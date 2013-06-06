@@ -1,0 +1,193 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use Data::Dump qw( dump );
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+
+use AIR2::SrcResponseSet;
+sub logger { AIR2::Utils::logger(@_) }
+
+my $air2_db  = AIR2::DBManager->new()->get_write_handle;
+my $air2_dbh = $air2_db->retain_dbh;
+
+=pod
+
+=head1 NAME
+
+clean-up-empty-srs - cleans up completely empty src_response_sets
+
+=head1 SYNOPSIS
+
+ clean-up-empty-srs [opts]
+ clean-up-empty-srs --help
+ clean-up-empty-srs --debug --dry_run
+ clean-up-empty-srs --quiet
+
+=head1 DESCRIPTION
+
+This script will search the database for any src_response_sets without any
+corresponding src_responses.  It will then nuke that record, and look for a
+src_activity tied to the inquiry.  If found, it will change the sact_desc to
+show that the submission was empty.  Otherwise, it will create a new activity
+to show why the src_response_set was deleted.
+
+=head1 OPTIONS
+
+=head2 help
+
+Shows this document
+
+=head2 debug
+
+Prints a whole bunch-o' output
+
+=head2 dry_run
+
+Run without making any changes to the database
+
+=head2 quiet
+
+None of the usual 'report' output - only error messages will be printed
+
+=cut
+
+my ( $help, $debug, $dry_run, $quiet );
+GetOptions(
+    help             => \$help,
+    debug            => \$debug,
+    dry_run          => \$dry_run,
+    quiet            => \$quiet,
+) or pod2usage(2);
+
+if ($help) {
+    pod2usage(2);
+}
+
+my $QUERY_RESPONSE_ACTM_ID = 4;
+
+logger("Starting...\n") if $debug;
+
+################################
+# Run in transaction           #
+################################
+my $ok = $air2_db->do_transaction(
+    sub {
+        my $found = 0;
+        my $nuked = 0;
+        my $cre_sact = 0;
+        my $upd_sact = 0;
+
+        # query
+        logger("Searching for empty src_response_sets...\n") if $debug;
+        my $srs_it = AIR2::SrcResponseSet->fetch_all_iterator(
+            with_objects => [ qw(source) ],
+            clauses => [
+                'srs_id not in (select distinct sr_srs_id from src_response)',
+            ],
+        );
+
+        # nuke 'em
+        while ( my $srs = $srs_it->next ) {
+            $found++;
+            if ($debug) {
+                my $sid = $srs->srs_id;
+                my $sdt = $srs->srs_date;
+                my $iid = $srs->srs_inq_id;
+                my $sn  = $srs->source->src_username;
+                logger("  *deleting srs_id($sid) srs_date($sdt) inq_id($iid) by source($sn)\n");
+            }
+
+            # search for the closest sact_cre_dtim to the submission
+            my $sacts = $srs->source->find_activities(
+                sort_by => 'sact_id DESC',
+                query => [
+                    sact_actm_id  => $QUERY_RESPONSE_ACTM_ID,
+                    sact_ref_type => 'I',
+                    sact_xid      => $srs->srs_inq_id,
+                    sact_notes    => undef,
+                ],
+            );
+            my $srs_activity = 0;
+            for my $sact ( @{$sacts} ) {
+                if ($srs_activity) {
+                    my $srs_epoch = $srs->srs_date->epoch();
+                    my $my_diff   = abs $sact->sact_dtim->epoch() - $srs_epoch;
+                    my $cmp_diff  = abs $srs_activity->sact_dtim->epoch() - $srs_epoch;
+                    if ($my_diff < $cmp_diff) {
+                        $srs_activity = $sact;
+                        if ($debug) {
+                            my $sid = $sact->sact_id;
+                            my $sdt = $sact->sact_dtim;
+                            logger("     -SWITCH TO sact_id($sid) sact_dtim($sdt)\n");
+                        }
+                    }
+                    else {
+                        my $sid = $sact->sact_id;
+                            my $sdt = $sact->sact_dtim;
+                    }
+                }
+                else {
+                    $srs_activity = $sact;
+                    $upd_sact++;
+                    if ($debug) {
+                        my $sid = $sact->sact_id;
+                        my $sdt = $sact->sact_dtim;
+                        logger("     -using existing sact_id($sid) sact_dtim($sdt)\n");
+                    }
+                }
+            }
+
+            # optionally create a new activity
+            unless ($srs_activity) {
+                $srs_activity = AIR2::SrcActivity->new(
+                    sact_src_id   => $srs->srs_src_id,
+                    sact_dtim     => $srs->srs_date,
+                    sact_actm_id  => $QUERY_RESPONSE_ACTM_ID,
+                    sact_ref_type => 'I',
+                    sact_xid      => $srs->srs_inq_id,
+                );
+                $cre_sact++;
+                logger("     -create new src_activity\n") if $debug;
+
+                # look for a project
+                for my $pi ( @{ $srs->inquiry->project_inquiries } ) {
+                    $srs_activity->sact_prj_id( $pi->pinq_prj_id );
+                    last;
+                }
+            }
+            $srs_activity->sact_desc( '{SRC} submitted empty submission to {XID}' );
+            $srs_activity->sact_notes( 'bin/clean-up-empty-srs' );
+            $srs_activity->save();
+
+            # nuke the empty response set
+            $srs->delete();
+            $nuked++;
+        }
+
+        # report
+        unless ($quiet) {
+            logger("Finished - deleted $nuked of $found src_response_sets\n");
+            logger("         - created $cre_sact new src_activity\n");
+            logger("         - updated $upd_sact existing src_activity\n");
+        }
+
+        # rollback dry runs
+        if ($dry_run) {
+            die "DRY_RUN";
+        }
+    }
+);
+
+
+# die appropriately
+unless ( $ok ) {
+    my $err = $air2_db->error;
+    if ($dry_run && $err =~ /DRY_RUN/) {
+        logger("DRY_RUN... rolled back all changes!\n") unless $quiet;
+    }
+    else {
+        die "Error: $err";
+    }
+}

@@ -1,0 +1,144 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful, 
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License 
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+body {
+    background-color: white;
+    font-family: tahoma, verdana, sans-serif;
+    width: 85%;
+    margin: auto;
+}
+
+h1.title {
+    font-size: 24px;
+}
+
+h1, h2, h3, h4, h5, h6,
+div.toc p b,
+div.list-of-figures p b,
+div.list-of-tables p b,
+div.abstract p.title
+{
+  color: #527bbd;
+}
+
+body h1 {
+  margin: .0em 0 0 -4%;
+  line-height: 1.3;
+  border-bottom: 2px solid silver;
+  font-size: 120%;
+}
+
+body h2 {
+  margin: 0.5em 0 0 -4%;
+  line-height: 1.3;
+  border-bottom: 2px solid silver;
+  font-size: 115%;
+}
+
+body h3 {
+  margin: .8em 0 0 -3%;
+  line-height: 1.3;
+  font-size: 110%;
+}
+
+body h4 {
+  margin: .8em 0 0 -3%;
+  line-height: 1.3;
+}
+
+body h5 {
+  margin: .8em 0 0 -2%;
+  line-height: 1.3;
+}
+
+body h6 {
+  margin: .8em 0 0 -1%;
+  line-height: 1.3;
+}
+
+span.term { 
+    font-weight: bold; 
+}
+
+
+pre.programlisting, 
+pre.screen,
+div.literallayout { 
+    background: #F0F0F0; 
+    border: 1px solid gray; 
+    padding: 6px; 
+    font-size: 10pt;
+    white-space: pre;
+}
+/* TODO is this correct? */
+div.literallayout p {
+    padding: 0;
+    margin: 0;
+}
+
+div.tip {
+    border: 1px solid gray;
+    padding: 5px;
+
+}
+
+a {
+   color: #00008B;
+}
+
+
+a:visited {
+
+   color: #990033;
+}
+
+
+a:hover {
+    color: #990033;
+    background-color: #FFFF80;
+}
+
+td {
+   padding: 5px;
+
+}
+
+code.literal {
+   font: courier, fixed;
+   font-weight: bold;
+
+}
+    
+.caption {
+    font-weight: bold;
+    color: #ccc;
+}
+
+div.caution {
+    border: 1px solid red;
+    padding: 8px;
+}
+
+div.caution h3.title {
+    margin: 0;
+    color: red;
+}

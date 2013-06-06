@@ -1,0 +1,76 @@
+#!/usr/bin/env php
+<?php
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+require_once realpath(dirname(__FILE__).'/../app/init.php');
+require_once 'AIR2_DBManager.php';
+
+/*
+ * Drop the AIR database
+ *
+ * In production environments (AIR2_ENVIRONMENT=prod), this script will
+ * prompt you to confirm that you really know what you're doing.
+ */
+
+try {
+    AIR2_DBManager::init();
+}
+catch (Doctrine_Connection_Exception $e) {
+    $msg = ' > Unable to connect to database using profile ' . AIR2_PROFILE;
+    $msg .= ' - check your database settings in etc/profiles.ini';
+    error_log($msg);
+    exit(1);
+}
+
+// get connection
+$conn = AIR2_DBManager::get_master_connection();
+$master = AIR2_DBManager::$master;
+$system = $master['hostname'].'::'.$master['dbname'];
+
+// double check dropping a prod database
+if (AIR2_ENVIRONMENT == 'prod') {
+    echo " > you are about to drop $system in a PRODUCTION environment!\n";
+    echo " > are you sure you want to do that? (y/n)\n > ";
+    $answer = trim(strtolower(fgets(STDIN)));
+    if ($answer != 'y' && $answer != 'yes') {
+        echo " > no changes made!\n";
+        exit(0);
+    }
+}
+
+// turn off key checks while we do this
+$conn->execute('SET FOREIGN_KEY_CHECKS = 0');
+
+// attempt to drop
+$tables = $conn->fetchColumn('show tables', array(), 0);
+foreach($tables as $tbl) {
+    try {
+        $conn->execute("drop table $tbl");
+    }
+    catch (Doctrine_Exception $e) {
+        error_log(" > unable to drop table $tbl - " . $e->getMessage());
+        exit(2);
+    }
+}
+
+// turn key checks back on for the database
+$conn->execute('SET FOREIGN_KEY_CHECKS = 1');

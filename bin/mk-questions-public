@@ -1,0 +1,318 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2013 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+#
+# utility tool for flagging questions as public
+# until Querymaker makes that possible for users to do themselves.
+#
+
+use strict;
+use warnings;
+use Carp;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+
+use AIR2::Config;
+use AIR2::Inquiry;
+use AIR2::Question;
+
+my %questions = (
+
+    # key is inq_uuid,
+    # value is array of ques_uuids
+
+    # budget hero
+    '497a169ff52d' => [
+
+        # "How many times have you played Budget Hero?"
+        "2c2ecc192b17",
+
+        # "To the best of your recollection
+        "4ceeceb30684",
+
+        # "How did you learn about the game? (Choose all that apply.)"
+        #"7ac29e3950ce",
+
+        # "If you are or recently were a student
+        "207b482e906c",
+
+        # "If yes, tell us more about student..
+        "67e578ccb00a",
+
+       # "Have you used Budget Hero to teach others about the federal budget?"
+        "ba524de94351",
+
+        # "If yes, tell us more
+        "385a45c22d19",
+
+        # "Have you encouraged family or friends to play the game?"
+        "e97c14214296",
+
+# "What insights did you gain from playing Budget Hero? Please check all that apply."
+        "fd740275caaf",
+
+# "Is there a specific story or experience you could share that would help us to better understand your answer(s) above?"
+        "b841beb81917",
+
+        # "What else did you learn from playing Budget Hero?"
+        "31d0ddc5f53e",
+
+# "Please complete the statement by checking all that apply. ""Playing Budget Hero changed my view of the ..."""
+        "d2fd9c35300c",
+
+# "Please provide some more details about your answer(s) above. What changed and why?"
+        "0ba933a5af35",
+
+# "What other subject areas would you like to see addressed in an online game? (Choose all that apply.)"
+        "0abfbcc21f51",
+
+        # "If you have specific ideas for another serious game
+        "5ee190e732a6",
+
+# "<i>We hope that you can share some information so we can better understand the impact of the game on different people.</i><br> <br> If you live in the United States
+#"e20df12bfca0",
+
+        # "If you live outside the United States
+        #"71e4555a1f3f",
+
+        # "What is your gender?"
+        #"2da2505c2c33",
+
+        # "What is your household income?"
+        #"f14120826d5d",
+
+        # "What political party
+        #"381019a414e7",
+
+        # "What is your race or ethnicity?"
+        #"8c89920a5ae7",
+
+        # "Did you play the game with friends or family?"
+        "820003b2cb53",
+
+# "May we share your insights with the Woodrow Wilson Center and others interested in the game's impact? (We will only identify you by your initials and place of residence
+#"07723c21ba1b",
+
+# "<i>We have a few more optional questions that help us better understand your perspective and allow us to include people of a variety of backgrounds in our stories and reports.</i><br><br> In what year were you born?"
+#"64d902847e61",
+
+# "May we share your insights (including full name and place of residence) on the air or on the Web and attribute them to you?  (Your comments may be edited for length or clarity.)"
+#"4c9eb7639f1d",
+
+        # "What do you do for work?"
+        #"5b2060ca7592",
+
+        # "What, if anything, surprised you about the game?"
+        "3cba4335df31",
+
+    ],
+
+    # vets, gunzel
+    "243cfc2d4184" => [
+
+        #"What do you do for work?"
+        "8dfee8728c39",
+
+        #"Did you leave this thing behind in Iraq or Afghanistan?"
+        "a527bfcc3862",
+
+        #<i>Be as specific as possible. No detail is too small.</i>"
+        "a6207915412f",
+
+#<i>Again, it could be anything -- a physical object or something less tangible.</i>"
+        "17f54402e229",
+
+        #"Is this thing you kept from Iraq or Afghanistan?"
+        "45affc3e610e",
+
+    #<i>Again, please be as specific as possible. No detail is too small.</i>"
+        "c2146489e372",
+
+        #"When did it all begin for you? What year were you first deployed?"
+        "97f10b9a9fbc",
+
+        #"Were you sent to Iraq or Afghanistan on your first deployment?"
+        "3d68308234bf",
+
+        #"What year did your first deployment end?"
+        "ea98ada599a2",
+
+        #"What branch of the military were you serving in at the time?"
+        "55378fcff480",
+
+        #"If you answered ""other,"" please enter branch here:"
+        "539ac7a561e5",
+
+        #"What was your rank at the time?"
+        "203f7c9869be",
+
+        #"What branch of the military were you serving in at the time?"
+        "5157971ae3ac",
+
+        #"If you answered ""other,"" please enter branch here:"
+        "cfb193c79f89",
+
+        #"What was your rank at the time?"
+        "b748d809da37",
+
+#<i>Example: Sgt. 1st Class Jane Doe</i> or <i>Command Ret. Sgt. Maj. John Doe</i>"
+#"413f95761e12",
+
+        #"How many times have you been deployed to Iraq and/or Afghanistan?"
+        "8349f8e62a77",
+
+        #"Did you deploy to Iraq, Afghanistan or both?"
+        "62b2cf369f99",
+
+        # in as few words as possible
+        "45a8bb0f7718",
+
+    ],
+
+    # caputo immigration
+    '95210dba3713' => [
+
+        qw(
+            7dd074eedc3a
+            4053c6a8e649
+            570549e70dd6
+            dd3ee759b0e8
+            )
+
+    ],
+
+    # LA mayor
+    '5bf1fe369f0e' => ['9200af1a79cb'],
+
+    # mars geeks
+    '2122d02a309a' => [
+        '7dedd3eaf1e7',    # do you have a story
+        'f88f0f4e2b2e',    # in your experience and observations
+        '43e24975ce98',    # what questions do you have
+        '5baccb9ffd71',    # what is your scientific expertise or interest
+        '7eb5563102e2',    # what do you do for work
+    ],
+
+    # travel to mars
+    '7fb3cce975df' => [
+        'b8041061b06e',    # knowing that you may never return
+        'b14b4ef84f70',    # explain your answer
+        '4905ba3b472d',    # what questions do you have
+        'de358a3e921b',    # what do you do for work
+    ],
+
+    # retarded
+    '2e07dc9d66c9' => [
+        '5bfdaa1cbd17',    # personal experience
+        'aa0ebeaf019d',    # stop using word
+        '740299b8f5c3',    # what words instead
+        '0202505f50bf',    # what do you do for work
+    ],
+
+    # pope
+    '3e9f9c58ba26' => [
+        '6fd3a8fa9acc',    # hopes
+        '095e55527630',    # significance
+        'fa693bd93f84',    # church looks like
+        '451749b427ef',    # your faith tradition
+    ],
+
+    # food
+    '9eaa6009c422' => [
+        '5606f3c6c582',    # most of us
+        '446549792f32',    # if you could change one thing
+        '5f6f0f8f558b',
+        '804ae0b37bab',
+    ],
+
+    # more mars
+    '6333fc54e7da' => [
+        '93d2e91b2566',    # no return
+        'd12b60a582fe',    # explain previous
+        '0942dfa9e72d',    # gathering
+        '86e1ac06c41c',    # skills
+    ],
+
+    # la city council
+    '5bf1fe369f0e' => [
+        '9200af1a79cb',    # tell the mayor one thing
+        'db10ff019c5a',    # why important
+        'f6d5d1c2d738',    # which category
+    ],
+
+    # veteran
+    '28eac3598f9e' => [
+        'bd262d9406c4',    # name
+        'd031edc53560',    # where
+        '1eec724d0aee',    # other
+        'c19932b63fd2',    # experiences
+                           #'6baef7c09cfc', # about photo
+    ],
+
+    # student veterans
+    '6e0ab3afd400' => [
+        '99410422c9a7',    # where to school
+        '40409b9befb6',    # name of veteran center
+        'baa28488bd46',    # website
+        'cc6bed747e89',    # address 1
+        '8c56a220f864',    # address 2
+        'd963ead79642',    # city
+        'f97eaa7203ad',    # state
+        '08bbf6fd7bb1',    # zip
+        'a51a28f152f1',    # how to get involved
+        '1362c2bdaeb0',    # hours
+        '4e76e899383d',    # how helpful
+    ],
+
+    # early childhood
+    '603e42e3ba29' => [
+        '91487fa705fc',    # book
+        'de45d1f3ab4d',    # special
+        '81067e997f95',    # soundcloud
+    ],
+
+    # immigrants
+    '89a391c3d7d2' => [
+        '8c14ee173b24',    # choose term
+        'dd91e7c65a91',    # other
+        'd8c626c1ae51',    # experiences
+    ],
+
+);
+
+# toggle flags
+
+for my $inq_uuid ( keys %questions ) {
+
+    # make sure we have the inquiry
+    my $inq = AIR2::Inquiry->new( inq_uuid => $inq_uuid )->load;
+
+    for my $ques_uuid ( @{ $questions{$inq_uuid} } ) {
+        my $ques = AIR2::Question->new( ques_uuid => $ques_uuid )->load;
+
+        $ques->ques_public_flag(1);
+        $ques->set_admin_update(1);
+        $ques->save();
+
+    }
+
+}

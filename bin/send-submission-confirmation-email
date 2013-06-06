@@ -1,0 +1,279 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2013 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Carp;
+use Data::Dump qw( dump );
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+use Email::Stuff;
+use Template;
+use HTML::FormatText::Elinks;
+use AIR2::Config;
+use AIR2::SrcResponseSet;
+use JSON;
+use Path::Class;
+
+my $CONFIRMATION_SENT_ACTM_ID = 48;
+my ( $help, $debug, $strict, $dry_run, $FROM, $TO, $log_activity );
+GetOptions(
+    help           => \$help,
+    debug          => \$debug,
+    'strict=i'     => \$strict,
+    'dry_run',     => \$dry_run,
+    'from=s'       => \$FROM,
+    'to=s'         => \$TO,
+    'log_activity' => \$log_activity,
+) or pod2usage(2);
+
+if ($help) {
+    pod2usage(2);
+}
+
+for my $srs_uuid (@ARGV) {
+    send_confirmation($srs_uuid);
+}
+
+exit(0);
+
+##############################################################
+# functions
+
+sub send_confirmation {
+    my $srs_uuid = shift or die "srs_uuid required";
+
+    my $template_vars = get_template_vars($srs_uuid);
+    my $html          = '';
+    my $template_dir
+        = AIR2::Config::get_app_root()->subdir('templates')->resolve;
+    my $template = Template->new( { INCLUDE_PATH => "$template_dir", } );
+
+    $template->process( 'email/confirmation.html.tt', $template_vars, \$html )
+        or die $template->error();
+
+    my $text = HTML::FormatText::Elinks->format_string($html);
+    my $to   = sprintf( "%s <%s>",
+        $template_vars->{source}->{name},
+        $template_vars->{source}->{email} );
+    my $from = sprintf( "%s <%s>",
+        $template_vars->{from}->{name},
+        $template_vars->{from}->{email} );
+    my $subject = sprintf( "Thank you for sharing your insight with %s!",
+        $template_vars->{newsrooms}->[0]->{name} );
+    my $sent = send_email(
+        html    => $html,
+        text    => $text,
+        from    => ( $FROM || $from ),
+        to      => ( $TO || $to ),
+        subject => $subject,
+    );
+
+    if ( $sent && $log_activity ) {
+        log_activity($template_vars);
+    }
+}
+
+sub get_response {
+    my ( $srs, $question ) = @_;
+    my $response;
+    if ( ref $srs eq 'HASH' ) {
+
+        # from json file
+        $response = $srs->{ $question->ques_uuid };
+        if ( ref $response ) {
+            if ( ref $response eq 'ARRAY' ) {
+                $response = join( ', ', @$response );
+            }
+            elsif ( ref $response eq 'HASH' ) {
+                $response = $response->{orig_name};
+            }
+            else {
+                croak "Unknown response type: $response";
+            }
+        }
+
+    }
+    else {
+        $response = $srs->response_for_question($question)->sr_orig_value;
+
+    }
+
+    return $response;
+}
+
+sub get_template_vars {
+    my $srs_uuid = shift or die "srs_uuid required";
+
+    # srs_uuid may be a string or a submission.json file path
+    my ( $srs, $query );
+    if ( -s $srs_uuid ) {
+        $srs = decode_json( file($srs_uuid)->slurp );
+
+        #dump $srs;
+        $query
+            = AIR2::Inquiry->new( inq_uuid => $srs->{meta}->{query} )->load;
+    }
+    else {
+        $srs = AIR2::SrcResponseSet->new( srs_uuid => $srs_uuid )->load;
+        $query = $srs->inquiry;
+    }
+    my @submission;
+    my ( $first_name, $last_name, $email );
+    $first_name = '';
+    $last_name  = '';
+    for my $question ( @{ $query->questions_in_display_order } ) {
+        my $response = get_response( $srs, $question );
+        $response = '' unless defined $response;
+
+        push @submission,
+            {
+            question => $question->ques_value,
+            answer   => $response,
+            };
+
+        #warn sprintf( "%s : %s\n",
+        #    dump( \@submission ),
+        #    $question->ques_template );
+
+        next unless $question->ques_template;
+        if ( $question->ques_template eq 'firstname' ) {
+            $first_name = $response;
+        }
+        elsif ( $question->ques_template eq 'lastname' ) {
+            $last_name = $response;
+        }
+        elsif ( $question->ques_template eq 'email' ) {
+            $email = $response;
+
+            #warn "found email '$email'";
+        }
+    }
+    if ( !$TO and !$email ) {
+        die "No email address found in submission";
+    }
+    my @newsrooms;
+    my @related;
+    for my $org ( @{ $query->organizations } ) {
+        push @newsrooms,
+            {
+            name     => $org->org_display_name,
+            uri      => ( $org->org_site_uri || $org->get_uri() ),
+            logo_uri => ( $org->org_logo_uri || $org->get_logo_uri() ),
+            location => $org->get_location(),
+            };
+        my $rss = $org->get_rss_feed(3);
+        for my $inq (@$rss) {
+            next if $inq->inq_uuid eq $query->inq_uuid;
+            push @related,
+                { title => $inq->get_title(), uri => $inq->get_uri() };
+        }
+    }
+    my $from_author;
+    for my $author ( @{ $query->authors } ) {
+        next unless $author->user->is_active;
+        $from_author = $author->user;
+    }
+    if ( !$from_author ) {
+
+        if ( $query->cre_user->is_active ) {
+            $from_author = $query->cre_user;
+        }
+        else {
+
+            # TODO look elsewhere
+            croak "No active User found for From";
+
+        }
+    }
+
+    my $base_url = AIR2::Config::get_constant('AIR2_BASE_URL');
+    $base_url =~ s,/$,,;
+
+    return {
+        submission => \@submission,
+        pin        => {
+            asset_uri   => $base_url,
+            uri         => 'http://pinsight.org/',
+            terms_uri   => 'http://pinsight.org/terms',
+            privacy_uri => 'http://pinsight.org/privacy',
+        },
+        from => {
+            name       => $from_author->get_name_first_last,
+            email      => $from_author->get_primary_email->uem_address,
+            avatar_uri => $from_author->get_avatar_uri,
+        },
+        authors   => [ map { $_->user } @{ $query->authors } ],
+        newsrooms => \@newsrooms,
+        query  => { uri => $query->get_uri(), uuid => $query->inq_uuid, },
+        source => {
+            src_id => ( ref $srs eq 'HASH' ? '' : $srs->srs_src_id ),
+            name => join( ' ', $first_name, $last_name ),
+            email => ( $email || $TO ),
+        },
+        related_queries => \@related,
+        project         => $query->find_a_project(),
+    };
+}
+
+sub log_activity {
+    my $vars = shift or die "vars required";
+    if ( $vars->{source}->{src_id} ) {
+        my $sact = AIR2::SrcActivity->new(
+            sact_actm_id => $CONFIRMATION_SENT_ACTM_ID,
+            sact_src_id  => $vars->{source}->{src_id},
+            sact_dtim    => time(),
+            sact_desc    => "Submission confirmation email sent to {SRC}",
+            sact_prj_id  => $vars->{project}->{prj_id},
+        );
+
+        $sact->save();
+    }
+    else {
+        warn "Can't log activity since we do not have a src_id\n";
+    }
+}
+
+sub send_email {
+    my %args = @_;
+    if ( $dry_run and $debug ) {
+        dump \%args;
+        return;
+    }
+    my $stuff = Email::Stuff->to( $args{to} )->from( $args{from} )
+        ->subject( $args{subject} );
+    if ( $args{text} ) {
+        $stuff->text_body( $args{text} );
+    }
+    if ( $args{html} ) {
+        $stuff->html_body( $args{html} );
+    }
+    my $result
+        = $stuff->using( 'SMTP', Host => AIR2::Config->get_smtp_host )->send;
+
+    $debug and warn $result;
+
+    return $result;
+}
+

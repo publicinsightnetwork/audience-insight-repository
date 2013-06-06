@@ -1,0 +1,44 @@
+#!/opt/pij/bin/perl
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use AIR2::DBManager;
+
+my $daily_tsv  = shift(@ARGV) || '/tmp/air-sources.tsv';
+my $growth_tsv = shift(@ARGV) || '/tmp/air-source-growth.tsv';
+
+my $dbh = AIR2::DBManager->new_or_cached()->retain_dbh;
+
+my $sql = <<SQL;
+select * from source order by src_cre_dtim asc
+SQL
+
+my $sth = $dbh->prepare($sql);
+$sth->execute();
+
+my $counts = {};
+while ( my $row = $sth->fetchrow_hashref ) {
+
+    #dump($row);
+
+    my $dtim = $row->{src_cre_dtim};
+    $dtim =~ s/\ .+//;
+    $dtim =~ s/\-//g;
+
+    $counts->{$dtim}++;
+
+}
+
+open( my $daily,  ">", $daily_tsv )  or die "can't write $daily_tsv: $!";
+open( my $growth, ">", $growth_tsv ) or die "can't write $growth_tsv: $!";
+
+print $daily "date\tnAccts\n";
+print $growth "date\tnAccts\n";
+
+my $total = 0;
+for my $ymd ( sort { $a <=> $b } keys %$counts ) {
+    $total += $counts->{$ymd};
+    printf( $daily "%s\t%d\n",  $ymd, $counts->{$ymd} );
+    printf( $growth "%s\t%d\n", $ymd, $total );
+}

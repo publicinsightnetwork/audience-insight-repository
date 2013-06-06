@@ -1,0 +1,1605 @@
+CodeMaster:
+  CodeMaster_1:
+    cm_field_name: actm_table_type
+    cm_code: S
+    cm_table_name: activity_master
+    cm_disp_value: Source/invitee
+    cm_disp_seq: '10'
+    cm_area: 'Activity subject'
+    cm_status: A
+  CodeMaster_2:
+    cm_field_name: actm_table_type
+    cm_code: P
+    cm_table_name: activity_master
+    cm_disp_value: Project
+    cm_disp_seq: '20'
+    cm_area: 'Activity subject'
+    cm_status: A
+  CodeMaster_3:
+    cm_field_name: actm_type
+    cm_code: I
+    cm_table_name: activity_master
+    cm_disp_value: 'Inbound (count toward engagement)'
+    cm_disp_seq: '10'
+    cm_area: 'Activity type'
+    cm_status: A
+  CodeMaster_4:
+    cm_field_name: actm_type
+    cm_code: A
+    cm_table_name: activity_master
+    cm_disp_value: Administrative
+    cm_disp_seq: '20'
+    cm_area: 'Activity type'
+    cm_status: A
+  CodeMaster_5:
+    cm_field_name: actm_type
+    cm_code: O
+    cm_table_name: activity_master
+    cm_disp_value: Outbound
+    cm_disp_seq: '30'
+    cm_area: 'Activity type'
+    cm_status: A
+  CodeMaster_6:
+    cm_field_name: actm_type
+    cm_code: C
+    cm_table_name: activity_master
+    cm_disp_value: 'Contact (count toward contacts and business rules around contacts)'
+    cm_disp_seq: '40'
+    cm_area: 'Activity type'
+    cm_status: A
+  CodeMaster_7:
+    cm_field_name: actm_type
+    cm_code: R
+    cm_table_name: activity_master
+    cm_disp_value: Relationship
+    cm_disp_seq: '50'
+    cm_area: 'Activity type'
+    cm_status: A
+  CodeMaster_8:
+    cm_field_name: actm_type
+    cm_code: S
+    cm_table_name: activity_master
+    cm_disp_value: Status
+    cm_disp_seq: '60'
+    cm_area: 'Activity type'
+    cm_status: A
+  CodeMaster_9:
+    cm_field_name: actm_type
+    cm_code: M
+    cm_table_name: activity_master
+    cm_disp_value: Message
+    cm_disp_seq: '70'
+    cm_area: 'Activity type'
+    cm_status: A
+  CodeMaster_10:
+    cm_field_name: actm_type
+    cm_code: J
+    cm_table_name: activity_master
+    cm_disp_value: Journalism
+    cm_disp_seq: '80'
+    cm_area: 'Activity type'
+    cm_status: A
+  CodeMaster_11:
+    cm_field_name: actm_type
+    cm_code: U
+    cm_table_name: activity_master
+    cm_disp_value: Upload
+    cm_disp_seq: '90'
+    cm_area: 'Activity type'
+    cm_status: A
+  CodeMaster_12:
+    cm_field_name: smadd_status
+    cm_code: E
+    cm_table_name: src_mail_address
+    cm_disp_value: 'Exception - needs work'
+    cm_disp_seq: '10'
+    cm_area: 'Address status'
+    cm_status: A
+  CodeMaster_13:
+    cm_field_name: smadd_status
+    cm_code: V
+    cm_table_name: src_mail_address
+    cm_disp_value: Valid
+    cm_disp_seq: '20'
+    cm_area: 'Address status'
+    cm_status: A
+  CodeMaster_18:
+    cm_field_name: bin_type
+    cm_code: U
+    cm_table_name: bin
+    cm_disp_value: Submission
+    cm_disp_seq: '9'
+    cm_area: 'Bin type'
+    cm_status: A
+  CodeMaster_19:
+    cm_field_name: bin_type
+    cm_code: S
+    cm_table_name: bin
+    cm_disp_value: Source
+    cm_disp_seq: '10'
+    cm_area: 'Bin type'
+    cm_status: A
+  CodeMaster_20:
+    cm_field_name: src_channel
+    cm_code: R
+    cm_table_name: source
+    cm_disp_value: 'Referred by another source'
+    cm_disp_seq: '10'
+    cm_area: 'Channel codes (source/invitee)'
+    cm_status: A
+  CodeMaster_21:
+    cm_field_name: src_channel
+    cm_code: Q
+    cm_table_name: source
+    cm_disp_value: Query
+    cm_disp_seq: '20'
+    cm_area: 'Channel codes (source/invitee)'
+    cm_status: A
+  CodeMaster_22:
+    cm_field_name: src_channel
+    cm_code: I
+    cm_table_name: source
+    cm_disp_value: 'Game/Interactive Experience'
+    cm_disp_seq: '30'
+    cm_area: 'Channel codes (source/invitee)'
+    cm_status: A
+  CodeMaster_23:
+    cm_field_name: src_channel
+    cm_code: E
+    cm_table_name: source
+    cm_disp_value: 'Event/In Person Signup'
+    cm_disp_seq: '40'
+    cm_area: 'Channel codes (source/invitee)'
+    cm_status: A
+  CodeMaster_24:
+    cm_field_name: src_channel
+    cm_code: O
+    cm_table_name: source
+    cm_disp_value: 'Opt-in (via programming)/Online Signup'
+    cm_disp_seq: '50'
+    cm_area: 'Channel codes (source/invitee)'
+    cm_status: A
+  CodeMaster_25:
+    cm_field_name: src_channel
+    cm_code: G
+    cm_table_name: source
+    cm_disp_value: 'Idea Generator'
+    cm_disp_seq: '60'
+    cm_area: 'Channel codes (source/invitee)'
+    cm_status: A
+  CodeMaster_26:
+    cm_field_name: src_channel
+    cm_code: U
+    cm_table_name: source
+    cm_disp_value: 'Not Known'
+    cm_disp_seq: '70'
+    cm_area: 'Channel codes (source/invitee)'
+    cm_status: A
+  CodeMaster_27:
+    cm_field_name: src_channel
+    cm_code: N
+    cm_table_name: source
+    cm_disp_value: 'Invitation by newsroom'
+    cm_disp_seq: '80'
+    cm_area: 'Channel codes (source/invitee)'
+    cm_status: A
+  CodeMaster_28:
+    cm_field_name: src_channel
+    cm_code: S
+    cm_table_name: source
+    cm_disp_value: 'Strategic Outreach activity'
+    cm_disp_seq: '90'
+    cm_area: 'Channel codes (source/invitee)'
+    cm_status: A
+  CodeMaster_32:
+    cm_field_name: srs_conf_level
+    cm_code: H
+    cm_table_name: src_response_set
+    cm_disp_value: 'High confidence'
+    cm_disp_seq: '40'
+    cm_area: 'Confidence levels - how confident am I that this source is accurate here?'
+    cm_status: A
+  CodeMaster_33:
+    cm_field_name: srs_conf_level
+    cm_code: L
+    cm_table_name: src_response_set
+    cm_disp_value: 'Low confidence'
+    cm_disp_seq: '50'
+    cm_area: 'Confidence levels - how confident am I that this source is accurate here?'
+    cm_status: A
+  CodeMaster_34:
+    cm_field_name: srs_conf_level
+    cm_code: N
+    cm_table_name: src_response_set
+    cm_disp_value: 'Not confident'
+    cm_disp_seq: '60'
+    cm_area: 'Confidence levels - how confident am I that this source is accurate here?'
+    cm_status: A
+  CodeMaster_56:
+    cm_field_name: fact_fv_type
+    cm_code: M
+    cm_table_name: fact
+    cm_disp_value: '3 potential values (source text, source map, analyst map)'
+    cm_disp_seq: '10'
+    cm_area: 'Fact type'
+    cm_status: A
+  CodeMaster_57:
+    cm_field_name: fact_fv_type
+    cm_code: F
+    cm_table_name: fact
+    cm_disp_value: 'Foreign key(s) only'
+    cm_disp_seq: '20'
+    cm_area: 'Fact type'
+    cm_status: A
+  CodeMaster_58:
+    cm_field_name: fact_fv_type
+    cm_code: S
+    cm_table_name: fact
+    cm_disp_value: 'String only'
+    cm_disp_seq: '30'
+    cm_area: 'Fact type'
+    cm_status: A
+  CodeMaster_59:
+    cm_field_name: inq_type
+    cm_code: F
+    cm_table_name: inquiry
+    cm_disp_value: Formbuilder
+    cm_disp_seq: '10'
+    cm_area: 'Inquiry type codes'
+    cm_status: A
+  CodeMaster_59a:
+    cm_field_name: inq_type
+    cm_code: Q
+    cm_table_name: inquiry
+    cm_disp_value: Querybuilder
+    cm_disp_seq: '15'
+    cm_area: 'Inquiry type codes'
+    cm_status: A
+  CodeMaster_60:
+    cm_field_name: inq_type
+    cm_code: E
+    cm_table_name: inquiry
+    cm_disp_value: 'Manual Entry'
+    cm_disp_seq: '20'
+    cm_area: 'Inquiry type codes'
+    cm_status: A
+  CodeMaster_61:
+    cm_field_name: inq_type
+    cm_code: C
+    cm_table_name: inquiry
+    cm_disp_value: 'Comment'
+    cm_disp_seq: '30'
+    cm_area: 'Inquiry type codes'
+    cm_status: A
+  CodeMaster_63:
+    cm_field_name: ar_status
+    cm_code: A
+    cm_table_name: admin_role
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_64:
+    cm_field_name: ar_status
+    cm_code: F
+    cm_table_name: admin_role
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_68a:
+    cm_field_name: bin_status
+    cm_code: A
+    cm_table_name: bin
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_68b:
+    cm_field_name: bin_status
+    cm_code: F
+    cm_table_name: bin
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_69:
+    cm_field_name: fact_status
+    cm_code: A
+    cm_table_name: fact
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_70:
+    cm_field_name: fact_status
+    cm_code: F
+    cm_table_name: fact
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_71:
+    cm_field_name: fv_status
+    cm_code: A
+    cm_table_name: fact_value
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_72:
+    cm_field_name: fv_status
+    cm_code: F
+    cm_table_name: fact_value
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_77:
+    cm_field_name: org_status
+    cm_code: P
+    cm_table_name: organization
+    cm_disp_value: Published
+    cm_disp_seq: '05'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_78:
+    cm_field_name: org_status
+    cm_code: G
+    cm_table_name: organization
+    cm_disp_value: Guest
+    cm_disp_seq: '30'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_79:
+    cm_field_name: org_status
+    cm_code: A
+    cm_table_name: organization
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_80:
+    cm_field_name: org_status
+    cm_code: F
+    cm_table_name: organization
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_81:
+    cm_field_name: pt_status
+    cm_code: A
+    cm_table_name: preference_type
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_82:
+    cm_field_name: pt_status
+    cm_code: F
+    cm_table_name: preference_type
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_83:
+    cm_field_name: ptv_status
+    cm_code: A
+    cm_table_name: preference_type_value
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_84:
+    cm_field_name: ptv_status
+    cm_code: F
+    cm_table_name: preference_type_value
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_85:
+    cm_field_name: pinq_status
+    cm_code: A
+    cm_table_name: project_inquiry
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_86:
+    cm_field_name: pinq_status
+    cm_code: F
+    cm_table_name: project_inquiry
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_87:
+    cm_field_name: porg_status
+    cm_code: A
+    cm_table_name: project_org
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_88:
+    cm_field_name: porg_status
+    cm_code: F
+    cm_table_name: project_org
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_91:
+    cm_field_name: spo_status
+    cm_code: A
+    cm_table_name: src_pref_org
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_92:
+    cm_field_name: spo_status
+    cm_code: F
+    cm_table_name: src_pref_org
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_93:
+    cm_field_name: sp_status
+    cm_code: A
+    cm_table_name: src_preference
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_94:
+    cm_field_name: sp_status
+    cm_code: F
+    cm_table_name: src_preference
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_95:
+    cm_field_name: srel_status
+    cm_code: A
+    cm_table_name: src_relationship
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_96:
+    cm_field_name: srel_status
+    cm_code: F
+    cm_table_name: src_relationship
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_98:
+    cm_field_name: user_status
+    cm_code: P
+    cm_table_name: user
+    cm_disp_value: Published
+    cm_disp_seq: '05'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_99:
+    cm_field_name: user_status
+    cm_code: A
+    cm_table_name: user
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_100:
+    cm_field_name: user_status
+    cm_code: F
+    cm_table_name: user
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_101:
+    cm_field_name: uo_status
+    cm_code: A
+    cm_table_name: user_org
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_102:
+    cm_field_name: uo_status
+    cm_code: F
+    cm_table_name: user_org
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_102a:
+    cm_field_name: actm_status
+    cm_code: A
+    cm_table_name: activity_master
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_102b:
+    cm_field_name: actm_status
+    cm_code: F
+    cm_table_name: activity_master
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+    cm_status: A
+  CodeMaster_103:
+    cm_field_name: org_type
+    cm_code: N
+    cm_table_name: organization
+    cm_disp_value: Newsroom
+    cm_disp_seq: '10'
+    cm_area: 'Organization type'
+    cm_status: A
+  CodeMaster_104:
+    cm_field_name: org_type
+    cm_code: L
+    cm_table_name: organization
+    cm_disp_value: 'Local journalism center'
+    cm_disp_seq: '20'
+    cm_area: 'Organization type'
+    cm_status: A
+  CodeMaster_107:
+    cm_field_name: srs_type
+    cm_code: F
+    cm_table_name: src_response_set
+    cm_disp_value: Formbuilder
+    cm_disp_seq: '10'
+    cm_area: 'Response set types'
+    cm_status: A
+  CodeMaster_108:
+    cm_field_name: srs_type
+    cm_code: E
+    cm_table_name: src_response_set
+    cm_disp_value: 'Manual Entry'
+    cm_disp_seq: '20'
+    cm_area: 'Response set types'
+    cm_status: A
+  CodeMaster_109:
+    cm_field_name: srs_type
+    cm_code: C
+    cm_table_name: src_response_set
+    cm_disp_value: 'Comment'
+    cm_disp_seq: '60'
+    cm_area: 'Response set types'
+    cm_status: A
+  CodeMaster_113:
+    cm_field_name: sact_ref_type
+    cm_code: R
+    cm_table_name: src_activity
+    cm_disp_value: src_response_set
+    cm_disp_seq: '10'
+    cm_area: 'Source activity log reference type - table name'
+    cm_status: A
+  CodeMaster_113a:
+    cm_field_name: pa_ref_type
+    cm_code: I
+    cm_table_name: project_activity
+    cm_disp_value: inquiry
+    cm_disp_seq: '10'
+    cm_area: 'Project activity log reference type - table name'
+    cm_status: A
+  CodeMaster_113b:
+    cm_field_name: pa_ref_type
+    cm_code: O
+    cm_table_name: project_activity
+    cm_disp_value: organization
+    cm_disp_seq: '20'
+    cm_area: 'Project activity log reference type - table name'
+    cm_status: A
+  CodeMaster_114:
+    cm_field_name: sma_type
+    cm_code: I
+    cm_table_name: src_media_asset
+    cm_disp_value: Image
+    cm_disp_seq: '10'
+    cm_area: 'Source media type'
+    cm_status: A
+  CodeMaster_115:
+    cm_field_name: sma_type
+    cm_code: V
+    cm_table_name: src_media_asset
+    cm_disp_value: Video
+    cm_disp_seq: '20'
+    cm_area: 'Source media type'
+    cm_status: A
+  CodeMaster_116:
+    cm_field_name: sma_type
+    cm_code: D
+    cm_table_name: src_media_asset
+    cm_disp_value: Document
+    cm_disp_seq: '30'
+    cm_area: 'Source media type'
+    cm_status: A
+  CodeMaster_117:
+    cm_field_name: sma_type
+    cm_code: A
+    cm_table_name: src_media_asset
+    cm_disp_value: 'Audio file'
+    cm_disp_seq: '40'
+    cm_area: 'Source media type'
+    cm_status: A
+  CodeMaster_118:
+    cm_field_name: so_status
+    cm_code: A
+    cm_table_name: src_org
+    cm_disp_value: 'Opted in'
+    cm_disp_seq: '10'
+    cm_area: 'Source organization status'
+    cm_status: A
+  CodeMaster_119:
+    cm_field_name: so_status
+    cm_code: D
+    cm_table_name: src_org
+    cm_disp_value: 'Editorial deactivation'
+    cm_disp_seq: '20'
+    cm_area: 'Source organization status'
+    cm_status: A
+  CodeMaster_120:
+    cm_field_name: so_status
+    cm_code: F
+    cm_table_name: src_org
+    cm_disp_value: 'Opted out'
+    cm_disp_seq: '30'
+    cm_area: 'Source organization status'
+    cm_status: A
+  CodeMaster_121:
+    cm_field_name: srel_context
+    cm_code: H
+    cm_table_name: src_relationship
+    cm_disp_value: Household
+    cm_disp_seq: '10'
+    cm_area: 'Source Relationship context codes'
+    cm_status: A
+  CodeMaster_122:
+    cm_field_name: srel_context
+    cm_code: S
+    cm_table_name: src_relationship
+    cm_disp_value: Spouse/Partner
+    cm_disp_seq: '20'
+    cm_area: 'Source Relationship context codes'
+    cm_status: A
+  CodeMaster_123:
+    cm_field_name: srel_context
+    cm_code: P
+    cm_table_name: src_relationship
+    cm_disp_value: Parent/Child
+    cm_disp_seq: '30'
+    cm_area: 'Source Relationship context codes'
+    cm_status: A
+  CodeMaster_124:
+    cm_field_name: srel_context
+    cm_code: R
+    cm_table_name: src_relationship
+    cm_disp_value: Referrer/Referree
+    cm_disp_seq: '40'
+    cm_area: 'Source Relationship context codes'
+    cm_status: A
+  CodeMaster_125:
+    cm_field_name: src_status
+    cm_code: A
+    cm_table_name: source
+    cm_disp_value: Engaged
+    cm_disp_seq: '10'
+    cm_area: 'Source status'
+    cm_status: A
+  CodeMaster_126:
+    cm_field_name: src_status
+    cm_code: D
+    cm_table_name: source
+    cm_disp_value: Deactivated
+    cm_disp_seq: '20'
+    cm_area: 'Source status'
+    cm_status: A
+  CodeMaster_127:
+    cm_field_name: src_status
+    cm_code: E
+    cm_table_name: source
+    cm_disp_value: Enrolled
+    cm_disp_seq: '30'
+    cm_area: 'Source status'
+    cm_status: A
+  CodeMaster_128:
+    cm_field_name: src_status
+    cm_code: F
+    cm_table_name: source
+    cm_disp_value: 'Opted out'
+    cm_disp_seq: '40'
+    cm_area: 'Source status'
+    cm_status: A
+  CodeMaster_129:
+    cm_field_name: src_status
+    cm_code: G
+    cm_table_name: source
+    cm_disp_value: 'No Organizations'
+    cm_disp_seq: '50'
+    cm_area: 'Source status'
+    cm_status: A
+  CodeMaster_130:
+    cm_field_name: src_status
+    cm_code: I
+    cm_table_name: source
+    cm_disp_value: Invitee
+    cm_disp_seq: '60'
+    cm_area: 'Source status'
+    cm_status: A
+  CodeMaster_131:
+    cm_field_name: src_status
+    cm_code: U
+    cm_table_name: source
+    cm_disp_value: Unsubscribed
+    cm_disp_seq: '70'
+    cm_area: 'Source status'
+    cm_status: A
+  CodeMaster_132:
+    cm_field_name: src_status
+    cm_code: X
+    cm_table_name: source
+    cm_disp_value: 'Editorial deactivation'
+    cm_disp_seq: '80'
+    cm_area: 'Source status'
+    cm_status: A
+  CodeMaster_133:
+    cm_field_name: src_status
+    cm_code: P
+    cm_table_name: source
+    cm_disp_value: Deceased
+    cm_disp_seq: '90'
+    cm_area: 'Source status'
+    cm_status: A
+  CodeMaster_134:
+    cm_field_name: src_status
+    cm_code: T
+    cm_table_name: source
+    cm_disp_value: 'Unverified'
+    cm_disp_seq: '100'
+    cm_area: 'Source status'
+    cm_status: A
+  CodeMaster_src_status_Z:
+    cm_field_name: src_status
+    cm_code: Z
+    cm_table_name: source
+    cm_disp_value: 'Anonymous - no contact or name'
+    cm_disp_seq: '100'
+    cm_area: 'Source status'
+    cm_status: A
+  CodeMaster_src_status_N:
+    cm_field_name: src_status
+    cm_code: N
+    cm_table_name: source
+    cm_disp_value: 'No Primary Email'
+    cm_disp_seq: '110'
+    cm_area: 'Source status'
+    cm_status: A
+  CodeMaster_146:
+    cm_field_name: osid_type
+    cm_code: E
+    cm_table_name: org_sys_id
+    cm_disp_value: 'Email Manager'
+    cm_disp_seq: '10'
+    cm_area: 'System types'
+    cm_status: A
+  CodeMaster_146b:
+    cm_field_name: osid_type
+    cm_code: M
+    cm_table_name: org_sys_id
+    cm_disp_value: 'Mailchimp'
+    cm_disp_seq: '15'
+    cm_area: 'System types'
+    cm_status: A
+  CodeMaster_147:
+    cm_field_name: osid_type
+    cm_code: F
+    cm_table_name: org_sys_id
+    cm_disp_value: Formbuilder
+    cm_disp_seq: '20'
+    cm_area: 'System types'
+    cm_status: A
+  CodeMaster_148:
+    cm_field_name: osid_type
+    cm_code: T
+    cm_table_name: org_sys_id
+    cm_disp_value: 'Twitter (future)'
+    cm_disp_seq: '30'
+    cm_area: 'System types'
+    cm_status: A
+  CodeMaster_149:
+    cm_field_name: osid_type
+    cm_code: B
+    cm_table_name: org_sys_id
+    cm_disp_value: 'Facebook (future)'
+    cm_disp_seq: '40'
+    cm_area: 'System types'
+    cm_status: A
+  CodeMaster_150:
+    cm_field_name: user_type
+    cm_code: A
+    cm_table_name: user
+    cm_disp_value: 'AIR User'
+    cm_disp_seq: '10'
+    cm_area: 'User type codes'
+    cm_status: A
+  CodeMaster_151:
+    cm_field_name: user_type
+    cm_code: J
+    cm_table_name: user
+    cm_disp_value: 'Journalist'
+    cm_disp_seq: '20'
+    cm_area: 'User type codes'
+    cm_status: A
+  CodeMaster_152:
+    cm_field_name: user_type
+    cm_code: R
+    cm_table_name: user
+    cm_disp_value: 'Related journalist (reporter, editor, producer)'
+    cm_disp_seq: '25'
+    cm_area: 'User type codes'
+    cm_status: A
+  CodeMaster_153:
+    cm_field_name: user_type
+    cm_code: S
+    cm_table_name: user
+    cm_disp_value: 'System User'
+    cm_disp_seq: '30'
+    cm_area: 'User type codes'
+    cm_status: A
+  CodeMaster_154:
+    cm_field_name: srcan_type
+    cm_code: S
+    cm_table_name: src_annotation
+    cm_disp_value: 'Source Annotation'
+    cm_disp_seq: '10'
+    cm_area: 'Annotation Type Codes'
+    cm_status: A
+  CodeMaster_155:
+    cm_field_name: srcan_type
+    cm_code: E
+    cm_table_name: src_annotation
+    cm_disp_value: 'Email Annotation'
+    cm_disp_seq: '20'
+    cm_area: 'Annotation Type Codes'
+    cm_status: A
+  CodeMaster_156:
+    cm_field_name: srcan_type
+    cm_code: P
+    cm_table_name: src_annotation
+    cm_disp_value: 'Phone Annotation'
+    cm_disp_seq: '30'
+    cm_area: 'Annotation Type Codes'
+    cm_status: A
+  CodeMaster_157:
+    cm_field_name: srcan_type
+    cm_code: M
+    cm_table_name: src_annotation
+    cm_disp_value: 'Mailing Address Annotation'
+    cm_disp_seq: '40'
+    cm_area: 'Annotation Type Codes'
+    cm_status: A
+  CodeMaster_158:
+    cm_field_name: srcan_type
+    cm_code: U
+    cm_table_name: src_annotation
+    cm_disp_value: 'URI Annotation'
+    cm_disp_seq: '50'
+    cm_area: 'Annotation Type Codes'
+    cm_status: A
+  CodeMaster_158:
+    cm_field_name: srcan_type
+    cm_code: D
+    cm_table_name: src_annotation
+    cm_disp_value: 'Description Annotation'
+    cm_disp_seq: '60'
+    cm_area: 'Annotation Type Codes'
+    cm_status: A
+  CodeMaster_159:
+    cm_field_name: tm_type
+    cm_code: J
+    cm_table_name: tag_master
+    cm_disp_value: 'Journalistic Tag'
+    cm_disp_seq: '10'
+    cm_area: 'Tag Type Codes'
+    cm_status: A
+  CodeMaster_160:
+    cm_field_name: tm_type
+    cm_code: I
+    cm_table_name: tag_master
+    cm_disp_value: 'IPTC Tag'
+    cm_disp_seq: '20'
+    cm_area: 'Tag Type Codes'
+    cm_status: A
+  CodeMaster_tag_ref_type_1:
+    cm_field_name: tag_ref_type
+    cm_code: P
+    cm_table_name: tag
+    cm_disp_value: Project
+    cm_disp_seq: '10'
+    cm_area: 'Tag external reference type'
+    cm_status: A
+  CodeMaster_tag_ref_type_2:
+    cm_field_name: tag_ref_type
+    cm_code: S
+    cm_table_name: tag
+    cm_disp_value: Source
+    cm_disp_seq: '20'
+    cm_area: 'Tag external reference type'
+    cm_status: A
+  CodeMaster_tag_ref_type_3:
+    cm_field_name: tag_ref_type
+    cm_code: R
+    cm_table_name: tag
+    cm_disp_value: Response
+    cm_disp_seq: '30'
+    cm_area: 'Tag external reference type'
+    cm_status: A
+  CodeMaster_tag_ref_type_4:
+    cm_field_name: tag_ref_type
+    cm_code: O
+    cm_table_name: tag
+    cm_disp_value: Outcome
+    cm_disp_seq: '40'
+    cm_area: 'Tag external reference type'
+    cm_status: A
+  CodeMaster_phone_context_1:
+    cm_field_name: sph_context
+    cm_code: H
+    cm_table_name: src_phone_number
+    cm_disp_value: Home
+    cm_disp_seq: '10'
+    cm_area: 'Phone number context'
+    cm_status: A
+  CodeMaster_phone_context_2:
+    cm_field_name: sph_context
+    cm_code: W
+    cm_table_name: src_phone_number
+    cm_disp_value: Work
+    cm_disp_seq: '20'
+    cm_area: 'Phone number context'
+    cm_status: A
+  CodeMaster_phone_context_3:
+    cm_field_name: sph_context
+    cm_code: M
+    cm_table_name: src_phone_number
+    cm_disp_value: Mobile
+    cm_disp_seq: '30'
+    cm_area: 'Phone number context'
+    cm_status: A
+  CodeMaster_phone_context_4:
+    cm_field_name: sph_context
+    cm_code: O
+    cm_table_name: src_phone_number
+    cm_disp_value: Other
+    cm_disp_seq: '40'
+    cm_area: 'Phone number context'
+    cm_status: A
+  CodeMaster_phone_context_5:
+    cm_field_name: sph_context
+    cm_code: S
+    cm_table_name: src_phone_number
+    cm_disp_value: SMS
+    cm_disp_seq: '50'
+    cm_area: 'Phone number context'
+    cm_status: A
+  CodeMaster_phone_status_1:
+    cm_field_name: sph_status
+    cm_code: V
+    cm_table_name: src_phone_number
+    cm_disp_value: Valid
+    cm_disp_seq: '10'
+    cm_area: 'Phone number status'
+    cm_status: A
+  CodeMaster_phone_status_2:
+    cm_field_name: sph_status
+    cm_code: I
+    cm_table_name: src_phone_number
+    cm_disp_value: Invalid
+    cm_disp_seq: '20'
+    cm_area: 'Phone number status'
+    cm_status: A
+  CodeMaster_email_context_1:
+    cm_field_name: sem_context
+    cm_code: P
+    cm_table_name: src_email
+    cm_disp_value: Personal
+    cm_disp_seq: '10'
+    cm_area: 'Email context'
+    cm_status: A
+  CodeMaster_email_context_2:
+    cm_field_name: sem_context
+    cm_code: W
+    cm_table_name: src_email
+    cm_disp_value: Work
+    cm_disp_seq: '20'
+    cm_area: 'Email context'
+    cm_status: A
+  CodeMaster_email_context_3:
+    cm_field_name: sem_context
+    cm_code: O
+    cm_table_name: src_email
+    cm_disp_value: Other
+    cm_disp_seq: '30'
+    cm_area: 'Email context'
+    cm_status: A
+  CodeMaster_email_status_1:
+    cm_field_name: sem_status
+    cm_code: G
+    cm_table_name: src_email
+    cm_disp_value: Good
+    cm_disp_seq: '10'
+    cm_area: 'Email status'
+    cm_status: A
+  CodeMaster_email_status_2:
+    cm_field_name: sem_status
+    cm_code: B
+    cm_table_name: src_email
+    cm_disp_value: Bounced
+    cm_disp_seq: '20'
+    cm_area: 'Email status'
+    cm_status: A
+  CodeMaster_email_status_3:
+    cm_field_name: sem_status
+    cm_code: C
+    cm_table_name: src_email
+    cm_disp_value: Confirmed bad
+    cm_disp_seq: '30'
+    cm_area: 'Email status'
+    cm_status: A
+  CodeMaster_email_status_4:
+    cm_field_name: sem_status
+    cm_code: U
+    cm_table_name: src_email
+    cm_disp_value: Unsubscribed
+    cm_disp_seq: '40'
+    cm_area: 'Email status'
+    cm_status: A
+  CodeMaster_address_context_1:
+    cm_field_name: smadd_context
+    cm_code: H
+    cm_table_name: src_mail_address
+    cm_disp_value: Home
+    cm_disp_seq: '10'
+    cm_area: 'Mail address context'
+    cm_status: A
+  CodeMaster_address_context_2:
+    cm_field_name: smadd_context
+    cm_code: W
+    cm_table_name: src_mail_address
+    cm_disp_value: Work
+    cm_disp_seq: '20'
+    cm_area: 'Mail address context'
+    cm_status: A
+  CodeMaster_address_context_3:
+    cm_field_name: smadd_context
+    cm_code: O
+    cm_table_name: src_mail_address
+    cm_disp_value: Other
+    cm_disp_seq: '30'
+    cm_area: 'Mail address context'
+    cm_status: A
+  CodeMaster_address_status_1:
+    cm_field_name: smadd_status
+    cm_code: A
+    cm_table_name: src_mail_address
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Mail address status'
+    cm_status: A
+  CodeMaster_address_status_2:
+    cm_field_name: smadd_status
+    cm_code: F
+    cm_table_name: src_mail_address
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Mail address status'
+    cm_status: A
+  CodeMaster_uri_context_1:
+    cm_field_name: suri_context
+    cm_code: P
+    cm_table_name: src_uri
+    cm_disp_value: Personal
+    cm_disp_seq: '10'
+    cm_area: 'Uri context'
+    cm_status: A
+  CodeMaster_uri_context_2:
+    cm_field_name: suri_context
+    cm_code: W
+    cm_table_name: src_uri
+    cm_disp_value: Work
+    cm_disp_seq: '20'
+    cm_area: 'Uri context'
+    cm_status: A
+  CodeMaster_uri_context_3:
+    cm_field_name: suri_context
+    cm_code: O
+    cm_table_name: src_uri
+    cm_disp_value: Other
+    cm_disp_seq: '30'
+    cm_area: 'Uri context'
+    cm_status: A
+  CodeMaster_uri_status_1:
+    cm_field_name: suri_status
+    cm_code: A
+    cm_table_name: src_uri
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Uri status'
+    cm_status: A
+  CodeMaster_uri_status_2:
+    cm_field_name: suri_status
+    cm_code: F
+    cm_table_name: src_uri
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Uri status'
+    cm_status: A
+  CodeMaster_inq_status_A:
+    cm_field_name: inq_status
+    cm_code: A
+    cm_table_name: inquiry
+    cm_disp_value: Published
+    cm_disp_seq: '10'
+    cm_area: 'Inquiry Status'
+    cm_status: A
+  CodeMaster_inq_status_L:
+    cm_field_name: inq_status
+    cm_code: L
+    cm_table_name: inquiry
+    cm_disp_value: Past Deadline
+    cm_disp_seq: '12'
+    cm_area: 'Inquiry Status'
+    cm_status: A
+  CodeMaster_inq_status_E:
+    cm_field_name: inq_status
+    cm_code: E
+    cm_table_name: inquiry
+    cm_disp_value: Expired
+    cm_disp_seq: '14'
+    cm_area: 'Inquiry Status'
+    cm_status: A
+  CodeMaster_inq_status_D:
+    cm_field_name: inq_status
+    cm_code: D
+    cm_table_name: inquiry
+    cm_disp_value: Draft
+    cm_disp_seq: '15'
+    cm_area: 'Inquiry Status'
+    cm_status: A
+  CodeMaster_inq_status_F:
+    cm_field_name: inq_status
+    cm_code: F
+    cm_table_name: inquiry
+    cm_disp_value: Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Inquiry Status'
+    cm_status: A
+  CodeMaster_ques_status_1:
+    cm_table_name: question
+    cm_field_name: ques_status
+    cm_code: A
+    cm_disp_value: Active
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+  CodeMaster_ques_status_2:
+    cm_table_name: question
+    cm_field_name: ques_status
+    cm_code: F
+    cm_disp_value: Former/Inactive
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+  CodeMaster_ques_type_1:
+    cm_table_name: question
+    cm_field_name: ques_type
+    cm_code: T
+    cm_disp_value: 'Text Field'
+    cm_disp_seq: '10'
+    cm_area: 'Question type'
+  CodeMaster_ques_type_2:
+    cm_table_name: question
+    cm_field_name: ques_type
+    cm_code: A
+    cm_disp_value: 'Text Area'
+    cm_disp_seq: '20'
+    cm_area: 'Question type'
+  CodeMaster_ques_type_3:
+    cm_table_name: question
+    cm_field_name: ques_type
+    cm_code: D
+    cm_disp_value: 'Date Field'
+    cm_disp_seq: '30'
+    cm_area: 'Question type'
+  CodeMaster_ques_type_4:
+    cm_table_name: question
+    cm_field_name: ques_type
+    cm_code: I
+    cm_disp_value: 'Datetime Field'
+    cm_disp_seq: '40'
+    cm_area: 'Question type'
+  CodeMaster_ques_type_5:
+    cm_table_name: question
+    cm_field_name: ques_type
+    cm_code: F
+    cm_disp_value: 'File Upload'
+    cm_disp_seq: '50'
+    cm_area: 'Question type'
+  CodeMaster_ques_type_6:
+    cm_table_name: question
+    cm_field_name: ques_type
+    cm_code: R
+    cm_disp_value: 'Radio Box'
+    cm_disp_seq: '60'
+    cm_area: 'Question type'
+  CodeMaster_ques_type_7:
+    cm_table_name: question
+    cm_field_name: ques_type
+    cm_code: O
+    cm_disp_value: 'Dropdown Box'
+    cm_disp_seq: '70'
+    cm_area: 'Question type'
+  CodeMaster_ques_type_8:
+    cm_table_name: question
+    cm_field_name: ques_type
+    cm_code: C
+    cm_disp_value: 'Check Box'
+    cm_disp_seq: '80'
+    cm_area: 'Question type'
+  CodeMaster_ques_type_9:
+    cm_table_name: question
+    cm_field_name: ques_type
+    cm_code: L
+    cm_disp_value: 'Multiselect List'
+    cm_disp_seq: '90'
+    cm_area: 'Question type'
+  CodeMaster_user_visit_1:
+    cm_table_name: user_visit
+    cm_field_name: uv_ref_type
+    cm_code: S
+    cm_disp_value: 'Source'
+    cm_disp_seq: '10'
+    cm_area: 'Visited resource'
+  CodeMaster_out_type_S:
+    cm_table_name: outcome
+    cm_field_name: out_type
+    cm_code: S
+    cm_disp_value: 'Story'
+    cm_disp_seq: '10'
+    cm_area: 'Outcome Type'
+  CodeMaster_out_type_R:
+    cm_table_name: outcome
+    cm_field_name: out_type
+    cm_code: R
+    cm_disp_value: 'Series'
+    cm_disp_seq: '15'
+    cm_area: 'Outcome Type'
+  CodeMaster_out_type_E:
+    cm_table_name: outcome
+    cm_field_name: out_type
+    cm_code: E
+    cm_disp_value: 'Event'
+    cm_disp_seq: '20'
+    cm_area: 'Outcome Type'
+  CodeMaster_out_type_O:
+    cm_table_name: outcome
+    cm_field_name: out_type
+    cm_code: O
+    cm_disp_value: 'Other'
+    cm_disp_seq: '30'
+    cm_area: 'Outcome Type'
+  CodeMaster_out_status_A:
+    cm_table_name: outcome
+    cm_field_name: out_status
+    cm_code: A
+    cm_disp_value: 'Active - Feeds Enabled'
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+  CodeMaster_out_status_N:
+    cm_table_name: outcome
+    cm_field_name: out_status
+    cm_code: N
+    cm_disp_value: 'Active - Feeds Disabled'
+    cm_disp_seq: '14'
+    cm_area: 'Multipurpose Active/Inactive status'
+  CodeMaster_out_status_F:
+    cm_table_name: outcome
+    cm_field_name: out_status
+    cm_code: F
+    cm_disp_value: 'Inactive'
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+  CodeMaster_prj_outcome_1:
+    cm_table_name: prj_outcome
+    cm_field_name: pout_status
+    cm_code: A
+    cm_disp_value: 'Active'
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+  CodeMaster_prj_outcome_2:
+    cm_table_name: prj_outcome
+    cm_field_name: pout_status
+    cm_code: F
+    cm_disp_value: 'Inactive'
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+  CodeMaster_prj_outcome_type_I:
+    cm_table_name: prj_outcome
+    cm_field_name: pout_type
+    cm_code: I
+    cm_disp_value: 'Informed'
+    cm_disp_seq: '10'
+    cm_area: 'Project Outcome Type'
+  CodeMaster_src_outcome_1:
+    cm_table_name: src_outcome
+    cm_field_name: sout_status
+    cm_code: A
+    cm_disp_value: 'Active'
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+  CodeMaster_src_outcome_2:
+    cm_table_name: src_outcome
+    cm_field_name: sout_status
+    cm_code: F
+    cm_disp_value: 'Inactive'
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+  CodeMaster_src_outcome_type_I:
+    cm_table_name: src_outcome
+    cm_field_name: sout_type
+    cm_code: I
+    cm_disp_value: 'Informed'
+    cm_disp_seq: '10'
+    cm_area: 'Source Outcome Type'
+  CodeMaster_src_outcome_type_C:
+    cm_table_name: src_outcome
+    cm_field_name: sout_type
+    cm_code: C
+    cm_disp_value: 'Cited'
+    cm_disp_seq: '20'
+    cm_area: 'Source Outcome Type'
+  CodeMaster_src_outcome_type_F:
+    cm_table_name: src_outcome
+    cm_field_name: sout_type
+    cm_code: F
+    cm_disp_value: 'Featured'
+    cm_disp_seq: '30'
+    cm_area: 'Source Outcome Type'
+  CodeMaster_inq_outcome_1:
+    cm_table_name: inq_outcome
+    cm_field_name: iout_status
+    cm_code: A
+    cm_disp_value: 'Active'
+    cm_disp_seq: '10'
+    cm_area: 'Multipurpose Active/Inactive status'
+  CodeMaster_inq_outcome_2:
+    cm_table_name: inq_outcome
+    cm_field_name: iout_status
+    cm_code: F
+    cm_disp_value: 'Inactive'
+    cm_disp_seq: '20'
+    cm_area: 'Multipurpose Active/Inactive status'
+  CodeMaster_inq_outcome_type_I:
+    cm_table_name: inq_outcome
+    cm_field_name: iout_type
+    cm_code: I
+    cm_disp_value: 'Informed'
+    cm_disp_seq: '10'
+    cm_area: 'Inquiry Outcome Type'
+  CodeMaster_uuri_type_v:
+    cm_table_name: user_uri
+    cm_field_name: uuri_type
+    cm_code: V
+    cm_disp_value: 'Intro Video'
+    cm_disp_seq: '10'
+    cm_area: 'User URI Type'
+  CodeMaster_uuri_type_f:
+    cm_table_name: user_uri
+    cm_field_name: uuri_type
+    cm_code: F
+    cm_disp_value: 'Facebook'
+    cm_disp_seq: '20'
+    cm_area: 'User URI Type'
+  CodeMaster_uuri_type_l:
+    cm_table_name: user_uri
+    cm_field_name: uuri_type
+    cm_code: L
+    cm_disp_value: 'LinkedIn'
+    cm_disp_seq: '30'
+    cm_area: 'User URI Type'
+  CodeMaster_uuri_type_t:
+    cm_table_name: user_uri
+    cm_field_name: uuri_type
+    cm_code: T
+    cm_disp_value: 'Twitter'
+    cm_disp_seq: '40'
+    cm_area: 'User URI Type'
+  CodeMaster_uuri_type_g:
+    cm_table_name: user_uri
+    cm_field_name: uuri_type
+    cm_code: G
+    cm_disp_value: 'Google+'
+    cm_disp_seq: '50'
+    cm_area: 'User URI Type'
+  CodeMaster_uuri_type_i:
+    cm_table_name: user_uri
+    cm_field_name: uuri_type
+    cm_code: I
+    cm_disp_value: 'Pinterest'
+    cm_disp_seq: '60'
+    cm_area: 'User URI Type'
+  CodeMaster_uuri_type_m:
+    cm_table_name: user_uri
+    cm_field_name: uuri_type
+    cm_code: M
+    cm_disp_value: 'Personal'
+    cm_disp_seq: '70'
+    cm_area: 'User URI Type'
+  CodeMaster_uuri_type_w:
+    cm_table_name: user_uri
+    cm_field_name: uuri_type
+    cm_code: W
+    cm_disp_value: 'Work'
+    cm_disp_seq: '80'
+    cm_area: 'User URI Type'
+  CodeMaster_uuri_type_o:
+    cm_table_name: user_uri
+    cm_field_name: uuri_type
+    cm_code: O
+    cm_disp_value: 'Other'
+    cm_disp_seq: '90'
+    cm_area: 'User URI Type'
+  CodeMaster_ouri_type_v:
+    cm_table_name: org_uri
+    cm_field_name: ouri_type
+    cm_code: V
+    cm_disp_value: 'Intro Video'
+    cm_disp_seq: '10'
+    cm_area: 'Organization URI Type'
+  CodeMaster_ouri_type_f:
+    cm_table_name: org_uri
+    cm_field_name: ouri_type
+    cm_code: F
+    cm_disp_value: 'Facebook'
+    cm_disp_seq: '20'
+    cm_area: 'Organization URI Type'
+  CodeMaster_ouri_type_l:
+    cm_table_name: org_uri
+    cm_field_name: ouri_type
+    cm_code: L
+    cm_disp_value: 'LinkedIn'
+    cm_disp_seq: '30'
+    cm_area: 'Organization URI Type'
+  CodeMaster_ouri_type_t:
+    cm_table_name: org_uri
+    cm_field_name: ouri_type
+    cm_code: T
+    cm_disp_value: 'Twitter'
+    cm_disp_seq: '40'
+    cm_area: 'Organization URI Type'
+  CodeMaster_ouri_type_g:
+    cm_table_name: org_uri
+    cm_field_name: ouri_type
+    cm_code: G
+    cm_disp_value: 'Google+'
+    cm_disp_seq: '50'
+    cm_area: 'Organization URI Type'
+  CodeMaster_ouri_type_i:
+    cm_table_name: org_uri
+    cm_field_name: ouri_type
+    cm_code: I
+    cm_disp_value: 'Pinterest'
+    cm_disp_seq: '60'
+    cm_area: 'Organization URI Type'
+  CodeMaster_ouri_type_m:
+    cm_table_name: org_uri
+    cm_field_name: ouri_type
+    cm_code: M
+    cm_disp_value: 'Personal'
+    cm_disp_seq: '70'
+    cm_area: 'Organization URI Type'
+  CodeMaster_ouri_type_w:
+    cm_table_name: org_uri
+    cm_field_name: ouri_type
+    cm_code: W
+    cm_disp_value: 'Work'
+    cm_disp_seq: '80'
+    cm_area: 'Organization URI Type'
+  CodeMaster_ouri_type_o:
+    cm_table_name: org_uri
+    cm_field_name: ouri_type
+    cm_code: O
+    cm_disp_value: 'Other'
+    cm_disp_seq: '90'
+    cm_area: 'Organization URI Type'
+  CodeMaster_email_status_a:
+    cm_table_name: email
+    cm_field_name: email_status
+    cm_code: A
+    cm_disp_value: 'Active'
+    cm_disp_seq: '10'
+    cm_area: 'Email Status'
+  CodeMaster_email_status_d:
+    cm_table_name: email
+    cm_field_name: email_status
+    cm_code: D
+    cm_disp_value: 'Draft'
+    cm_disp_seq: '20'
+    cm_area: 'Email Status'
+  CodeMaster_email_status_f:
+    cm_table_name: email
+    cm_field_name: email_status
+    cm_code: F
+    cm_disp_value: 'Inactive'
+    cm_disp_seq: '30'
+    cm_area: 'Email Status'
+  CodeMaster_email_type_q:
+    cm_table_name: email
+    cm_field_name: email_type
+    cm_code: Q
+    cm_disp_value: 'Query'
+    cm_disp_seq: '10'
+    cm_area: 'Email Type'
+  CodeMaster_email_type_f:
+    cm_table_name: email
+    cm_field_name: email_type
+    cm_code: F
+    cm_disp_value: 'Follow-up'
+    cm_disp_seq: '20'
+    cm_area: 'Email Type'
+  CodeMaster_email_type_r:
+    cm_table_name: email
+    cm_field_name: email_type
+    cm_code: R
+    cm_disp_value: 'Reminder'
+    cm_disp_seq: '30'
+    cm_area: 'Email Type'
+  CodeMaster_email_type_t:
+    cm_table_name: email
+    cm_field_name: email_type
+    cm_code: T
+    cm_disp_value: 'Thank You'
+    cm_disp_seq: '40'
+    cm_area: 'Email Type'
+  CodeMaster_email_type_o:
+    cm_table_name: email
+    cm_field_name: email_type
+    cm_code: O
+    cm_disp_value: 'Other'
+    cm_disp_seq: '50'
+    cm_area: 'Email Type'
+  CodeMaster_email_inquiry_status_a:
+    cm_table_name: email_inquiry
+    cm_field_name: einq_status
+    cm_code: A
+    cm_disp_value: 'Active'
+    cm_disp_seq: '10'
+    cm_area: 'Email Inquiry Status'
+  CodeMaster_email_inquiry_status_f:
+    cm_table_name: email_inquiry
+    cm_field_name: einq_status
+    cm_code: F
+    cm_disp_value: 'Inactive'
+    cm_disp_seq: '20'
+    cm_area: 'Email Inquiry Status'
+  CodeMaster_user_signature_status_a:
+    cm_table_name: user_signature
+    cm_field_name: usig_status
+    cm_code: A
+    cm_disp_value: 'Active'
+    cm_disp_seq: '10'
+    cm_area: 'User Signature Status'
+  CodeMaster_user_signature_status_f:
+    cm_table_name: user_signature
+    cm_field_name: usig_status
+    cm_code: F
+    cm_disp_value: 'Inactive'
+    cm_disp_seq: '20'
+    cm_area: 'User Signature Status'

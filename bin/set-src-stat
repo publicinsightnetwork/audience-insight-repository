@@ -1,0 +1,176 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Data::Dump qw( dump );
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Getopt::Long;
+
+use AIR2::Source;
+use AIR2::SrcStat;
+sub logger { AIR2::Utils::logger(@_) }
+
+my $air2_db  = AIR2::DBManager->new()->get_write_handle;
+my $air2_dbh = $air2_db->retain_dbh;
+
+=pod
+
+=head1 NAME
+
+set-src-stat - attempt to set columns in the src_stat table for each source
+
+=head1 SYNOPSIS
+
+ set-src-stat [opts]
+ set-src-stat --help
+ set-src-stat --debug --dry_run
+ set-src-stat --quiet
+
+=head1 DESCRIPTION
+
+Running this script will iterate over each source, and attempt to glean
+enough information to set columns in src_stat.
+
+=head1 OPTIONS
+
+=head2 help
+
+Shows this document
+
+=head2 debug
+
+Prints a whole bunch-o' output
+
+=head2 dry_run
+
+Run without making any changes to the database
+
+=head2 quiet
+
+None of the usual 'report' output - only error messages will be printed
+
+=cut
+
+my ( $help, $debug, $dry_run, $quiet );
+GetOptions(
+    help    => \$help,
+    debug   => \$debug,
+    dry_run => \$dry_run,
+    quiet   => \$quiet,
+) or pod2usage(2);
+
+if ($help) {
+    pod2usage(2);
+}
+
+logger("Starting...\n") if $debug;
+
+#################################
+# 1) look for budget-hero plays #
+#################################
+my $bh_tm_id = 1437;
+my $desc1    = "{SRC} played Budget Hero game via {XID} website";
+my $desc2    = "Budget Balancer";
+my $desc3    = "Budget Hero";
+my $desc4    = "Opt-in through Budget Balancer";
+
+my $bh_actv
+    = "select sact_src_id from src_activity where sact_desc='$desc1' or "
+    . "sact_desc like '$desc2%' or sact_desc like '$desc3%' or sact_desc like '$desc4%'";
+my $bh_tags
+    = "select tag_xid from tag where tag_tm_id=$bh_tm_id and tag_ref_type='S'";
+
+logger("Querying for src_ids...\n") if $debug;
+
+my $q
+    = "select src_id from source where src_id in ($bh_actv) or src_id in ($bh_tags)";
+my $sel = $air2_dbh->selectall_arrayref($q);
+my @bh_src_ids = map { $_->[0] } @{$sel};
+
+my $total = scalar @bh_src_ids;
+logger("Starting to process $total src_ids...\n") unless $quiet;
+
+my $count         = 0;
+my $play_count    = 0;
+my $signup_count  = 0;
+my %signup_counts = (
+    0 => 0,
+    1 => 0,
+    2 => 0,
+    3 => 0,
+);
+
+for my $src_id (@bh_src_ids) {
+    logger("  processed $count / $total\n")
+        if ( $count % 1000 == 0 && $debug );
+
+    my $src         = AIR2::Source->new( src_id => $src_id )->load();
+    my $play_dtim   = 0;
+    my $signup_dtim = 0;
+
+    my $idx = 0;
+    for my $sact ( @{ $src->find_activities( sort_by => 'sact_id ASC' ) } ) {
+        if ( $sact->sact_desc ) {
+            my $is_match 
+                = $sact->sact_desc  =~ m/played Budget Hero game via/i
+                || $sact->sact_desc =~ m/^Budget Balancer/i
+                || $sact->sact_desc =~ m/^Budget Hero/i
+                || $sact->sact_desc =~ m/^Opt-in through Budget Balancer/i;
+            if ($is_match) {
+                $play_dtim = $sact->sact_date;
+                if ( !$signup_dtim && $idx < 4 ) {
+                    $signup_dtim = $sact->sact_date;
+                    $signup_counts{$idx}++;
+                }
+            }
+        }
+        $idx++;
+    }
+
+    # save
+    if ($play_dtim) {
+        my $stat = $src->stat;
+        if ( !$stat ) {
+            $stat = AIR2::SrcStat->new( sstat_src_id => $src->src_id );
+        }
+
+        $play_count++;
+        $stat->sstat_bh_play_dtim($play_dtim);
+        if ($signup_dtim) {
+            $signup_count++;
+            $stat->sstat_bh_signup_dtim($signup_dtim);
+        }
+        $stat->save() unless $dry_run;
+    }
+    $count++;
+}
+
+# report
+unless ($quiet) {
+    logger("Finished - $count sources\n");
+    logger("           $play_count players\n");
+    logger("           $signup_count signups\n");
+    dump( \%signup_counts );
+}

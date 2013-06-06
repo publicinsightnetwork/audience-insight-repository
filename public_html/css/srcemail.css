@@ -1,0 +1,64 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful, 
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License 
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* list panel */
+
+
+/* row style */
+.air2-source-email .src-email.confirmed-bad {
+    color: #aaa;
+}
+.air2-source-email .src-email.confirmed-bad a {
+    color: #aaa;
+}
+.air2-source-email .src-email.merged {
+    color: #aaa;
+    text-decoration: line-through;
+}
+.air2-source-email .src-email.merged a {
+    color: #aaa;
+    text-decoration: line-through;
+}
+
+/* fix emptytext position */
+.air2-source-email .air2-paging-editor {
+    min-height: 120px;
+}
+.air2-source-email .air2-panel-empty {
+    top: 70px;
+}
+
+/* buttons */
+.air2-source-email .air2-rowedit {
+    background-image: url(img/icons/zone-pencil.png);
+}
+.air2-source-email .air2-rowdelete {
+    background-image: url(img/icons/cross-button.png);
+}
+
+/* filter tools */
+.air2-source-email .filter-tools {
+    background: #f9f9f9;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    border-top: 1px solid #eee;
+}

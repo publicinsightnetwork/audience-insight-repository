@@ -1,0 +1,115 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Data::Dump qw( dump );
+use Getopt::Long;
+use Pod::Usage;
+use Rose::DateTime::Parser;
+use AIR2::SrcMailAddress;
+use AIR2::GeoLookup;
+use AIR2::State;
+
+# set flag with any true argument
+my $verbose = shift(@ARGV);
+
+# cache states for lookup ease
+my %states
+    = map { $_->state_name => $_->state_code } @{ AIR2::State->fetch_all };
+
+# find records that have ZIP but do not have state, county, lat or long
+my $smadds = AIR2::SrcMailAddress->fetch_all_iterator(
+    query => [
+        '!smadd_zip' => undef,
+        or           => [
+            'smadd_state'  => undef,
+            'smadd_county' => undef,
+            'smadd_lat'    => undef,
+            'smadd_long'   => undef,
+        ]
+    ]
+);
+
+my %skip;
+
+while ( my $smadd = $smadds->next ) {
+
+    my $zip = $smadd->smadd_zip;
+
+    next unless $zip =~ m/^(\d\d\d\d\d)(-\d\d\d\d)?$/;
+    my $zip5 = $1;
+
+    next if exists $skip{$zip5};
+
+    my $geo = AIR2::GeoLookup->find( zip_code => $zip5 );
+
+    if ( !$geo ) {
+        $verbose and warn "No geo_lookup for $zip5\n";
+        $skip{$zip5}++;
+        next;
+    }
+
+    # do not touch upd_dtim
+    $smadd->set_admin_update(1);
+
+    # only update if smadd is null, and geo_lookup is not
+    if ( $geo->state && !$smadd->smadd_state ) {
+        $smadd->smadd_state( $states{ $geo->state } );
+    }
+    if ( $geo->county && !$smadd->smadd_county ) {
+        $smadd->smadd_county( $geo->county );
+    }
+    if ( $geo->latitude && !$smadd->smadd_lat ) {
+        $smadd->smadd_lat( $geo->latitude );
+    }
+    if ( $geo->longitude && !$smadd->smadd_long ) {
+        $smadd->smadd_long( $geo->longitude );
+    }
+    $smadd->save();
+
+}
+
+# find src_response_sets with no state
+# and cache data based on ZIP response
+my $sets = AIR2::SrcResponseSet->fetch_all_iterator(
+    query => [ 'srs_state' => undef, ], );
+
+while ( my $srs = $sets->next ) {
+    my $postal_response = $srs->get_postal_code_response() or next;
+    my $zip = $postal_response->sr_mod_value
+        || $postal_response->sr_orig_value;
+
+    # some optimization
+    next unless $zip and $zip =~ m/^(\d\d\d\d\d)(-\d\d\d\d)?$/;
+    my $zip5 = $1;
+    next if exists $skip{$zip5};
+
+    # let srs update itself
+    if ( $srs->set_geo_cache() ) {
+        $srs->set_admin_update(1);
+        $srs->save();
+    }
+}

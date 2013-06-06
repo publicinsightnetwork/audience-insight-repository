@@ -1,0 +1,175 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful, 
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License 
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* pager style */
+.air2-paging-editor-pager {
+    padding: 5px 4px 3px;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    -moz-border-radius-bottomleft: 2px;
+    -moz-border-radius-bottomright: 2px;
+    -webkit-border-bottom-left-radius: 2px;
+    -webkit-border-bottom-right-radius: 2px;
+}
+
+/* body style */
+.air2-paging-editor {
+    overflow: hidden; /* disable scrolling */
+}
+.air2-paging-editor.unlocked {
+    overflow: auto;
+}
+.air2-paging-editor table {
+    width: 100%;
+    border-spacing: 0px;
+}
+
+/* row style */
+.air2-paging-editor .row-selected, .air2-paging-editor tr.row-selected > td {
+    background-color: #f8f8ea !important;
+}
+.air2-paging-editor .air2-rowedit, .air2-paging-editor .air2-rowdelete {
+    visibility: hidden;
+}
+.air2-paging-editor.unlocked .row-over,
+.air2-paging-editor.unlocked tr.row-over > td 
+.air2-paging-editor.unlocked tbody.row-over > tr > td {
+    background-color: #f8f8ea !important;
+}
+.air2-paging-editor.unlocked .row-over .air2-rowedit, .air2-paging-editor.unlocked .row-over .air2-rowdelete {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* row editing/deleting */
+.air2-paging-editor td.row-ops {
+    text-align: center;
+    width: 64px;
+    padding: 0px 1px 0px 1px !important;
+}
+.air2-paging-editor .air2-rowedit, .air2-paging-editor .air2-rowdelete {
+    display: inline;
+}
+/* row delete/edit controls */
+.air2-paging-editor .row-controls {
+    background: #f8f8ea;
+    border-bottom: 1px solid #eee;
+    border-top: 1px solid #fff;
+    position: fixed;
+    visibility: hidden;
+    padding: 4px 6px;
+}
+.air2-paging-editor .row-controls .air2-btn {
+    float: left;
+    margin-right: 7px;
+}
+.air2-paging-editor .row-controls .air2-btn:last-child {
+    margin-right: 0px;
+}
+.air2-paging-editor .row-controls .confirm-delete button {
+    background-color: #DF0000;
+    border-color: #963737;
+    color: #fff;
+    text-shadow: inherit;
+}
+.air2-paging-editor .row-controls .cancel-op button {
+    padding-left: 8px;
+    padding-right: 8px;
+    font-weight: normal;
+    text-shadow: inherit;
+}
+.air2-paging-editor .row-controls .confirm-delete.x-btn-over button, 
+.air2-paging-editor .row-controls .confirm-delete.x-btn-focus button {
+    background-color: #aa4400;
+}
+
+/* support hiding edit/delete buttons */
+.hide-rowedit .air2-rowedit {
+    display: none !important;
+}
+.hide-rowdelete .air2-rowdelete {
+    display: none !important;
+}
+
+/* sorting plugin style */
+.air2-paging-editor .header .sortable {
+    cursor: pointer;
+}
+.air2-paging-editor .header .sortable:hover {
+    text-decoration: underline;
+    background-color: #eee;
+}
+.air2-paging-editor .header .sortasc span {
+    padding-right: 20px;
+    background: url(img/icons/sort-alphabet.png) no-repeat 100% 50%;
+    text-decoration: underline;
+}
+.air2-paging-editor .header .sortdesc span {
+    padding-right: 20px;
+    background: url(img/icons/sort-alphabet.png) no-repeat 100% 50%;
+    text-decoration: underline;
+}
+
+
+/* hover editor controls plugin */
+.air2-paging-editor-hoverctrl {
+    width: auto;
+    background: transparent;
+    position: fixed;
+    visibility: hidden;
+    border-spacing: 0px;
+}
+.air2-paging-editor-hoverctrl td {
+    text-align: center;
+    cursor: pointer;
+}
+.air2-paging-editor-hoverctrl td.delete {
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    -moz-border-radius-topleft: 2px;
+    -moz-border-radius-bottomleft: 2px;
+    -webkit-border-top-left-radius: 2px;
+    -webkit-border-bottom-left-radius: 2px;
+}
+.air2-paging-editor-hoverctrl.edit-only td.edit {
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    -moz-border-radius-topleft: 2px;
+    -moz-border-radius-bottomleft: 2px;
+    -webkit-border-top-left-radius: 2px;
+    -webkit-border-bottom-left-radius: 2px;
+}
+.air2-paging-editor-hoverctrl td.delete {
+    background: rgba(255,51,51,.8) url(img/icons/cross-button.png) no-repeat 50% 50%;
+    width: 24px;
+}
+.air2-paging-editor-hoverctrl td.delete:hover {
+    background-color: rgba(255,51,51,1);
+}
+.air2-paging-editor-hoverctrl td.edit {
+    color: #eee;
+    background: rgba(0, 0, 0, .4);
+    padding: 0 10px;
+}
+.air2-paging-editor-hoverctrl td.edit:hover {
+    background-color: rgba(0, 0, 0, .8);
+}

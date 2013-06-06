@@ -1,0 +1,9 @@
+"MYUUID0001";"this is a test string";"2020-02-20 20:20:20"
+MYUUID0002;this is a 'test' string;2020-02-20 20:20:20
+MYUUID0003;"this
+is
+a
+multiline
+test
+string";"2020-02-20 20:20:20"
+MYUUID0004;"last";2020-02-20 20:20:20

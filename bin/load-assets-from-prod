@@ -1,0 +1,106 @@
+#!/usr/bin/env php
+<?php
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+require_once realpath(dirname(__FILE__).'/../app/init.php');
+
+/**
+ * Load assets from production to this environment.  This is often useful
+ * after running load-db-from-backup, when you want to sync this environments
+ * file assets with its new database.
+ *
+ * This is a DESTRUCTIVE script, and anything you had in your assets
+ * directories will be destroyed.  Therefor, you'll recieve a stern warning
+ * when trying to run this in a production environment.
+ *
+ */
+
+// get paths to prod assets (these should exist)
+$remote_img_root = '/opt/pinshare/www/prod/air2/img';
+$remote_csv_path = '/opt/pinshare/www/prod/air2/csv';
+
+// this doesn't make sense
+if (AIR2_PROFILE == 'prod' || AIR2_PROFILE == 'visi_prod') {
+    error_log("You can't reload from prod to prod!");
+    exit(1);
+}
+
+// double check nuking prod assets
+if (AIR2_ENVIRONMENT == 'prod') {
+    echo " > you are about to destructively reload the file assets for a PRODUCTION environment!\n";
+    echo " > are you sure you want to do that? (y/n)\n > ";
+    $answer = trim(strtolower(fgets(STDIN)));
+    if ($answer != 'y' && $answer != 'yes') {
+        echo " > no changes made!\n";
+        exit(0);
+    }
+}
+
+// check for existence of local image
+$img_root = AIR2_IMG_ROOT;
+if (!(is_dir($img_root) && is_writable($img_root))) {
+    error_log(" > Invalid img_root at $img_root - please run 'make assets'");
+    exit(2);
+}
+
+// rsync from production (inherit perms from directory)
+echo " > rsync'ing images from production ...\n";
+$from = "{$remote_img_root}/";
+$cmd  = "rsync --recursive --delete $from $img_root 2>&1";
+
+$resp_code;
+$output = array();
+exec($cmd, $output, $resp_code);
+
+if ($resp_code == 0) {
+    echo " > completed successfully!\n";
+}
+else {
+    error_log(" > fatal error - $cmd");
+    error_log(" > status $resp_code - " . implode(' / ', $output));
+    exit(3);
+}
+
+// check for existence of local csvs
+$csv_path = AIR2_CSV_PATH;
+if (!(is_dir($csv_path) && is_writable($csv_path))) {
+    error_log(" > Invalid csv_path at $csv_path - please run 'make assets'");
+    exit(2);
+}
+
+// rsync from production (inherit perms from directory)
+echo " > rsync'ing csv files from production ...\n";
+$from = "{$remote_csv_path}/";
+$cmd  = "rsync --recursive --delete $from $csv_path 2>&1";
+
+$resp_code;
+$output = array();
+exec($cmd, $output, $resp_code);
+
+if ($resp_code == 0) {
+    echo " > completed successfully!\n";
+}
+else {
+    error_log(" > fatal error - $cmd");
+    error_log(" > status $resp_code - " . implode(' / ', $output));
+    exit(3);
+}

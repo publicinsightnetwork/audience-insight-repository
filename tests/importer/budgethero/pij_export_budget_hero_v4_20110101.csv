@@ -1,0 +1,9 @@
+First Name,Last Name,E-Mail Address,Gender,Date Of Birth,Political Affiliation,Income,Ethnicity,Address Type,State,Zip,Activity Type,Activity Domain,Activity Date,Activity Description,Activity Notes
+First1,Last1,test01@004budgethero.org,Male,1940,Independent,"More than $200,000",,Home,MN,55043,Form Response,http://budgethero.publicradio.org/widget/BudgetHero.swf?refid=OPB,9/19/2012,Budget Hero v4 PIN export,User Comment: a bunch of stuff.
+First2,Last2,test02@004budgethero.org,Male,1922,Green,,White,Home,CA,14423,Form Response,,9/19/2012,Budget Hero v4 PIN export,
+First3,Last3,,Male,1999,Green,"Less than $15,000",white,,WI,55102,Form Response,,9/19/2012,Budget Hero v4 PIN export,
+First4,Last4,test04@004budgethero.org,,1956,Democratic,"$50,001-$100,000",Asain,Work,MN,55102,Form Response,http://budgethero.publicradio.org/widget/BudgetHero.swf?refid=MKP,9/19/2012,Budget Hero v4 PIN export,
+,,test05@004budgethero.org,Male,1964,Democratic,"$100,001-$200,000",Caucasian,Work,,,Form Response,http://fakestreet.org/something,9/19/2012,Budget Hero v4 PIN export,
+First6,Last6,test06@004budgethero.org,Male,1972,Libertarian,"$50,001-$100,000",african,Home,NY,,Form Response,,9/19/2012,Budget Hero v4 PIN export,
+First1Conflict,Last1Conflict,test01@004budgethero.org,Male,1944,Independent,"$50,001-$100,000",,Home,MN,55077,Form Response,http://budgethero.publicradio.org/widget/BudgetHero.swf,9/19/2012,Budget Hero v4 PIN export,
+first1,,test01@004budgethero.org,Male,1944,Independent,"$50,001-$100,000",,Home,MN,55077,Form Response,http://budgethero.publicradio.org/widget/BudgetHero.swf,9/19/2012,Budget Hero v4 PIN export,

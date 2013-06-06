@@ -1,0 +1,111 @@
+#!/usr/bin/env php
+<?php
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+require_once realpath(dirname(__FILE__).'/../app/init.php');
+require_once 'AIR2_DBManager.php';
+
+/*
+ * Create and validate (read/writable) the file asset paths defined
+ * for this AIR profile.  (See "file storage" in air2_constants.php)
+ *
+ * If unable to create a directory, or the permissioning is wrong,
+ * an error will be logged.
+ */
+
+$csv_path            = AIR2_CSV_PATH;
+$query_docroot       = AIR2_QUERY_DOCROOT;
+$query_incoming_root = AIR2_QUERY_INCOMING_ROOT;
+$cache_root          = AIR2_CACHE_ROOT;
+$img_root            = AIR2_IMG_ROOT;
+$rss_cache_root      = AIR2_RSS_CACHE_ROOT;
+$search_root         = AIR2_SEARCH_ROOT;
+$js_cache_root       = AIR2_JS_CACHE_ROOT;
+
+/**
+ * helper function to check/create path
+ *
+ * @param unknown $path
+ * @param unknown $name
+ */
+function make_or_create_path($path, $name) {
+    printf("%s => %s\n", $name, $path);
+    if (!is_dir($path)) {
+        printf("mkdir(%s)\n", $path);
+        air2_mkdir($path);
+    }
+    if (!is_readable($path)) {
+        error_log(" > Unable to read $name at $path");
+        exit(1);
+    }
+    if (!is_writable($path)) {
+        printf("not writable: %s\n", $path);
+        if (!chmod($path, 0775)) {
+            error_log(" > Unable to write $name at $path");
+            exit(2);
+        }
+    }
+}
+
+
+// do it!
+make_or_create_path($csv_path, 'csv_path');
+make_or_create_path($query_docroot, 'query_docroot');
+make_or_create_path($query_incoming_root, 'query_incoming_root');
+make_or_create_path($cache_root, 'cache_root');
+make_or_create_path($rss_cache_root, 'rss_cache_root');
+make_or_create_path($js_cache_root, 'js_cache_root');
+make_or_create_path($search_root, 'search_root');
+
+// special cases: img_root and rss_cache_root - wherever they happen to be
+// must be symlinked to public_html/ so that apache can serve/cache
+// directly
+make_or_create_path($img_root, 'img_root');
+
+$symlinks = array(
+    AIR2_DOCROOT . '/img' => $img_root,
+    AIR2_DOCROOT . '/rss' => $rss_cache_root,
+    AIR2_DOCROOT . '/js/cache' => $js_cache_root,
+    AIR2_DOCROOT . '/querys' => $query_docroot,
+);
+
+foreach ($symlinks as $symlink_path => $real_path) {
+    if (is_link($symlink_path)) {
+        if ($real_path != readlink($symlink_path)) {
+            error_log(" > Unable to symlink $symlink_path directory - " .
+                'existing symlink points somewhere else.  Try running ' .
+                'a "make assets-drop" first');
+            exit(3);
+        }
+    }
+    elseif (is_dir($symlink_path)) {
+        error_log(" > Unable to symlink image directory - $symlink_path ".
+            "is already an actual directory! Remove the directory and try again.");
+        exit(4);
+    }
+    else {
+        if (!symlink($real_path, $symlink_path)) {
+            error_log(" > Error creating symlink at $symlink_path");
+            exit(5);
+        }
+    }
+}

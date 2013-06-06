@@ -1,0 +1,55 @@
+AddType application/rss+xml .rss
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # always require ssl
+    #RewriteCond %{HTTPS} off
+    #RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L]
+
+    # proxy search server
+    # TODO host:port is defined in etc/profiles.ini
+    # we just assume localhost
+    RewriteRule ^search-admin/(.*)$ http://mprweb4:5000/$1  [P,L]
+
+    # querymaker shortcuts
+    RewriteCond  %{REQUEST_METHOD} =POST [OR]
+    RewriteCond  %{REQUEST_METHOD} =OPTIONS
+    RewriteRule ^q/(\w{12})$            submit.php?query=$1 [L]
+
+    RewriteRule ^q/(\w{12})$         querys/$1.html [L]
+    RewriteRule ^q/(\w{12}\.json)$   querys/$1      [L]
+    RewriteRule ^q/(\w{12}\.html)$   querys/$1      [L]
+    RewriteRule ^q/(\w{12})/(.+)$    querys/$1.html [L]
+
+    RewriteCond %{REQUEST_METHOD} =GET
+    RewriteCond %{QUERY_STRING} callback=([^&]+)
+    RewriteRule ^(querys/\w{12}.json) jsonp.php?f=$1&callback=%1 [L]
+
+    #Removes access to the system folder by users.
+    #Additionally this will allow you to create a System.php controller,
+    #previously this would not have been possible.
+    #'system' can be replaced if you have renamed your system folder.
+    RewriteCond %{REQUEST_URI} ^system.*
+    RewriteRule ^(.*)$ /index.php/$1 [L]
+
+    #Checks to see if the user is attempting to access a valid file,
+    #such as an image or css document, if this isn't true it sends the
+    #request to index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI}      !/img/*
+    RewriteRule ^(.*)$ index.php/$1 [L]
+
+    # hide .svn (and another src ctrl) dirs
+    RewriteRule "(^|/)(CVS|\.svn|\.git|\.hg|\.bzr)/" - [F]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    # If we don't have mod_rewrite installed, all 404's
+    # can be sent to index.php, and everything works as normal.
+    # Submitted by: ElliotHaughin
+
+    ErrorDocument 404 /index.php
+</IfModule> 
+

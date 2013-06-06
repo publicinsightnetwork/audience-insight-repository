@@ -1,0 +1,75 @@
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+#
+# AIR2 example crontab
+#
+#
+AIR2_ROOT=/you/should/set/this/path
+PERL=/path/to/bin/perl
+
+#
+# more than hourly jobs
+#
+# search indexes every 3 minutes
+*/3 * * * *           $AIR2_ROOT/bin/build-search --increm --xml --index --prune
+# check search services every 2 minutes
+*/2 * * * *           $PERL $AIR2_ROOT/bin/check-search-servers
+#
+# job queue check every minute
+*   * * * *           $AIR2_ROOT/bin/run-job-queue
+# Formbuilder import
+*/5 * * * *            $PERL $AIR2_ROOT/bin/fb-import --email pijdev@mpr.org 
+
+# Querymaker import
+*/3 * * * *            $PERL $AIR2_ROOT/bin/reaper --send_confirm_email
+*/15 1-23 * * *        $PERL $AIR2_ROOT/bin/check-queries
+
+# Lyris import
+*/15 * * * *           LYRIS_DOMAIN=prod /opt/pij/bin/perl $AIR2_ROOT/bin/lyris-import 
+#
+# Welcome emails
+*/10 * * * *           $PERL $AIR2_ROOT/bin/send-welcome-emails --log_activity
+
+# build JSON caches
+*/5  * * * *           $PERL $AIR2_ROOT/bin/mk-inquiry-json > $AIR2_ROOT/assets/js_cache/inquiry-titles.js
+
+#
+# hourly jobs
+#
+# sync lyris db with AIR
+5    * * * *           LYRIS_DOMAIN=prod $PERL $AIR2_ROOT/bin/sync-lyris-unsub-bounced
+10   * * * *           LYRIS_DOMAIN=prod $PERL $AIR2_ROOT/bin/sync-lyris-soe
+#
+# daily jobs
+#
+# rebuild cache
+0 0  * * *            $AIR2_ROOT/bin/mk_src_org_cache.pl
+# dump meta for FB
+0   0 * * *           $PERL /WWW/publicradio/air2/prod/bin/mk_fb_json.pl
+#
+# sanity check XML vs DB
+0   23 * * *          $AIR2_ROOT/bin/check-all-xml-files
+#
+# weekly jobs
+#
+# monthly jobs
+#
+# misc jobs

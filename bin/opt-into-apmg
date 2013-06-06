@@ -1,0 +1,104 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Data::Dump qw( dump );
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use lib "$FindBin::Bin/../lib/shared/perl";
+sub logger { AIR2::Utils::logger(@_) }
+
+# AIR2 perl ORM
+use AIR2::Config;
+use AIR2::Utils;
+use AIR2::Source;
+
+# get handles
+my $dbm = AIR2::DBManager->new;
+my $dbh = $dbm->get_write_handle->retain_dbh;
+
+# build queries
+my $APMG_ID  = 1;
+my $in_apmg  = "select so_src_id from src_org where so_org_id = $APMG_ID";
+my $outcasts = "select src_id from source where src_id not in ($in_apmg)";
+
+# build inserts
+my @so_flds = qw(so_src_id so_org_id so_uuid so_effective_date so_cre_user
+    so_upd_user so_cre_dtim so_upd_dtim);
+my $so_flds = join( ',', @so_flds );
+my $so_vals = join( ',', map {qq/?/} @so_flds );
+my $insert_so = "insert ignore into src_org ($so_flds) values ($so_vals)";
+
+# get timestamp
+my $dt = DateTime->now();
+$dt->set_time_zone( AIR2::Config->get_tz() );
+my $now = sprintf( "%s %s", $dt->ymd('-'), $dt->hms(':') );
+
+################################
+# transactionalize everything! #
+################################
+$dbh->{AutoCommit} = 0;
+$dbh->{RaiseError} = 1;
+
+########
+# Run! #
+########
+eval {
+    logger("Searching for sources not in APMG...\n");
+
+    # process outcasts
+    my $all   = $dbh->selectall_arrayref($outcasts);
+    my $num   = scalar @{$all};
+    my $count = 0;
+    my $done  = 0;
+    my $skip  = 0;
+    logger("Opting-in $num sources:\n");
+
+    for my $row ( @{$all} ) {
+        logger("  processed $count...\n") if !( $count % 5000 );
+        $count++;
+        my $srcid = $row->[0];
+
+        # insert-ignore the src_org record
+        my $uuid   = AIR2::Utils->str_to_uuid("$srcid-forceapmg");
+        my @params = ( $srcid, $APMG_ID, $uuid, $now, 1, 1, $now, $now );
+        my $rows   = $dbh->do( $insert_so, undef, @params );
+        $done++ if ( $rows > 0 );
+        $skip++ if ( $rows == 0 );
+    }
+
+    logger("Finished $count!\n");
+    logger("  $done new APMG opt-ins\n");
+    logger("  $skip skipped (already in APMG)\n");
+    $dbh->commit;
+};
+
+################
+# catch errors #
+################
+if ($@) {
+    warn "\n!!! Transaction aborted!\n";
+    warn "!!! Because: $@\n";
+    warn "!!! Rolling back changes!\n";
+    eval { $dbh->rollback };
+}

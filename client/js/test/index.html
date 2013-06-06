@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>AIRAPI Test Suite</title>
+
+    <!-- AIR login credentials -->
+    <script type="text/javascript" src="config.js"></script>
+
+    <!-- qunit testing library -->
+    <link rel="stylesheet" href="qunit/qunit/qunit.css" type="text/css" media="screen">
+    <script type="text/javascript" src="qunit/qunit/qunit.js"></script>
+
+    <!-- airapi library -->
+    <script type="text/javascript" src="../airapi.js"></script>
+
+    <!-- Test Files -->
+    <script src="001-connection.js"></script>
+    <script src="002-synchronous.js"></script>
+    <script src="003-sequence.js"></script>
+    <script src="004-fetch.js"></script>
+    <script src="005-query.js"></script>
+    <script src="006-create.js"></script>
+    <script src="007-update.js"></script>
+    <script src="008-delete.js"></script>
+
+</head>
+<body>
+    <h1 id="qunit-header">AIRAPI Test Suite</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="qunit-fixture">test markup</div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+#!/usr/bin/env perl 
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+# check the job_queue table and run unlocked jobs
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Data::Dump qw( dump );
+use Getopt::Long;
+use Pod::Usage;
+use DateTime;
+use Rose::DateTime::Util qw(parse_date);
+use AIR2::Utils;
+use AIR2::Config;
+use AIR2::JobQueue;
+
+# ALWAYS use the master connection!
+$ENV{AIR2_USE_MASTER} = 1;
+
+umask(0007);    # group rw, world null
+
+# if any are locked, just exit
+# since we do not want concurrent jobs running.
+# TODO this may change if we ever move to a clustered
+# queue via (e.g.) Gearman
+my $locked = AIR2::JobQueue->get_locked();
+if ( scalar(@$locked) ) {
+
+    # find oldest and complain if older than an hour,
+    # in case whole queue is stuck
+    my $oldest;
+    for my $j (@$locked) {
+        $oldest ||= $j;
+        if ( $oldest->jq_start_dtim->epoch < $j->jq_start_dtim->epoch ) {
+            $oldest = $j;
+        }
+    }
+
+    my $now = parse_date('now');
+
+    # only warn once-an-hour
+    if (    $now->minute == 0
+        and $oldest->jq_start_dtim->epoch < ( time() - 3600 ) )
+    {
+        warn "Job Queue has been locked since " . $oldest->jq_start_dtim;
+    }
+
+    exit(0);
+}
+
+my $queued = AIR2::JobQueue->get_queued_with_locks();
+
+for my $job (@$queued) {
+    if ( !$job->run() ) {
+        AIR2::Utils::logger(
+            sprintf(
+                "FAIL: job id %s with error msg: %s\n",
+                $job->jq_id, $job->jq_error_msg
+            )
+        );
+    }
+}
+

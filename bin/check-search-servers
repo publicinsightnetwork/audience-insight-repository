@@ -1,0 +1,34 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use AIR2::Config;
+
+#
+# in answer to the age-old question: who will watch the watchers?
+#
+
+my $app_root = AIR2::Config->get_app_root();
+my $server   = $app_root->file("bin/search-server");
+my $perl     = $^X;
+my @check    = `$perl $server check`;
+
+if ( my @stale = grep {m/stale/} @check ) {
+    for my $line (@stale) {
+        my ( $service, $pidfile )
+            = ( $line =~ m/stale (\w+) PID file at (.+\.pid)/ );
+        next unless $service; 
+        warn "restart $service based on $pidfile\n";
+        unlink $pidfile;
+        system("$perl $server start_$service");
+    }
+}
+
+if ( my @not_running = grep {m/No (\w+) running/} @check ) {
+    for my $line (@not_running) {
+        my ($service) = ( $line =~ m/^No (\w+) running/ );
+        system("$perl $server start_$service");
+    }
+}
+

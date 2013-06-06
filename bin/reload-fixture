@@ -1,0 +1,288 @@
+#!/usr/bin/env php
+<?php
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+require_once realpath(dirname(__FILE__).'/../app/init.php');
+require_once 'AIR2_DBManager.php';
+
+/**
+ * Load or reload fixture(s) in the database.
+ *
+ * Usage:
+ *     reload-fixture [MODEL_NAME|ALL] [OPTIONS]
+ *
+ * Valid Options:
+ *  -S : silent
+ *  -V : verbose
+ *
+ * Note that asking for ALL will not get you tag fixtures.  These must be
+ * loaded individually to avoid possibly hitting the PHP memory limit while
+ * reading the yml files.
+ *
+ * @package default
+ */
+AIR2_DBManager::init();
+$conn = AIR2_DBManager::get_master_connection();
+
+// process arguments
+if ($argc < 2 || substr($argv[1], 0, 1) == '-') {
+    echo "Invalid parameters. Usage: \"reload-fixture [MODEL_NAME|ALL] [OPTIONS]\"\n";
+    exit(1);
+}
+$opts = getopt('S::');
+$run_silent = isset($opts['S']);
+$opts = getopt('V::');
+$run_verbose = isset($opts['V']);
+$input_modelname = $argv[1];
+
+// get requested models
+$requested = array($input_modelname);
+if ($input_modelname == 'ALL') {
+    $requested = array('User', 'ActivityMaster', 'AdminRole', 'CodeMaster',
+        'Country', 'Fact', 'FactValue', 'Locale', 'PreferenceType',
+        'PreferenceTypeValue', 'ProfileMap', 'Project', 'State',
+        'SystemMessage');
+}
+
+// ONLY ONLY ONLY ONLY these models will allow DELETE-sync's
+$ALLOW_DELETE = array('ActivityMaster', 'AdminRole', 'CodeMaster', 'Country',
+    'Fact', 'FactValue', 'Locale', 'PreferenceType', 'PreferenceTypeValue',
+    'State', 'SystemMessage');
+
+
+/**
+ * Helper to find/load a model fixture into an array
+ *
+ * @param string  $modelname
+ * @return array
+ */
+function load_fixture_file($modelname) {
+    $base1 = APPPATH.'fixtures/base/';
+    $base2 = APPPATH.'fixtures/tags/';
+    $path = false;
+    $fixt_name = ($modelname == 'User') ? '0User.yml' : "$modelname.yml";
+    $fixt_name = ($modelname == 'TagMaster') ? 'IptcTag.yml' : $fixt_name;
+    if (file_exists($base1.$fixt_name) && is_readable($base1.$fixt_name)) {
+        $path = $base1.$fixt_name;
+    }
+    elseif (file_exists($base2.$fixt_name) && is_readable($base2.$fixt_name)) {
+        $path = $base2.$fixt_name;
+    }
+    if (!$path) {
+        echo "No fixture file found for model '$modelname'!\n";
+        exit(1);
+    }
+
+    // convert yaml to array
+    $data = sfYaml::load($path);
+    if (!$data || !is_array($data) || !isset($data[$modelname])) {
+        echo "Error reading fixture file '$path'\n";
+        exit(1);
+    }
+    return $data[$modelname];
+}
+
+
+// validate input --- load Doctrine_Table and yaml data
+$tables = array();
+$yamls = array();
+$all = Doctrine::getLoadedModels();
+foreach ($requested as $idx => $inputmdl) {
+    // get the table
+    foreach ($all as $mod) {
+        if (strtolower($inputmdl) == strtolower($mod)) {
+            $requested[$idx] = $mod; //fix case
+            $tables[$idx] = Doctrine::getTable($mod);
+            break;
+        }
+    }
+    if (!isset($tables[$idx]) || !$tables[$idx]) {
+        echo "Invalid model name: '{$requested[$idx]}'!\n";
+        exit(1);
+    }
+
+    // load data
+    $data = load_fixture_file($requested[$idx]);
+    $yamls[$idx] = $data;
+}
+
+
+// cache tables for code_master to use
+$cm_all_tables = $conn->fetchColumn('show tables', array(), 0);
+$cm_all_tables = array_flip($cm_all_tables);
+
+// process input
+$insert_count = 0;
+$update_count = 0;
+$delete_count = 0;
+
+$conn->beginTransaction();
+try {
+    foreach ($requested as $idx => $modelname) {
+        if ($run_verbose) echo "$modelname ---\n";
+        $tbl = $tables[$idx];
+        $data = $yamls[$idx];
+
+        //track id's so we know what to delete
+        $id_col = $tbl->getIdentifierColumnNames();
+        if ($modelname == 'TagMaster') {
+            $id_col = array('tm_iptc_id'); //fixtures only load iptc tags
+        }
+        if (count($id_col) != 1) throw new Exception("Bad identifier on $modelname!");
+        $id_col = $id_col[0];
+        $before_ids = array();
+
+        // CodeMaster should just be dropped and reloaded --- no FK problems
+        if ($modelname == 'CodeMaster') {
+            $n = $conn->exec('delete from code_master');
+            if ($run_verbose) echo "  *DELETED $n rows (will reload all)\n";
+        }
+        else {
+            $tbl_name = $tbl->getTableName();
+            $before_ids = $conn->fetchColumn("select $id_col from $tbl_name where $id_col is not null", array(), 0);
+            $before_ids = array_flip($before_ids);
+        }
+
+        // process data rows
+        foreach ($data as $name => $row) {
+            $my_id = isset($row[$id_col]) ? $row[$id_col] : 'unknown';
+            unset($before_ids[$my_id]);
+            $dbg = "  $name - $id_col($my_id)";
+
+            // lookup existing
+            $q = $tbl->createQuery()->addWhere("$id_col = ?", $my_id);
+            $rec = $q->fetchOne();
+            if (!$rec) {
+                $rec = $tbl->getRecord();
+                $insert_count++;
+                $dbg .= ' - <INSERT>';
+            }
+
+            // update and save
+            $rec->fromArray($row);
+            if ($rec->isModified()) {
+                // validate code_master data
+                if ($modelname == 'CodeMaster') {
+                    $cm_table = $rec->cm_table_name;
+                    $cm_field = $rec->cm_field_name;
+                    $cm_code = $rec->cm_code;
+
+                    // table exists
+                    if (!isset($cm_all_tables[$cm_table])) {
+                        throw new Exception("Bad code_master table: $cm_table.$cm_field ($name)");
+                    }
+
+                    // column exists
+                    if (!is_array($cm_all_tables[$cm_table])) {
+                        $cm_all_tables[$cm_table] = $conn->fetchColumn("describe $cm_table", array(), 0);
+                    }
+                    if (!in_array($cm_field, $cm_all_tables[$cm_table])) {
+                        throw new Exception("Bad code_master field: $cm_table.$cm_field ($name)");
+                    }
+
+                    // unique
+                    $sel = 'select count(*) from code_master';
+                    $where = 'where cm_table_name = ? and cm_field_name = ? and cm_code = ?';
+                    $c = $conn->fetchOne("$sel $where", array($cm_table, $cm_field, $cm_code), 0);
+                    if ($c > 0) {
+                        throw new Exception("Non-unique code_master: $cm_table - $cm_field($cm_code)");
+                    }
+                }
+
+                // updates
+                if ($rec->exists()) {
+                    //print_r($row);
+                    //print_r($rec->getModified(true));
+                    //print_r($rec->getModified(false));
+                    $update_count++;
+                    $dbg .= ' - <UPDATE>';
+                }
+
+                // verbose before save, in case there's an exception
+                if ($run_verbose && $modelname != 'CodeMaster') {
+                    echo "$dbg\n";
+                }
+                $rec->save();
+            }
+        }
+
+        // verbose output for codemaster
+        if ($run_verbose && $modelname == 'CodeMaster') {
+            $count = count($data);
+            echo "  Reloaded $count rows\n";
+        }
+
+        // delete any existing id's that we didn't hit
+        if (in_array($modelname, $ALLOW_DELETE)) {
+            if (count($before_ids) > 0) {
+                $tbl_name = $tbl->getTableName();
+                foreach ($before_ids as $my_id => $blah) {
+                    $n = 0;
+                    try {
+                        $n = $conn->exec("delete from $tbl_name where $id_col = $my_id");
+                    }
+                    catch (Exception $e) {
+                        $msg = "Unable to delete from $tbl_name - $id_col($my_id) - ";
+                        throw new Exception($msg.$e->getMessage());
+                    }
+                    if ($n != 1) {
+                        throw new Exception("Expected to delete from $tbl_name - $id_col($my_id)");
+                    }
+                }
+
+                // made it!
+                if ($run_verbose) {
+                    $n = count($before_ids);
+                    $delete_count += $n;
+                    $deleted_ids = implode(', ', array_keys($before_ids));
+                    echo "  *DELETED $n stale items - $id_col($deleted_ids)\n";
+                }
+            }
+        }
+    }
+}
+catch (Exception $e) {
+    echo "\n*EXCEPTION:\n{$e->getMessage()}\nRolling back changes!\n";
+    $conn->rollback();
+    exit(1);
+}
+
+// finish
+echo " > finished processing!  $update_count records updated, ";
+echo "$insert_count inserted, $delete_count deleted.\n";
+if (($update_count + $insert_count) > 0) {
+    if ($run_silent) {
+        $conn->commit();
+    }
+    else {
+        echo " > commit transaction? (y/n): ";
+        $answer = trim(strtolower(fgets(STDIN)));
+        if ($answer == 'y') {
+            $conn->commit();
+            echo " > commited changes\n";
+        }
+        else {
+            $conn->rollback();
+            echo " > rolled back changes\n";
+        }
+    }
+}

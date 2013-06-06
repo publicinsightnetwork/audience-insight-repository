@@ -1,0 +1,232 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2012 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use File::Find;
+use File::Slurp;
+use Path::Class;
+use Path::Class::File::Lockable;
+use Data::Dump qw( dump );
+use Getopt::Long;
+use Pod::Usage;
+use DateTime;
+use IPC::Cmd ();
+use Unix::PID::Tiny;
+use IO::Interactive qw( is_interactive );
+use Rose::DateTime::Util qw(parse_date);
+use AIR2::Config;
+use AIR2::Utils;
+
+umask(0007);    # group rw, world null
+
+my $swish3    = 'swish3';    # let PATH find it
+my $help      = 0;
+my $quiet     = 0;
+my $mod_since = 0;
+my $debug     = 0;
+my $archive   = 0;
+my $type;
+my $build_dir;
+GetOptions(
+    'help'             => \$help,
+    'modified_since=s' => \$mod_since,
+    'debug'            => \$debug,
+    'quiet'            => \$quiet,
+    'type=s'           => \$type,
+    'archive'          => \$archive,
+    'build_dir=s'      => \$build_dir,
+) or pod2usage(2);
+pod2usage(1) if $help;
+
+warn "missing --type\n" and pod2usage(2) unless $type;
+
+=pod
+
+=head1 NAME
+
+indexer - crawl and index XML files
+
+=head1 SYNOPSIS
+
+ indexer --type=[typename] [opts]
+    --help
+    --modified_since ['y-m-d h:m:s'|path/to/file]
+    --debug
+    --quiet
+    --base_dir path/to/xml
+    --archive
+
+ typename may be one of:
+   sources
+   fuzzy_sources
+   projects
+   responses
+   fuzzy_responses
+   inquiries
+   public_responses
+   
+=cut
+
+my $now       = DateTime->now->set_time_zone( AIR2::Config->get_tz() );
+my $timestamp = $now->ymd('') . '-' . $now->hms('');
+
+# set up paths
+my $base_dir = AIR2::Config->get_search_root();
+chdir $base_dir or die "can't chdir $base_dir: $!";
+
+my $config = AIR2::Config->get_app_root()
+    ->file( 'etc', 'search', $type . '.config' );
+my $non_fuzzy_type = $type;
+$non_fuzzy_type =~ s/^fuzzy_//;
+my $xml_dir   = AIR2::Config->get_search_xml->subdir($non_fuzzy_type);
+my $index_dir = AIR2::Config->get_search_index->subdir($type);
+$index_dir->mkpath($debug);
+
+# build dir only used for full reindex, not incremental
+$build_dir ||= $base_dir->subdir('build');
+$build_dir = dir($build_dir);
+$build_dir = $build_dir->subdir($type);
+$build_dir->mkpath($debug);
+
+my $lock_file = Path::Class::File::Lockable->new( $xml_dir, 'indexer' );
+if ( $lock_file->locked ) {
+
+    # if the lock is old but no process is running
+    my $pidnum = $lock_file->lock_pid;
+    my $pid    = Unix::PID::Tiny->new;
+    if ( !$pid->is_pid_running($pidnum) ) {
+        AIR2::Utils::logger(
+            "Found old lock file but no PID running for $pidnum\n");
+        AIR2::Utils::logger("Removing lock file...\n");
+        $lock_file->unlock;
+    }
+    else {
+        AIR2::Utils::logger("$lock_file is currently locked\n");
+        exit(0);
+    }
+}
+
+$lock_file->lock;
+
+# if in full index mode, create a new dir
+my $build_index
+    = $mod_since
+    ? $index_dir
+    : $build_dir . '.' . $timestamp;
+
+my $expected = get_expected_total( $xml_dir, $mod_since );
+if ( !$expected ) {
+    $lock_file->unlock;
+    $quiet or AIR2::Utils::logger("Found no new documents in $xml_dir\n");
+    exit(0);
+}
+
+# run the command
+my $cmd
+    = "$swish3 -F lucy -f $build_index -i $xml_dir -c $config --lucy_highlightable";
+$cmd .= qq/ -E $expected /   if is_interactive();
+$cmd .= qq/ -N "$mod_since"/ if $mod_since;
+$cmd .= " -v " unless $quiet;
+$cmd .= " -D" if $debug;
+run_it($cmd);
+
+# if in full index mode, clean up
+if ( $build_index ne $index_dir ) {
+    if ( -d $index_dir ) {
+        if ($archive) {
+            run_it("mv $index_dir $index_dir.archive.$timestamp");
+        }
+        else {
+            run_it("rm -rf $index_dir");
+        }
+    }
+    run_it("mv $build_index $index_dir");
+}
+
+unless ($quiet) {
+    if ($build_index eq $index_dir) {
+        print "Index updated at $index_dir\n";
+    }
+    else {
+        print "New index built at $index_dir\n";
+    }
+}
+
+$lock_file->unlock;
+
+sub run_it {
+    my $cmd = shift;
+    if ( is_interactive() ) {
+        if ( !$quiet ) {
+            warn "Running [$cmd]\n";
+        }
+        system($cmd) and die "$cmd failed with [$!]";
+        return 1;
+    }
+    my ( $success, $error_code, $full_buf, $stdout_buf, $stderr_buf )
+        = IPC::Cmd::run( command => $cmd, verbose => $quiet ? 0 : 1 );
+
+    if ( !$success ) {
+        die "$cmd failed with [$error_code]: " . join( "\n", @$stderr_buf );
+    }
+    return $full_buf;
+}
+
+sub get_expected_total {
+    my $dir       = shift;
+    my $mod_since = shift;
+    my $ts;
+    if ($mod_since) {
+        my $dt = parse_date($mod_since);
+        if ( !defined $dt ) {
+            my $stat = [ stat($mod_since) ];
+            if ( !defined $stat->[9] ) {
+                die "$mod_since is not a parsable date or readable file\n";
+            }
+            $ts = $stat->[9];
+        }
+        else {
+            $ts = $dt->epoch;
+        }
+    }
+
+    my $total = 0;
+    find(
+        sub {
+            if ($ts) {
+                if ( stat($_) && ( stat($_) )[9] >= $ts ) {
+                    $total += m/\.xml/;
+                }
+            }
+            else {
+                $total += m/\.xml/;
+            }
+        },
+        $dir
+    );
+    return $total;
+}
+

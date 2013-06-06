@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter>
+  <title>CRUD API</title>
+  <para>This chapter covers the public CRUD (Create, Read, Update, Delete) API of the AIR2 application.</para>
+  <section>
+    <title>RESTful Architecture</title>
+    <para>Resources accessible through the CRUD API generally follow a RESTful
+    (Representational State Transfer) style.  A general explaination of the REST
+    architecture can be found on <ulink url="http://en.wikipedia.org/wiki/Representational_State_Transfer">
+    Wikipedia</ulink>.</para>
+    <para>Generally, this means that you interact with AIR2 through HTTP
+    <command>GET</command>, <command>POST</command>, <command>PUT</command> and
+    <command>DELETE</command> requests.  A <command>GET</command> request will
+    <emphasis>read</emphasis> the contents of a resource.  This can be either a 
+    single item or a list, depending on which URL the request is issued to.  A
+    <command>POST</command> request is used to <emphasis>create</emphasis> a new
+    resource.  A <command>PUT</command> request is used to <emphasis>update</emphasis>
+    an existing resource.  And a <command>DELETE</command> request will
+    <emphasis>delete</emphasis> an existing resource.</para>
+    <example>
+      <title>Working with resources in a RESTful architecture</title>
+      <screen>
+<command>GET</command>      http://fakeserver.biz/air2/foobar       #read list of foobars
+<command>POST</command>     http://fakeserver.biz/air2/foobar       #create new foobar
+<command>GET</command>      http://fakeserver.biz/air2/foobar/1234  #read single foobar (with id = 1234)
+<command>PUT</command>      http://fakeserver.biz/air2/foobar/1234  #update existing foobar 1234
+<command>DELETE</command>   http://fakeserver.biz/air2/foobar/1234  #delete foobar 1234
+      </screen>
+    </example>
+  </section>
+  <section>
+    <title>Response Formats</title>
+    <para>AIR2 supports a number of response formats, including HTML, text, XML, CSV and
+    JSON.  The default response format is
+    <emphasis>text/plain</emphasis>. There are two ways to request a specific response format: either set the
+    HTTP <command>Accept</command> header field to the format you want to recieve, or
+    append the corresponding file extension to the URI.
+    Usually you will want to request <emphasis>application/json</emphasis>
+    or <emphasis>application/xml</emphasis> to receive consumable data for the resource.</para>
+    <para>In addition to the HTTP <command>Accept</command> header field, you can also
+    append the requested format onto the end of the resource url.  For instance, adding
+    <command>.xml</command> or <command>.json</command> will request those application
+    formats.</para>
+    <screen><command>GET</command>   http://fakeserver.biz/air2/foobar.json   #read list of foobars in JSON format</screen>
+  </section>
+  <section>
+    <title>Generic CRUD features</title>
+    <para>The following key/value pairs are valid when GETing multiple resources. They are not applicable when accessing a single resource.</para>
+    <variablelist>
+      <varlistentry>
+        <term>q=<replaceable>querystring</replaceable></term>
+        <listitem>
+          <para>The <replaceable>querystring</replaceable> is a plain-text string
+          used to search resources in a certain way.  For instance, if you were listing
+          Projects, the <replaceable>querystring</replaceable> would look for Project names
+          similar to the string.  When listing Users, the <replaceable>querystring</replaceable>
+          would instead by applied to the User's first name and last name.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>b=<replaceable>AND|OR</replaceable></term>
+        <listitem>
+          <para>Used in conjunction with the <command>q</command> parameter, this
+          determines which boolean operation is applied to the search query.
+          Defaults to <replaceable>OR</replaceable>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>sort=<replaceable>fieldname</replaceable></term>
+        <listitem>
+          <para>Applies a sort order to the resource list, using the
+          <replaceable>fieldname</replaceable> to sort with.  Used in conjunction
+          with the <command>dir</command> parameter.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>dir=<replaceable>ASC|DESC</replaceable></term>
+        <listitem>
+          <para>Used in conjunction with the <command>sort</command> parameter,
+          sets the direction of the sorting.  Defaults to
+          <replaceable>ASC</replaceable></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>s=<replaceable>sortstring</replaceable></term>
+        <listitem>
+          <para>Applies one or more sorting directions to the resource listing, in
+          the form of a comma-delimited list.  The <replaceable>sortstring</replaceable>
+          should have a form similar to: <screen>field1 DESC, field2 ASC, field3 ASC</screen>
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>start|o=<replaceable>n</replaceable></term>
+        <listitem>
+          <para>The integer start value for the resource list. (May be designated
+          by either <command>start</command> or <command>o</command>).  Defaults
+          to 0.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>limit|p=<replaceable>n</replaceable></term>
+        <listitem>
+          <para>The integer limit for the numbe of resources to be listed. (May
+          be designated by either <command>limit</command> or <command>p</command>).
+          Defaults to no-limit (returns ALL results).</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>u=<replaceable>0|1</replaceable></term>
+        <listitem>
+          <para>When set to <replaceable>1</replaceable>, the resource list will
+          only include the base-level resource, and no related objects.  Defaults
+          to <replaceable>0</replaceable>.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </section>
+  <section>
+    <title>List of AIR2 resources</title>
+    <para>This section describes custom parameters available for specific resources
+    in AIR2.  These custom parameters supplement the general CRUD features.  These resources are all
+    accessible from the root URI path.  For example, if your AIR2 installation
+    base url is "http://fakeserver.biz/air2", you would access the "foobar"
+    resource controller at: </para>
+    <screen>http://fakeserver.biz/air2/foobar</screen>
+    <section id="crud-batch">
+      <title>Batch</title>
+    </section>
+    <section id="crud-inquiry">
+      <title>Inquiry</title>
+    </section>
+    <section id="crud-organization">
+      <title>Organization</title>
+    </section>
+    <section id="crud-project">
+      <title>Project</title>
+    </section>
+    <section id="crud-source">
+      <title>Source</title>
+    </section>
+    <section id="crud-tag">
+      <title>Tag</title>
+    </section>
+    <section id="crud-user">
+      <title>User</title>
+    </section>
+  </section>
+</chapter>

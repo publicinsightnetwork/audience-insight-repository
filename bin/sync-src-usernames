@@ -1,0 +1,161 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Carp;
+use Data::Dump qw( dump );
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+use AIR2::Config;
+use AIR2::Source;
+my $air2_dbh = AIR2::DBManager->new()->get_write_handle;
+
+=pod
+
+=head1 NAME
+
+sync-src-usernames - update src_username to match primary email addresses
+
+=head1 SYNOPSIS
+
+ sync-src-username -dry_run|commit [-debug] [-no_report]
+
+=head1 DESCRIPTION
+
+sync-src-username will set src_username = sem_email for any sources without
+a MyPIN account.  It will also print out a list those MyPIN sources and a list
+of sources that will need to be manually merged.
+
+You must at least specify -dry_run or -commit option.
+
+=cut
+
+my ( $help, $debug, $dry_run, $commit, $no_report );
+GetOptions(
+    'help'           => \$help,
+    'debug'          => \$debug,
+    'dry_run'        => \$dry_run,
+    'commit'         => \$commit,
+    'no_report'      => \$no_report,
+) or pod2usage(2);
+
+# show help
+if ($help) {
+    pod2usage(2);
+}
+if (!$dry_run && !$commit) {
+    pod2usage(2);
+}
+
+
+##################################################
+# Get sources with src_username != primary_email #
+##################################################
+my $from = "source inner join src_email on (src_id=sem_src_id)";
+my $where = "sem_primary_flag=1 and src_username != sem_email";
+my $select = "select src_id from $from where $where order by src_id asc";
+my $rs = $air2_dbh->retain_dbh->selectall_arrayref( $select );
+print scalar @{$rs}." non-matching usernames found.\n" if $debug;
+
+
+#################
+# Fetch objects #
+#################
+my $srcids;
+for my $line ( @{$rs} ) {
+    push @{$srcids}, $line->[0];
+}
+my $src_it = AIR2::Source->fetch_all_iterator(
+    with_objects => [ qw(emails) ],
+    query => [ src_id => $srcids ],
+);
+
+
+################################
+# Run transaction              #
+################################
+$air2_dbh->do_transaction(
+    sub {
+        # counts
+        my $count = 0;
+        my @updated;
+        my @has_acct;
+        my @needs_merge;
+
+        # iterate
+        while ( my $src = $src_it->next ) {
+            $count++;
+            my $sem   = $src->get_primary_email;
+            my $uuid  = $src->src_uuid;
+            my $uname = $src->src_username;
+            my $email = $sem->sem_email;
+            print "-checking $uuid - $uname - $email\n" if $debug;
+
+            # don't update mypin sources
+            if ($src->src_has_acct eq 'Y') {
+                push @has_acct, "uuid($uuid) - username($uname) - email($email)";
+                print "   *has_acct=Y!\n" if $debug;
+                next;
+            }
+
+            # check if the username (=email) is taken
+            my $existing = AIR2::Source->new( src_username => $email );
+            $existing->load_speculative;
+            if ($existing->src_id) {
+                my $ex = $existing->src_uuid;
+                push @needs_merge, "uuid($uuid) - username($uname) - email($email) - existing($ex)";
+                print "   *username '$uname' exists - uuid($ex)!\n" if $debug;
+                next;
+            }
+
+            # update the username
+            $src->src_username( $email );
+            $src->save unless $dry_run;
+            push @updated, "uuid($uuid) - username($uname) - email($email)";
+            print "   *updated username!\n" if $debug;
+        }
+
+        # report
+        my $n_upd   = scalar @updated;
+        my $n_acct  = scalar @has_acct;
+        my $n_merge = scalar @needs_merge;
+        print "Processed $count sources\n";
+        print " *$n_upd updated";
+        print $dry_run ? " - (DRY_RUN - NO CHANGES COMMITTED)\n" : "\n";
+        print " *$n_acct mypin sources skipped\n";
+        print " *$n_merge sources require merge\n";
+
+        unless ($no_report) {
+            print "MYPIN SOURCES:\n";
+            for my $line ( @has_acct ) {
+                print "  $line\n";
+            }
+            print "SOURCES NEEDING MERGING:\n";
+            for my $line ( @needs_merge ) {
+                print "  $line\n";
+            }
+        }
+    }
+) or die "\nERROR: ", $air2_dbh->error;

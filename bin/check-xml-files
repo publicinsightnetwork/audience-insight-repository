@@ -1,0 +1,108 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+#
+# iterate over all db records and make sure we have a .xml file for each
+#
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use AIR2::DBManager;
+use AIR2::Config;
+use AIR2::SearchUtils;
+use Getopt::Long;
+use Pod::Usage;
+use Module::Load ();
+
+my $help    = 0;
+my $quiet   = 0;
+my $debug   = 0;
+my $dry_run = 0;
+my $type;
+GetOptions(
+    'help'    => \$help,
+    'debug'   => \$debug,
+    'quiet'   => \$quiet,
+    'type=s'  => \$type,
+    'dry_run' => \$dry_run,
+) or pod2usage(2);
+pod2usage(1) if $help;
+warn "missing --type\n" and pod2usage(2) unless $type;
+
+my $xml_dir = AIR2::Config::get_search_xml->subdir($type);
+
+my %sql = (
+    'sources'   => 'select src_uuid from source',
+    'inquiries' => 'select inq_uuid from inquiry',
+    'projects'  => 'select prj_uuid from project',
+    'responses' => 'select srs_uuid from src_response_set',
+);
+
+if ( !exists $sql{$type} ) {
+    die "Not a supported --type: $type\n";
+}
+
+my $dbh = AIR2::DBManager->new->retain_dbh();
+my $sth = $dbh->prepare( $sql{$type} );
+$sth->execute;
+
+while ( my $row = $sth->fetch ) {
+
+    my $pk = $row->[0];
+    my $xml_path = AIR2::SearchUtils::xml_path_for( $pk, $xml_dir );
+
+    if ( !-s $xml_path and !-s "$xml_path.gz" ) {
+        my $class = AIR2::SearchUtils::class_for_type($type);
+        Module::Load::load($class);
+        my $object = $class->new( $class->get_uuid_column => $pk )->load;
+        AIR2::SearchUtils::touch_stale($object);
+        print "$type: $pk\n";
+    }
+
+}
+
+exit(0);
+
+__END__
+
+=pod
+
+=head1 NAME
+
+check-xml-files - audit XML files and report any missing
+
+=head1 SYNOPSIS
+
+ check-xml-files --type=[inquiries|sources|projects|responses] [opts]
+    --help
+    --debug
+    --quiet
+    --dry_run
+
+=head1 DESCRIPTION
+
+For any missing XML files will touch the stale/I<type>/I<pk> file for the 
+indexer to pick up.
+    
+=cut

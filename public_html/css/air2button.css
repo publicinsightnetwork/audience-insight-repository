@@ -1,0 +1,262 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+.air2-btn button {
+    font-weight: bold;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background: none no-repeat;
+    cursor: pointer;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+.air2-btn.x-btn-text-icon .x-btn-text {
+    background-position: 5px center;
+    padding-left: 20px;
+}
+.air2-btn.x-btn-icon .x-btn-text {
+    background-position: center;
+    width: 22px;
+}
+
+/**************
+ *  SIZES
+ *************/
+.air2-btn-small button {
+    padding: 3px 5px;
+    font-size: 11px;
+}
+.air2-btn-medium button {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+.air2-btn-large button {
+    padding: 5px 7px;
+    font-size: 13px;
+}
+
+/**************
+ *  STYLES
+ *************/
+.air2-btn-plain button {
+    background-color: #eee;
+    border-color: #ccc;
+    color: #666;
+}
+.air2-btn-plain.x-btn-over button, .air2-btn-plain.x-btn-focus button {
+    background-color: #ddd;
+    border-color: #999;
+    color: #333;
+}
+.air2-btn-clear button {
+    background-color: transparent;
+    border-color: transparent;
+    color: #666;
+}
+.air2-btn-clear.x-btn-over button, .air2-btn-clear.x-btn-focus button {
+    background-color: #ddd;
+    border-bottom-color: #bbb;
+}
+.air2-btn-save button {
+    background-color: #00cc33;
+    border: 1px solid #01b22e;
+    color: #fff;
+}
+.air2-btn-save.x-btn-over button, .air2-btn-save.x-btn-focus button {
+    background-color: #01dc38;
+}
+.air2-btn-cancel button {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    color: #777;
+}
+.air2-btn-cancel.x-btn-over button, .air2-btn-cancel.x-btn-focus button {
+    color: #000;
+}
+.air2-btn-delete button {
+    background-color: #ff0000;
+    border-color: #cc0000;
+    border-top-color: #ff9999;
+    color: #fff;
+}
+.air2-btn-delete.x-btn-over button, .air2-btn-delete.x-btn-focus button {
+    background-color: #993300;
+}
+.air2-btn-blue button {
+    background-color: #3399ff;
+    background-image: url(img/button-back-blue.jpg) repeat-x top;
+    border-color: #2a8df0;
+    color: #fff;
+}
+.air2-btn-blue.x-btn-over button, .air2-btn-blue.x-btn-focus button {
+    background-color: #6699ff;
+}
+.x-form-file-wrap input.x-form-file {
+    cursor: pointer;
+}
+.air2-btn-new button {
+    background-color: #669933;
+    border-color: #339900;
+    border-top-color: #99cc66;
+    color: #fff;
+}
+.air2-btn-new.x-btn-over button, .air2-btn-new.x-btn-focus button {
+    background-color: #339900;
+}
+.air2-btn-new2 button {
+    background-color: #a8cc99;
+    border-color: #a8cc99;
+    color: #fff;
+    text-shadow: 0 1px 0 #999;
+}
+.air2-btn-new2.x-btn-over button, .air2-btn-new2.x-btn-focus button {
+    background-color: #82dd82;
+}
+.air2-btn-dark button {
+    background-color: #ccc;
+}
+.air2-btn-dark.x-btn-over button, .air2-btn-dark.x-btn-focus button {
+    background-color: #fff;
+}
+.air2-btn-darker button {
+    background-color: #555;
+    opacity: .7;
+}
+.air2-btn-darker.x-btn-over button, .air2-btn-darker.x-btn-focus button {
+    background-color: #555;
+    opacity: 1;
+}
+.air2-btn-drawer button {
+    color: #fff;
+    background-color: #555;
+    border-top-color: #777;
+    border-bottom-color: #444;
+    opacity: .8;
+}
+.air2-btn-drawer.x-btn-over button, .air2-btn-drawer.x-btn-focus button {
+    background-color: #555;
+    opacity: 1;
+}
+.air2-btn-upload button {
+    color: #666;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    text-shadow: 0 1px 0 #fff;
+}
+.air2-btn-upload.x-btn-over button, .air2-btn-upload.x-btn-focus button {
+    background-color: #f9f9f9;
+    color: #333;
+    border-color: #aaa;
+}
+.air2-btn-upload.air2-btn.x-btn-text-icon button {
+    padding-left: 24px;
+}
+.air2-btn-upload.air2-btn.x-btn-pressed button {
+    background-color: #eee;
+    border-color: #999;
+}
+.air2-btn-round button {
+    color: #555;
+    text-shadow: 0 1px 0 #999;
+    background-color: #eee;
+    height: 23px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+}
+.air2-btn-round.x-btn-icon .x-btn-text {
+    width: 33px;
+}
+.air2-btn-round.x-btn-over button, .air2-btn-round.x-btn-focus button {
+    background-color: #ddd;
+    border-color: #bbb;
+}
+.air2-btn-friendly button {
+    color: #999;
+    background-color: #f3f3f3;
+    border: 1px solid #ddd;
+    text-shadow: 0 1px 0 #fff;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+.air2-btn-friendly.x-btn-over button, .air2-btn-upload.x-btn-focus button, .air2-btn-friendly button:hover {
+    background-color: #f4f4f4;
+    color: #777;
+    border-color: #ccc;
+}
+.air2-btn-friendly.air2-btn.x-btn-text-icon button {
+    padding-left: 24px;
+}
+
+/**************
+ * special ROWEDIT and ROWDELETE button classes
+ *************/
+.air2-rowedit, .air2-rowdelete, .air2-rowadd {
+    padding: 0;
+    margin: 0 2px 0 0;
+    background: #eee no-repeat 50%;
+    height: 21px;
+    width: 30px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    text-shadow: 0 1px 0 #999;
+    border-radius: 12px;
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+}
+.air2-rowedit {
+    background-image: url(img/icons/pencil-small.png);
+}
+.air2-rowdelete {
+    background-image: url(img/icons/cross-small.png);
+}
+.air2-rowadd {
+    background-image: url(img/icons/plus-circle-frame-medium.png);
+}
+.air2-rowedit:hover, .air2-rowedit:focus,
+.air2-rowdelete:hover, .air2-rowdelete:focus,
+.air2-rowadd:hover, .air2-rowadd:focus {
+    background-color: #ddd;
+    border-color: #bbb;
+}
+
+/**************
+ * special dragbutton
+ *************/
+.air2-btn-upload.air2-btn.x-btn-text-icon button.air2-icon-drag {
+    cursor: move;
+    padding-left: 12px;
+}
+
+.air2-btn .air2-btn-menu-hint {
+    background-image: url(../lib/extjs/resources/images/default/button/arrow.gif);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    padding: 4px;
+}

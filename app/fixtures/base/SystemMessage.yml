@@ -1,0 +1,5 @@
+SystemMessage:
+  msg_100:
+    smsg_id: 100
+    smsg_value: 'Invalid characters specified in Tag "%s".'
+    smsg_status: A

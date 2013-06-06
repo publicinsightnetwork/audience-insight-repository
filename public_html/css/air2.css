@@ -1,0 +1,478 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+body {
+    margin: 0;
+    padding: 0;
+    background: #eee url(img/back-gray-grid.jpg) repeat fixed;
+    color: #222;
+    font-size: small;
+    font-family: Tahoma, Geneva, sans-serif;
+    position: relative;
+}
+
+/* prevent any scrolling funny-business for modal windows */
+body.x-body-masked {
+    overflow: hidden;
+}
+
+a, a:visited {
+    text-decoration: none;
+    color: #5c88ca;
+}
+a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+a.external {
+    background: url(img/icons/external-link.png) no-repeat 100% 50%;
+    padding-right: 18px;
+}
+form, input {
+    margin: 0;
+    padding: 0;
+}
+ul, li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+h1, h2, h3, h4, h5 {
+    margin: 0;
+    padding: 0;
+}
+h2 {
+    font-size: 22px;
+}
+h3 {
+    font-size: 16px;
+    margin: 0;
+}
+table, tr, td {
+    margin: 0;
+    padding: 0;
+}
+pre {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    word-wrap: break-word;
+    font-family: Tahoma, Geneva, sans-serif;
+}
+.wrap {
+    margin: 0 auto;
+    width: 1100px;
+}
+.clearfix {
+    display: inline-block;
+    width: 100%;
+}
+.lighter {
+    color: #bbb;
+    font-size: 11px;
+}
+.forcebreak {
+    word-break: break-all;
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+/* D&D elements */
+.air2-dragzone {
+    cursor: move;
+}
+.air2-dragarrow {
+    padding: 12px 0 12px 12px;
+    cursor: move;
+    display: none;
+    position: absolute
+}
+.air2-empty {
+    text-align: center;
+    position: relative;
+    top: 40%;
+}
+.air2-wait {
+    background: url(../lib/extjs/resources/images/default/grid/wait.gif) no-repeat 0 50%;
+    padding-left: 18px;
+    display: inline;
+}
+
+/* AIR2 focus */
+.air2-focus-mask {
+    z-index: 200;
+    position: absolute;
+    zoom: 1;
+    background-color: #000;
+    opacity: 0.6;
+    -moz-opacity: 0.6;
+    filter: alpha(opacity=60);
+}
+
+/* Fix combo box triggers in chrome */
+.ext-chrome .x-form-field-wrap .x-form-trigger {
+    right: auto;
+}
+
+/* remove squiggly line from Ext forms */
+.x-form-invalid, textarea.x-form-invalid {
+    background-image: none;
+}
+
+/* global ext style changes */
+.ext-el-mask {
+    opacity: 0.7;
+    background-color: #000;
+}
+
+/* shortcuts for panel corners */
+.air2-corner-tl {
+    -webkit-border-top-left-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    border-top-left-radius: 5px;
+}
+
+.air2-corner-tr {
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-right-radius: 5px;
+}
+
+.air2-corner-bl {
+    -webkit-border-bottom-left-radius: 5px;
+    -moz-border-radius-bottomleft: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.air2-corner-br {
+    -webkit-border-bottom-right-radius: 5px;
+    -moz-border-radius-bottomright: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.air2-corners-top {
+    -webkit-border-top-left-radius: 2px;
+    -moz-border-radius-topleft: 2px;
+    border-top-left-radius: 2px;
+    -webkit-border-top-right-radius: 2px;
+    -moz-border-radius-topright: 2px;
+    border-top-right-radius: 2px;
+}
+
+.air2-corners-bottom {
+    -webkit-border-bottom-right-radius: 5px;
+    -moz-border-radius-bottomright: 5px;
+    border-bottom-right-radius: 5px;
+    -webkit-border-bottom-left-radius: 5px;
+    -moz-border-radius-bottomleft: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.air2-corners-left {
+    -webkit-border-bottom-left-radius: 5px;
+    -moz-border-radius-bottomleft: 5px;
+    border-bottom-left-radius: 5px;
+    -webkit-border-top-left-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    border-top-left-radius: 5px;
+}
+
+.air2-corners-right {
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-right-radius: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    -moz-border-radius-bottomright: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.air2-corners {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.air2-corners3 {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.air2-corners3-top {
+    -webkit-border-top-left-radius: 3px;
+    -moz-border-radius-topleft: 3px;
+    border-top-left-radius: 3px;
+    -webkit-border-top-right-radius: 3px;
+    -moz-border-radius-topright: 3px;
+    border-top-right-radius: 3px;
+}
+
+.air2-corners2 {
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+
+
+/* Exception styling */
+#air2-exception {
+    text-align: center;
+    padding: 10px 0 20px;
+}
+#air2-exception .body {
+    background: #fff;
+    margin: 0 230px;
+    min-height: 240px;
+    font-size: 16px;
+}
+#air2-exception .body h1 {
+    font-size: 25px;
+    padding: 10px;
+    margin: 10px;
+    border-bottom: dotted 1px #999;
+}
+#air2-exception .body p {
+    font-size: 15px;
+    padding: 0 10px 20px 10px;
+}
+
+/* ajax login defeats all */
+#air2-ajax-login { z-index: 10001 !important; }
+.air2-ajax-login-mask { z-index: 10000 !important; }
+
+/* Valid extjs form message */
+.air2-form-valid-msg {
+    color: green;
+    font: normal 11px tahoma, arial, helvetica, sans-serif;
+    background-image: url(../lib/extjs/resources/images/default/dd/drop-yes.gif);
+    padding-top: 4px;
+}
+
+/* style for remote validation field waiting icon */
+.air2-form-remote-wait {
+    background: url(../lib/extjs/resources/images/default/grid/wait.gif) no-repeat;
+    width: 100%;
+    height: 19px;
+    width: 19px;
+    display: block;
+    position: absolute;
+    visibility: hidden;
+    z-index: 99;
+}
+.air2-form-clear {
+    background: url(img/icons/circle-remove-gray.png) no-repeat;
+    width: 100%;
+    height: 19px;
+    width: 19px;
+    display: block;
+    position: absolute;
+    visibility: hidden;
+    z-index: 98;
+    opacity: .6;
+    cursor: pointer;
+}
+
+/* API error styling */
+.air2-api-error-msg {
+    background: #efefef;
+    border: 1px solid red;
+    padding: 4px;
+    position: absolute;
+    visibility: hidden;
+    min-width: 125px;
+    max-width: 360px;
+    z-index: 100;
+}
+.air2-api-error-msg .title {
+    text-align: center;
+    font-weight: bold;
+    color: #444;
+    font-size: 16px;
+    border-bottom: 1px dotted #666;
+}
+.air2-api-error-msg .msg {
+    color: #666;
+    font-size: 13px;
+    padding: 5px 3px;
+}
+.air2-api-error-msg .btns {
+    text-align: center;
+}
+
+/* generic style for displaying newsrooms */
+.air2-newsroom, .air2-newsroom:visited {
+    text-transform: uppercase;
+    color: #fff;
+    font-size: 10px;
+    padding: 3px 5px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    margin-right: 3px;
+}
+
+.air2-search-excerpt .air2-newsroom {
+	margin-right: 3px;
+}
+
+.air2-newsroom:hover { text-decoration: none; }
+
+.air2-pager strong {
+    font-weight: bold;
+}
+
+.air2-pager a {
+    padding-left: 4px;
+}
+
+.air2-magnifier.x-form-field {
+    background-image: url(img/icons/magnifier.png);
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+    padding-left: 16px;
+}
+
+.air2-lock.x-form-field {
+    background-image: url(img/icons/security-lock.png);
+    background-repeat: no-repeat;
+    background-position: 3px 50%;
+    padding-left: 22px;
+}
+
+.air2-okay.x-form-field {
+    background-image: url(img/icons/tick.png);
+    background-repeat: no-repeat;
+    background-position: 3px 50%;
+    padding-left: 22px;
+}
+
+.air2-hidden {
+    display: none;
+}
+
+/* Global tooltips (hijacked from Ext.QuickTips) */
+.air2-tip {
+    background-color: #444;
+    border: 1px solid #444;
+    padding: 8px 10px 10px 10px;
+    font-size: 13px;
+    color: #CCC;
+    text-shadow: 0 -1px 0 #222;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    -moz-box-shadow: 0 3px rgba(0,0,0,0.1);
+    -webkit-box-shadow: 0 3px rgba(0,0,0,0.1);
+    box-shadow: 0 3px rgba(0,0,0,0.1);
+    position: relative;
+}
+.air2-tip a, .air2-tip a:visited {
+    color: #fff;
+    font-weight: bold;
+    font-size: 12px;
+}
+.air2-tip.lighter a, .air2-tip-lighter a:visited {
+    color: #444;
+}
+.air2-tip .arrow {
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    width: 100%;
+}
+.air2-tip .arrow-down {
+    bottom: -10px;
+    height: 10px;
+    background: url(img/tooltip-arrow-down.png) no-repeat 50% bottom;
+}
+.air2-tip .arrow-up {
+    display: none; /* by default */
+    top: -10px;
+    height: 10px;
+    background: url(img/tooltip-arrow-up.png) no-repeat 50% top;
+}
+.air2-tip.below .arrow-down {
+    display: none;
+}
+.air2-tip.below .arrow-up {
+    display: block;
+}
+.air2-tip.small {
+    color: #fff;
+    background-image: none;
+    font-size: 12px;
+    padding: 3px 5px 4px 5px;
+}
+.air2-tip.small .arrow-down {
+    bottom: -8px;
+    height: 8px;
+}
+.air2-tip.small .arrow-up {
+    top: -8px;
+    height: 8px;
+}
+.air2-tip.lighter {
+    background: #eee;
+    color: #666;
+    text-shadow: 0 1px 0 #fff;
+    border: 1px solid #d6d6d6;
+}
+.air2-tip.lighter .arrow-down {
+    background-image: url(img/tooltip-arrow-down-light.png);
+}
+.air2-tip.lighter .arrow-up {
+    background-image: url(img/tooltip-arrow-up-light.png);
+}
+.air2-tipper {
+    background: #CCC;
+    color: white !important; /*defeat ext disable class */
+    padding: 0 5px 1px 5px;
+    -webkit-border-radius: 100px;
+    -moz-border-radius: 100px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: normal;
+    text-decoration: none;
+    border-top: 1px solid #BBB;
+    cursor: help;
+    text-shadow: none;
+}
+.air2-tipper:hover {
+    background: #66cc33;
+}
+#air2-drawer .air2-tipper {
+    border-top: #111;
+    margin-left: 7px;
+    background: #777;
+    color: #fff;
+    font-size: 11px;
+}
+
+@-moz-document url-prefix() {
+    .air2-tipper {
+        padding: 0 6px 1px 6px;
+    }
+}
+
+.air2-pointer {
+    cursor: pointer;
+}
+

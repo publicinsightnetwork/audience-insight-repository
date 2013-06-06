@@ -1,0 +1,17 @@
+PreferenceType:
+  PreferenceType_1:
+    pt_id: 1
+    pt_name: Contact frequency
+    pt_status: A
+  PreferenceType_2:
+    pt_id: 2
+    pt_name: Contact topic
+    pt_status: A
+  PreferenceType_3:
+    pt_id: 3
+    pt_name: Preferred contact method
+    pt_status: A
+  PreferenceType_4:
+    pt_id: 4
+    pt_name: Preferred language
+    pt_status: A

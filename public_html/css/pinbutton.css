@@ -1,0 +1,98 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* styling for the pinbutton - mainly used on the inquiry page */
+.air2-pinbutton .embed-preview {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+}
+.air2-pinbutton .air2-btn.x-btn-text-icon button.x-btn-text {
+    padding-left: 22px;
+    font-weight: normal;
+    color: #5C88CA;
+}
+
+.air2-embedcode .air2-btn.x-btn-text-icon button.x-btn-text {
+    padding-left: 22px;
+    font-weight: normal;
+    color: #5C88CA;
+}
+
+/* generic styling */
+.pin-button {
+    position: absolute;
+    background-color: #f9f9f9;
+    padding: 4px 5px 2px 2px;
+    height: 12px;
+    text-decoration: none;
+    color: #777;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    border: 1px solid #ddd;
+    z-index: 10;
+}
+.pin-button:hover {
+    background: #f9f9f9;
+    border: 1px solid #bbb;
+    color: #555;
+}
+.pin-button span.button {
+    float: left;
+    background: url(img/icons/pin-med.png) no-repeat 0;
+    padding-left: 19px;
+    height: 17px;
+    margin-top: -3px;
+    line-height: 17px;
+}
+
+/* large */
+.pin-button.large {
+    height: 24px;
+    font-size: 18px;
+    padding: 6px 5px 0 3px;
+}
+.pin-button.large span.button {
+    background: url(img/icons/pin-large.png) no-repeat 0;
+    padding-left: 27px;
+    height: 25px;
+    line-height: 25px;
+}
+.pin-button.small {
+    border: 0;
+    padding: 0 0 0 1px;
+    background-color: transparent;
+}
+
+/* small */
+.pin-button.small:hover {
+    border: 0;
+    background-color: transparent;
+}
+.pin-button.small span.button {
+    background: url(img/icons/pin-small.png) no-repeat 0;
+    padding-left: 14px;
+    height: 12px;
+    margin-top: 0;
+    line-height: 11px;
+}

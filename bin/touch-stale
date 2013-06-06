@@ -1,0 +1,82 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2012 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+#
+# touch stale flag for records
+#
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use AIR2::Config;
+use AIR2::StaleRecord;
+use Module::Load ();
+
+my %stale_types = (
+    'source'           => [ 'S', 'AIR2::Source' ],
+    'sources'          => [ 'S', 'AIR2::Source' ],
+    'inquiry'          => [ 'I', 'AIR2::Inquiry' ],
+    'inquiries'        => [ 'I', 'AIR2::Inquiry' ],
+    'src_response_set' => [ 'R', 'AIR2::SrcResponseSet' ],
+    'responses'        => [ 'R', 'AIR2::SrcResponseSet' ],
+    'project'          => [ 'P', 'AIR2::Project' ],
+    'projects'         => [ 'P', 'AIR2::Project' ],
+    'public_response'  => [ 'A', 'AIR2::PublicSrcResponseSet' ],
+    'public_responses' => [ 'A', 'AIR2::PublicSrcResponseSet' ],
+);
+
+for my $f (@ARGV) {
+    my ( $type, $xid ) = split( m!/!, $f );
+    my $str_type;
+    if ( length $type > 1 ) {
+        $str_type = $stale_types{$type}->[0];
+    }
+    else {
+        $str_type = $type;
+    }
+
+    #warn "type=$type str_type=$str_type xid=$xid";
+    if ( $xid =~ m/\D/ ) {
+
+        # assume uuid, look up xid
+        my $uuid = $xid;
+        my $class;
+        for my $t ( keys %stale_types ) {
+            if ( $stale_types{$t}->[0] eq $str_type ) {
+                $class = $stale_types{$t}->[1];
+            }
+        }
+        if ( !$class ) {
+            die "No class for $f";
+        }
+        Module::Load::load $class;
+        my $obj = $class->new( $class->get_uuid_column => $xid )->load;
+        $xid = $obj->primary_key_value;
+    }
+
+    my $sr = AIR2::StaleRecord->new(
+        str_xid  => $xid,
+        str_type => $str_type,
+    );
+    $sr->insert_or_update_on_duplicate_key();
+}

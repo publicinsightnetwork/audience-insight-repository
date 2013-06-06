@@ -1,0 +1,204 @@
+[%  # in-line style definitions 
+
+    font_face = 'font-family: Helvetica';
+    font_size = '9px';
+    
+    content = 'max-width: 600px; margin: 0 auto; display: block;';
+    css_newsrooms = 'width: 100%; padding-bottom: 20px; margin-bottom: 20px; color: #999; font-size: 14px; border-bottom: 1px solid #eee;';
+    css_container = 'display:block!important; max-width:600px!important; margin:0 auto!important; clear:both!important;';
+    css_text = 'margin: 15px 0; font-weight: normal; font-size:14px; line-height:1.5;';
+    css_body_links = 'color: #4887ff; text-decoration: none;'
+    css_footer_links = 'color: #666; text-decoration: none;';
+
+    all_inline_styles = "$font_face; $font_size;";
+
+%]
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!-- If you delete this meta tag, Half Life 3 will never be released. -->
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Welcome - Public Insight Network</title>
+</head>
+ 
+<body style="-webkit-text-size-adjust:none; width: 100% !important; height: 100%; background: #f6f6f6 url([% pin.asset_uri %]/email/img/back-gray-grid.jpg) repeat; color: #444; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; margin: 0; padding: 0;">
+
+
+<!-- BACKGROUND COLOR FOR GMAIL -->
+<table bgcolor="#eee" width="100%" cellpadding="0" cellspacing="0" style="background: #f6f6f6 url([% pin.asset_uri %]/email/img/back-gray-grid.jpg) repeat;">
+  <tr>
+    <td>
+
+
+<!-- HEADER -->
+<table style="width: 100%; text-align: center; margin-bottom: 25px;" bgcolor="#B80007" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <td style="[% css_container %] text-align: center; margin: 0; padding: 10px;">
+            <a href="[% pin.uri %]"><img src="[% pin.asset_uri %]/email/img/pin-logo-white.png" style="border: 0; max-width: 200px; text-align: center;" /></a>
+        </td>
+    </tr>
+</table>
+<!-- /HEADER -->
+
+
+<!-- BODY --> 
+<table style="width: 100%;" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <td></td>
+        <td style="[% css_container %]">
+
+            <div style="[% content %] background: #fff; padding: 20px; box-shadow: 0 0 5px rgba(0,0,0,.1);">
+            <table>
+                <tr>
+                    <td>
+                    
+                        <!-- NEWSROOM -->
+                        <table style="[% css_newsrooms %]">
+                            <tr>
+                                <td style="width: 1%;">
+                                    <a href="[% newsroom.uri %]" style="[% css_body_links %]"><img src="[% newsroom.logo_uri %]" style="width: 45px; height: 45px; border-radius: 2px; margin-right: 7px;" /></a>
+                                </td>
+                                <td valign="top" style="padding-top: 6px; width: 1px; white-space: nowrap; padding-right: 30px; line-height: 18px;">
+                                    <strong><a href="[% newsroom.uri %]" style="text-decoration: none;">[% newsroom.name %]</a></strong><br />
+                                    [% newsroom.location %] 
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- /NEWSROOM -->
+                    
+                    
+                        <!-- MESSAGE -->
+                        <h3 style="font-weight:500; font-size: 27px; margin-bottom: 20px;">Hi, [% source.name %].</h3>
+                        <p style="font-size:17px;">Thanks for becoming part of [% newsroom.name %]'s Public Insight Network!</p>
+                        
+                        [% IF newsroom.msg %]
+                        <p style="[% css_text %]">[% newsroom.msg %]</p>
+                        [% END %]
+                        
+                        <p style="[% css_text %]">
+                            You are one of more than <strong>200,000 people</strong> around the world helping journalists cover the news in many ways: by sharing your expertise for stories, by letting your personal experience illustrate the news, by pointing us towards new stories, or by participating in live events with other sources in our network.
+                        </p>
+
+                        <p style="[% css_text %]">
+                            Here's what you can expect:
+                        </p>
+                                                
+                        <p style="[% css_text %]">
+                            <ul style="[% css_text %] margin-left: 0; padding-left: 20px;">
+                                <li>
+                                    From time to time, you'll receive questions from journalists working on a story we think you might know something about.
+                                </li>
+                                
+                                <li>
+                                    We will <strong>read every insight</strong> we receive, and every insight helps us understand the story a little better. A reporter, producer or may contact you to find out more about your insight. We will only publish what you tell if we first get your explicit permission.
+                                </li>
+                                
+                                <li>
+                                    We are journalists and we do NOT use your insights or contact information for marketing, membership or sales purposes.
+                                </li>
+                                
+                                <li>
+                                    You can always see and change which newsrooms in our network can send you questions by creating an account.
+                                </li> 
+                            </ul>
+                        </p>
+
+                        <p style="[% css_text %]">
+                            <strong>If you haven't already, you can help inform our reporting:</strong>
+                            <ul style="[% css_text %] margin-left: 0; padding-left: 20px;">
+                            [% FOREACH q IN related_queries %]
+                                <li><a href="[% q.uri %]" style="[% css_body_links %]">[% q.title %]</a></li>
+                            [% END %]
+                            </ul>
+                        </p>
+
+                        <p style="[% css_text %]">
+                            Feel free to send me a note anytime with things you've noticed recently that you think we should look into.
+                        </p>
+
+                        <p style="[% css_text %]">
+                            Lastly, please pass this note to any friends, family or colleagues who would also be interested in sharing their knowledge and insight with <a href="[% newsroom.uri %]">[% newsroom.name %]</a>.
+                        </p>
+
+                        <p style="[% css_text %]">
+                            Thank you for your time. We look forward to hearing from you soon.</p>
+                        </p>
+                        <!-- /MESSAGE -->
+                        
+                        
+                        <!-- SIGNATURE -->
+                        <p style="[% css_text %]">
+                            <table style="margin: 25px 0; font-weight: normal; font-size: 14px; line-height: 1.4;">
+                                <tr>
+                                 [% IF (newsroom.logo_uri) %]
+                                    <td style="width: 62px;">
+                                        <img src="[% newsroom.logo_uri %]" style="height: 55px; width: 55px; border-radius: 50px;">
+                                    </td>
+                                 [% END %]
+                                    <td>[% newsroom.name %]'s Public Insight Network</td>
+                                </tr>
+                            </table>
+                        </p>
+                        <!-- /SIGNATURE -->
+                        
+
+                        <!-- Callout Panel -->
+                        <p style="[% css_text %] padding:15px; background-color:#ECF8FF; margin-top: 10px; margin-bottom: 10px;">
+                            <strong>What is the Public Insight Network?</strong><br />
+                            American Public Media's Public Insight Network (PIN) is a platform for connecting trusted journalists with knowledgeable sources. Through PIN, people around the world share what they know to inform reporting by PIN partner newsrooms, making news coverage more relevant, diverse, transparent and trustworthy.<br />
+                            <a href="[% pin.uri %]" style="font-weight:bold; color: #2BA6CB;">Learn more &raquo;</a>
+                        </p><!-- /Callout Panel -->                    
+            
+                    </td>
+                </tr>
+            </table>
+            </div><!-- /content -->
+                                    
+        </td>
+        <td></td>
+    </tr>
+</table><!-- /BODY -->
+
+<!-- FOOTER -->
+<table style="width: 100%; clear: both !important; padding-bottom: 40px;">
+    <tr>
+        <td></td>
+        <td style="[% css_container %]">
+            
+            <!-- FOOTER CONTENT -->
+            <div class="content">
+            <table width="100%">
+            <tr>
+            [% FOREACH newsroom IN newsrooms %]
+                <td width="70%">
+                    <p style="color: #999; padding-left: 20px;">
+                        <strong><a href="[% newsroom.uri %]" style="[% css_footer_links %]">[% newsroom.name %]</a></strong><br /> 
+                        [% newsroom.location %]
+                    </p>
+                </td>
+            [% END %]
+                <td valign="top" style="text-align: right;" width="30%">
+                    <p style="font-weight: bold; padding-right: 20px;">
+                        <a href="[% pin.terms_uri %]" style="[% css_footer_links %]">Terms</a> <span style="color: #ccc;">|</span>
+                        <a href="[% pin.privacy_uri %]" style="[% css_footer_links %]">Privacy</a>
+                    </p>
+                </td>
+            </tr>
+            </table>
+            </div>
+            <!-- /FOOTER CONTENT -->
+            
+          </td>
+        <td></td>
+    </tr>
+</table><!-- /FOOTER -->
+
+
+    
+    </td>
+  </tr>
+</table>
+</body>
+</html>

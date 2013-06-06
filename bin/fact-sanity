@@ -1,0 +1,207 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use Data::Dump qw( dump );
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+
+use AIR2::SrcFact;
+sub logger { AIR2::Utils::logger(@_) }
+
+my $air2_db  = AIR2::DBManager->new()->get_write_handle;
+my $air2_dbh = $air2_db->retain_dbh;
+
+=pod
+
+=head1 NAME
+
+fact-sanity - attempt sanity check and cleanup the src_fact table
+
+=head1 SYNOPSIS
+
+ fact-sanity [opts]
+ fact-sanity --help
+ fact-sanity --debug --dry_run
+ fact-sanity --quiet
+
+=head1 DESCRIPTION
+
+Running this script will do the following:
+
+ 1) Change any blank-strings into NULLs
+ 2) Change any invalid columns for a fact_type to NULL
+ 3) Change any invalid fv_id's (for that fact) into NULLs
+ 4) NUKE any completely null src_facts
+ 5) Attempt to translation_map unmapped facts
+
+=head1 OPTIONS
+
+=head2 help
+
+Shows this document
+
+=head2 debug
+
+Prints a whole bunch-o' output
+
+=head2 dry_run
+
+Run without making any changes to the database
+
+=head2 quiet
+
+None of the usual 'report' output - only error messages will be printed
+
+=cut
+
+my ( $help, $debug, $dry_run, $quiet );
+GetOptions(
+    help             => \$help,
+    debug            => \$debug,
+    dry_run          => \$dry_run,
+    quiet            => \$quiet,
+) or pod2usage(2);
+
+if ($help) {
+    pod2usage(2);
+}
+
+logger("Starting...\n") if $debug;
+
+################################
+# Run in transaction           #
+################################
+my $ok = $air2_db->do_transaction(
+    sub {
+        my $blanks = 0;
+        my $bad_cols = 0;
+        my $bad_fvid = 0;
+        my $nuked = 0;
+        my $mapped = 0;
+        my $no_map = 0;
+
+        my $txt_fid  = "select fact_id from fact where fact_fv_type='S'";
+        my $fk_fid   = "select fact_id from fact where fact_fv_type='F'";
+        my $mult_fid = "select fact_id from fact where fact_fv_type='M'";
+        $txt_fid  = "sf_fact_id in ($txt_fid)";
+        $fk_fid   = "sf_fact_id in ($fk_fid)";
+        $mult_fid = "sf_fact_id in ($mult_fid)";
+
+        # 1 -blank sf_src_value
+        my $n   = 0;
+        my $set = "set sf_src_value = NULL";
+        my $whr = "where trim(sf_src_value) = ''";
+        $n += $air2_dbh->do("update src_fact $set $whr");
+        logger("Unset $n empty-string'd sf_src_values\n") if $debug;
+        $blanks += $n;
+
+        # 2 - no fv_id's on text-only facts
+        $n = 0;
+        my $hasone = "sf_fv_id is not NULL or sf_src_fv_id is not NULL";
+        $set = "set sf_fv_id=NULL, sf_src_fv_id=NULL";
+        $whr = "where $txt_fid and ($hasone)";
+        $n += $air2_dbh->do("update src_fact $set $whr");
+        logger("Unset $n sf_fv_id/sf_src_fv_id's for text-only facts\n") if $debug;
+        $bad_cols += $n;
+
+        # 2 - no text on fk-only facts
+        $n = 0;
+        $set = "set sf_src_value=NULL";
+        $whr = "where $fk_fid and sf_src_value is not NULL";
+        $n += $air2_dbh->do("update src_fact $set $whr");
+        logger("Unset $n sf_src_value's for FK-only facts\n") if $debug;
+        $bad_cols += $n;
+
+        # 3 -invalid sf_fv_id's
+        $n = 0;
+        my $ids = "select fv_id from fact_value where fv_fact_id=a.sf_fact_id";
+        $set = "set a.sf_fv_id = NULL";
+        $whr = "where a.sf_fv_id is not NULL and a.sf_fv_id not in ($ids)";
+        $n += $air2_dbh->do("update src_fact a $set $whr");
+        logger("Unset $n sf_fv_id's that didn't match fact_id's with their fact_value\n") if $debug;
+        $bad_fvid += $n;
+
+        # 3 - invalid sf_src_fv_id's
+        $n = 0;
+        $ids = "select fv_id from fact_value where fv_fact_id=a.sf_fact_id";
+        $set = "set a.sf_src_fv_id = NULL";
+        $whr = "where a.sf_src_fv_id is not NULL and a.sf_src_fv_id " .
+               "not in ($ids)";
+        $n += $air2_dbh->do("update src_fact a $set $whr");
+        logger("Unset $n sf_src_fv_id's that didn't match fact_id's with their fact_value\n") if $debug;
+        $bad_fvid += $n;
+
+        # 4 - nuke NULL text-only
+        $n = 0;
+        $whr = "where $txt_fid and sf_src_value is NULL";
+        $n += $air2_dbh->do("delete from src_fact $whr");
+        logger("Deleted $n empty text-only facts\n") if $debug;
+        $nuked += $n;
+
+        # 4 - nuke NULL fk-only
+        $n = 0;
+        $whr = "where $fk_fid and sf_fv_id is NULL and sf_src_fv_id is NULL";
+        $n += $air2_dbh->do("delete from src_fact $whr");
+        logger("Deleted $n empty FK-only facts\n") if $debug;
+        $nuked += $n;
+
+        # 4 - nuke NULL multi
+        $n = 0;
+        $whr = "where $mult_fid and sf_fv_id is NULL and sf_src_fv_id " .
+               "is NULL and sf_src_value is NULL";
+        $n += $air2_dbh->do("delete from src_fact $whr");
+        logger("Deleted $n empty multi-key facts\n") if $debug;
+        $nuked += $n;
+
+        # 5 - translation_map
+        my $attempt_to_map_it = AIR2::SrcFact->fetch_all_iterator(
+            with_objects => [ qw(fact) ],
+            query => [
+                'fact.fact_fv_type' => 'M',
+                'sf_fv_id'          => undef,
+                '!sf_src_value'     => undef,
+            ],
+        );
+        while ( my $sf = $attempt_to_map_it->next ) {
+            my $fid  = $sf->sf_fact_id;
+            my $txt  = $sf->sf_src_value;
+            my $fvid = AIR2::TranslationMap->find_translation($fid, $txt);
+            if ($fvid) {
+                $sf->sf_fv_id($fvid);
+                $sf->save();
+                $mapped++;
+            }
+            else {
+                $no_map++;
+            }
+        }
+        my $total = $mapped + $no_map;
+        logger("Set sf_fv_id on $mapped of $total multi-key facts using translation_map\n") if $debug;
+
+        # complete!
+        unless ($quiet) {
+            print "Cleanup of src_facts complete!\n";
+            print "Nullified $blanks blanks, $bad_cols invalids columns, $bad_fvid invalid fv_id's\n";
+            print "Nuked $nuked empty facts\n";
+            print "Mapped $mapped of $total unmapped facts\n";
+        }
+
+        # rollback dry runs
+        if ($dry_run) {
+            die "DRY_RUN";
+        }
+    }
+);
+
+
+# die appropriately
+unless ( $ok ) {
+    my $err = $air2_db->error;
+    if ($dry_run && $err =~ /DRY_RUN/) {
+        print "DRY_RUN... rolled back all changes!\n" unless $quiet;
+    }
+    else {
+        die "Error: $err";
+    }
+}

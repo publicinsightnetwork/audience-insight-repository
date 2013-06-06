@@ -1,0 +1,525 @@
+<html>
+ <head>
+  <title>AIR2 Search Help</title>
+
+ </head>
+
+ <body>
+  <div id="air2-search-help">
+
+   <div id="replace-query"></div>
+
+   <div>
+     <ul>
+      <li><a href="#quickstart">Quick start</a></li>
+      <li><a href="#terms">Creating your search terms</a></li>
+      <li><a href="#advsearch">Advanced search</a></li>
+      <li><a href="#Phrases">Phrases</a></li>
+      <li><a href="#Wildcards">Wildcards</a></li>
+      <li><a href="#EvaluationOrder">Evaluation order</a></li>
+      <li><a href="#FieldNames">Field names</a></li>
+      <li><a href="#Stemming">Stemming</a></li>
+      <li><a href="#RelevanceRanking">Relevance ranking</a></li>
+      <li><a href="#FAQ">FAQ</a></li>
+     </ul>
+    </div>
+
+    <div>
+      <h2 id="quickstart">Quick start</h2>
+      
+      <p>
+      <strong>Keyword searches:</strong>
+      Use the <b>Search for</b> text box above to enter keywords.
+      Limit your search with the <b>within</b> selector menu to specify if you want to search
+      within active sources, all sources, or if you want to search for a keyword used in a past inquiry.
+      Constrain the fields in which AIR will search for your keywords by using the 
+      <b>limit to</b> selector menu.
+      </p>
+      
+      <p>
+      <strong>Common searches:</strong>
+      Use the <b>Search by</b> links in the upper right to target your search
+      by specific fields, activities or categories.
+      </p>
+      
+    </div>
+
+    <div>
+      <a name="terms"></a>
+      <h2>Creating your search terms</h2>
+
+      <p>Searches are case-insensitive (the case you use does not matter). <tt>health</tt>,
+      <tt>Health</tt>, and <tt>HeAlTh</tt> all provide the same results.</p>
+
+      <p>Strings of words in a search are split on whitespace into
+      <strong>terms</strong> (everything with spaces around it is a term). 
+      Unless a term is qualified with a
+      boolean operator (see below), all terms have an implicit
+      <strong>AND</strong> between them.</p>
+
+    </div>
+
+    <div>
+      <a name="advsearch"></a>
+      <h2>Advanced search</h2>
+
+      <p>Search syntax supports the following special operators (what
+      you enter in between terms) and their aliases (alternates that mean the
+      same thing). All operators are case-insensitive.
+      Some operators are sensitive to whitespace; check the examples for proper use.
+      </p>
+
+      <table id="operators" >
+        <tr>
+          <td><strong>Operator</strong></td>
+
+          <td><strong>Aliases</strong></td>
+
+          <td><strong>Description</strong></td>
+
+          <td><strong>Example</strong></td>
+        </tr>
+
+        <tr>
+          <td>AND</td>
+
+          <td>+, &amp;</td>
+
+          <td>Term <i>must</i> match.</td>
+
+          <td>
+           <tt>health and care</tt><br/>
+           <tt>health & care</tt><br/>
+           <tt>+health +care</tt>
+          </td>
+        </tr>
+
+        <tr>
+          <td>OR</td>
+
+          <td>|</td>
+
+          <td>Term <i>may</i> match.</td>
+
+          <td>
+           <tt>health or care</tt><br/>
+           <tt>health | care</tt>
+          </td>
+        </tr>
+
+        <tr>
+          <td>NOT</td>
+
+          <td>-, !</td>
+
+          <td>Term <i>must not</i> match (same as <tt>AND
+          NOT</tt>).</td>
+
+          <td><tt>health not care</tt></td>
+        </tr>
+
+        <tr>
+          <td>NEAR<i>n</i></td>
+
+          <td>"this that"~<i>n</i></td>
+
+          <td>Term <i>must</i> match within <i>n</i> terms of the
+          following term.</td>
+
+          <td>
+           <tt>health near10 care</tt><br/>
+           <tt>"health care"~10</tt>
+          </td>
+        </tr>
+
+        <tr>
+          <td><tt>"phrase&nbsp;term"</tt></td>
+
+          <td></td>
+
+          <td>Terms within double quotes must appear exactly in
+          that order (same as <tt>NEAR1</tt>). See <a 
+          href="#Phrases">Phrases</a>.</td>
+
+          <td><tt>"health care"</tt></td>
+        </tr>
+
+        <tr>
+          <td>(this that)</td>
+
+          <td></td>
+
+          <td>Parentheses may be used to group terms and change the
+          <a href="#EvaluationOrder">evaluation order</a>.</td>
+
+          <td><tt>health and (care or costs)</tt></td>
+        </tr>
+
+        <tr>
+          <td><i>field</i>=<i>term</i></td>
+
+          <td>:</td>
+
+          <td><i>term</i> must appear within <i>field</i></td>
+
+          <td><tt>responses=health AND responses=(care OR costs)</tt></td>
+        </tr>
+
+
+        <tr>
+          <td><i>field</i>=NULL</td>
+
+          <td>:</td>
+
+          <td>Find all records where <i>field</i> is empty.</td>
+
+          <td><tt>first_name=NULL</tt></td>
+        </tr>
+
+        <tr>
+          <td>*</td>
+
+          <td></td>
+
+          <td>Match zero or more characters. See <a 
+          href="#Wildcards">Wildcards</a>.</td>
+
+          <td><tt>heal*</tt></td>
+        </tr>
+
+      </table>
+
+      <p>Some aliases can be attached, without a space, to the front of a term to indicate the
+      boolean significance of the term. In other words, these search strings are equivalent:</p>
+      <pre >
+ +health +care
+ health AND care
+ health care
+</pre>
+      <p>The above search strings will find all records containing both <tt>health</tt> and <tt>care</tt>.</p>
+
+      <p>These are equivalent:</p>
+      <pre >
+ health | care
+ health OR care
+</pre>
+      <p>The above search strings will find all records containing either <tt>health</tt> or <tt>care</tt>.</p>
+    
+     </div>
+
+     <div>
+      <h2 id="Phrases">Phrases</h2>
+
+      <p>Double quotation marks group two or more terms to indicate exact phrases.
+      </p>
+
+      <p>Boolean operators are ignored when they occur within phrases.</p>
+      <pre >
+ "health care"
+</pre>
+
+      <p>and</p>
+      <pre >
+ "health or care"
+</pre>
+
+      <p>are <strong><i>not</i></strong> the same. The first search string will find the exact phrase <tt>health care</tt>.
+      The second search string will find the three terms <tt>health</tt>, <tt>or</tt>, and
+      <tt>care</tt>.</p>
+
+      <p>Terms <strong>are</strong> stemmed inside phrases. See <a  href="#Stemming">Stemming</a>.</p>
+
+     </div>
+
+     <div>
+      <h2 id="Wildcards">Wildcards</h2>
+
+      <p>AIR recognizes the wildcard character <tt>*</tt> . Wildcards indicate
+      that any combination of letters could match. Examples:</p>
+      <pre >
+ health*
+</pre>
+
+      <p>will match <tt>health</tt> and <tt>healthcare</tt> and
+      <tt>healthy</tt>.</p>
+      <pre >
+ hea*th
+</pre>
+
+      <p>will match <tt>health</tt> but it will also match <tt>hearth</tt>.</p>
+
+      <p>See the <a  href="#Stemming">Stemming</a> section for a caution about using wildcards.</p>
+
+     </div>
+
+     <div>
+      <h2 id="EvaluationOrder">Evaluation order</h2>
+
+      <p>The search string is processed from left to right. Parentheses can
+      be used to group terms together, changing the order of
+      evaluation. For example, these three search strings produce the same results:</p>
+      <pre >
+ health NOT care costs
+ NOT care costs health
+ health costs NOT care
+ +costs +health -care
+</pre>
+
+      <p>The above strings all search for <tt>costs</tt> and <tt>health</tt> but specifically not for <tt>care</tt>.</p>
+      <p>However these are different:</p>
+      <pre >
+ health NOT (care costs)
+ health NOT care costs
+</pre>
+
+      <p>The second string searches for <tt>health</tt> but specifically not for both <tt>care</tt> and <tt>costs</tt>.</p>
+      <p>These are the same:</p>
+      <pre >
+juliet not ophelia and romeo
+(juliet) AND (NOT ophelia) AND (romeo)
+juliet not ophelia romeo
+romeo and juliet and not ophelia
++romeo +juliet -ophelia
+</pre>
+
+      <p>The above strings all search for <tt>juliet</tt> and <tt>romeo</tt> but specifically not for <tt>ophelia</tt>.</p>
+      <p>But this is different:</p>
+      <pre >
+juliet not (ophelia and romeo)
+</pre>
+
+      <p>The above string searches for <tt>juliet</tt> but specifically not for both <tt>ophelia</tt> and <tt>romeo</tt>.</p>
+      <p><strong>NOTE</strong> the order of logical groups of terms does not affect 
+      the <a href="#RelevanceRanking">relevance ranking</a> of results turned up by your search.</p>
+
+     </div>
+
+     <div>
+      <h2 id="FieldNames">Field names</h2>
+
+      <p>You may use field names to limit a search to particular
+      term categories. Examples:</p>
+      <pre >
+ mail=jsmith@example.com
+ city=("st paul" or "saint paul")
+ last_name=jones and first_name=(bob or alice)
+</pre>
+
+      <p>The following field names are defined for limiting your
+      search to a specific kind of value. Following each field name
+      is a list of field aliases that can be used instead of the
+      official name for that field.</p>
+
+      <table>
+        <tr>
+          <td><strong>Field Name</strong></td>
+
+          <td><strong>Aliases</strong></td>
+        </tr>
+
+        <tr><td>activities.count</td><td></td></tr>
+        <tr><td>activity_type_date</td><td></td></tr>
+        <tr><td>activity_type_month</td><td></td></tr>
+        <tr><td>activity_type_year</td><td></td></tr>
+        <tr><td>alias</td><td></td></tr>
+        <tr><td>annotation</td><td></td></tr>
+        <tr><td>bh_play_date</td><td></td></tr>
+        <tr><td>bh_signup_date</td><td></td></tr>
+        <tr><td>birth_year</td><td></td></tr>
+        <tr><td>confidence</td><td></td></tr>
+        <tr><td>contacted_date</td><td></td></tr>
+        <tr><td>contacted_month</td><td></td></tr>
+        <tr><td>contacted_year</td><td></td></tr>
+        <tr><td>education_level</td><td></td></tr>
+        <tr><td>ethnicity</td><td></td></tr>
+        <tr><td>experience</td><td></td></tr>
+        <tr><td>first_response_date</td><td></td></tr>
+        <tr><td>first_response_month</td><td></td></tr>
+        <tr><td>first_response_year</td><td></td></tr>
+        <tr><td>gender</td><td></td></tr>
+        <tr><td>household_income</td><td></td></tr>
+        <tr><td>inq_org_date</td><td></td></tr>
+        <tr><td>inq_sent</td><td></td></tr>
+        <tr><td>inq_sent_date</td><td></td></tr>
+        <tr><td>inq_uuid</td><td></td></tr>
+        <tr><td>inquiries.count</td><td></td></tr>
+        <tr><td>interest</td><td></td></tr>
+        <tr><td>is_translated</td><td></td></tr>
+        <tr><td>last_activity_date</td><td></td></tr>
+        <tr><td>last_activity_month</td><td></td></tr>
+        <tr><td>last_activity_year</td><td></td></tr>
+        <tr><td>last_contacted_date</td><td></td></tr>
+        <tr><td>last_contacted_month</td><td></td></tr>
+        <tr><td>last_contacted_year</td><td></td></tr>
+        <tr><td>last_exported_date</td><td></td></tr>
+        <tr><td>last_queried_date</td><td></td></tr>
+        <tr><td>last_queried_month</td><td></td></tr>
+        <tr><td>last_queried_year</td><td></td></tr>
+        <tr><td>last_response_date</td><td></td></tr>
+        <tr><td>last_response_month</td><td></td></tr>
+        <tr><td>last_response_year</td><td></td></tr>
+        <tr><td>lifecycle</td><td></td></tr>
+        <tr><td>modified_qa</td><td></td></tr>
+        <tr><td>org_name</td><td></td></tr>
+        <tr><td>org_status</td><td></td></tr>
+        <tr><td>org_status_date</td><td></td></tr>
+        <tr><td>org_status_month</td><td></td></tr>
+        <tr><td>org_status_year</td><td></td></tr>
+        <tr><td>org_uuid</td><td></td></tr>
+        <tr><td>out_dtim</td><td></td></tr>
+        <tr><td>out_headline</td><td></td></tr>
+        <tr><td>out_teaser</td><td></td></tr>
+        <tr><td>out_url</td><td></td></tr>
+        <tr><td>out_uuid</td><td></td></tr>
+        <tr><td>outcome</td><td></td></tr>
+        <tr><td>political_affiliation</td><td></td></tr>
+        <tr><td>primary_city</td><td></td></tr>
+        <tr><td>primary_country</td><td></td></tr>
+        <tr><td>primary_county</td><td></td></tr>
+        <tr><td>primary_email</td><td></td></tr>
+        <tr><td>primary_lat</td><td></td></tr>
+        <tr><td>primary_lat_norm</td><td></td></tr>
+        <tr><td>primary_long</td><td></td></tr>
+        <tr><td>primary_long_norm</td><td></td></tr>
+        <tr><td>primary_org_name</td><td></td></tr>
+        <tr><td>primary_org_uuid</td><td></td></tr>
+        <tr><td>primary_phone</td><td></td></tr>
+        <tr><td>primary_state</td><td></td></tr>
+        <tr><td>primary_zip</td><td></td></tr>
+        <tr><td>prj_uuid</td><td></td></tr>
+        <tr><td>qa</td><td></td></tr>
+        <tr><td>referrer</td><td></td></tr>
+        <tr><td>religion</td><td></td></tr>
+        <tr><td>response_sets.count</td><td></td></tr>
+        <tr><td>sa_first_name</td><td></td></tr>
+        <tr><td>sa_last_name</td><td></td></tr>
+        <tr><td>sact_desc</td><td></td></tr>
+        <tr><td>sact_notes</td><td></td></tr>
+        <tr><td>smadd_city</td><td></td></tr>
+        <tr><td>smadd_cntry</td><td></td></tr>
+        <tr><td>smadd_county</td><td></td></tr>
+        <tr><td>smadd_state</td><td></td></tr>
+        <tr><td>smadd_zip</td><td></td></tr>
+        <tr><td>source.authz</td><td></td></tr>
+        <tr><td>source_website</td><td></td></tr>
+        <tr><td>sph_context</td><td></td></tr>
+        <tr><td>sph_ext</td><td></td></tr>
+        <tr><td>sph_number</td><td></td></tr>
+        <tr><td>src_channel</td><td></td></tr>
+        <tr><td>src_created_date</td><td></td></tr>
+        <tr><td>src_created_month</td><td></td></tr>
+        <tr><td>src_created_year</td><td></td></tr>
+        <tr><td>src_education_level</td><td></td></tr>
+        <tr><td>src_ethnicity</td><td></td></tr>
+        <tr><td>src_first_name</td><td></td></tr>
+        <tr><td>src_gender</td><td></td></tr>
+        <tr><td>src_has_acct</td><td></td></tr>
+        <tr><td>src_household_income</td><td></td></tr>
+        <tr><td>src_last_name</td><td></td></tr>
+        <tr><td>src_modified_date</td><td></td></tr>
+        <tr><td>src_modified_month</td><td></td></tr>
+        <tr><td>src_modified_year</td><td></td></tr>
+        <tr><td>src_political_affiliation</td><td></td></tr>
+        <tr><td>src_post_name</td><td></td></tr>
+        <tr><td>src_pre_name</td><td></td></tr>
+        <tr><td>src_religion</td><td></td></tr>
+        <tr><td>src_status</td><td></td></tr>
+        <tr><td>src_upd_dtim</td><td></td></tr>
+        <tr><td>src_username</td><td></td></tr>
+        <tr><td>src_uuid</td><td></td></tr>
+        <tr><td>srs_date</td><td></td></tr>
+        <tr><td>srs_uuid</td><td></td></tr>
+        <tr><td>sv_basis</td><td></td></tr>
+        <tr><td>sv_value</td><td></td></tr>
+        <tr><td>swishdescription</td><td></td></tr>
+        <tr><td>swishtitle</td><td></td></tr>
+        <tr><td>tag</td><td></td></tr>
+        <tr><td>timezone</td><td></td></tr>
+        <tr><td>user_education_level</td><td></td></tr>
+        <tr><td>user_ethnicity</td><td></td></tr>
+        <tr><td>user_gender</td><td></td></tr>
+        <tr><td>user_household_income</td><td></td></tr>
+        <tr><td>user_political_affiliation</td><td></td></tr>
+        <tr><td>user_read</td><td></td></tr>
+        <tr><td>user_religion</td><td></td></tr>
+        <tr><td>user_star</td><td></td></tr>
+        
+      </table>
+
+     </div>
+     <div>
+      <h2 id="Stemming">Stemming</h2>
+
+      <p>All terms are stemmed using the Snowball English language
+      stemmer. See <a class="ext-link" href=
+      "http://en.wikipedia.org/wiki/Stemming">http://en.wikipedia.org/wiki/Stemming</a>
+      for a definition.
+      <!-- AIR does <b><i>not</i></b> handle stemming exactly like Google does,
+      but you can <a href="http://www.googleguide.com/interpreting_queries.html#stemming"
+      >read how Google does it</a>. 
+      -->
+      </p>
+
+      <p>
+      <strong>What's stemming?</strong>
+      It's a search feature that detects the root words inside longer words 
+      and then searches for the root.  This means your search may turn up 
+      more terms than you expect it to, and you may see terms highlighted in 
+      search results that you do not expect. This is a feature, not a bug.
+      (For example, you may run into this if you click on words in the tagcloud
+      on this page.)
+      </p>
+
+      <p>For example, the stem of <tt>running</tt> is <tt>run</tt>
+      but the stem of <tt>runner</tt> is <tt>runner</tt>. So
+      stemming is not always equivalent to appending a wildcard
+      <tt>*</tt> to all your query terms.</p>
+
+      <p><strong>Be advised:</strong> if you use a <a href="#Wildcards">wildcard</a> in your
+      search, it may not match the way you expect. The query will
+      be stemmed first, then the wildcard applied. For example, a
+      query for <tt>runn*</tt> will not match <tt>running</tt>
+      because the stem of <tt>running</tt> is <tt>run</tt>.</p>
+    </div>
+
+    <div>
+     <h2 id="RelevanceRanking">Relevance ranking</h2>
+
+     <p>
+     When you perform a search, your results are displayed by default in order of relevance.
+     The relevance is calculated based on the length of the content in the source record
+     (for example, the number and length of responses) and the frequency of your search terms
+     when compared against all other source records. The relevance ranking is not an exact
+     science, and we expect to refine it over time as we get your feedback.
+     </p>
+     
+     <p>
+     You can change the order in which your results are sorted by selecting from the Sort menu 
+     at the bottom of your results.  You can sort alphabetically, by recent activity or responses, 
+     and by the sources' respective levels of participation.
+     </p>
+
+    </div>
+    
+    <div id="FAQ">
+      <h2>FAQ</h2>
+      
+      <dl class="faq">
+       <dt>
+       Q: Why can't I search on something that just imported into AIR?
+       </dt>
+       <dd>
+       A: There is typically a 5-minute delay between changes in AIR and search results.  
+       </dd>
+       
+       
+      </dl>
+      
+    </div>
+
+  </div>
+
+ </body>
+
+</html>
+    

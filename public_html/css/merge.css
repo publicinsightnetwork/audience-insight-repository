@@ -1,0 +1,83 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful, 
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License 
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* merge sources window style */
+.air2-merge {
+    color: #777;
+    font-size: 13px;
+}
+.air2-merge table.source-data {
+    width: 100%;
+    padding: 10px;
+}
+.air2-merge .source-data td {
+    padding: 5px 10px;
+    border-bottom: 1px dotted #ddd;
+}
+
+/* header */
+.air2-merge .header {
+    color: #999;
+    font-size: 11px;
+    text-transform: uppercase;
+    padding: 5px 10px;
+}
+.air2-merge .section-header {
+    font-weight: bold;
+    color: #777;
+}
+.air2-merge .section-header td {
+    padding-top: 20px;
+}
+
+/* row styling */
+.air2-merge .source-data .conflict {
+    background-color: #ffffc6;
+    color: #333;
+}
+.air2-merge .source-data .choice {
+    border: 2px solid green;
+}
+.air2-merge .source-data .lighter {
+    color: #bbb;
+}
+
+/* fatal error message */
+.air2-merge .fatal-error {
+    margin: 30px auto;
+    position: relative;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    font-color: #999;
+}
+
+/* fix "swap" button */
+.air2-merge .air2-btn button.air2-icon-retry {
+    padding-left: 21px;
+}
+
+/* footer */
+.air2-merge .submit-status {
+    height: 16px;
+    font-size: 12px;
+}

@@ -1,0 +1,270 @@
+State:
+  State_1:
+    state_id: 1
+    state_name: Alberta
+    state_code: AB
+  State_2:
+    state_id: 2
+    state_name: Alaska
+    state_code: AK
+  State_3:
+    state_id: 3
+    state_name: Alabama
+    state_code: AL
+  State_4:
+    state_id: 4
+    state_name: Arkansas
+    state_code: AR
+  State_5:
+    state_id: 5
+    state_name: Arizona
+    state_code: AZ
+  State_6:
+    state_id: 6
+    state_name: British Columbia
+    state_code: BC
+  State_7:
+    state_id: 7
+    state_name: California
+    state_code: CA
+  State_8:
+    state_id: 8
+    state_name: Colorado
+    state_code: CO
+  State_9:
+    state_id: 9
+    state_name: Connecticut
+    state_code: CT
+  State_10:
+    state_id: 10
+    state_name: District Of Columbia
+    state_code: DC
+  State_11:
+    state_id: 11
+    state_name: Delaware
+    state_code: DE
+  State_12:
+    state_id: 12
+    state_name: Florida
+    state_code: FL
+  State_13:
+    state_id: 13
+    state_name: Georgia
+    state_code: GA
+  State_14:
+    state_id: 14
+    state_name: Hawaii
+    state_code: HI
+  State_15:
+    state_id: 15
+    state_name: Iowa
+    state_code: IA
+  State_16:
+    state_id: 16
+    state_name: Idaho
+    state_code: ID
+  State_17:
+    state_id: 17
+    state_name: Illinois
+    state_code: IL
+  State_18:
+    state_id: 18
+    state_name: Indiana
+    state_code: IN
+  State_19:
+    state_id: 19
+    state_name: Kansas
+    state_code: KS
+  State_20:
+    state_id: 20
+    state_name: Kentucky
+    state_code: KY
+  State_21:
+    state_id: 21
+    state_name: Louisiana
+    state_code: LA
+  State_22:
+    state_id: 22
+    state_name: Massachusetts
+    state_code: MA
+  State_23:
+    state_id: 23
+    state_name: Manitoba
+    state_code: MB
+  State_24:
+    state_id: 24
+    state_name: Maryland
+    state_code: MD
+  State_25:
+    state_id: 25
+    state_name: Maine
+    state_code: ME
+  State_26:
+    state_id: 26
+    state_name: Michigan
+    state_code: MI
+  State_27:
+    state_id: 27
+    state_name: Minnesota
+    state_code: MN
+  State_28:
+    state_id: 28
+    state_name: Missouri
+    state_code: MO
+  State_29:
+    state_id: 29
+    state_name: Mississippi
+    state_code: MS
+  State_30:
+    state_id: 30
+    state_name: Montana
+    state_code: MT
+  State_31:
+    state_id: 31
+    state_name: N/A
+    state_code: NA
+  State_32:
+    state_id: 32
+    state_name: New Brunswick
+    state_code: NB
+  State_33:
+    state_id: 33
+    state_name: North Carolina
+    state_code: NC
+  State_34:
+    state_id: 34
+    state_name: North Dakota
+    state_code: ND
+  State_35:
+    state_id: 35
+    state_name: Nebraska
+    state_code: NE
+  State_36:
+    state_id: 36
+    state_name: Newfoundland &amp Labrador
+    state_code: NF
+  State_37:
+    state_id: 37
+    state_name: New Hampshire
+    state_code: NH
+  State_38:
+    state_id: 38
+    state_name: New Jersey
+    state_code: NJ
+  State_39:
+    state_id: 39
+    state_name: New Mexico
+    state_code: NM
+  State_40:
+    state_id: 40
+    state_name: Nova Scotia
+    state_code: NS
+  State_41:
+    state_id: 41
+    state_name: Northwest Territories
+    state_code: NT
+  State_42:
+    state_id: 42
+    state_name: Nunavut
+    state_code: NU
+  State_43:
+    state_id: 43
+    state_name: Nevada
+    state_code: NV
+  State_44:
+    state_id: 44
+    state_name: New York
+    state_code: NY
+  State_45:
+    state_id: 45
+    state_name: Ohio
+    state_code: OH
+  State_46:
+    state_id: 46
+    state_name: Oklahoma
+    state_code: OK
+  State_47:
+    state_id: 47
+    state_name: Ontario
+    state_code: ON
+  State_48:
+    state_id: 48
+    state_name: Oregon
+    state_code: OR
+  State_49:
+    state_id: 49
+    state_name: Pennsylvania
+    state_code: PA
+  State_50:
+    state_id: 50
+    state_name: Prince Edward Island
+    state_code: PE
+  State_51:
+    state_id: 51
+    state_name: Quebec
+    state_code: QC
+  State_52:
+    state_id: 52
+    state_name: Rhode Island
+    state_code: RI
+  State_53:
+    state_id: 53
+    state_name: South Carolina
+    state_code: SC
+  State_54:
+    state_id: 54
+    state_name: South Dakota
+    state_code: SD
+  State_55:
+    state_id: 55
+    state_name: Saskatchewan
+    state_code: SK
+  State_56:
+    state_id: 56
+    state_name: Tennessee
+    state_code: TN
+  State_57:
+    state_id: 57
+    state_name: Texas
+    state_code: TX
+  State_58:
+    state_id: 58
+    state_name: Utah
+    state_code: UT
+  State_59:
+    state_id: 59
+    state_name: Virginia
+    state_code: VA
+  State_60:
+    state_id: 60
+    state_name: Vermont
+    state_code: VT
+  State_61:
+    state_id: 61
+    state_name: Washington
+    state_code: WA
+  State_62:
+    state_id: 62
+    state_name: Wisconsin
+    state_code: WI
+  State_63:
+    state_id: 63
+    state_name: West Virginia
+    state_code: WV
+  State_64:
+    state_id: 64
+    state_name: Wyoming
+    state_code: WY
+  State_65:
+    state_id: 65
+    state_name: Yukon
+    state_code: YT
+  State_66:
+    state_id: 66
+    state_name: Virgin Islands
+    state_code: VI
+  State_67:
+    state_id: 67
+    state_name: Puerto Rico
+    state_code: PR
+

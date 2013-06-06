@@ -1,0 +1,142 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Data::Dump qw( dump );
+use Getopt::Long;
+use Pod::Usage;
+use Rose::DateTime::Parser;
+use AIR2::Source;
+use Email::Stuff;
+use Text::CSV_XS;
+use File::Slurp;
+
+=pod
+
+=head1 NAME
+
+first-activities
+
+=head1 SYNOPSIS
+
+ first-activities [options]
+    --help
+    --debug
+    --start=s
+    --end=s
+    --format=[file|email]
+    --mailto=s
+    --filename=s
+
+=head1 DESCRIPTION
+
+Prints the first activities of sources created in a date range.  For now,
+only outputs CSV.  Choose between the CSV being written to a file or
+emailed to someone.
+
+=cut
+
+my ( $help, $debug, $start, $end, $format, $mailto, $filename );
+
+# defaults
+$start    = '2012-01-01';
+$end      = '2012-04-01';
+$format   = 'file';
+$filename = 'first-activities.csv';
+
+GetOptions(
+    'help'       => \$help,
+    'debug'      => \$debug,
+    'start=s'    => \$start,
+    'end=s'      => \$end,
+    'format=s'   => \$format,
+    'mailto=s'   => \$mailto,
+    'filename=s' => \$filename,
+) or pod2usage(2);
+
+if ($help) {
+    pod2usage(2);
+}
+if ($format ne 'file' && $format ne 'email') {
+    pod2usage('Invalid format specified! Valid formats are (file, email)');
+}
+if ($format eq 'email' && !$mailto) {
+    pod2usage('Must provide a valid mailto for format=email');
+}
+
+# validate dates
+my $date_parser = Rose::DateTime::Parser->new();
+my $start_dt = $date_parser->parse_date($start) or die "Bad date: $start";
+my $end_dt = $date_parser->parse_date($end) or die "Bad date: $end";
+die "Bad date range: $start to $end" unless ($start_dt < $end_dt);
+
+# parse to mysql format
+my $start_str = DateTime::Format::MySQL->format_datetime($start_dt);
+my $end_str = DateTime::Format::MySQL->format_datetime($end_dt);
+
+# build raw-sql query
+my $first_act  = "select sact_id from src_activity where sact_src_id=a.src_id order by sact_cre_dtim, "
+               . "sact_dtim, sact_id limit 1";
+my $date_limit = "where a.src_cre_dtim > '$start_str' and a.src_cre_dtim <= '$end_str'";
+my $since      = "select a.src_id as first_src_id, ($first_act) as first_sact_id from source a $date_limit";
+my $from       = "($since) b join source on (first_src_id=src_id) join src_activity on (first_sact_id=sact_id) "
+               . "join activity_master on (sact_actm_id=actm_id)";
+my $sel        = "src_uuid, src_username, src_cre_dtim, actm_name, sact_desc, sact_notes, sact_cre_dtim, sact_dtim";
+
+# execute
+my $dbh = AIR2::DBManager->new->retain_dbh();
+my $sth = $dbh->prepare( "select $sel from $from" );
+$sth->execute();
+
+# csv printer
+my $fh;
+my $str = '';
+my $csv = Text::CSV_XS->new( { binary => 1, eol => $/ } )
+    or die "Cannot use CSV: " . Text::CSV_XS->error_diag();
+if ($format eq 'file') {
+    open $fh, ">$filename" or die $!;
+}
+elsif ($format eq 'email') {
+    open $fh, '>', \$str or die $!;
+}
+
+# print it!
+my $headers = $sth->{NAME};
+$csv->print($fh, $headers);
+while (my $row = $sth->fetchrow_arrayref) {
+   $csv->print($fh, $row);
+}
+close $fh or die $!;
+
+# email output
+if ($format eq 'email') {
+    Email::Stuff->to($mailto)
+        ->from('support@publicinsightnetwork.org')
+        ->subject("AIR Monthly Report - How Sources Join")
+        ->text_body( "See attachment for new sources from $start to $end" )
+        ->attach($str, filename => $filename)
+        ->send();
+}

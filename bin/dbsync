@@ -1,0 +1,31 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use AIR2::Config;
+use IPC::Cmd ();
+use Email::Stuff;
+
+sub notify {
+    my $buf = shift;
+    Email::Stuff->to('pkarman@mpr.org,rcavis@mpr.org')->from('pijdev@mpr.org')
+        ->subject("AIR2 dbconv error")->text_body( join( "", @$buf ) )->send;
+
+}
+
+my $root = AIR2::Config::get_app_root();
+my $perl = $^X;
+my $sync = $root->file('lib/dbconv/sync_data.pl');
+my $cmd  = "$perl $sync";
+
+my ( $success, $error_code, $full_buf, $stdout_buf, $stderr_buf )
+    = IPC::Cmd::run( command => $cmd, verbose => 0 );
+
+if ( !$success ) {
+    notify($full_buf);
+}
+else {
+    print @$full_buf;
+}
+

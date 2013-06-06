@@ -1,0 +1,120 @@
+#!/usr/bin/env php
+<?php
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+require_once realpath(dirname(__FILE__).'/../app/init.php');
+require_once 'AIR2_DBManager.php';
+
+/**
+ * Reload database from a mysql dump file.  Uses the command:
+ *     gunzip < file.sql.gz | mysql -u $usr -p $pw -h $hostname $dbname
+ *
+ * Usage:
+ *     load-db-from-backup [PATH_TO_FILE.SQL.GZ]
+ *
+ * If you don't provide a path to a sql backup file, this script will attempt
+ * to find/load /home/pijuser/air2/air2.sql.gz
+ *
+ * This script will be EXTREMELY slow if the database isn't on localhost, so
+ * expect to be warned about that.
+ *
+ * When executing in a production environment, you'll also be warned about the
+ * consequences of your actions.
+ *
+ */
+
+// process arguments
+$file = '/home/pijuser/air2/air2.sql.gz';
+if ($argc == 2) {
+    $file = $argv[1];
+}
+if (!is_readable($file)) {
+    error_log(" > Unable to read backup file $file");
+    exit(1);
+}
+if (!preg_match('/\.sql\.gz$/i', $file)) {
+    error_log(" > Invalid file $file - should be .sql.gz");
+    exit(2);
+}
+
+// check connection
+try {
+    AIR2_DBManager::init();
+}
+catch (Doctrine_Connection_Exception $e) {
+    $msg = ' > Unable to connect to database using profile ' . AIR2_PROFILE;
+    $msg .= ' - check your database settings in etc/profiles.ini';
+    error_log($msg);
+    exit(3);
+}
+
+// get connection
+$conn = AIR2_DBManager::get_master_connection();
+$master = AIR2_DBManager::$master;
+$system = $master['hostname'].'::'.$master['dbname'];
+
+// double check dropping a prod database
+if (AIR2_ENVIRONMENT == 'prod') {
+    echo " > you are about to reload $system in a PRODUCTION environment!\n";
+    echo " > are you sure you want to do that? (y/n)\n > ";
+    $answer = trim(strtolower(fgets(STDIN)));
+    if ($answer != 'y' && $answer != 'yes') {
+        echo " > no changes made!\n";
+        exit(0);
+    }
+}
+
+// double check loading on a non-localhost database
+if ($master['hostname'] != 'localhost') {
+    echo " > you are attempting to reload a NON-local database $system - " .
+        "this may be excruciatingly slow!\n";
+    echo " > are you sure you want to continue? (y/n)\n > ";
+    $answer = trim(strtolower(fgets(STDIN)));
+    if ($answer != 'y' && $answer != 'yes') {
+        echo " > no changes made!\n";
+        exit(0);
+    }
+}
+
+// run the command
+echo " > running reload command (this may take awhile, so go get a drink) ...\n";
+
+$usr  = escapeshellarg($master['username']);
+$pwd  = escapeshellarg($master['password']);
+$host = escapeshellarg($master['hostname']);
+$db   = escapeshellarg($master['dbname']);
+$preimport = APPPATH.'../etc/sql/preimport.sql.gz';
+$postimport = APPPATH.'../etc/sql/postimport.sql.gz';
+$cmd  = "zcat $preimport $file $postimport 2>&1 | mysql -u$usr -p$pwd -h$host $db 2>&1";
+
+$resp_code;
+$output = array();
+exec($cmd, $output, $resp_code);
+
+if ($resp_code == 0) {
+    echo " > Completed successfully!\n";
+}
+else {
+    error_log(" > Fatal error reloading $system - $cmd");
+    error_log(" > Status $resp_code - " . implode(' / ', $output));
+    exit(4);
+}

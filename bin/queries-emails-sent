@@ -1,0 +1,233 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Rose::DB::Object::Manager;
+use Carp;
+use Data::Dump qw( dump );
+use Getopt::Long;
+use Pod::Usage;
+use Rose::DateTime::Parser;
+use AIR2::Source;
+use AIR2::SrcStat;
+use Data::Dumper;
+use File::Slurp;
+
+my ( $help, $debug, $start, $end, $cached );
+my $date_parser = Rose::DateTime::Parser->new();
+
+# default date ranges
+$start = '2011-03-01';
+$end   = '2011-04-01';
+
+GetOptions(
+    help      => \$help,
+    debug     => \$debug,
+    'start=s' => \$start,
+    'end=s'   => \$end,
+    'cached'  => \$cached,
+) or pod2usage(2);
+
+if ($help) {
+    pod2usage(2);
+}
+
+my @cats      = ( 'Total_Published_Queries', 'Total_Emails_Sent', 'Total_Responses', 'Average_Emails_Sent_Per_Query', 'Average_Responses_Per_Query' );
+my $this_year = (localtime)[5] + 1900;
+
+sub get_year_range {
+    my $y = shift;
+    if ( $y =~ m/^\d\d\d\d$/ and $y < $this_year and $y > 1890 ) {
+        my $base = $y;
+        $base =~ s/\d$//;
+        return "${base}0-${base}9";
+    }
+}
+
+sub get_total_emails {
+    my ($start, $end, $org_id) = @_;
+    my $emails;
+    if($org_id eq ''){
+        $emails = Rose::DB::Object::Manager->get_objects_count(
+            query => [
+                si_cre_dtim => { ge => $start, },
+                si_cre_dtim => { le => $end, },
+            ],
+            object_class => "AIR2::SrcInquiry",
+        );
+    } else {
+        $emails = Rose::DB::Object::Manager->get_objects_count(
+            query => [
+                si_cre_dtim => { ge => $start, },
+                si_cre_dtim => { le => $end, },
+                iorg_org_id => { eq => $org_id},
+            ],
+            require_objects => [
+                'inquiry.inquiry_orgs',
+            ],
+            object_class => "AIR2::SrcInquiry",
+        );
+    }
+
+    return $emails;
+}
+
+sub get_total_responses {
+    my ($start, $end, $org_id) = @_;
+    my $responses;
+    if($org_id eq ''){
+        $responses = Rose::DB::Object::Manager->get_objects_count(
+            query => [
+                srs_cre_dtim => { ge => $start, },
+                srs_cre_dtim => { le => $end, },
+            ],
+            object_class => "AIR2::SrcResponseSet",
+        );
+    } else {
+        $responses = Rose::DB::Object::Manager->get_objects_count(
+            query => [
+                srs_cre_dtim => { ge => $start, },
+                srs_cre_dtim => { le => $end, },
+                iorg_org_id => { eq => $org_id},
+            ],
+            require_objects => [
+                'inquiry.inquiry_orgs',
+            ],
+            object_class => "AIR2::SrcResponseSet",
+        );
+    }
+   
+    return $responses;
+}
+
+sub get_total_inquiries {
+    my ($start, $end, $org_id) = @_;
+    my $inquiries;
+    if($org_id eq ''){
+        $inquiries = Rose::DB::Object::Manager->get_objects_count(
+            query => [
+                inq_publish_dtim => { ge => $start, },
+                inq_publish_dtim => { le => $end, },
+            ],
+            object_class => "AIR2::Inquiry",
+        );
+    } else {
+        $inquiries = Rose::DB::Object::Manager->get_objects_count(
+            query => [
+                inq_publish_dtim => { ge => $start, },
+                inq_publish_dtim => { le => $end, },
+                iorg_org_id => { eq => $org_id},
+            ],
+            require_objects => [
+                'inquiry_orgs.inquiry'
+            ],
+            object_class => "AIR2::Inquiry",
+        );
+    }
+
+    return $inquiries;
+}
+
+sub get_organizations {
+    my ($start, $end) = @_;
+    my %org_report;
+    my $organizationsQuery = Rose::DB::Object::Manager->get_objects(
+        select => ['org_id', 'org_display_name'],
+        query => [
+            org_status => {eq => 'A'},
+        ],
+        object_class => "AIR2::Organization",
+    );
+    
+    foreach(@{$organizationsQuery}){
+        my $org_name = $_->{'org_display_name'};
+        my $org_id = $_->{'org_id'};
+        my $total = get_total_inquiries($start, $end, $org_id);
+        my $emails = get_total_emails($start, $end, $org_id);
+        my $responses = get_total_responses($start, $end, $org_id);
+        my $averageEmails =  0;
+        my $averageResponses = 0;
+        if ($total != 0){
+            $averageEmails = $emails/$total;
+            $averageResponses = $responses/$total;
+        }
+        $org_report{$org_name}->{Total_Published_Queries} = $total;
+        $org_report{$org_name}->{Total_Emails_Sent} = $emails;
+        $org_report{$org_name}->{Total_Responses} = $responses;
+        $org_report{$org_name}->{Average_Emails_Sent_Per_Query} = $averageEmails;
+        $org_report{$org_name}->{Average_Responses_Per_Query} = $averageResponses;
+    }
+
+    return %org_report;
+}
+
+sub build_reports {
+    my %report;
+    my %org_report;
+    my $start_dt = $date_parser->parse_date($start) or die "Bad date: $start";
+    my $end_dt = $date_parser->parse_date($end) or die "Bad date: $end";
+
+    my $totalEmails = get_total_emails($start_dt, $end_dt, '');
+    my $totalResponses = get_total_responses($start_dt, $end_dt, '');
+    my $totalInquiries = get_total_inquiries($start_dt, $end_dt, '');
+
+    %org_report = get_organizations($start_dt, $end_dt);
+
+    $report{Total_Published_Queries} = $totalInquiries;
+    $report{Total_Emails_Sent} = $totalEmails;
+    $report{Total_Responses} = $totalResponses;
+    $report{Average_Emails_Sent_Per_Query} = $totalEmails/$totalInquiries;
+    $report{Average_Responses_Per_Query} = $totalResponses/$totalInquiries;
+
+    return ( \%report, \%org_report );
+}
+
+sub render_reports{
+    my ( $report, $org_report ) = build_reports();
+
+    print '=' x 75, $/;
+    print "AIR Totals Report \n";
+    print "$start - $end\n";
+    print '=' x 75, $/;
+
+    for my $ft (@cats) {
+        my $value    = $report->{$ft};    
+        printf( " %40s : %.0f \n", $ft , $value);
+    }
+
+    print '=' x 75, $/;
+    print "Totals By Organization\n";
+
+    for my $org_name ( sort keys %$org_report ) {
+        print '-' x 75, $/;
+        printf " %s \n", $org_name;
+        for my $ft (@cats) {
+            my $value    = $org_report->{$org_name}->{$ft};    
+            printf( " %40s : %.0f\n", $ft , $value);
+        }
+    }
+
+}
+render_reports();

@@ -1,0 +1,317 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/**************
+ * Header
+ *************/
+#air2-headerwrap {
+    width: 100%;
+    position: fixed; /* LOCK at top */
+    z-index: 50;
+}
+#air2-headerwrap .background {
+    background: #333;
+    overflow: hidden;
+}
+#air2-headerwrap .bevel {
+    background: transparent url(img/air-header-grad.png) repeat-x;
+    height: 5px;
+}
+#air2-header {
+    color: #666;
+    font-size: 11px;
+    padding: 8px 0;
+}
+#air2-header .logo {
+    padding: 0 0 0 7px;
+
+}
+#air2-header .tools {
+    float: right;
+    width: 775px;
+}
+
+/* Search textbox */
+#air2-header .tools .search {
+    float: left;
+    padding: 3px;
+}
+#air2-header .tools .search .text-input {
+    padding: 5px;
+    border: 0 none;
+    height: 14px;
+    margin: 0;
+    width: 200px;
+    float: left;
+    font-size: 95%;
+}
+
+/* search tools */
+#air2-header .search .air2-btn {
+    float: left;
+}
+#air2-header .search .air2-btn button {
+    font-weight: normal;
+    margin: 0;
+    padding: 0 7px;
+    height: 25px;
+    border-radius: 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+}
+#air2-header .search .search-type button {
+    padding: 0px;
+}
+#air2-header .search .search-norm button {
+    border-left: 1px solid #8BB2FE;
+    border-right: 1px solid #8BB2FE;
+}
+#air2-header .search .search-adv button {
+    color: #bbb;
+    background-color: #555;
+    border-bottom-color: #444;
+    border-top-color: #666;
+    opacity: 1;
+    -webkit-border-top-right-radius: 2px;
+    -moz-border-radius-topright: 2px;
+    border-top-right-radius: 2px;
+    -webkit-border-bottom-right-radius: 2px;
+    -moz-border-radius-bottomright: 2px;
+    border-bottom-right-radius: 2px;
+}
+#air2-header .search .search-adv.x-btn-over button, #air2-header .search .search-adv.x-btn-focus button {
+    background-color: #777;
+    color: #fff;
+}
+
+/* recent links */
+#air2-header .recent-stuff {
+    float: left;
+    padding: 3px 0 7px 40px;
+}
+#air2-header .recent-stuff .air2-btn {
+    float: left;
+}
+#air2-header .recent-stuff .air2-btn button {
+    margin: 0 1px 0 0;
+    padding: 0;
+    height: 25px;
+    width: 35px;
+    border-radius: 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+}
+#air2-header .recent-stuff .air2-btn button {
+    opacity: 1;
+}
+#air2-header .recent-stuff .air2-btn.x-btn-over button {
+    background-color: #666;
+}
+#air2-header .recent-stuff .air2-btn.x-btn-menu-active button {
+    background-color: #efefef;
+}
+
+/* current user account tools */
+#air2-header .account {
+    float: right;
+    padding: 3px;
+}
+#air2-header .account .name {
+    float: left;
+    height: 25px;
+    background: #555;
+    padding: 0 8px;
+    -webkit-border-top-left-radius: 2px;
+    -moz-border-radius-topleft: 2px;
+    border-top-left-radius: 2px;
+    -webkit-border-bottom-left-radius: 2px;
+    -moz-border-radius-bottomleft: 2px;
+    border-bottom-left-radius: 2px;
+    width: 95px;
+}
+#air2-header .account .name a {
+    color: #fff;
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: normal;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+#air2-header .account .air2-btn {
+    float: left;
+}
+#air2-header .account .air2-btn button {
+    background-color: #666;
+    opacity: 1;
+    margin: 0;
+    padding: 0;
+    height: 25px;
+    border-radius: 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    -webkit-border-top-right-radius: 2px;
+    -moz-border-radius-topright: 2px;
+    border-top-right-radius: 2px;
+    -webkit-border-bottom-right-radius: 2px;
+    -moz-border-radius-bottomright: 2px;
+    border-bottom-right-radius: 2px;
+}
+#air2-header .account .air2-btn.x-btn-over button {
+    background-color: #777;
+}
+#air2-header .account .air2-btn.x-btn-menu-active button {
+    background-color: #efefef;
+    opacity: 1;
+}
+
+/* header floating-menu style */
+.air2-header-menu .x-menu-item {
+    padding: 3px 10px 3px 7px;
+}
+.air2-header-menu.use-icons .x-menu-item {
+    padding-left: 24px;
+}
+.air2-header-menu a.x-menu-item:hover {
+    text-decoration: underline !important;
+}
+#air2-header .search .x-btn-over button, #air2-header .search .x-btn-focus button {
+    background-color: #2EB4F3;
+}
+#air2-header .search .x-btn-menu-active button {
+    background-color: #2EB4F3;
+    border-color: transparent;
+}
+.air2-header-menu.search {
+    background-color: #2EB4F3;
+}
+.air2-header-menu.search .x-menu-item {
+    padding: 3px 3px 3px 25px;
+    color: #fff !important;
+}
+.air2-header-menu.search .x-menu-item:hover {
+    text-decoration: none !important;
+}
+.air2-header-menu.search .x-menu-list-item {
+    border-bottom: 1px solid #8BB2FE;
+    border-top: 0px none;
+}
+.air2-header-menu.search .x-menu-item-active {
+    background-color: #46bdfe;
+    border-color: #46bdfe;
+    padding: 1px;
+}
+.air2-header-menu.search .x-menu-item-checked {
+    background-color: #aaccf6;
+    border-color: #aaccf6;
+}
+/* fix search search icons */
+#air2-header .search .air2-icon-activesources, .air2-header-menu.search .air2-icon-activesources {
+    background-image: url(img/icons/user-silhouette.png) !important;
+}
+#air2-header .search .air2-icon-sources, .air2-header-menu.search .air2-icon-sources {
+    background-image: url(img/icons/user-silhouette-two.png) !important;
+}
+
+
+/**************
+ *  locationbar style
+ *************/
+#air2-location-wrap {
+    padding: 10px 0;
+}
+.air2-location {
+    color: #999;
+    background: #f9f9f9 url(img/back-header.jpg) repeat-x top;
+    font-size: 13px;
+    text-shadow: 0 1px 0 #fff;
+    border: 1px solid #d6d6d6;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+}
+.air2-location td { }
+
+.air2-location a, .air2-location a:visited {
+    color: #666;
+    text-shadow: 0 1px 0 #fff;
+    text-decoration: none;
+}
+.air2-location .loc-type {
+    padding: 1px 7px 1px 3px;
+}
+.air2-location .loc-icon {
+    padding-left: 25px;
+    background: no-repeat 5px 50%;
+}
+.air2-location .loc-arrow.has-title {
+    background-color: #444;
+}
+.air2-location .loc-title {
+    display: none;
+    padding: 4px 7px 5px 6px;
+    font-weight: bold;
+    font-size: 12px;
+    text-shadow: 0 1px 0 #fff;
+    color: #666;
+}
+
+@-moz-document url-prefix() {
+    .air2-location .loc-title {
+        padding: 6px 7px 5px 6px;
+    }
+}
+
+.air2-location .loc-title:before {
+    content: "›";
+    color: #ccc;
+    padding: 0 5px 0 0;
+    margin-left: -8px;
+    font-weight: normal;
+}
+.air2-location .loc-title a:hover {
+    color: #444;
+}
+
+
+/**************
+ * Content
+ *************/
+#air2-contentwrap {
+    padding-top: 50px; /* for fixed header */
+}
+
+
+/**************
+ * Footer
+ *************/
+#air2-footer {
+    clear: both;
+    padding: 30px 20px;
+    width: 1060px;
+    color: #999;
+    text-shadow: 0 1px 0 #fff;
+}
+#air2-footer a, #air2-footer a:visited {
+    color: #666;
+}

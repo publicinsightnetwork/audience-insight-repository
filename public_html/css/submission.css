@@ -1,0 +1,326 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* submission responses panel */
+ol.response-list {
+    padding: 6px 6px 0 25px;
+}
+ol.response-list li.subm-response {
+    list-style: decimal outside none;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+}
+.subm-response .question {
+    color: #666;
+    font-size: 13px;
+    margin: 10px 0;
+}
+.subm-response .response {
+    font-size: 13px;
+}
+.subm-response .response {
+    margin-bottom: 11px;
+}
+.subm-response .selections {
+    margin: 4px 0px 6px 15px;
+}
+.subm-response .selections li {
+    padding: 3px 0 3px;
+}
+.subm-response .annotation {
+    float: left;
+    position:relative;
+}
+
+.subm-response select.selections {
+    margin-left: 0px;
+    margin-bottom: 4px;
+}
+
+.subm-response .annotation .annot-count {
+    padding: 5px 7px 5px 24px;
+    color: #999;
+    background: #f3f3f3 url(img/icons/balloon-left.png) no-repeat 5px 50%;
+    border: 1px solid #ddd;
+    text-shadow: 0 1px 0 #fff;
+    font-size: 12px;
+    cursor: pointer;
+}
+.subm-response .annotation .annot-count:hover {
+    background-color: #f4f4f4;
+    color: #777;
+    border-color: #ccc;
+}
+
+/* mini (inline) response annotations */
+.subm-response .annot-mini-tbl {
+    padding: 6px 0 0 14px;
+    border-spacing: 0px 5px;
+}
+.subm-response .annot-mini-tbl td {
+    vertical-align: top;
+}
+.subm-response .annot-mini-tbl td.row-ops {
+    vertical-align: middle;
+}
+.subm-response .annot-mini-tbl td.row-ops .row-controls {
+    z-index: 5;
+}
+.subm-response .annot-mini-tbl td:first-child {
+    width: 1px;
+}
+.subm-response .annot-mini-tbl .who {
+    background: #eee url(img/icons/comment-arrow.png) no-repeat right center;
+    border-bottom: 1px solid #ccc;
+    border-right: 0px none;
+    width: 136px;
+    min-height: 30px;
+    padding: 5px;
+}
+.subm-response .annot-mini-tbl .who .room {
+    margin-top: 4px;
+}
+.subm-response .annot-mini-tbl .text {
+    vertical-align: top;
+    padding: 5px;
+    min-height: 80px;
+}
+.subm-response .annot-mini-tbl .meta {
+    border-top: 1px dotted #ddd;
+    color: #999;
+    font-size: 10px;
+    padding-top: 2px;
+    margin-top: 10px;
+    text-transform: uppercase;
+}
+.subm-response .annot-mini-tbl .addwho {
+    font-size: 11px;
+    font-weight: bold;
+    height: 30px;
+}
+.subm-response .annot-mini-tbl .addarea {
+    padding: 0 5px;
+}
+
+/* source panel */
+.subm-source .meta {
+    margin-left: 20px;
+}
+.subm-source .meta li {
+    border-bottom: 0px none;
+    list-style: disc outside none;
+    font-size: 13px;
+    padding: 2px 0;
+}
+.subm-source .meta li.profile {
+    list-style: none;
+}
+
+/* submission inquiry summary */
+.subm-summary-inq {
+    margin: 4px 0 10px 23px;
+}
+
+/* header submissions count */
+.air2-submission-response .header-title {
+    max-width: 475px;
+}
+.air2-submission-response .count-box {
+    background: #ccc;
+    color: #fff !important;
+    padding: 3px 5px;
+    text-shadow: 0 1px 0 #999;
+    margin-right: 5px;
+    font-size: 13px;
+}
+.air2-submission-response .count-box a {
+    color: #fff;
+}
+.air2-submission-response .count-box:hover {
+    background: #bbb;
+}
+
+/* button row */
+.modify-response {
+    float:left;
+    display: inline-block;
+    height: auto;
+    padding-left: 4px;
+    padding-bottom: 4px;
+    position: relative;
+}
+
+.modify-response .air2-btn {
+    float:left;
+    padding-right: 15px;
+}
+
+.modify-response .air2-btn .air2-icon-check:hover {
+    background-image: url(img/icons/prohibition.png) !important;
+}
+
+.modify-response .air2-btn .air2-icon-prohibited:hover {
+    background-image: url(img/icons/tick.png) !important;
+}
+
+.spin-icon {
+    float:left;
+    width:15px;
+    position:relative;
+}
+
+/* ==========================================================
+ * overlap with reader
+ * ========================================================== */
+
+.sub-meta {
+    margin: 25px 0 5px -7px;
+    padding: 9px 20px 7px 11px;
+    color: #777;
+    background: #f9f9f9;
+    text-shadow: 0 1px 0 #fff;
+    border: 1px solid #e6e6e6;
+    border-left: 0;
+    display: inline-block;
+    -webkit-border-top-right-radius: 2px;
+    -webkit-border-bottom-right-radius: 2px;
+    -moz-border-radius-topright: 2px;
+    -moz-border-radius-bottomright: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
+.sub-meta li { padding: 2px 0 2px 0; margin-left: 20px; list-style: none; }
+.sub-meta a { font-weight: bold; text-align: center; }
+.sub-meta span { color: #ddd; }
+
+h4 { margin: 30px 0 0 0; padding: 0; }
+.highlight { background: #f7f89e; color: #444; padding: 1px 5px; }
+p { margin: .5em 0 .8em; }
+span.hidden { visibility: hidden; }
+
+.last-mod { color: #999; border-top: 1px solid #eee; padding-top: 7px; }
+
+.annotate a { padding: 0 0 0 20px; background: url(img/icons/balloon-left.png) no-repeat; font-weight: bold; font-size: 12px; }
+.annotate a .norm { font-weight: normal; color: #ddd; }
+.annotate a .sran-count.norm { font-weight: bold; color: #999; }
+.annotate a.rollover { visibility: hidden; }
+.annotate a.excluded { background:none; font-weight:bold; color:#C00; }
+.annotate a.included { background:none; font-weight:bold; color:#090; }
+.annotate a.hidden { visibility: hidden; }
+.annotate a.edit { background:none; font-weight:bold; color:#999; }
+.annotate a.orig { background:none; font-weight:bold; color:#999; }
+.annotate .spinner { padding: 0 0 3px 10px; vertical-align: middle; visibility: hidden; }
+/*.anns-row { display: none; }*/
+.anns:first-child { margin-top: 10px; }
+.anns { padding: 10px; }
+.stuff:hover .annotate .rollover {visibility: visible;}
+.ann-author {
+    float: left;
+    margin-left: -61px;
+    margin-top: 5px;
+    background: #eee;
+    padding: 5px;
+    -webkit-border-radius: 100px;
+    -moz-border-radius: 100px;
+    border-radius: 100px;
+}
+.ann-author .avatar {
+    width: 45px;
+    float: left;
+    -webkit-border-radius: 100px;
+    -moz-border-radius: 100px;
+    border-radius: 100px;
+}
+.ann::before {
+    content: url(img/arrow-left.png);
+    position: absolute;
+    top: 20px;
+    left: -12px;
+    z-index: -1;
+}
+.ann {
+    float: left;
+    width: 480px;
+    background: #f9f9f9;
+    border: 1px solid #e6e6e6;
+    text-shadow: 0 1px 0 #fff;
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+    margin-left: 10px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+.ann h4 { margin: 0 0 3px 0; padding: 0; }
+.ann h4 span { font-size: 12px; font-weight: normal; color: #aaa; }
+.ann-posted {
+    color: #aaa;
+    border-top: 1px solid #eee;
+    padding: 7px 0 0 7px;
+    margin: 10px -7px 0 -7px;
+    font-size: 12px;
+}
+.ann-posted button {
+    visibility: hidden;
+    font-weight: normal;
+    font-size: 12px;
+    color: #666;
+    background: #eee;
+    border: none;
+    padding: 3px 8px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+.ann button { cursor: pointer; }
+.ann:hover .ann-posted button { visibility: visible; }
+.ann-posted button:hover { color: #fff; text-shadow: none; text-decoration: none; }
+.ann-posted button.ann-edit:hover { background: #33cc00; }
+.ann-posted button.ann-delete:hover { background: #cc0000; }
+.ann-posted button.ann-save { display: none; visibility: visible; background: #33cc00; }
+.ann-posted button.ann-cancel { display: none; visibility: visible; }
+
+.edit-lock button { display: none; }
+.editing button.ann-save,
+.editing button.ann-cancel { display: inline; }
+
+.anns textarea { width: 473px; border: 1px solid #ddd; min-height: 100px; }
+.anns-row.hide { display: none; }
+.anns button.ann-post {
+    position: relative;
+    z-index: 1;
+    padding: 3px 10px;
+    background: #fff url(img/button-gray.jpg) repeat-x;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+    display: inline-block;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    -webkit-box-shadow: 0px 1px 1px rgba(50, 50, 50, 0.1);
+    -moz-box-shadow: 0px 1px 1px rgba(50, 50, 50, 0.1);
+    box-shadow: 0px 1px 1px rgba(50, 50, 50, 0.1);
+}
+.anns button.ann-post:hover { background: #f9f9f9; text-decoration: none; }
+

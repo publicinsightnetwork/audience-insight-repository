@@ -1,0 +1,61 @@
+Fact:
+  Fact_11:
+    fact_id: 1
+    fact_identifier: gender
+    fact_name: Gender
+    fact_fv_type: M
+    fact_status: A
+  Fact_12:
+    fact_id: 2
+    fact_identifier: household_income
+    fact_name: 'Household Income'
+    fact_fv_type: F
+    fact_status: A
+  Fact_13:
+    fact_id: 3
+    fact_identifier: education_level
+    fact_name: 'Education Level'
+    fact_fv_type: F
+    fact_status: A
+  Fact_14:
+    fact_id: 4
+    fact_identifier: political_affiliation
+    fact_name: 'Political Affiliation'
+    fact_fv_type: F
+    fact_status: A
+  Fact_15:
+    fact_id: 5
+    fact_identifier: ethnicity
+    fact_name: Ethnicity
+    fact_fv_type: M
+    fact_status: A
+  Fact_16:
+    fact_id: 6
+    fact_identifier: religion
+    fact_name: Religion
+    fact_fv_type: M
+    fact_status: A
+  Fact_17:
+    fact_id: 7
+    fact_identifier: birth_year
+    fact_name: 'Birth Year'
+    fact_fv_type: S
+    fact_status: A
+  Fact_18:
+    fact_id: 8
+    fact_identifier: source_website
+    fact_name: 'Source website'
+    fact_fv_type: S
+    fact_status: A
+  Fact_19:
+    fact_id: 9
+    fact_identifier: lifecycle
+    fact_name: Lifecycle
+    fact_fv_type: F
+    fact_status: A
+  Fact_20:
+    fact_id: 10
+    fact_identifier: timezone
+    fact_name: Timezone
+    fact_fv_type: S
+    fact_status: A

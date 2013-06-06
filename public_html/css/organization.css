@@ -1,0 +1,111 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful, 
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License 
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* organization info panel */
+.air2-org-info {
+    padding: 12px 10px;
+    line-height: 19px;
+}
+
+.air2-org-info h1 {
+    font-size: 16px;
+    float: left;
+    margin-bottom: 5px;
+}
+
+.air2-org-info ul {
+    clear: both;
+}
+
+.air2-org-info .primary-info img {
+    max-width: 300px;
+    max-height: 200px;
+    float: right;
+}
+
+.air2-org-info table {
+    margin: 20px 0 0 -4px;
+    border-collapse: collapse;
+}
+.air2-org-info td {
+    border-bottom: 1px solid #eee;
+    padding: 6px 4px;
+}
+
+#air2-org-info-left {
+    float: left; 
+}
+
+#air2-org-info-logo {
+    width: 150px; 
+    height: 150px; 
+    margin: 0 15px 15px 0;
+    background: #f9f9f9; 
+    border: 1px solid #eee;
+    border-radius: 2px;
+}
+
+#air2-org-info-logo img {
+    max-width: 150px;
+    border-radius: 2px;
+    box-shadow: 0px 1px 7px 1px rgba(221,221,221,1);
+    -webkit-box-shadow: 0px 1px 7px 1px rgba(221,221,221,1);
+    -moz-box-shadow: 0px 1px 7px 1px rgba(221,221,221,1);
+}
+
+#air2-org-info-profile {
+    float: left; 
+    width: 520px; 
+    margin-top: 5px;
+}
+
+#air2-org-info-profile h1 {
+    margin-right: 10px;
+}
+
+.air2-org-info .published a, .air2-org-info .published a:visited {
+    text-transform: uppercase;
+    background: #6fba0e;
+    color: #fff;
+    font-size: 10px;
+    padding: 3px 5px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    margin-right: 3px;
+}
+
+.air2-org-info .published a:hover {
+    text-decoration: none;
+}
+
+#logo-instructions {
+    margin: 5px 0 20px 80px;
+}
+
+/* organization users panel */
+.air2-org-users .user-row.inactive {
+    color: #aaa;
+}
+.air2-org-users .user-row.inactive a {
+    color: #aaa;
+}

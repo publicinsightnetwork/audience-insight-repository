@@ -1,0 +1,134 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+use Text::CSV_XS;
+use Term::ANSIColor;
+use AIR2::Config;
+use WWW::Mailchimp;
+use Class::Inspector;
+use Term::ReadLine;
+use Data::Dump qw( dump );
+
+$ENV{PERL_RL} = "Perl o=0";
+# export "PERL_RL=Perl o=0"; # Use Perl ReadLine sans ornaments
+
+my $help       = 0;
+my $write_mode = 0;
+my $csv_sql    = 0;
+GetOptions(
+    'help'  => \$help,
+) or pod2usage(2);
+pod2usage(1) if $help;
+
+=pod
+
+=head1 NAME
+
+mailchimp-client - connect to mailchimp api
+
+=head1 SYNOPSIS
+
+ mailchimp-client [opts]
+    -h --help
+
+=cut
+
+# connection
+my $API_KEY = AIR2::Config::get_constant('AIR2_MAILCHIMP_KEY');
+my $mailchimp = WWW::Mailchimp->new(apikey => $API_KEY);
+
+# banner
+my $GREEN = color("green");
+my $BLUE  = color("blue");
+my $WARN  = color("red");
+my $RESET = color("reset");
+my $msg = sprintf( "%-64s", "           key: $API_KEY" );
+
+print "$GREEN\n";
+print "##################################################################\n";
+print "#                                                                #\n";
+print "#                         MAILCHIMP API                          #\n";
+print "#$msg#\n";
+print "#                                                                #\n";
+print "##################################################################\n";
+print "\n$RESET";
+
+# check connection
+unless ( $mailchimp->ping eq "Everything's Chimpy!" ) {
+    print " > ${WARN}WOH there!${RESET} Unable to connect to the mailchimp API\n";
+    print " > Maybe check your ${WARN}mailchimp_key${RESET} in profiles.ini?\n\n";
+    exit 0;
+}
+
+# get a list of "allowed" methods
+my @allowed = qw(help exit);
+my $all_methods = Class::Inspector->methods("WWW::Mailchimp", "full", "public");
+my $all_prefixes = "campaign|chimp|ecomm|folder|list|ping|template";
+for my $name ( @$all_methods ) {
+    push(@allowed, $1) if ( $name =~ /^WWW::Mailchimp::((${all_prefixes}).*)$/ );
+}
+
+# term setup
+my $prompt_str = "${GREEN}chimp> $RESET";
+my $term       = Term::ReadLine->new;
+my $attribs    = $term->Attribs;
+$attribs->{completion_function} = sub {
+    my ($text, $line, $start) = @_;
+    return @allowed;
+};
+
+# interactive prompt
+while ( defined ($_ = $term->readline($prompt_str)) ) {
+    last if ( $_ =~ /^(q|quit|exit)$/i );
+    next unless $_;
+
+    if ( $_ eq 'help' ) {
+        print "  ${WARN}COMMANDS:${RESET}\n";
+        for my $name ( @allowed ) {
+            print "  $name\n";
+        }
+        next;
+    }
+
+    my $command = $_;
+    unless ( $command && grep { $command =~ /^$_/ } @allowed ) {
+        print "  ${WARN}Unrecognized command:${RESET} $command\n";
+        next;
+    }
+
+    # run that command!
+    my $res = eval "\$mailchimp->$command";
+    if ( $@ ) {
+        print "  ${WARN}Error:${RESET} $@\n";
+    }
+    else {
+        dump $res;
+    }
+
+    # add to history
+    $term->addhistory($_) if /\S/;
+}

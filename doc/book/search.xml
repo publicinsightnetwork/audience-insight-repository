@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter>
+  <title>Search</title>
+  <para>This chapters covers the administration and use of the AIR2 search
+  features.</para>
+  <section>
+    <title>Installing the prerequisite software packages</title>
+    <para>AIR2 search relies on the following open source software
+    packages.</para>
+    <variablelist>
+      <varlistentry>
+        <term>Perl</term>
+        <listitem>
+          <variablelist>
+            <varlistentry>
+              <term>Minimum version:</term>
+              <listitem>
+                <para>5.8.9</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>URL:</term>
+              <listitem>
+                <para>
+                  <ulink url="http://www.perl.org/">www.perl.org</ulink>
+                </para>
+              </listitem>
+            </varlistentry>
+          </variablelist>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>libxml2</term>
+        <listitem>
+          <variablelist>
+            <varlistentry>
+              <term>Minimum version:</term>
+              <listitem>
+                <para>2.6.0</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>URL:</term>
+              <listitem>
+                <para>
+                  <ulink url="http://www.xmlsoft.org/">www.xmlsoft.org</ulink>
+                </para>
+              </listitem>
+            </varlistentry>
+          </variablelist>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>CPAN modules</term>
+        <listitem>
+         <para>A full list of the required CPAN modules is located in the <filename>lib/perl/Makefile.PL</filename>
+         file. See the Perl documetation for how to install modules from CPAN.
+         </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term/>
+        <listitem>
+          <para/>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </section>
+  <section>
+    <title>An overview of the search architecture</title>
+    <para>
+    AIR2 search relies on full-text indexes that exist independently from the database.
+    The indexes are created in a two-step process. First, database records are serialized
+    as XML documents and written to disk. Second, the XML documents are parsed and indexed
+    using the <command>swish3</command> tool. There is one index created for each major data
+    model entity: sources, responses (submissions), projects, activities and inquiries.
+    </para>
+    <para>
+    After the indexes have been built (see <xref linkend="search-building"/>), they
+    are searchable via the search server (see <xref linkend="search-server"/>).
+    </para>
+    <section id="search-server">
+      <title>The <command>search.cgi</command> server</title>
+      <para>AIR2 comes with a standalone HTTP search server, written in Perl. This allows
+     for a number of optimizations:
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>The index filehandles are held open in a persistent process, 
+          which greatly improves response time.</para>
+        </listitem>
+        <listitem>
+          <para>The server can be easily customized.</para>
+        </listitem>
+        <listitem>
+          <para>The server can be scaled by distributing it on multiple load-balanced machines,
+          just like any other HTTP server.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
+  <section id="search-building">
+    <title>Building and maintaining the search indexes</title>
+    <para>
+    The easiest way to create the XML documents and indexes for the first time is to type:
+    <screen> bash% <command>make search</command> </screen>
+    The build process can take several hours, so all the tools in the build chain have
+    an optional incremental mode for indexing only records that have been changed since
+    a given timestamp. See <xref linkend="search-cron"/> for instructions on setting
+    up the search build scheduled jobs.
+    </para>
+    <para>
+    The following sections cover details of the individual steps in the build process.
+    </para>
+    <section>
+      <title>Creating XML documents</title>
+      <para>
+     Database records are serialized as XML using tools in the 
+     <filename><replaceable>AIR2ROOT</replaceable>/bin</filename> directory. There is one
+     tool for each index type.
+     </para>
+      <example>
+        <title>Creating XML documents for sources</title>
+        <screen> bash% <command>perl bin/sources2xml.pl</command></screen>
+      </example>
+      <para>
+     The structure of the serialized XML documents preserves the logical relationships
+     between database records.
+     </para>
+    </section>
+    <section id="search-cron">
+      <title>Scheduled jobs</title>
+      <para>See the <filename>cron/crontab.example</filename> file in the distribution for the necessary cron jobs.</para>
+    </section>
+  </section>
+  <section>
+    <title>Using the AIR2 Search API</title>
+    <para>AIR2 Search supports the full 
+    <ulink url="http://search.cpan.org/dist/Search-OpenSearch/lib/Search/OpenSearch.pm">
+    Search::OpenSearch</ulink> API. The following param key/value pairs are
+    supported.</para>
+    <variablelist>
+      <varlistentry>
+        <term>q=<replaceable>querystring</replaceable></term>
+        <listitem>
+          <para>The 
+          <replaceable>querystring</replaceable> may be any terms or combination
+          of fields and terms, as described in 
+          <ulink url="http://search.cpan.org/dist/Search-Query/lib/Search/Query/Parser.pm">
+          Search::Query::Parser</ulink>.</para>
+          <para>The official lists of available field names are kept in <filename><replaceable>AIR2ROOT</replaceable>/etc/search</filename>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>s=<replaceable>fieldname ASC|DESC</replaceable></term>
+        <listitem>
+          <para>The order in which results should be sorted. The default is <literal>rank DESC</literal>, by
+          relevance weight.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>o=<replaceable>n</replaceable></term>
+        <listitem>
+          <para>The start value for paging through results. The default is zero (0).</para>
+          <para>You may also use the param name <literal>start</literal>, as ExtJS does.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>p=<replaceable>n</replaceable></term>
+        <listitem>
+          <para>The page size for paging through results. The default is twenty-five (25).</para>
+          <para>You may also use the param name <literal>limit</literal>, as ExtJS does.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>h=<replaceable>0|1</replaceable></term>
+        <listitem>
+          <para>Highlight query terms in results. Takes a true or false value (default true).</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>c=<replaceable>0|1</replaceable></term>
+        <listitem>
+          <para>Return total count only, with no results. Takes a true or false value (default false).</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>f=<replaceable>0|1</replaceable></term>
+        <listitem>
+          <para>Return facets. Takes a true or false value (default false).</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>r=<replaceable>0|1</replaceable></term>
+        <listitem>
+          <para>Return results. Takes a true or false value (default true).</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>format=<replaceable>XML|JSON</replaceable></term>
+        <listitem>
+          <para>The response format. Default is <literal>JSON</literal>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>b=<replaceable>AND|OR</replaceable></term>
+        <listitem>
+          <para>The default boolean operator to apply to query terms. The default is <literal>AND</literal>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>M=<replaceable>n</replaceable></term>
+        <listitem>
+          <para>The field mapping for unqualified query terms. Each index type has its own set. The default is zero (0)
+          which turns off the mapping. Use this feature to limit a keyword search to a logical subset of available fields.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>u=<replaceable>0|1</replaceable></term>
+        <listitem>
+          <para>Return UUIDs for results only. Useful for quickly creating a batch of Sources.</para>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+
+  </section>
+</chapter>

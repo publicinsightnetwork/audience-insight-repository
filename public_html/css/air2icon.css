@@ -1,0 +1,471 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+.air2-icon {
+    background-repeat: no-repeat;
+    padding-left: 22px;
+}
+
+.air2-icon-activity {
+    background-image: url(img/icons/calendar-select-days.png) !important;
+}
+
+.air2-icon-activities {
+    background-image: url(img/icons/calendar-select-days.png) !important;
+}
+
+.air2-icon-add {
+    background-image: url(img/icons/plus-circle-frame.png) !important;
+}
+
+.air2-icon-add-org {
+    background-image: url(img/icons/building-plus.png) !important;
+}
+
+.air2-icon-add-small {
+    background-image: url(img/icons/plus-circle-frame-medium.png) !important;
+}
+
+.air2-icon-add-user {
+    background-image: url(img/icons/user-worker-plus.png) !important;
+}
+
+.air2-icon-alert {
+    background-image: url(img/icons/exclamation-button.png) !important;
+}
+
+.air2-icon-annotation {
+    background-image: url(img/icons/balloon-left.png) !important;
+}
+
+.air2-icon-arrow {
+    background-image: url(img/arrow-sprite.png) !important;
+}
+
+.air2-icon-arrow-closed {
+    background:transparent no-repeat 0 0;
+}
+
+.air2-icon-arrow-open {
+    background:transparent no-repeat -16px 0;
+}
+
+.air2-icon-arrow-up {
+    background-image: url(img/icons/arrow-090-medium.png) !important;
+}
+
+.air2-icon-arrow-down {
+    background-image: url(img/icons/arrow-270-medium.png) !important;
+}
+
+.air2-icon-bin {
+    background-image: url(img/icons/bin-metal.png) !important;
+}
+
+.air2-icon-bin-dock {
+    background-image: url(img/icons/bin-dock.png) !important;
+}
+
+.air2-icon-bin-large {
+    background-image: url(img/icons/bin-large.png) !important;
+}
+
+.air2-icon-bin-small {
+    background-image: url(img/icons/bin-small.png) !important;
+}
+
+.air2-icon-bullet {
+    background-image: url(img/icons/circle-bullet.png) !important;
+}
+
+.air2-icon-cancel-small {
+    background-image: url(img/icons/cross-small-white.png) !important;
+}
+
+.air2-icon-check {
+    background-image: url(img/icons/tick.png) !important;
+}
+
+.air2-icon-check-next {
+    background-image: url(img/icons/tick-arrow.png) !important;
+}
+
+.air2-icon-check-grey {
+    background-image: url(img/icons/check-grey.png) !important;
+}
+
+.air2-icon-chevron {
+    background-image: url(img/icons/chevron-small-expand.png) !important;
+}
+
+.air2-icon-clipboard {
+    background-image: url(img/icons/clipboard-list.png) !important;
+}
+
+.air2-icon-close {
+    background-image: url(img/icons/arrow-in.png) !important;
+}
+
+.air2-icon-close-drawer {
+    background-image: url(img/icons/control-min-small.png) !important;
+}
+
+.air2-icon-credential {
+    background-image: url(img/icons/property.png) !important;
+}
+
+.air2-icon-contactmethod {
+    background-image: url(img/icons/cards-bind-address.png) !important;
+}
+
+.air2-icon-curve {
+    background-image: url(img/icons/arrow-curve-000-left.png) !important;
+}
+
+.air2-icon-delete {
+    background-image: url(img/icons/cross-button.png) !important;
+}
+
+.air2-icon-directory {
+    background-image: url(img/icons/address-book-blue.png) !important;
+}
+
+.air2-icon-disk {
+    background-image: url(img/icons/disk.png) !important;
+}
+
+.air2-icon-disk-small {
+    background-image: url(img/icons/disk-small.png) !important;
+}
+
+.air2-icon-drag {
+    background-image: url(img/icons/dragable.png) !important;
+}
+
+.air2-icon-draft {
+    background-image: url(img/icons/blue-document-attribute-d.png) !important;
+}
+
+.air2-icon-duplicate {
+    background-image: url(img/icons/tables-copy.png) !important;
+}
+
+.air2-icon-error {
+    background-image: url(img/icons/error.png) !important;
+}
+
+.air2-icon-formbuilder {
+    background-image: url(img/icons/bulleted-list.png) !important;
+}
+
+.air2-icon-forward {
+    background-image: url(img/icons/arrow-000-medium.png) !important;
+}
+
+.air2-icon-edit {
+    background-image: url(img/icons/pencil-small.png) !important;
+}
+
+.air2-icon-edit-percent {
+    background-image: url(img/icons/edit-percent.png) !important;
+}
+
+.air2-icon-editzone {
+    background-image: url(img/icons/zone-pencil.png) !important;
+}
+
+.air2-icon-email {
+    background-image: url(img/icons/mail.png) !important;
+}
+
+.air2-icon-email-small {
+    background-image: url(img/icons/mail-small.png) !important;
+}
+
+.air2-icon-embedcode {
+    background-image: url(img/icons/document-snippet.png) !important;
+}
+
+.air2-icon-explode {
+    background-image: url(img/icons/arrow-out.png) !important;
+}
+
+.air2-icon-fact {
+    background-image: url(img/icons/information.png) !important;
+}
+
+.air2-icon-field {
+    background-image: url(img/icons/application-form.png) !important;
+}
+
+.air2-icon-fileup {
+    background-image: url(img/icons/upload.gif) !important;
+}
+
+.air2-icon-filter {
+    background-image: url(img/icons/application-task.png) !important;
+}
+
+.air2-icon-gear {
+    background-image: url(img/icons/gear.png) !important;
+}
+
+.air2-icon-home {
+    background-image: url(img/icons/home-medium.png) !important;
+}
+
+.air2-icon-implode {
+    background-image: url(img/icons/arrow-in.png) !important;
+}
+
+.air2-icon-import {
+    background-image: url(img/icons/table-import.png) !important;
+}
+
+.air2-icon-inquiry {
+    background-image: url(img/icons/queries.png) !important;
+}
+
+.air2-icon-inquiries {
+    background-image: url(img/icons/queries.png) !important;
+}
+
+.air2-icon-interest {
+    background-image: url(img/icons/user-worker-boss.png) !important;
+}
+
+.air2-icon-link {
+    background-image: url(img/icons/chain.png) !important;
+}
+
+.air2-icon-list {
+    background-image: url(img/icons/document-list.png) !important;
+}
+
+.air2-icon-lock {
+    background-image: url(img/icons/lock.png) !important;
+}
+
+.air2-icon-magnifier {
+    background-image: url(img/icons/magnifier.png) !important;
+}
+
+.air2-icon-merge {
+    background-image: url(img/icons/arrow-merge.png) !important;
+}
+
+.air2-icon-modal {
+    background-image: url(img/icons/application-resize.png) !important;
+}
+
+.air2-icon-needs-work {
+    background-image: url(img/icons/flag-exclamation.png) !important;
+}
+
+.air2-icon-network {
+    background-image: url(img/icons/report.png) !important;
+}
+
+.air2-icon-notify {
+    background-image: url(img/icons/megaphone.png) !important;
+}
+
+.air2-icon-organization {
+    background-image: url(img/icons/building.png) !important;
+}
+
+.air2-icon-original {
+    background-image: url(img/icons/document-snippet.png) !important;
+}
+
+.air2-icon-outcome {
+    background-image: url(img/icons/sticky-notes-pin.png) !important;
+}
+
+.air2-icon-pinbutton {
+    background-image: url(img/icons/pin-med.png) !important;
+}
+
+.air2-icon-printer {
+    background-image: url(img/icons/printer-medium.png) !important;
+}
+
+.air2-icon-prohibited {
+    background-image: url(img/icons/prohibition.png) !important;
+}
+
+.air2-icon-prohibited-disabled {
+    background-image: url(img/icons/prohibition-disabled.png) !important;
+}
+
+.air2-icon-project {
+    background-image: url(img/icons/wooden-box-label.png) !important;
+}
+
+.air2-icon-projects {
+    background-image: url(img/icons/wooden-box-label.png) !important;
+}
+
+.air2-icon-refresh {
+    background-image: url(img/icons/application-refresh.png) !important;
+}
+
+.air2-icon-remove-sel {
+    background-image: url(img/icons/table-delete-row.png) !important;
+}
+
+.air2-icon-random {
+    background-image: url(img/icons/dice.png) !important;
+}
+
+.air2-icon-remove {
+    background-image: url(img/icons/cross-small.png) !important;
+}
+
+.air2-icon-response {
+    background-image: url(img/icons/inbox-document-text.png) !important;
+}
+
+.air2-icon-responses,
+.air2-icon-fuzzy-responses,
+.air2-icon-strict-responses {
+    background-image: url(img/icons/inbox-document-text.png) !important;
+}
+
+.air2-icon-retry {
+    background-image: url(img/icons/arrow-return-180.png) !important;
+}
+
+.air2-icon-savedsearch {
+    background-image: url(img/icons/application-search-result.png) !important;
+}
+
+.air2-icon-schedule,
+.air2-icon-scheduled {
+    background-image: url(img/icons/clock--arrow.png) !important;
+}
+
+.air2-icon-sort-asc {
+    background-image: url(img/icons/arrow-090-medium.png) !important;
+}
+
+.air2-icon-sort-desc {
+    background-image: url(img/icons/arrow-270-medium.png) !important;
+}
+
+.air2-icon-source {
+    background-image: url(img/icons/user-silhouette.png) !important;
+}
+
+.air2-icon-active-sources,
+.air2-icon-fuzzy-active-sources,
+.air2-icon-strict-active-sources {
+    background-image: url(img/icons/user-silhouette.png) !important;
+}
+
+.air2-icon-sources,
+.air2-icon-fuzzy-sources,
+.air2-icon-strict-sources {
+    background-image: url(img/icons/user-silhouette-two.png) !important;
+}
+
+.air2-icon-source-upload {
+    background-image: url(img/icons/user-silhouette-upload.png) !important;
+}
+
+.air2-icon-primary-sources,
+.air2-icon-fuzzy-primary-sources,
+.air2-icon-strict-primary-sources {
+    background-image: url(img/icons/user-silhouette-star.png) !important;
+}
+
+.air2-icon-source-new {
+    background-image: url(img/icons/user-silhouette-plus.png) !important;
+}
+
+.air2-icon-source-out {
+    background-image: url(img/icons/user-silhouette-minus.png) !important;
+}
+
+.air2-icon-stats {
+    background-image: url(img/icons/chart.png) !important;
+}
+
+.air2-icon-tag {
+    background-image: url(img/icons/tags.png) !important;
+}
+
+.air2-icon-tag-plus {
+    background-image: url(img/icons/tag-plus.png) !important;
+}
+
+.air2-icon-translation {
+    background-image: url(img/icons/task.png) !important;
+}
+
+.air2-icon-translation-add {
+    background-image: url(img/icons/task-plus.png) !important;
+}
+
+.air2-icon-uncheck {
+    background-image: url(img/icons/ui-check-box-uncheck.png) !important;
+}
+
+.air2-icon-uncheck-disabled {
+    background-image: url(img/icons/ui-check-box-uncheck-locked.png) !important;
+}
+
+.air2-icon-unschedule {
+    background-image: url(img/icons/clock--minus.png) !important;
+}
+
+.air2-icon-upload {
+    background-image: url(img/icons/document-excel-csv-import.png) !important;
+}
+
+.air2-icon-user {
+    background-image: url(img/icons/user-worker.png) !important;
+}
+
+.air2-icon-view {
+    background-image: url(img/icons/eye.png) !important;
+}
+
+.air2-icon-wait {
+    background-image: url(../lib/extjs/resources/images/default/grid/wait.gif) !important;
+}
+
+.air2-icon-warning {
+    background-image: url(img/icons/alert.png) !important;
+}
+
+.air2-icon-warning2 {
+    background-image: url(img/icons/warning.png) !important;
+}
+
+.air2-icon-working {
+    background-image: url(img/icons/clock-select-remain.png) !important;
+}
+
+.air2-icon-working-error {
+    background-image: url(img/icons/gear-exclamation.png) !important;
+}

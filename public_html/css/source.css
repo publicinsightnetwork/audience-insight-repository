@@ -1,0 +1,131 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* Contact widget */
+.air2-source-contact .label {
+    color: #666;
+    text-align: right;
+    font-weight: bold;
+    padding-right: 10px;
+    width: 80px;
+    float: left;
+}
+.air2-source-contact .value a {
+    word-break: break-all; /* argg... css3! */
+}
+.air2-source-contact .value .none {
+    color: #999;
+}
+
+.air2-source-contact ul {
+    vertical-align: top;
+}
+.air2-source-contact ul li {
+    vertical-align: top;
+    padding: 7px 6px;
+    border-bottom: 1px solid #eee;
+}
+.air2-source-contact .photo {
+    display: inline-block;
+    margin: 0 10px 0 0;
+}
+.air2-source-contact .photo img {
+    width: 80px;
+    border: 5px solid #eee;
+}
+
+.air2-source-contact .address {
+    width: 280px;
+    display: inline-block;
+    margin: 0 10px 0 0;
+}
+.air2-source-contact .other {
+    width: 320px;
+    display: inline-block;
+}
+.air2-source-contact .other .primary {
+    background: url(img/icons/point-small.png) no-repeat 100% 50%;
+    padding-right: 16px;
+}
+.air2-source-contact .other .label {
+    width: 60px;
+}
+
+/* info overlay */
+.air2-src-contact-panel.air2-editwin .header-title {
+    position: relative;
+}
+.air2-src-contact-panel.air2-editwin .header-title .air2-tipper {
+    position: absolute;
+    z-index: 100;
+    margin-left: 4px;
+}
+.air2-source-infoprimary .x-form-display-field {
+    font-weight: bold;
+}
+.air2-source-infomore p {
+    padding-bottom: 5px;
+}
+
+/* visual hint for src_has_acct */
+.air2-source-locked {
+    background: url(img/icons/security-lock.png) no-repeat 0 7px;
+    padding: 8px;
+
+}
+
+/* Outcomes widget */
+.air2-source-outcome.air2-editwin .outcome-row {
+    border-bottom: 1px dotted #ddd;
+    padding: 10px 10px 10px 20px;
+}
+.air2-source-outcome .outcome-row .title {
+    font-size: 14px;
+    font-weight: normal;
+    padding: 0 0 10px;
+}
+.air2-source-outcome .outcome-row .link {
+    padding: 3px 0;
+}
+.air2-source-outcome .outcome-row .date {
+    float: none;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+.air2-source-outcome .outcome-row .teaser {
+    color: #666;
+    font-style: normal;
+}
+.air2-source-outcome .outcome-row .meta {
+    color: #999;
+    font-size: 11px;
+    margin: 12px 0 7px;
+}
+.air2-source-outcome .outcome-row .datewho {
+    background: #F1F1F1;
+    margin-right: 10px;
+    padding: 5px 7px;
+    text-shadow: 0 1px 0 #fff;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}

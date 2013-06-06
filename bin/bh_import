@@ -1,0 +1,260 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Carp;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+use File::Slurp;
+use Email::Stuff;
+use AIR2::Config;
+use AIR2::User;
+use AIR2::Importer::BudgetHero;
+use AIR2::JobQueue;
+use AIR2::Utils;
+use AIR2::CSVReader;
+use JSON;
+use Data::Dump qw( dump );
+use Rose::DateTime::Parser;
+use LWP::Simple;
+
+my $BH_PATH  = "/opt/pin/shared/budgethero/reports/";
+my $TMP_PATH = "/tmp/budgethero/";
+my $BH_FILE  = "pij_export_<DATE>.csv";
+my $BH_USER  = 'BudgetHero Importer';
+
+=pod
+
+=head1 NAME
+
+bh-import - import budgethero csv data into AIR2 tank
+
+=head1 SYNOPSIS
+
+ bh-import [opts]
+
+=head1 DESCRIPTION
+
+bh-import is a cli for AIR2::Importer::BudgetHero.
+
+=head1 OPTIONS
+
+=head2 user_id I<U>
+
+The User pk.
+
+=cut
+
+my $username         = $BH_USER;
+my ( $help, $debug, $dry_run, $email_notify, $tank_only, $since, $only,
+    $no_warnings );
+GetOptions(
+    'username=s'     => \$username,
+    'help'           => \$help,
+    'debug'          => \$debug,
+    'dry_run'        => \$dry_run,
+    'email_notify=s' => \$email_notify,
+    'tank_only'      => \$tank_only,
+    'since=s'        => \$since,
+    'only=s'         => \$only,
+    'no_warnings'    => \$no_warnings,
+) or pod2usage(2);
+
+# show help
+if ($help) {
+    pod2usage(2);
+}
+
+# if no "BudgetHero Importer" user, create one
+my $user = AIR2::User->new( user_username => $username );
+$user->load_speculative();
+unless ( $user->user_id ) {
+    if ($username eq $BH_USER) {
+        $user->user_first_name( 'Budget' );
+        $user->user_last_name( 'Hero' );
+        $user->user_type( 'S' );
+        $user->save();
+    }
+    else {
+        croak "Unknown User '$username'";
+    }
+}
+
+# setup user to run as, and notify email
+if ( !$email_notify ) {
+    if ( !$user->get_primary_email() ) {
+        croak "User $username has no email address defined and no --email_notify supplied";
+    }
+    else {
+        $email_notify = $user->get_primary_email()->uem_address();
+    }
+}
+
+# debug/warning mode
+$debug = (defined $debug) ? 1 : 0;
+$no_warnings = (defined $no_warnings) ? 1 : 0;
+
+
+# lookup the NEWEST budgethero csv AIR knows about
+my $date_parser = Rose::DateTime::Parser->new();
+my $newest_known = '20110701';
+my $tank_it = AIR2::Tank->fetch_all_iterator(
+    query   => [ tank_type => 'B' ],
+    sort_by => 'tank_meta DESC',
+);
+my $trec = $tank_it->next();
+if ( $trec && $trec->tank_meta && $trec->tank_meta =~ /^last_file_date/) {
+    $newest_known = substr $trec->tank_meta, -8;
+}
+my $newest_known_date = $date_parser->parse_date( $newest_known );
+print "Newest csv in AIR from $newest_known\n" if $debug;
+
+
+# date to look for budgethero csv's after.  If not provided, uses the day
+# after the newest day AIR knows about
+my $since_date;
+if ($since) {
+    unless ($since =~ /[1-2][0-9]{3}[0-1][0-9][0-3][0-9]/) {
+        die "invalid date '$since' ... use format YYYYMMDD";
+    }
+    $since_date = $date_parser->parse_date($since) or die "invalid date '$since'";
+}
+else {
+    $since_date = $date_parser->parse_date( $newest_known );
+    $since_date->add( days => 1 );
+}
+
+
+# specifying "only" gets you just one date
+my $now = DateTime->now();
+if ($only) {
+    unless ($only =~ /[1-2][0-9]{3}[0-1][0-9][0-3][0-9]/) {
+        die "invalid date '$only' ... use format YYYYMMDD";
+    }
+    my $only_date = $date_parser->parse_date($only) or die "invalid date '$only'";
+
+    $since_date = $only_date;
+    $now = $only_date->clone();
+}
+if ($debug) {
+    my $strt = $since_date->strftime("%Y%m%d");
+    my $fnsh = $now->strftime("%Y%m%d");
+    print "Looking for CSV files from $strt to $fnsh\n";
+}
+
+
+# issue DIRE WARNING on possible double-imports
+if ( $since_date <= $newest_known_date && !$no_warnings ) {
+    my $strt = $since_date->strftime("%Y%m%d");
+    print "WARNING: possible double-import!  Latest budgethero csv date in AIR is $newest_known\n";
+    print "Really go through with this? (y/n) ";
+    chomp(my $answer = <STDIN>);
+    die "Aborted import" unless ( lc $answer eq 'y' );
+}
+
+
+# counts
+my $success_import = 0;
+my $failed_import = 0;
+
+while ( $since_date <= $now ) {
+    my $dt_str = $since_date->strftime("%Y%m%d");
+    my $file = $BH_FILE;
+    $file =~ s/\<DATE\>/$dt_str/;
+    my $content = 0;
+
+    # attempt to read the local file
+    if (-e $BH_PATH.$file) {
+        $content = read_file($BH_PATH.$file);
+    }
+
+    # attempt to access on pij01
+    else {
+        mkdir $TMP_PATH;
+        my $from = 'pijuser@pij01:'.$BH_PATH.$file;
+        my $to   = $TMP_PATH;
+        my $out = `scp $from $to 2>&1`;
+        my $success = !($out =~ /no such file or directory/i);
+        if ($success && -e $TMP_PATH.$file) {
+            $content = read_file($TMP_PATH.$file);
+        }
+    }
+
+    # process csv, if found
+    if ($content) {
+        if ($debug or $dry_run) {
+            print "-importing BudgetHero CSV $file\n";
+        }
+
+        # create reader and importer
+        my $rdr = AIR2::CSVReader->new( $content );
+        my $importer = AIR2::Importer::BudgetHero->new(
+            reader       => $rdr,
+            user         => $user,
+            debug        => $debug,
+            max_errors   => 1,
+            dry_run      => $dry_run,
+            csv_filename => $file,
+            csv_filedate => $dt_str,
+        );
+
+        # run it!
+        $importer->run();
+
+        # counts
+        $success_import++ if ($importer->errored == 0);
+        $failed_import++ if ($importer->errored > 0);
+
+        # email/report errors
+        if ($importer->errored) {
+            if ($debug or $dry_run) {
+                print "    Finished-error:\n".$importer->report(6)."\n";
+            }
+            else {
+                Email::Stuff->to($email_notify)
+                    ->from('support@publicinsightnetwork.org')
+                    ->subject("BudgetHero CSV import results - $file")
+                    ->text_body( $importer->report() )->send;
+            }
+        }
+        elsif ($debug or $dry_run) {
+            print "    Finished-success:\n".$importer->report(6)."\n";
+        }
+
+        # schedule job_queue
+        unless ($dry_run || $importer->errored) {
+            $importer->schedule_jobs();
+        }
+    }
+
+    # increment since_date
+    $since_date->add( days => 1 );
+}
+
+if ($debug or $dry_run) {
+    my $tot = $success_import + $failed_import;
+    print "Finished $tot BudgetHero CSV's\n";
+    print "$success_import success, $failed_import failed\n";
+}

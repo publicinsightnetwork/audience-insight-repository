@@ -1,0 +1,71 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful, 
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License 
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* directory panel */
+.air2-directory-direct .header-total a {
+    color: #aaa;
+}
+.air2-directory-direct .header-total a.current {
+    color: #666;
+    font-weight: bold;
+}
+
+/* hide/show org panel */
+.air2-directory-direct .org-dv {
+    display: none;
+}
+.air2-directory-direct.show-org .org-dv {
+    display: block;
+}
+.air2-directory-direct.show-org .user-dv {
+    display: none;
+}
+.air2-directory-direct.show-org .air2-paging-editor-pager {
+    display: none;
+}
+.air2-directory-direct.show-org .header-tools {
+    visibility: hidden;
+}
+
+/* row style */
+.air2-directory-direct .air2-panel-body {
+    min-height: 400px;
+}
+.air2-directory-direct .direct-row.root .name {
+    font-weight: bold;
+}
+.air2-directory-direct .direct-row.inactive {
+    color: #aaa;
+}
+.air2-directory-direct .direct-row.inactive a {
+    color: #aaa;
+}
+.air2-directory-direct .direct-row .name {
+    padding-left: 0px;
+}
+.air2-directory-direct .direct-row .name span {
+    padding-left: 17px;
+}
+.air2-directory-direct .direct-row.expanded .name span {
+    font-weight: bold;
+    background: url(img/icons/circle-bullet.png) no-repeat;
+}

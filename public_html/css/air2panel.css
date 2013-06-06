@@ -1,0 +1,347 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/**************
+ * PanelGrid styling
+ *************/
+table.air2-panel-grid {
+    border-style: hidden;
+    border-collapse: collapse;
+}
+table.air2-panel-grid td.x-table-layout-cell {
+    border-color: transparent;
+    border-style: solid;
+    border-width: 10px 10px 10px;
+    vertical-align: top;
+    width: 50%;
+}
+.air2-panel-grid-right {
+    margin: 0 0 10px 10px;
+}
+.air2-panel-grid-left {
+    margin: 0 10px 10px 0;
+}
+.air2-panel-grid-center {
+    margin: 0 0 10px 0;
+}
+
+
+/**************
+ * AIR2Panel styling
+ *************/
+.air2-panel {
+    background: #fff;
+    border: 1px solid #d6d6d6;
+    color: #777;
+    box-shadow: 0 0 2px #ddd;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+.air2-panel-header {
+    background: #f9f9f9 url(img/back-header.jpg) repeat-x top;
+    border-bottom: 1px solid #eee;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    -moz-border-radius-topleft: 2px;
+    -moz-border-radius-topright: 2px;
+    -webkit-border-top-left-radius: 2px;
+    -webkit-border-top-right-radius: 2px;
+}
+.air2-panel-header table.header-table {
+    width: 100%;
+    height: 32px;
+    padding-top: 2px;
+}
+.air2-panel-header .header-title {
+    padding-left: 6px;
+    color: #666;
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
+    text-shadow: 0 1px 0 #fff;
+}
+.air2-panel-header .header-title.icon {
+    background: no-repeat 5px 43%;
+    padding-left: 25px;
+}
+.air2-panel-header .header-total {
+    padding: 0 12px;
+    color: #999;
+    white-space: nowrap;
+    font-size: 13px;
+}
+.air2-panel-header .header-tools {
+    width: 100%;
+}
+.air2-panel-header .x-toolbar {
+    background: none;
+    border: 0;
+}
+
+/* toolbar style */
+.air2-panel:hover .header-tools .x-toolbar-right-ct,
+#air2-search-results .header-tools .x-toolbar-right-ct,
+#air2-search-category .header-tools .x-toolbar-right-ct {
+	visibility: visible;
+}
+
+/* query summary style */
+#air2-inquiry-overview-main .air2-panel {
+    margin-bottom: 10px;
+}
+
+/* body style */
+.air2-panel-body {
+    clear: both;
+    padding: 5px 7px;
+    min-height: 125px;
+}
+.air2-panel-body .air2-panel-empty {
+    text-align: center;
+    position: relative;
+    top: 40px;
+}
+.air2-panel-body .air2-panel-dataview table {
+    width: 100%;
+}
+
+/* editinplace style */
+.air2-panel-editinplace form.x-form {
+    padding: 0 5px;
+}
+.air2-panel-editinplace .ext-el-mask {
+    opacity: 0.5;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+.air2-panel-editinplace .x-toolbar {
+    border: 0;
+    background: none;
+}
+
+/* footer style */
+.air2-panel-footer {
+    background: #eee;
+    height: 24px;
+    padding: 0 4px;
+    border: 0;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    -moz-border-radius-bottomleft: 2px;
+    -moz-border-radius-bottomright: 2px;
+    -webkit-border-bottom-left-radius: 2px;
+    -webkit-border-bottom-right-radius: 2px;
+}
+.air2-panel-footer.x-toolbar {
+    padding: 5px 4px 2px;
+    margin-top: 4px;
+}
+
+/* collapsed style */
+.air2-panel-collapsible .air2-panel-header {
+    cursor: pointer;
+}
+.air2-panel-collapsed .air2-panel-header {
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+.air2-panel-collapsed .air2-panel-body {
+    display: none;
+}
+
+
+/**************
+ * Tag Panel
+ *************/
+.air2-tagpanel {
+    overflow: hidden;
+}
+.air2-tagpanel .tag-add {
+    padding-bottom: 5px;
+}
+.air2-tagpanel .tag-add div {
+    display: inline;
+    padding-right: 5px;
+    vertical-align: bottom;
+}
+.air2-tagpanel .air2-panel-footer {
+    padding: 0;
+    height: 0;
+    background: transparent;
+    position: relative;
+    overflow: visible;
+}
+.air2-tagpanel .tag-status {
+    border: 1px solid #ddd;
+    color: #777;
+    position: absolute;
+    padding: 4px 8px;
+    background: #f9f9f9;
+    visibility: hidden;
+    border-radius: 2px;
+}
+.air2-tagpanel .tag-status img {
+    margin: -4px -8px -7px 10px;
+    padding: 4px 3px 4px 4px;
+    border-left: 1px solid #ddd;
+    background: #f3f3f3;
+}
+.air2-tagpanel .tag-status img:hover {
+    background: #fff;
+}
+.air2-tagpanel .tag-status .undo {
+    padding-left: 5px;
+}
+.air2-tagpanel .air2-panel-footer .undo {
+    padding-left: 4px;
+    line-height: 22px;
+}
+.air2-tagpanel .air2-tag-list {
+    margin: 0;
+    padding: 0;
+}
+.air2-tagpanel .air2-tag-list li {
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    background: #EEEEEE;
+    border-bottom: 1px solid #DDDDDD;
+    margin: 5px 5px 0 0;
+    padding: 3px 5px;
+    float: left;
+}
+.air2-tagpanel .air2-tag-delete-icon {
+    background: transparent url(img/icons/cross-small.png) no-repeat 0 0;
+    padding-left: 12px;
+    cursor: pointer;
+}
+.air2-tagpanel .air2-panel-empty {
+    top: 20px;
+}
+.air2-tag-search-result {
+    width: auto !important;
+    border: none;
+}
+.air2-tag-search-result .x-combo-list-inner {
+    width: auto !important;
+    overflow: hidden;
+    background: #EFEFEF;
+    border: 1px solid #CCC;
+}
+.air2-tag-search-result .x-combo-list-item {
+    white-space: nowrap;
+    padding: 1px 5px 1px;
+    font-size: 13px;
+    border: none !important;
+}
+.air2-tag-search-result .x-combo-selected {
+    background-color: #CDCDCD !important;
+}
+
+/* hide edit functionality */
+.air2-tagpanel.read-only .tag-add {
+    display: none;
+}
+.air2-tagpanel.read-only .air2-tag-delete-icon {
+    background-image: none;
+    padding-left: 3px;
+}
+
+
+/**************
+ * Annotation Panel
+ *************/
+.air2-annotation.air2-tbl tr.annot-row > td {
+    background-color: #fff;
+    border-right: 0px none;
+}
+.air2-annotation.air2-tbl tr.annot-row > td:first-child {
+    width: 206px;
+}
+.air2-annotation .who {
+    background: #eee url(img/icons/comment-arrow.png) no-repeat right center;
+    border-bottom: 1px solid #ccc;
+    border-right: 0px none;
+    width: 200px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+.air2-annotation .who .photo {
+    width: 54px;
+    padding: 4px 8px;
+    min-height: 75px;
+}
+.air2-annotation .who .photo img {
+    border: 5px solid #ccc;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+.air2-annotation .who .info {
+    vertical-align: top;
+    padding: 4px 8px;
+}
+.air2-annotation .who .info .room {
+    margin-top: 4px;
+}
+.air2-annotation .text {
+    min-height: 80px;
+}
+.air2-annotation .meta {
+    border-top: 1px dotted #ddd;
+    color: #999;
+    font-size: 10px;
+    padding-top: 2px;
+    margin-top: 10px;
+    text-transform: uppercase;
+}
+
+.air2-annotation textarea {
+    resize: both;
+    overflow: auto;
+    height: 101px;
+}
+
+/******************
+ * Fields Panel
+ ******************/
+
+#air2-inquiry-fields h4 {
+    display: block;
+    margin: 0.5em 1em 0.5em 0.5em;
+    font-size: 12px;
+    text-shadow: 2px 0 0 rgba(255,255,255,1), 
+                 4px 0 0 rgba(255,255,255,1), 
+                 6px 0 0 rgba(255,255,255,1), 
+                 8px 0 0 rgba(255,255,255,1), 
+                 10px 0 0 rgba(255,255,255,1);
+}
+#air2-inquiry-fields h4:after {
+    content: '';
+    display: block;
+    border-bottom: 1px solid #eee;
+    margin: -0.5em 0 1em;
+}

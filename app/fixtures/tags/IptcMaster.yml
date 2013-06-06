@@ -1,0 +1,5549 @@
+IptcMaster:
+  Iptc_01000000:
+    iptc_id: 1
+    iptc_concept_code: '01000000'
+    iptc_name: 'arts culture and entertainment'
+  Iptc_01001000:
+    iptc_id: 2
+    iptc_concept_code: '01001000'
+    iptc_name: 'arts culture and entertainment / archaeology'
+  Iptc_01002000:
+    iptc_id: 3
+    iptc_concept_code: '01002000'
+    iptc_name: 'arts culture and entertainment / architecture'
+  Iptc_01003000:
+    iptc_id: 4
+    iptc_concept_code: '01003000'
+    iptc_name: 'arts culture and entertainment / bullfighting'
+  Iptc_01004000:
+    iptc_id: 5
+    iptc_concept_code: '01004000'
+    iptc_name: 'arts culture and entertainment / festive event'
+  Iptc_01005000:
+    iptc_id: 6
+    iptc_concept_code: '01005000'
+    iptc_name: 'arts culture and entertainment / cinema'
+  Iptc_01005001:
+    iptc_id: 7
+    iptc_concept_code: '01005001'
+    iptc_name: 'arts culture and entertainment / cinema / film festival'
+  Iptc_01006000:
+    iptc_id: 8
+    iptc_concept_code: '01006000'
+    iptc_name: 'arts culture and entertainment / dance'
+  Iptc_01007000:
+    iptc_id: 9
+    iptc_concept_code: '01007000'
+    iptc_name: 'arts culture and entertainment / fashion'
+  Iptc_01007001:
+    iptc_id: 10
+    iptc_concept_code: '01007001'
+    iptc_name: 'arts culture and entertainment / fashion / jewelry'
+  Iptc_01008000:
+    iptc_id: 11
+    iptc_concept_code: '01008000'
+    iptc_name: 'arts culture and entertainment / language'
+  Iptc_01009000:
+    iptc_id: 12
+    iptc_concept_code: '01009000'
+    iptc_name: 'arts culture and entertainment / library and museum'
+  Iptc_01010000:
+    iptc_id: 13
+    iptc_concept_code: '01010000'
+    iptc_name: 'arts culture and entertainment / literature'
+  Iptc_01010001:
+    iptc_id: 14
+    iptc_concept_code: '01010001'
+    iptc_name: 'arts culture and entertainment / literature / fiction'
+  Iptc_01010002:
+    iptc_id: 15
+    iptc_concept_code: '01010002'
+    iptc_name: 'arts culture and entertainment / literature / poetry'
+  Iptc_01011000:
+    iptc_id: 16
+    iptc_concept_code: '01011000'
+    iptc_name: 'arts culture and entertainment / music'
+  Iptc_01011001:
+    iptc_id: 17
+    iptc_concept_code: '01011001'
+    iptc_name: 'arts culture and entertainment / music / classical music'
+  Iptc_01011002:
+    iptc_id: 18
+    iptc_concept_code: '01011002'
+    iptc_name: 'arts culture and entertainment / music / folk music'
+  Iptc_01011003:
+    iptc_id: 19
+    iptc_concept_code: '01011003'
+    iptc_name: 'arts culture and entertainment / music / jazz music'
+  Iptc_01011004:
+    iptc_id: 20
+    iptc_concept_code: '01011004'
+    iptc_name: 'arts culture and entertainment / music / popular music'
+  Iptc_01011005:
+    iptc_id: 21
+    iptc_concept_code: '01011005'
+    iptc_name: 'arts culture and entertainment / music / country music'
+  Iptc_01011006:
+    iptc_id: 22
+    iptc_concept_code: '01011006'
+    iptc_name: 'arts culture and entertainment / music / rock and roll music'
+  Iptc_01011007:
+    iptc_id: 23
+    iptc_concept_code: '01011007'
+    iptc_name: 'arts culture and entertainment / music / hip-hop'
+  Iptc_01012000:
+    iptc_id: 24
+    iptc_concept_code: '01012000'
+    iptc_name: 'arts culture and entertainment / painting'
+  Iptc_01013000:
+    iptc_id: 25
+    iptc_concept_code: '01013000'
+    iptc_name: 'arts culture and entertainment / photography'
+  Iptc_01014000:
+    iptc_id: 26
+    iptc_concept_code: '01014000'
+    iptc_name: 'arts culture and entertainment / radio'
+  Iptc_01015000:
+    iptc_id: 27
+    iptc_concept_code: '01015000'
+    iptc_name: 'arts culture and entertainment / sculpture'
+  Iptc_01015001:
+    iptc_id: 28
+    iptc_concept_code: '01015001'
+    iptc_name: 'arts culture and entertainment / sculpture / plastic art'
+  Iptc_01016000:
+    iptc_id: 29
+    iptc_concept_code: '01016000'
+    iptc_name: 'arts culture and entertainment / television'
+  Iptc_01016001:
+    iptc_id: 30
+    iptc_concept_code: '01016001'
+    iptc_name: 'arts culture and entertainment / television / soap opera'
+  Iptc_01017000:
+    iptc_id: 31
+    iptc_concept_code: '01017000'
+    iptc_name: 'arts culture and entertainment / theatre'
+  Iptc_01017001:
+    iptc_id: 32
+    iptc_concept_code: '01017001'
+    iptc_name: 'arts culture and entertainment / theatre / music theatre'
+  Iptc_01018000:
+    iptc_id: 33
+    iptc_concept_code: '01018000'
+    iptc_name: 'arts culture and entertainment / monument and heritage site'
+  Iptc_01019000:
+    iptc_id: 34
+    iptc_concept_code: '01019000'
+    iptc_name: 'arts culture and entertainment / customs and tradition'
+  Iptc_01020000:
+    iptc_id: 35
+    iptc_concept_code: '01020000'
+    iptc_name: 'arts culture and entertainment / arts'
+  Iptc_01021000:
+    iptc_id: 36
+    iptc_concept_code: '01021000'
+    iptc_name: 'arts culture and entertainment / entertainment'
+  Iptc_01021001:
+    iptc_id: 37
+    iptc_concept_code: '01021001'
+    iptc_name: 'arts culture and entertainment / entertainment / entertainment award'
+  Iptc_01022000:
+    iptc_id: 38
+    iptc_concept_code: '01022000'
+    iptc_name: 'arts culture and entertainment / culture'
+  Iptc_01022001:
+    iptc_id: 39
+    iptc_concept_code: '01022001'
+    iptc_name: 'arts culture and entertainment / culture / cultural development'
+  Iptc_01023000:
+    iptc_id: 40
+    iptc_concept_code: '01023000'
+    iptc_name: 'arts culture and entertainment / nightclub'
+  Iptc_01024000:
+    iptc_id: 41
+    iptc_concept_code: '01024000'
+    iptc_name: 'arts culture and entertainment / cartoon'
+  Iptc_01025000:
+    iptc_id: 42
+    iptc_concept_code: '01025000'
+    iptc_name: 'arts culture and entertainment / animation'
+  Iptc_01026000:
+    iptc_id: 43
+    iptc_concept_code: '01026000'
+    iptc_name: 'arts culture and entertainment / mass media'
+  Iptc_01026001:
+    iptc_id: 44
+    iptc_concept_code: '01026001'
+    iptc_name: 'arts culture and entertainment / mass media / periodicals'
+  Iptc_01026002:
+    iptc_id: 45
+    iptc_concept_code: '01026002'
+    iptc_name: 'arts culture and entertainment / mass media / news media'
+  Iptc_01026003:
+    iptc_id: 46
+    iptc_concept_code: '01026003'
+    iptc_name: 'arts culture and entertainment / mass media / newspapers'
+  Iptc_01026004:
+    iptc_id: 47
+    iptc_concept_code: '01026004'
+    iptc_name: 'arts culture and entertainment / mass media / reviews'
+  Iptc_01027000:
+    iptc_id: 48
+    iptc_concept_code: '01027000'
+    iptc_name: 'arts culture and entertainment / internet'
+  Iptc_01028000:
+    iptc_id: 49
+    iptc_concept_code: '01028000'
+    iptc_name: 'arts culture and entertainment / history'
+  Iptc_02000000:
+    iptc_id: 50
+    iptc_concept_code: '02000000'
+    iptc_name: 'crime law and justice'
+  Iptc_02001000:
+    iptc_id: 51
+    iptc_concept_code: '02001000'
+    iptc_name: 'crime law and justice / crime'
+  Iptc_02001001:
+    iptc_id: 52
+    iptc_concept_code: '02001001'
+    iptc_name: 'crime law and justice / crime / homicide'
+  Iptc_02001002:
+    iptc_id: 53
+    iptc_concept_code: '02001002'
+    iptc_name: 'crime law and justice / crime / computer crime'
+  Iptc_02001003:
+    iptc_id: 54
+    iptc_concept_code: '02001003'
+    iptc_name: 'crime law and justice / crime / theft'
+  Iptc_02001004:
+    iptc_id: 55
+    iptc_concept_code: '02001004'
+    iptc_name: 'crime law and justice / crime / drug trafficking'
+  Iptc_02001005:
+    iptc_id: 56
+    iptc_concept_code: '02001005'
+    iptc_name: 'crime law and justice / crime / sexual assault'
+  Iptc_02001006:
+    iptc_id: 57
+    iptc_concept_code: '02001006'
+    iptc_name: 'crime law and justice / crime / assault'
+  Iptc_02001007:
+    iptc_id: 58
+    iptc_concept_code: '02001007'
+    iptc_name: 'crime law and justice / crime / kidnapping'
+  Iptc_02001008:
+    iptc_id: 59
+    iptc_concept_code: '02001008'
+    iptc_name: 'crime law and justice / crime / arson'
+  Iptc_02001009:
+    iptc_id: 60
+    iptc_concept_code: '02001009'
+    iptc_name: 'crime law and justice / crime / gang activity'
+  Iptc_02001010:
+    iptc_id: 61
+    iptc_concept_code: '02001010'
+    iptc_name: 'crime law and justice / crime / terrorism'
+  Iptc_02002000:
+    iptc_id: 62
+    iptc_concept_code: '02002000'
+    iptc_name: 'crime law and justice / judiciary'
+  Iptc_02002001:
+    iptc_id: 63
+    iptc_concept_code: '02002001'
+    iptc_name: 'crime law and justice / judiciary / lawyer'
+  Iptc_02002002:
+    iptc_id: 64
+    iptc_concept_code: '02002002'
+    iptc_name: 'crime law and justice / judiciary / judge'
+  Iptc_02002003:
+    iptc_id: 65
+    iptc_concept_code: '02002003'
+    iptc_name: 'crime law and justice / judiciary / court administration'
+  Iptc_02003000:
+    iptc_id: 66
+    iptc_concept_code: '02003000'
+    iptc_name: 'crime law and justice / police'
+  Iptc_02003001:
+    iptc_id: 67
+    iptc_concept_code: '02003001'
+    iptc_name: 'crime law and justice / police / law enforcement'
+  Iptc_02003002:
+    iptc_id: 68
+    iptc_concept_code: '02003002'
+    iptc_name: 'crime law and justice / police / investigation'
+  Iptc_02003003:
+    iptc_id: 69
+    iptc_concept_code: '02003003'
+    iptc_name: 'crime law and justice / police / arrest'
+  Iptc_02004000:
+    iptc_id: 70
+    iptc_concept_code: '02004000'
+    iptc_name: 'crime law and justice / punishment'
+  Iptc_02004001:
+    iptc_id: 71
+    iptc_concept_code: '02004001'
+    iptc_name: 'crime law and justice / punishment / fine'
+  Iptc_02004002:
+    iptc_id: 72
+    iptc_concept_code: '02004002'
+    iptc_name: 'crime law and justice / punishment / execution'
+  Iptc_02005000:
+    iptc_id: 73
+    iptc_concept_code: '02005000'
+    iptc_name: 'crime law and justice / prison'
+  Iptc_02006000:
+    iptc_id: 74
+    iptc_concept_code: '02006000'
+    iptc_name: 'crime law and justice / laws'
+  Iptc_02006001:
+    iptc_id: 75
+    iptc_concept_code: '02006001'
+    iptc_name: 'crime law and justice / laws / criminal'
+  Iptc_02006002:
+    iptc_id: 76
+    iptc_concept_code: '02006002'
+    iptc_name: 'crime law and justice / laws / civil'
+  Iptc_02007000:
+    iptc_id: 77
+    iptc_concept_code: '02007000'
+    iptc_name: 'crime law and justice / justice and rights'
+  Iptc_02007001:
+    iptc_id: 78
+    iptc_concept_code: '02007001'
+    iptc_name: 'crime law and justice / justice and rights / civil rights'
+  Iptc_02008000:
+    iptc_id: 79
+    iptc_concept_code: '02008000'
+    iptc_name: 'crime law and justice / trials'
+  Iptc_02008001:
+    iptc_id: 80
+    iptc_concept_code: '02008001'
+    iptc_name: 'crime law and justice / trials / litigation'
+  Iptc_02008002:
+    iptc_id: 81
+    iptc_concept_code: '02008002'
+    iptc_name: 'crime law and justice / trials / arbitration'
+  Iptc_02008003:
+    iptc_id: 82
+    iptc_concept_code: '02008003'
+    iptc_name: 'crime law and justice / trials / court preliminary'
+  Iptc_02009000:
+    iptc_id: 83
+    iptc_concept_code: '02009000'
+    iptc_name: 'crime law and justice / prosecution'
+  Iptc_02009001:
+    iptc_id: 84
+    iptc_concept_code: '02009001'
+    iptc_name: 'crime law and justice / prosecution / defendant'
+  Iptc_02009002:
+    iptc_id: 85
+    iptc_concept_code: '02009002'
+    iptc_name: 'crime law and justice / prosecution / witness'
+  Iptc_02010000:
+    iptc_id: 86
+    iptc_concept_code: '02010000'
+    iptc_name: 'crime law and justice / organized crime'
+  Iptc_02011000:
+    iptc_id: 87
+    iptc_concept_code: '02011000'
+    iptc_name: 'crime law and justice / international law'
+  Iptc_02011001:
+    iptc_id: 88
+    iptc_concept_code: '02011001'
+    iptc_name: 'crime law and justice / international law / international court or tribunal'
+  Iptc_02011002:
+    iptc_id: 89
+    iptc_concept_code: '02011002'
+    iptc_name: 'crime law and justice / international law / extradition'
+  Iptc_02012000:
+    iptc_id: 90
+    iptc_concept_code: '02012000'
+    iptc_name: 'crime law and justice / corporate crime'
+  Iptc_02012001:
+    iptc_id: 91
+    iptc_concept_code: '02012001'
+    iptc_name: 'crime law and justice / corporate crime / fraud'
+  Iptc_02012002:
+    iptc_id: 92
+    iptc_concept_code: '02012002'
+    iptc_name: 'crime law and justice / corporate crime / embezzlement'
+  Iptc_02012003:
+    iptc_id: 93
+    iptc_concept_code: '02012003'
+    iptc_name: 'crime law and justice / corporate crime / restraint of trade'
+  Iptc_02012004:
+    iptc_id: 94
+    iptc_concept_code: '02012004'
+    iptc_name: 'crime law and justice / corporate crime / breach of contract'
+  Iptc_02012005:
+    iptc_id: 95
+    iptc_concept_code: '02012005'
+    iptc_name: 'crime law and justice / corporate crime / anti-trust crime'
+  Iptc_02012006:
+    iptc_id: 96
+    iptc_concept_code: '02012006'
+    iptc_name: 'crime law and justice / corporate crime / corruption'
+  Iptc_02012007:
+    iptc_id: 97
+    iptc_concept_code: '02012007'
+    iptc_name: 'crime law and justice / corporate crime / bribery'
+  Iptc_02013000:
+    iptc_id: 98
+    iptc_concept_code: '02013000'
+    iptc_name: 'crime law and justice / war crime'
+  Iptc_02014000:
+    iptc_id: 99
+    iptc_concept_code: '02014000'
+    iptc_name: 'crime law and justice / inquest'
+  Iptc_02015000:
+    iptc_id: 100
+    iptc_concept_code: '02015000'
+    iptc_name: 'crime law and justice / inquiry'
+  Iptc_02016000:
+    iptc_id: 101
+    iptc_concept_code: '02016000'
+    iptc_name: 'crime law and justice / tribunal'
+  Iptc_03000000:
+    iptc_id: 102
+    iptc_concept_code: '03000000'
+    iptc_name: 'disaster and accident'
+  Iptc_03001000:
+    iptc_id: 103
+    iptc_concept_code: '03001000'
+    iptc_name: 'disaster and accident / drought'
+  Iptc_03002000:
+    iptc_id: 104
+    iptc_concept_code: '03002000'
+    iptc_name: 'disaster and accident / earthquake'
+  Iptc_03003000:
+    iptc_id: 105
+    iptc_concept_code: '03003000'
+    iptc_name: 'disaster and accident / famine'
+  Iptc_03004000:
+    iptc_id: 106
+    iptc_concept_code: '03004000'
+    iptc_name: 'disaster and accident / fire'
+  Iptc_03005000:
+    iptc_id: 107
+    iptc_concept_code: '03005000'
+    iptc_name: 'disaster and accident / flood'
+  Iptc_03006000:
+    iptc_id: 108
+    iptc_concept_code: '03006000'
+    iptc_name: 'disaster and accident / industrial accident'
+  Iptc_03006001:
+    iptc_id: 109
+    iptc_concept_code: '03006001'
+    iptc_name: 'disaster and accident / industrial accident / structural failures'
+  Iptc_03007000:
+    iptc_id: 110
+    iptc_concept_code: '03007000'
+    iptc_name: 'disaster and accident / meteorological disaster'
+  Iptc_03007001:
+    iptc_id: 111
+    iptc_concept_code: '03007001'
+    iptc_name: 'disaster and accident / meteorological disaster / windstorms'
+  Iptc_03008000:
+    iptc_id: 112
+    iptc_concept_code: '03008000'
+    iptc_name: 'disaster and accident / nuclear accident'
+  Iptc_03009000:
+    iptc_id: 113
+    iptc_concept_code: '03009000'
+    iptc_name: 'disaster and accident / pollution'
+  Iptc_03010000:
+    iptc_id: 114
+    iptc_concept_code: '03010000'
+    iptc_name: 'disaster and accident / transport accident'
+  Iptc_03010001:
+    iptc_id: 115
+    iptc_concept_code: '03010001'
+    iptc_name: 'disaster and accident / transport accident / road accident'
+  Iptc_03010002:
+    iptc_id: 116
+    iptc_concept_code: '03010002'
+    iptc_name: 'disaster and accident / transport accident / railway accident'
+  Iptc_03010003:
+    iptc_id: 117
+    iptc_concept_code: '03010003'
+    iptc_name: 'disaster and accident / transport accident / air and space accident'
+  Iptc_03010004:
+    iptc_id: 118
+    iptc_concept_code: '03010004'
+    iptc_name: 'disaster and accident / transport accident / maritime accident'
+  Iptc_03011000:
+    iptc_id: 119
+    iptc_concept_code: '03011000'
+    iptc_name: 'disaster and accident / volcanic eruption'
+  Iptc_03012000:
+    iptc_id: 120
+    iptc_concept_code: '03012000'
+    iptc_name: 'disaster and accident / relief and aid organisation'
+  Iptc_03013000:
+    iptc_id: 121
+    iptc_concept_code: '03013000'
+    iptc_name: 'disaster and accident / accident'
+  Iptc_03014000:
+    iptc_id: 122
+    iptc_concept_code: '03014000'
+    iptc_name: 'disaster and accident / emergency incident'
+  Iptc_03014001:
+    iptc_id: 123
+    iptc_concept_code: '03014001'
+    iptc_name: 'disaster and accident / emergency incident / explosion'
+  Iptc_03015000:
+    iptc_id: 124
+    iptc_concept_code: '03015000'
+    iptc_name: 'disaster and accident / disaster'
+  Iptc_03015001:
+    iptc_id: 125
+    iptc_concept_code: '03015001'
+    iptc_name: 'disaster and accident / disaster / natural disasters'
+  Iptc_03015002:
+    iptc_id: 126
+    iptc_concept_code: '03015002'
+    iptc_name: 'disaster and accident / disaster / avalanchelandslide'
+  Iptc_03016000:
+    iptc_id: 127
+    iptc_concept_code: '03016000'
+    iptc_name: 'disaster and accident / emergency planning'
+  Iptc_03017000:
+    iptc_id: 128
+    iptc_concept_code: '03017000'
+    iptc_name: 'disaster and accident / rescue'
+  Iptc_04000000:
+    iptc_id: 129
+    iptc_concept_code: '04000000'
+    iptc_name: 'economy business and finance'
+  Iptc_04001000:
+    iptc_id: 130
+    iptc_concept_code: '04001000'
+    iptc_name: 'economy business and finance / agriculture'
+  Iptc_04001001:
+    iptc_id: 131
+    iptc_concept_code: '04001001'
+    iptc_name: 'economy business and finance / agriculture / arable farming'
+  Iptc_04001002:
+    iptc_id: 132
+    iptc_concept_code: '04001002'
+    iptc_name: 'economy business and finance / agriculture / fishing industry'
+  Iptc_04001003:
+    iptc_id: 133
+    iptc_concept_code: '04001003'
+    iptc_name: 'economy business and finance / agriculture / forestry and timber'
+  Iptc_04001004:
+    iptc_id: 134
+    iptc_concept_code: '04001004'
+    iptc_name: 'economy business and finance / agriculture / livestock farming'
+  Iptc_04001005:
+    iptc_id: 135
+    iptc_concept_code: '04001005'
+    iptc_name: 'economy business and finance / agriculture / viniculture'
+  Iptc_04001006:
+    iptc_id: 136
+    iptc_concept_code: '04001006'
+    iptc_name: 'economy business and finance / agriculture / aquaculture'
+  Iptc_04002000:
+    iptc_id: 137
+    iptc_concept_code: '04002000'
+    iptc_name: 'economy business and finance / chemicals'
+  Iptc_04002001:
+    iptc_id: 138
+    iptc_concept_code: '04002001'
+    iptc_name: 'economy business and finance / chemicals / biotechnology'
+  Iptc_04002002:
+    iptc_id: 139
+    iptc_concept_code: '04002002'
+    iptc_name: 'economy business and finance / chemicals / fertiliser'
+  Iptc_04002003:
+    iptc_id: 140
+    iptc_concept_code: '04002003'
+    iptc_name: 'economy business and finance / chemicals / health and beauty product'
+  Iptc_04002004:
+    iptc_id: 141
+    iptc_concept_code: '04002004'
+    iptc_name: 'economy business and finance / chemicals / inorganic chemical'
+  Iptc_04002005:
+    iptc_id: 142
+    iptc_concept_code: '04002005'
+    iptc_name: 'economy business and finance / chemicals / organic chemical'
+  Iptc_04002006:
+    iptc_id: 143
+    iptc_concept_code: '04002006'
+    iptc_name: 'economy business and finance / chemicals / pharmaceutical'
+  Iptc_04002007:
+    iptc_id: 144
+    iptc_concept_code: '04002007'
+    iptc_name: 'economy business and finance / chemicals / synthetic and plastic'
+  Iptc_04003000:
+    iptc_id: 145
+    iptc_concept_code: '04003000'
+    iptc_name: 'economy business and finance / computing and information technology'
+  Iptc_04003001:
+    iptc_id: 146
+    iptc_concept_code: '04003001'
+    iptc_name: 'economy business and finance / computing and information technology / hardware'
+  Iptc_04003002:
+    iptc_id: 147
+    iptc_concept_code: '04003002'
+    iptc_name: 'economy business and finance / computing and information technology / networking'
+  Iptc_04003003:
+    iptc_id: 148
+    iptc_concept_code: '04003003'
+    iptc_name: 'economy business and finance / computing and information technology / satellite technology'
+  Iptc_04003004:
+    iptc_id: 149
+    iptc_concept_code: '04003004'
+    iptc_name: 'economy business and finance / computing and information technology / semiconductors and active components'
+  Iptc_04003005:
+    iptc_id: 150
+    iptc_concept_code: '04003005'
+    iptc_name: 'economy business and finance / computing and information technology / software'
+  Iptc_04003006:
+    iptc_id: 151
+    iptc_concept_code: '04003006'
+    iptc_name: 'economy business and finance / computing and information technology / telecommunication equipment'
+  Iptc_04003007:
+    iptc_id: 152
+    iptc_concept_code: '04003007'
+    iptc_name: 'economy business and finance / computing and information technology / telecommunication service'
+  Iptc_04003008:
+    iptc_id: 153
+    iptc_concept_code: '04003008'
+    iptc_name: 'economy business and finance / computing and information technology / security'
+  Iptc_04003009:
+    iptc_id: 154
+    iptc_concept_code: '04003009'
+    iptc_name: 'economy business and finance / computing and information technology / wireless technology'
+  Iptc_04004000:
+    iptc_id: 155
+    iptc_concept_code: '04004000'
+    iptc_name: 'economy business and finance / construction and property'
+  Iptc_04004001:
+    iptc_id: 156
+    iptc_concept_code: '04004001'
+    iptc_name: 'economy business and finance / construction and property / heavy construction'
+  Iptc_04004002:
+    iptc_id: 157
+    iptc_concept_code: '04004002'
+    iptc_name: 'economy business and finance / construction and property / house building'
+  Iptc_04004003:
+    iptc_id: 158
+    iptc_concept_code: '04004003'
+    iptc_name: 'economy business and finance / construction and property / real estate'
+  Iptc_04004004:
+    iptc_id: 159
+    iptc_concept_code: '04004004'
+    iptc_name: 'economy business and finance / construction and property / farms'
+  Iptc_04004005:
+    iptc_id: 160
+    iptc_concept_code: '04004005'
+    iptc_name: 'economy business and finance / construction and property / land price'
+  Iptc_04004006:
+    iptc_id: 161
+    iptc_concept_code: '04004006'
+    iptc_name: 'economy business and finance / construction and property / renovation'
+  Iptc_04004007:
+    iptc_id: 162
+    iptc_concept_code: '04004007'
+    iptc_name: 'economy business and finance / construction and property / design and engineering'
+  Iptc_04005000:
+    iptc_id: 163
+    iptc_concept_code: '04005000'
+    iptc_name: 'economy business and finance / energy and resource'
+  Iptc_04005001:
+    iptc_id: 164
+    iptc_concept_code: '04005001'
+    iptc_name: 'economy business and finance / energy and resource / alternative energy'
+  Iptc_04005002:
+    iptc_id: 165
+    iptc_concept_code: '04005002'
+    iptc_name: 'economy business and finance / energy and resource / coal'
+  Iptc_04005003:
+    iptc_id: 166
+    iptc_concept_code: '04005003'
+    iptc_name: 'economy business and finance / energy and resource / oil and gas - downstream activities'
+  Iptc_04005004:
+    iptc_id: 167
+    iptc_concept_code: '04005004'
+    iptc_name: 'economy business and finance / energy and resource / oil and gas - upstream activities'
+  Iptc_04005005:
+    iptc_id: 168
+    iptc_concept_code: '04005005'
+    iptc_name: 'economy business and finance / energy and resource / nuclear power'
+  Iptc_04005006:
+    iptc_id: 169
+    iptc_concept_code: '04005006'
+    iptc_name: 'economy business and finance / energy and resource / electricity production and distribution'
+  Iptc_04005007:
+    iptc_id: 170
+    iptc_concept_code: '04005007'
+    iptc_name: 'economy business and finance / energy and resource / waste management and pollution control'
+  Iptc_04005008:
+    iptc_id: 171
+    iptc_concept_code: '04005008'
+    iptc_name: 'economy business and finance / energy and resource / water supply'
+  Iptc_04005009:
+    iptc_id: 172
+    iptc_concept_code: '04005009'
+    iptc_name: 'economy business and finance / energy and resource / natural resources'
+  Iptc_04005010:
+    iptc_id: 173
+    iptc_concept_code: '04005010'
+    iptc_name: 'economy business and finance / energy and resource / energy'
+  Iptc_04005011:
+    iptc_id: 174
+    iptc_concept_code: '04005011'
+    iptc_name: 'economy business and finance / energy and resource / natural gas'
+  Iptc_04005012:
+    iptc_id: 175
+    iptc_concept_code: '04005012'
+    iptc_name: 'economy business and finance / energy and resource / petrol'
+  Iptc_04005013:
+    iptc_id: 176
+    iptc_concept_code: '04005013'
+    iptc_name: 'economy business and finance / energy and resource / diesel fuel'
+  Iptc_04005014:
+    iptc_id: 177
+    iptc_concept_code: '04005014'
+    iptc_name: 'economy business and finance / energy and resource / keroseneparaffin'
+  Iptc_04006000:
+    iptc_id: 178
+    iptc_concept_code: '04006000'
+    iptc_name: 'economy business and finance / financial and business service'
+  Iptc_04006001:
+    iptc_id: 179
+    iptc_concept_code: '04006001'
+    iptc_name: 'economy business and finance / financial and business service / accountancy and auditing'
+  Iptc_04006002:
+    iptc_id: 180
+    iptc_concept_code: '04006002'
+    iptc_name: 'economy business and finance / financial and business service / banking'
+  Iptc_04006003:
+    iptc_id: 181
+    iptc_concept_code: '04006003'
+    iptc_name: 'economy business and finance / financial and business service / consultancy service'
+  Iptc_04006004:
+    iptc_id: 182
+    iptc_concept_code: '04006004'
+    iptc_name: 'economy business and finance / financial and business service / employment agency'
+  Iptc_04006005:
+    iptc_id: 183
+    iptc_concept_code: '04006005'
+    iptc_name: 'economy business and finance / financial and business service / healthcare provider'
+  Iptc_04006006:
+    iptc_id: 184
+    iptc_concept_code: '04006006'
+    iptc_name: 'economy business and finance / financial and business service / insurance'
+  Iptc_04006007:
+    iptc_id: 185
+    iptc_concept_code: '04006007'
+    iptc_name: 'economy business and finance / financial and business service / legal service'
+  Iptc_04006008:
+    iptc_id: 186
+    iptc_concept_code: '04006008'
+    iptc_name: 'economy business and finance / financial and business service / market research'
+  Iptc_04006009:
+    iptc_id: 187
+    iptc_concept_code: '04006009'
+    iptc_name: 'economy business and finance / financial and business service / stock broking'
+  Iptc_04006010:
+    iptc_id: 188
+    iptc_concept_code: '04006010'
+    iptc_name: 'economy business and finance / financial and business service / personal investing'
+  Iptc_04006011:
+    iptc_id: 189
+    iptc_concept_code: '04006011'
+    iptc_name: 'economy business and finance / financial and business service / market trend'
+  Iptc_04006012:
+    iptc_id: 190
+    iptc_concept_code: '04006012'
+    iptc_name: 'economy business and finance / financial and business service / shipping service'
+  Iptc_04006013:
+    iptc_id: 191
+    iptc_concept_code: '04006013'
+    iptc_name: 'economy business and finance / financial and business service / personal service'
+  Iptc_04006014:
+    iptc_id: 192
+    iptc_concept_code: '04006014'
+    iptc_name: 'economy business and finance / financial and business service / janitorial service'
+  Iptc_04006015:
+    iptc_id: 193
+    iptc_concept_code: '04006015'
+    iptc_name: 'economy business and finance / financial and business service / funeral parlour and crematorium'
+  Iptc_04006016:
+    iptc_id: 194
+    iptc_concept_code: '04006016'
+    iptc_name: 'economy business and finance / financial and business service / rental service'
+  Iptc_04006017:
+    iptc_id: 195
+    iptc_concept_code: '04006017'
+    iptc_name: 'economy business and finance / financial and business service / wedding service'
+  Iptc_04006018:
+    iptc_id: 196
+    iptc_concept_code: '04006018'
+    iptc_name: 'economy business and finance / financial and business service / personal finance'
+  Iptc_04006019:
+    iptc_id: 197
+    iptc_concept_code: '04006019'
+    iptc_name: 'economy business and finance / financial and business service / personal income'
+  Iptc_04006020:
+    iptc_id: 198
+    iptc_concept_code: '04006020'
+    iptc_name: 'economy business and finance / financial and business service / auction service'
+  Iptc_04006021:
+    iptc_id: 199
+    iptc_concept_code: '04006021'
+    iptc_name: 'economy business and finance / financial and business service / printingpromotional service'
+  Iptc_04006022:
+    iptc_id: 200
+    iptc_concept_code: '04006022'
+    iptc_name: 'economy business and finance / financial and business service / investment service'
+  Iptc_04007000:
+    iptc_id: 201
+    iptc_concept_code: '04007000'
+    iptc_name: 'economy business and finance / consumer goods'
+  Iptc_04007001:
+    iptc_id: 202
+    iptc_concept_code: '04007001'
+    iptc_name: 'economy business and finance / consumer goods / clothing'
+  Iptc_04007002:
+    iptc_id: 203
+    iptc_concept_code: '04007002'
+    iptc_name: 'economy business and finance / consumer goods / department store'
+  Iptc_04007003:
+    iptc_id: 204
+    iptc_concept_code: '04007003'
+    iptc_name: 'economy business and finance / consumer goods / food'
+  Iptc_04007004:
+    iptc_id: 205
+    iptc_concept_code: '04007004'
+    iptc_name: 'economy business and finance / consumer goods / mail order'
+  Iptc_04007005:
+    iptc_id: 206
+    iptc_concept_code: '04007005'
+    iptc_name: 'economy business and finance / consumer goods / retail'
+  Iptc_04007006:
+    iptc_id: 207
+    iptc_concept_code: '04007006'
+    iptc_name: 'economy business and finance / consumer goods / speciality store'
+  Iptc_04007007:
+    iptc_id: 208
+    iptc_concept_code: '04007007'
+    iptc_name: 'economy business and finance / consumer goods / wholesale'
+  Iptc_04007008:
+    iptc_id: 209
+    iptc_concept_code: '04007008'
+    iptc_name: 'economy business and finance / consumer goods / beverage'
+  Iptc_04007009:
+    iptc_id: 210
+    iptc_concept_code: '04007009'
+    iptc_name: 'economy business and finance / consumer goods / electronic commerce'
+  Iptc_04007010:
+    iptc_id: 211
+    iptc_concept_code: '04007010'
+    iptc_name: 'economy business and finance / consumer goods / luxury good'
+  Iptc_04007011:
+    iptc_id: 212
+    iptc_concept_code: '04007011'
+    iptc_name: 'economy business and finance / consumer goods / non-durable good'
+  Iptc_04007012:
+    iptc_id: 213
+    iptc_concept_code: '04007012'
+    iptc_name: 'economy business and finance / consumer goods / toy'
+  Iptc_04008000:
+    iptc_id: 214
+    iptc_concept_code: '04008000'
+    iptc_name: 'economy business and finance / macro economics'
+  Iptc_04008001:
+    iptc_id: 215
+    iptc_concept_code: '04008001'
+    iptc_name: 'economy business and finance / macro economics / central bank'
+  Iptc_04008002:
+    iptc_id: 216
+    iptc_concept_code: '04008002'
+    iptc_name: 'economy business and finance / macro economics / consumer issue'
+  Iptc_04008003:
+    iptc_id: 217
+    iptc_concept_code: '04008003'
+    iptc_name: 'economy business and finance / macro economics / debt market'
+  Iptc_04008004:
+    iptc_id: 218
+    iptc_concept_code: '04008004'
+    iptc_name: 'economy business and finance / macro economics / economic indicator'
+  Iptc_04008005:
+    iptc_id: 219
+    iptc_concept_code: '04008005'
+    iptc_name: 'economy business and finance / macro economics / emerging market'
+  Iptc_04008006:
+    iptc_id: 220
+    iptc_concept_code: '04008006'
+    iptc_name: 'economy business and finance / macro economics / foreign exchange market'
+  Iptc_04008007:
+    iptc_id: 221
+    iptc_concept_code: '04008007'
+    iptc_name: 'economy business and finance / macro economics / government aid'
+  Iptc_04008008:
+    iptc_id: 222
+    iptc_concept_code: '04008008'
+    iptc_name: 'economy business and finance / macro economics / government debt'
+  Iptc_04008009:
+    iptc_id: 223
+    iptc_concept_code: '04008009'
+    iptc_name: 'economy business and finance / macro economics / interest rate'
+  Iptc_04008010:
+    iptc_id: 224
+    iptc_concept_code: '04008010'
+    iptc_name: 'economy business and finance / macro economics / international economic institution'
+  Iptc_04008011:
+    iptc_id: 225
+    iptc_concept_code: '04008011'
+    iptc_name: 'economy business and finance / macro economics / international trade'
+  Iptc_04008012:
+    iptc_id: 226
+    iptc_concept_code: '04008012'
+    iptc_name: 'economy business and finance / macro economics / loan market'
+  Iptc_04008013:
+    iptc_id: 227
+    iptc_concept_code: '04008013'
+    iptc_name: 'economy business and finance / macro economics / economic organization'
+  Iptc_04008014:
+    iptc_id: 228
+    iptc_concept_code: '04008014'
+    iptc_name: 'economy business and finance / macro economics / consumer confidence'
+  Iptc_04008015:
+    iptc_id: 229
+    iptc_concept_code: '04008015'
+    iptc_name: 'economy business and finance / macro economics / trade dispute'
+  Iptc_04008016:
+    iptc_id: 230
+    iptc_concept_code: '04008016'
+    iptc_name: 'economy business and finance / macro economics / inflation and deflation'
+  Iptc_04008017:
+    iptc_id: 231
+    iptc_concept_code: '04008017'
+    iptc_name: 'economy business and finance / macro economics / prices'
+  Iptc_04008018:
+    iptc_id: 232
+    iptc_concept_code: '04008018'
+    iptc_name: 'economy business and finance / macro economics / currency values'
+  Iptc_04008019:
+    iptc_id: 233
+    iptc_concept_code: '04008019'
+    iptc_name: 'economy business and finance / macro economics / budgets and budgeting'
+  Iptc_04008020:
+    iptc_id: 234
+    iptc_concept_code: '04008020'
+    iptc_name: 'economy business and finance / macro economics / credit and debt'
+  Iptc_04008021:
+    iptc_id: 235
+    iptc_concept_code: '04008021'
+    iptc_name: 'economy business and finance / macro economics / loans'
+  Iptc_04008022:
+    iptc_id: 236
+    iptc_concept_code: '04008022'
+    iptc_name: 'economy business and finance / macro economics / mortgages'
+  Iptc_04008023:
+    iptc_id: 237
+    iptc_concept_code: '04008023'
+    iptc_name: 'economy business and finance / macro economics / financial markets'
+  Iptc_04008024:
+    iptc_id: 238
+    iptc_concept_code: '04008024'
+    iptc_name: 'economy business and finance / macro economics / commodity markets'
+  Iptc_04008025:
+    iptc_id: 239
+    iptc_concept_code: '04008025'
+    iptc_name: 'economy business and finance / macro economics / investments'
+  Iptc_04008026:
+    iptc_id: 240
+    iptc_concept_code: '04008026'
+    iptc_name: 'economy business and finance / macro economics / stocks'
+  Iptc_04008027:
+    iptc_id: 241
+    iptc_concept_code: '04008027'
+    iptc_name: 'economy business and finance / macro economics / bonds'
+  Iptc_04008028:
+    iptc_id: 242
+    iptc_concept_code: '04008028'
+    iptc_name: 'economy business and finance / macro economics / mutual funds'
+  Iptc_04008029:
+    iptc_id: 243
+    iptc_concept_code: '04008029'
+    iptc_name: 'economy business and finance / macro economics / derivative securities'
+  Iptc_04008030:
+    iptc_id: 244
+    iptc_concept_code: '04008030'
+    iptc_name: 'economy business and finance / macro economics / imports'
+  Iptc_04008031:
+    iptc_id: 245
+    iptc_concept_code: '04008031'
+    iptc_name: 'economy business and finance / macro economics / exports'
+  Iptc_04008032:
+    iptc_id: 246
+    iptc_concept_code: '04008032'
+    iptc_name: 'economy business and finance / macro economics / trade agreements'
+  Iptc_04008033:
+    iptc_id: 247
+    iptc_concept_code: '04008033'
+    iptc_name: 'economy business and finance / macro economics / trade policy'
+  Iptc_04008034:
+    iptc_id: 248
+    iptc_concept_code: '04008034'
+    iptc_name: 'economy business and finance / macro economics / business enterprises'
+  Iptc_04008035:
+    iptc_id: 249
+    iptc_concept_code: '04008035'
+    iptc_name: 'economy business and finance / macro economics / tariff'
+  Iptc_04008036:
+    iptc_id: 250
+    iptc_concept_code: '04008036'
+    iptc_name: 'economy business and finance / macro economics / trade balance'
+  Iptc_04009000:
+    iptc_id: 251
+    iptc_concept_code: '04009000'
+    iptc_name: 'economy business and finance / market and exchange'
+  Iptc_04009001:
+    iptc_id: 252
+    iptc_concept_code: '04009001'
+    iptc_name: 'economy business and finance / market and exchange / energy'
+  Iptc_04009002:
+    iptc_id: 253
+    iptc_concept_code: '04009002'
+    iptc_name: 'economy business and finance / market and exchange / metal'
+  Iptc_04009003:
+    iptc_id: 254
+    iptc_concept_code: '04009003'
+    iptc_name: 'economy business and finance / market and exchange / securities'
+  Iptc_04009004:
+    iptc_id: 255
+    iptc_concept_code: '04009004'
+    iptc_name: 'economy business and finance / market and exchange / soft commodity'
+  Iptc_04010000:
+    iptc_id: 256
+    iptc_concept_code: '04010000'
+    iptc_name: 'economy business and finance / media'
+  Iptc_04010001:
+    iptc_id: 257
+    iptc_concept_code: '04010001'
+    iptc_name: 'economy business and finance / media / advertising'
+  Iptc_04010002:
+    iptc_id: 258
+    iptc_concept_code: '04010002'
+    iptc_name: 'economy business and finance / media / book'
+  Iptc_04010003:
+    iptc_id: 259
+    iptc_concept_code: '04010003'
+    iptc_name: 'economy business and finance / media / cinema industry'
+  Iptc_04010004:
+    iptc_id: 260
+    iptc_concept_code: '04010004'
+    iptc_name: 'economy business and finance / media / news agency'
+  Iptc_04010005:
+    iptc_id: 261
+    iptc_concept_code: '04010005'
+    iptc_name: 'economy business and finance / media / newspaper and magazine'
+  Iptc_04010006:
+    iptc_id: 262
+    iptc_concept_code: '04010006'
+    iptc_name: 'economy business and finance / media / online'
+  Iptc_04010007:
+    iptc_id: 263
+    iptc_concept_code: '04010007'
+    iptc_name: 'economy business and finance / media / public relation'
+  Iptc_04010008:
+    iptc_id: 264
+    iptc_concept_code: '04010008'
+    iptc_name: 'economy business and finance / media / radio industry'
+  Iptc_04010009:
+    iptc_id: 265
+    iptc_concept_code: '04010009'
+    iptc_name: 'economy business and finance / media / satellite and cable service'
+  Iptc_04010010:
+    iptc_id: 266
+    iptc_concept_code: '04010010'
+    iptc_name: 'economy business and finance / media / television industry'
+  Iptc_04010011:
+    iptc_id: 267
+    iptc_concept_code: '04010011'
+    iptc_name: 'economy business and finance / media / music industry'
+  Iptc_04011000:
+    iptc_id: 268
+    iptc_concept_code: '04011000'
+    iptc_name: 'economy business and finance / manufacturing and engineering'
+  Iptc_04011001:
+    iptc_id: 269
+    iptc_concept_code: '04011001'
+    iptc_name: 'economy business and finance / manufacturing and engineering / aerospace'
+  Iptc_04011002:
+    iptc_id: 270
+    iptc_concept_code: '04011002'
+    iptc_name: 'economy business and finance / manufacturing and engineering / automotive equipment'
+  Iptc_04011003:
+    iptc_id: 271
+    iptc_concept_code: '04011003'
+    iptc_name: 'economy business and finance / manufacturing and engineering / defence equipment'
+  Iptc_04011004:
+    iptc_id: 272
+    iptc_concept_code: '04011004'
+    iptc_name: 'economy business and finance / manufacturing and engineering / electrical appliance'
+  Iptc_04011005:
+    iptc_id: 273
+    iptc_concept_code: '04011005'
+    iptc_name: 'economy business and finance / manufacturing and engineering / heavy engineering'
+  Iptc_04011006:
+    iptc_id: 274
+    iptc_concept_code: '04011006'
+    iptc_name: 'economy business and finance / manufacturing and engineering / industrial component'
+  Iptc_04011007:
+    iptc_id: 275
+    iptc_concept_code: '04011007'
+    iptc_name: 'economy business and finance / manufacturing and engineering / instrument engineering'
+  Iptc_04011008:
+    iptc_id: 276
+    iptc_concept_code: '04011008'
+    iptc_name: 'economy business and finance / manufacturing and engineering / shipbuilding'
+  Iptc_04011009:
+    iptc_id: 277
+    iptc_concept_code: '04011009'
+    iptc_name: 'economy business and finance / manufacturing and engineering / machine manufacturing'
+  Iptc_04012000:
+    iptc_id: 278
+    iptc_concept_code: '04012000'
+    iptc_name: 'economy business and finance / metal and mineral'
+  Iptc_04012001:
+    iptc_id: 279
+    iptc_concept_code: '04012001'
+    iptc_name: 'economy business and finance / metal and mineral / building material'
+  Iptc_04012002:
+    iptc_id: 280
+    iptc_concept_code: '04012002'
+    iptc_name: 'economy business and finance / metal and mineral / gold and precious material'
+  Iptc_04012003:
+    iptc_id: 281
+    iptc_concept_code: '04012003'
+    iptc_name: 'economy business and finance / metal and mineral / iron and steel'
+  Iptc_04012004:
+    iptc_id: 282
+    iptc_concept_code: '04012004'
+    iptc_name: 'economy business and finance / metal and mineral / non ferrous metal'
+  Iptc_04012005:
+    iptc_id: 283
+    iptc_concept_code: '04012005'
+    iptc_name: 'economy business and finance / metal and mineral / mining'
+  Iptc_04013000:
+    iptc_id: 284
+    iptc_concept_code: '04013000'
+    iptc_name: 'economy business and finance / process industry'
+  Iptc_04013001:
+    iptc_id: 285
+    iptc_concept_code: '04013001'
+    iptc_name: 'economy business and finance / process industry / distiller and brewer'
+  Iptc_04013002:
+    iptc_id: 286
+    iptc_concept_code: '04013002'
+    iptc_name: 'economy business and finance / process industry / food'
+  Iptc_04013003:
+    iptc_id: 287
+    iptc_concept_code: '04013003'
+    iptc_name: 'economy business and finance / process industry / furnishings and furniture'
+  Iptc_04013004:
+    iptc_id: 288
+    iptc_concept_code: '04013004'
+    iptc_name: 'economy business and finance / process industry / paper and packaging product'
+  Iptc_04013005:
+    iptc_id: 289
+    iptc_concept_code: '04013005'
+    iptc_name: 'economy business and finance / process industry / rubber product'
+  Iptc_04013006:
+    iptc_id: 290
+    iptc_concept_code: '04013006'
+    iptc_name: 'economy business and finance / process industry / soft drinks'
+  Iptc_04013007:
+    iptc_id: 291
+    iptc_concept_code: '04013007'
+    iptc_name: 'economy business and finance / process industry / textile and clothing'
+  Iptc_04013008:
+    iptc_id: 292
+    iptc_concept_code: '04013008'
+    iptc_name: 'economy business and finance / process industry / tobacco'
+  Iptc_04014000:
+    iptc_id: 293
+    iptc_concept_code: '04014000'
+    iptc_name: 'economy business and finance / tourism and leisure'
+  Iptc_04014001:
+    iptc_id: 294
+    iptc_concept_code: '04014001'
+    iptc_name: 'economy business and finance / tourism and leisure / casino and gambling'
+  Iptc_04014002:
+    iptc_id: 295
+    iptc_concept_code: '04014002'
+    iptc_name: 'economy business and finance / tourism and leisure / hotel and accommodation'
+  Iptc_04014003:
+    iptc_id: 296
+    iptc_concept_code: '04014003'
+    iptc_name: 'economy business and finance / tourism and leisure / recreational and sporting goods'
+  Iptc_04014004:
+    iptc_id: 297
+    iptc_concept_code: '04014004'
+    iptc_name: 'economy business and finance / tourism and leisure / restaurant and catering'
+  Iptc_04014005:
+    iptc_id: 298
+    iptc_concept_code: '04014005'
+    iptc_name: 'economy business and finance / tourism and leisure / tour operator'
+  Iptc_04015000:
+    iptc_id: 299
+    iptc_concept_code: '04015000'
+    iptc_name: 'economy business and finance / transport'
+  Iptc_04015001:
+    iptc_id: 300
+    iptc_concept_code: '04015001'
+    iptc_name: 'economy business and finance / transport / air transport'
+  Iptc_04015002:
+    iptc_id: 301
+    iptc_concept_code: '04015002'
+    iptc_name: 'economy business and finance / transport / railway'
+  Iptc_04015003:
+    iptc_id: 302
+    iptc_concept_code: '04015003'
+    iptc_name: 'economy business and finance / transport / road transport'
+  Iptc_04015004:
+    iptc_id: 303
+    iptc_concept_code: '04015004'
+    iptc_name: 'economy business and finance / transport / waterway and maritime transport'
+  Iptc_04016000:
+    iptc_id: 304
+    iptc_concept_code: '04016000'
+    iptc_name: 'economy business and finance / company information'
+  Iptc_04016001:
+    iptc_id: 305
+    iptc_concept_code: '04016001'
+    iptc_name: 'economy business and finance / company information / accounting and audit'
+  Iptc_04016002:
+    iptc_id: 306
+    iptc_concept_code: '04016002'
+    iptc_name: 'economy business and finance / company information / annual and special corporate meeting'
+  Iptc_04016003:
+    iptc_id: 307
+    iptc_concept_code: '04016003'
+    iptc_name: 'economy business and finance / company information / annual report'
+  Iptc_04016004:
+    iptc_id: 308
+    iptc_concept_code: '04016004'
+    iptc_name: 'economy business and finance / company information / antitrust issue'
+  Iptc_04016005:
+    iptc_id: 309
+    iptc_concept_code: '04016005'
+    iptc_name: 'economy business and finance / company information / merger acquisition and takeover'
+  Iptc_04016006:
+    iptc_id: 310
+    iptc_concept_code: '04016006'
+    iptc_name: 'economy business and finance / company information / analysts comment'
+  Iptc_04016007:
+    iptc_id: 311
+    iptc_concept_code: '04016007'
+    iptc_name: 'economy business and finance / company information / bankruptcy'
+  Iptc_04016008:
+    iptc_id: 312
+    iptc_concept_code: '04016008'
+    iptc_name: 'economy business and finance / company information / board of directors'
+  Iptc_04016009:
+    iptc_id: 313
+    iptc_concept_code: '04016009'
+    iptc_name: 'economy business and finance / company information / buyback'
+  Iptc_04016010:
+    iptc_id: 314
+    iptc_concept_code: '04016010'
+    iptc_name: 'economy business and finance / company information / C.E.O. interview'
+  Iptc_04016011:
+    iptc_id: 315
+    iptc_concept_code: '04016011'
+    iptc_name: 'economy business and finance / company information / corporate officer'
+  Iptc_04016012:
+    iptc_id: 316
+    iptc_concept_code: '04016012'
+    iptc_name: 'economy business and finance / company information / corporate profile'
+  Iptc_04016013:
+    iptc_id: 317
+    iptc_concept_code: '04016013'
+    iptc_name: 'economy business and finance / company information / contract'
+  Iptc_04016014:
+    iptc_id: 318
+    iptc_concept_code: '04016014'
+    iptc_name: 'economy business and finance / company information / defence contract'
+  Iptc_04016015:
+    iptc_id: 319
+    iptc_concept_code: '04016015'
+    iptc_name: 'economy business and finance / company information / dividend announcement'
+  Iptc_04016016:
+    iptc_id: 320
+    iptc_concept_code: '04016016'
+    iptc_name: 'economy business and finance / company information / earnings forecast'
+  Iptc_04016017:
+    iptc_id: 321
+    iptc_concept_code: '04016017'
+    iptc_name: 'economy business and finance / company information / financially distressed company'
+  Iptc_04016018:
+    iptc_id: 322
+    iptc_concept_code: '04016018'
+    iptc_name: 'economy business and finance / company information / earnings'
+  Iptc_04016019:
+    iptc_id: 323
+    iptc_concept_code: '04016019'
+    iptc_name: 'economy business and finance / company information / financing and stock offering'
+  Iptc_04016020:
+    iptc_id: 324
+    iptc_concept_code: '04016020'
+    iptc_name: 'economy business and finance / company information / government contract'
+  Iptc_04016021:
+    iptc_id: 325
+    iptc_concept_code: '04016021'
+    iptc_name: 'economy business and finance / company information / global expansion'
+  Iptc_04016022:
+    iptc_id: 326
+    iptc_concept_code: '04016022'
+    iptc_name: 'economy business and finance / company information / insider trading'
+  Iptc_04016023:
+    iptc_id: 327
+    iptc_concept_code: '04016023'
+    iptc_name: 'economy business and finance / company information / joint venture'
+  Iptc_04016024:
+    iptc_id: 328
+    iptc_concept_code: '04016024'
+    iptc_name: 'economy business and finance / company information / leveraged buyout'
+  Iptc_04016025:
+    iptc_id: 329
+    iptc_concept_code: '04016025'
+    iptc_name: 'economy business and finance / company information / layoffs and downsizing'
+  Iptc_04016026:
+    iptc_id: 330
+    iptc_concept_code: '04016026'
+    iptc_name: 'economy business and finance / company information / licensing agreement'
+  Iptc_04016027:
+    iptc_id: 331
+    iptc_concept_code: '04016027'
+    iptc_name: 'economy business and finance / company information / litigation and regulation'
+  Iptc_04016028:
+    iptc_id: 332
+    iptc_concept_code: '04016028'
+    iptc_name: 'economy business and finance / company information / management change'
+  Iptc_04016029:
+    iptc_id: 333
+    iptc_concept_code: '04016029'
+    iptc_name: 'economy business and finance / company information / marketing'
+  Iptc_04016030:
+    iptc_id: 334
+    iptc_concept_code: '04016030'
+    iptc_name: 'economy business and finance / company information / new product'
+  Iptc_04016031:
+    iptc_id: 335
+    iptc_concept_code: '04016031'
+    iptc_name: 'economy business and finance / company information / patent copyright and trademark'
+  Iptc_04016032:
+    iptc_id: 336
+    iptc_concept_code: '04016032'
+    iptc_name: 'economy business and finance / company information / plant closing'
+  Iptc_04016033:
+    iptc_id: 337
+    iptc_concept_code: '04016033'
+    iptc_name: 'economy business and finance / company information / plant opening'
+  Iptc_04016034:
+    iptc_id: 338
+    iptc_concept_code: '04016034'
+    iptc_name: 'economy business and finance / company information / privatisation'
+  Iptc_04016035:
+    iptc_id: 339
+    iptc_concept_code: '04016035'
+    iptc_name: 'economy business and finance / company information / proxy filing'
+  Iptc_04016036:
+    iptc_id: 340
+    iptc_concept_code: '04016036'
+    iptc_name: 'economy business and finance / company information / rating'
+  Iptc_04016037:
+    iptc_id: 341
+    iptc_concept_code: '04016037'
+    iptc_name: 'economy business and finance / company information / research and development'
+  Iptc_04016038:
+    iptc_id: 342
+    iptc_concept_code: '04016038'
+    iptc_name: 'economy business and finance / company information / quarterly or semiannual financial statement'
+  Iptc_04016039:
+    iptc_id: 343
+    iptc_concept_code: '04016039'
+    iptc_name: 'economy business and finance / company information / restructuring and recapitalisation'
+  Iptc_04016040:
+    iptc_id: 344
+    iptc_concept_code: '04016040'
+    iptc_name: 'economy business and finance / company information / spin-off'
+  Iptc_04016041:
+    iptc_id: 345
+    iptc_concept_code: '04016041'
+    iptc_name: 'economy business and finance / company information / stock activity'
+  Iptc_04016042:
+    iptc_id: 346
+    iptc_concept_code: '04016042'
+    iptc_name: 'economy business and finance / company information / industrial production'
+  Iptc_04016043:
+    iptc_id: 347
+    iptc_concept_code: '04016043'
+    iptc_name: 'economy business and finance / company information / productivity'
+  Iptc_04016044:
+    iptc_id: 348
+    iptc_concept_code: '04016044'
+    iptc_name: 'economy business and finance / company information / inventories'
+  Iptc_04016045:
+    iptc_id: 349
+    iptc_concept_code: '04016045'
+    iptc_name: 'economy business and finance / company information / sales'
+  Iptc_04016046:
+    iptc_id: 350
+    iptc_concept_code: '04016046'
+    iptc_name: 'economy business and finance / company information / corporations'
+  Iptc_04016047:
+    iptc_id: 351
+    iptc_concept_code: '04016047'
+    iptc_name: 'economy business and finance / company information / shareholders'
+  Iptc_04016048:
+    iptc_id: 352
+    iptc_concept_code: '04016048'
+    iptc_name: 'economy business and finance / company information / corporate performance'
+  Iptc_04016049:
+    iptc_id: 353
+    iptc_concept_code: '04016049'
+    iptc_name: 'economy business and finance / company information / losses'
+  Iptc_04016050:
+    iptc_id: 354
+    iptc_concept_code: '04016050'
+    iptc_name: 'economy business and finance / company information / credit ratings'
+  Iptc_04016051:
+    iptc_id: 355
+    iptc_concept_code: '04016051'
+    iptc_name: 'economy business and finance / company information / stock splits'
+  Iptc_04016052:
+    iptc_id: 356
+    iptc_concept_code: '04016052'
+    iptc_name: 'economy business and finance / company information / stock options'
+  Iptc_04016053:
+    iptc_id: 357
+    iptc_concept_code: '04016053'
+    iptc_name: 'economy business and finance / company information / recalls'
+  Iptc_04016054:
+    iptc_id: 358
+    iptc_concept_code: '04016054'
+    iptc_name: 'economy business and finance / company information / globalization'
+  Iptc_04016055:
+    iptc_id: 359
+    iptc_concept_code: '04016055'
+    iptc_name: 'economy business and finance / company information / consumers'
+  Iptc_04016056:
+    iptc_id: 360
+    iptc_concept_code: '04016056'
+    iptc_name: 'economy business and finance / company information / purchase'
+  Iptc_04016057:
+    iptc_id: 361
+    iptc_concept_code: '04016057'
+    iptc_name: 'economy business and finance / company information / new service'
+  Iptc_04017000:
+    iptc_id: 362
+    iptc_concept_code: '04017000'
+    iptc_name: 'economy business and finance / economy'
+  Iptc_04017001:
+    iptc_id: 363
+    iptc_concept_code: '04017001'
+    iptc_name: 'economy business and finance / economy / economic policy'
+  Iptc_04018000:
+    iptc_id: 364
+    iptc_concept_code: '04018000'
+    iptc_name: 'economy business and finance / business'
+  Iptc_04018001:
+    iptc_id: 365
+    iptc_concept_code: '04018001'
+    iptc_name: 'economy business and finance / business / institution'
+  Iptc_04019000:
+    iptc_id: 366
+    iptc_concept_code: '04019000'
+    iptc_name: 'economy business and finance / finance'
+  Iptc_04019001:
+    iptc_id: 367
+    iptc_concept_code: '04019001'
+    iptc_name: 'economy business and finance / finance / money and monetary policy'
+  Iptc_05000000:
+    iptc_id: 368
+    iptc_concept_code: '05000000'
+    iptc_name: 'education'
+  Iptc_05001000:
+    iptc_id: 369
+    iptc_concept_code: '05001000'
+    iptc_name: 'education / adult education'
+  Iptc_05002000:
+    iptc_id: 370
+    iptc_concept_code: '05002000'
+    iptc_name: 'education / further education'
+  Iptc_05003000:
+    iptc_id: 371
+    iptc_concept_code: '05003000'
+    iptc_name: 'education / parent organisation'
+  Iptc_05004000:
+    iptc_id: 372
+    iptc_concept_code: '05004000'
+    iptc_name: 'education / preschool'
+  Iptc_05005000:
+    iptc_id: 373
+    iptc_concept_code: '05005000'
+    iptc_name: 'education / school'
+  Iptc_05005001:
+    iptc_id: 374
+    iptc_concept_code: '05005001'
+    iptc_name: 'education / school / elementary schools'
+  Iptc_05005002:
+    iptc_id: 375
+    iptc_concept_code: '05005002'
+    iptc_name: 'education / school / middle schools'
+  Iptc_05005003:
+    iptc_id: 376
+    iptc_concept_code: '05005003'
+    iptc_name: 'education / school / high schools'
+  Iptc_05006000:
+    iptc_id: 377
+    iptc_concept_code: '05006000'
+    iptc_name: 'education / teachers union'
+  Iptc_05007000:
+    iptc_id: 378
+    iptc_concept_code: '05007000'
+    iptc_name: 'education / university'
+  Iptc_05008000:
+    iptc_id: 379
+    iptc_concept_code: '05008000'
+    iptc_name: 'education / upbringing'
+  Iptc_05009000:
+    iptc_id: 380
+    iptc_concept_code: '05009000'
+    iptc_name: 'education / entrance examination'
+  Iptc_05010000:
+    iptc_id: 381
+    iptc_concept_code: '05010000'
+    iptc_name: 'education / teaching and learning'
+  Iptc_05010001:
+    iptc_id: 382
+    iptc_concept_code: '05010001'
+    iptc_name: 'education / teaching and learning / students'
+  Iptc_05010002:
+    iptc_id: 383
+    iptc_concept_code: '05010002'
+    iptc_name: 'education / teaching and learning / teachers'
+  Iptc_05010003:
+    iptc_id: 384
+    iptc_concept_code: '05010003'
+    iptc_name: 'education / teaching and learning / curriculum'
+  Iptc_05010004:
+    iptc_id: 385
+    iptc_concept_code: '05010004'
+    iptc_name: 'education / teaching and learning / testexamination'
+  Iptc_05011000:
+    iptc_id: 386
+    iptc_concept_code: '05011000'
+    iptc_name: 'education / religious education'
+  Iptc_05011001:
+    iptc_id: 387
+    iptc_concept_code: '05011001'
+    iptc_name: 'education / religious education / parochial school'
+  Iptc_05011002:
+    iptc_id: 388
+    iptc_concept_code: '05011002'
+    iptc_name: 'education / religious education / seminary'
+  Iptc_05011003:
+    iptc_id: 389
+    iptc_concept_code: '05011003'
+    iptc_name: 'education / religious education / yeshiva'
+  Iptc_05011004:
+    iptc_id: 390
+    iptc_concept_code: '05011004'
+    iptc_name: 'education / religious education / madrasa'
+  Iptc_06000000:
+    iptc_id: 391
+    iptc_concept_code: '06000000'
+    iptc_name: 'environmental issue'
+  Iptc_06001000:
+    iptc_id: 392
+    iptc_concept_code: '06001000'
+    iptc_name: 'environmental issue / renewable energy'
+  Iptc_06002000:
+    iptc_id: 393
+    iptc_concept_code: '06002000'
+    iptc_name: 'environmental issue / conservation'
+  Iptc_06002001:
+    iptc_id: 394
+    iptc_concept_code: '06002001'
+    iptc_name: 'environmental issue / conservation / endangered species'
+  Iptc_06002002:
+    iptc_id: 395
+    iptc_concept_code: '06002002'
+    iptc_name: 'environmental issue / conservation / ecosystem'
+  Iptc_06003000:
+    iptc_id: 396
+    iptc_concept_code: '06003000'
+    iptc_name: 'environmental issue / energy saving'
+  Iptc_06004000:
+    iptc_id: 397
+    iptc_concept_code: '06004000'
+    iptc_name: 'environmental issue / environmental politics'
+  Iptc_06005000:
+    iptc_id: 398
+    iptc_concept_code: '06005000'
+    iptc_name: 'environmental issue / environmental pollution'
+  Iptc_06005001:
+    iptc_id: 399
+    iptc_concept_code: '06005001'
+    iptc_name: 'environmental issue / environmental pollution / air pollution'
+  Iptc_06005002:
+    iptc_id: 400
+    iptc_concept_code: '06005002'
+    iptc_name: 'environmental issue / environmental pollution / water pollution'
+  Iptc_06006000:
+    iptc_id: 401
+    iptc_concept_code: '06006000'
+    iptc_name: 'environmental issue / natural resources'
+  Iptc_06006001:
+    iptc_id: 402
+    iptc_concept_code: '06006001'
+    iptc_name: 'environmental issue / natural resources / land resources'
+  Iptc_06006002:
+    iptc_id: 403
+    iptc_concept_code: '06006002'
+    iptc_name: 'environmental issue / natural resources / parks'
+  Iptc_06006003:
+    iptc_id: 404
+    iptc_concept_code: '06006003'
+    iptc_name: 'environmental issue / natural resources / forests'
+  Iptc_06006004:
+    iptc_id: 405
+    iptc_concept_code: '06006004'
+    iptc_name: 'environmental issue / natural resources / wetlands'
+  Iptc_06006005:
+    iptc_id: 406
+    iptc_concept_code: '06006005'
+    iptc_name: 'environmental issue / natural resources / mountains'
+  Iptc_06006006:
+    iptc_id: 407
+    iptc_concept_code: '06006006'
+    iptc_name: 'environmental issue / natural resources / rivers'
+  Iptc_06006007:
+    iptc_id: 408
+    iptc_concept_code: '06006007'
+    iptc_name: 'environmental issue / natural resources / oceans'
+  Iptc_06006008:
+    iptc_id: 409
+    iptc_concept_code: '06006008'
+    iptc_name: 'environmental issue / natural resources / wildlife'
+  Iptc_06006009:
+    iptc_id: 410
+    iptc_concept_code: '06006009'
+    iptc_name: 'environmental issue / natural resources / energy resources'
+  Iptc_06007000:
+    iptc_id: 411
+    iptc_concept_code: '06007000'
+    iptc_name: 'environmental issue / nature'
+  Iptc_06007001:
+    iptc_id: 412
+    iptc_concept_code: '06007001'
+    iptc_name: 'environmental issue / nature / invasive species'
+  Iptc_06008000:
+    iptc_id: 413
+    iptc_concept_code: '06008000'
+    iptc_name: 'environmental issue / population'
+  Iptc_06009000:
+    iptc_id: 414
+    iptc_concept_code: '06009000'
+    iptc_name: 'environmental issue / waste'
+  Iptc_06010000:
+    iptc_id: 415
+    iptc_concept_code: '06010000'
+    iptc_name: 'environmental issue / water'
+  Iptc_06011000:
+    iptc_id: 416
+    iptc_concept_code: '06011000'
+    iptc_name: 'environmental issue / global warming'
+  Iptc_06012000:
+    iptc_id: 417
+    iptc_concept_code: '06012000'
+    iptc_name: 'environmental issue / hazardous materials'
+  Iptc_06013000:
+    iptc_id: 418
+    iptc_concept_code: '06013000'
+    iptc_name: 'environmental issue / environmental cleanup'
+  Iptc_07000000:
+    iptc_id: 419
+    iptc_concept_code: '07000000'
+    iptc_name: 'health'
+  Iptc_07001000:
+    iptc_id: 420
+    iptc_concept_code: '07001000'
+    iptc_name: 'health / disease'
+  Iptc_07001001:
+    iptc_id: 421
+    iptc_concept_code: '07001001'
+    iptc_name: 'health / disease / communicable diseases'
+  Iptc_07001002:
+    iptc_id: 422
+    iptc_concept_code: '07001002'
+    iptc_name: 'health / disease / virus diseases'
+  Iptc_07001003:
+    iptc_id: 423
+    iptc_concept_code: '07001003'
+    iptc_name: 'health / disease / AIDS'
+  Iptc_07001004:
+    iptc_id: 424
+    iptc_concept_code: '07001004'
+    iptc_name: 'health / disease / cancer'
+  Iptc_07001005:
+    iptc_id: 425
+    iptc_concept_code: '07001005'
+    iptc_name: 'health / disease / heart disease'
+  Iptc_07001006:
+    iptc_id: 426
+    iptc_concept_code: '07001006'
+    iptc_name: 'health / disease / alzheimers disease'
+  Iptc_07001007:
+    iptc_id: 427
+    iptc_concept_code: '07001007'
+    iptc_name: 'health / disease / animal diseases'
+  Iptc_07001008:
+    iptc_id: 428
+    iptc_concept_code: '07001008'
+    iptc_name: 'health / disease / plant diseases'
+  Iptc_07001009:
+    iptc_id: 429
+    iptc_concept_code: '07001009'
+    iptc_name: 'health / disease / retrovirus'
+  Iptc_07002000:
+    iptc_id: 430
+    iptc_concept_code: '07002000'
+    iptc_name: 'health / epidemic and plague'
+  Iptc_07003000:
+    iptc_id: 431
+    iptc_concept_code: '07003000'
+    iptc_name: 'health / health treatment'
+  Iptc_07003001:
+    iptc_id: 432
+    iptc_concept_code: '07003001'
+    iptc_name: 'health / health treatment / prescription drugs'
+  Iptc_07003002:
+    iptc_id: 433
+    iptc_concept_code: '07003002'
+    iptc_name: 'health / health treatment / dietary supplements'
+  Iptc_07003003:
+    iptc_id: 434
+    iptc_concept_code: '07003003'
+    iptc_name: 'health / health treatment / diet'
+  Iptc_07003004:
+    iptc_id: 435
+    iptc_concept_code: '07003004'
+    iptc_name: 'health / health treatment / medical proceduretest'
+  Iptc_07003005:
+    iptc_id: 436
+    iptc_concept_code: '07003005'
+    iptc_name: 'health / health treatment / therapy'
+  Iptc_07004000:
+    iptc_id: 437
+    iptc_concept_code: '07004000'
+    iptc_name: 'health / health organisations'
+  Iptc_07005000:
+    iptc_id: 438
+    iptc_concept_code: '07005000'
+    iptc_name: 'health / medical research'
+  Iptc_07006000:
+    iptc_id: 439
+    iptc_concept_code: '07006000'
+    iptc_name: 'health / medical staff'
+  Iptc_07006001:
+    iptc_id: 440
+    iptc_concept_code: '07006001'
+    iptc_name: 'health / medical staff / primary care physician'
+  Iptc_07006002:
+    iptc_id: 441
+    iptc_concept_code: '07006002'
+    iptc_name: 'health / medical staff / health-workers union'
+  Iptc_07007000:
+    iptc_id: 442
+    iptc_concept_code: '07007000'
+    iptc_name: 'health / medicine'
+  Iptc_07007001:
+    iptc_id: 443
+    iptc_concept_code: '07007001'
+    iptc_name: 'health / medicine / herbal'
+  Iptc_07007002:
+    iptc_id: 444
+    iptc_concept_code: '07007002'
+    iptc_name: 'health / medicine / holistic'
+  Iptc_07007003:
+    iptc_id: 445
+    iptc_concept_code: '07007003'
+    iptc_name: 'health / medicine / western'
+  Iptc_07007004:
+    iptc_id: 446
+    iptc_concept_code: '07007004'
+    iptc_name: 'health / medicine / traditional Chinese'
+  Iptc_07008000:
+    iptc_id: 447
+    iptc_concept_code: '07008000'
+    iptc_name: 'health / preventative medicine'
+  Iptc_07008001:
+    iptc_id: 448
+    iptc_concept_code: '07008001'
+    iptc_name: 'health / preventative medicine / vaccines'
+  Iptc_07009000:
+    iptc_id: 449
+    iptc_concept_code: '07009000'
+    iptc_name: 'health / injury'
+  Iptc_07010000:
+    iptc_id: 450
+    iptc_concept_code: '07010000'
+    iptc_name: 'health / hospital and clinic'
+  Iptc_07011000:
+    iptc_id: 451
+    iptc_concept_code: '07011000'
+    iptc_name: 'health / government health care'
+  Iptc_07011001:
+    iptc_id: 452
+    iptc_concept_code: '07011001'
+    iptc_name: 'health / government health care / medicare'
+  Iptc_07011002:
+    iptc_id: 453
+    iptc_concept_code: '07011002'
+    iptc_name: 'health / government health care / medicaid'
+  Iptc_07012000:
+    iptc_id: 454
+    iptc_concept_code: '07012000'
+    iptc_name: 'health / private health care'
+  Iptc_07013000:
+    iptc_id: 455
+    iptc_concept_code: '07013000'
+    iptc_name: 'health / healthcare policy'
+  Iptc_07013001:
+    iptc_id: 456
+    iptc_concept_code: '07013001'
+    iptc_name: 'health / healthcare policy / food safety'
+  Iptc_07014000:
+    iptc_id: 457
+    iptc_concept_code: '07014000'
+    iptc_name: 'health / medical specialisation'
+  Iptc_07014001:
+    iptc_id: 458
+    iptc_concept_code: '07014001'
+    iptc_name: 'health / medical specialisation / geriatric'
+  Iptc_07014002:
+    iptc_id: 459
+    iptc_concept_code: '07014002'
+    iptc_name: 'health / medical specialisation / pediatrics'
+  Iptc_07014003:
+    iptc_id: 460
+    iptc_concept_code: '07014003'
+    iptc_name: 'health / medical specialisation / reproduction'
+  Iptc_07014004:
+    iptc_id: 461
+    iptc_concept_code: '07014004'
+    iptc_name: 'health / medical specialisation / genetics'
+  Iptc_07014005:
+    iptc_id: 462
+    iptc_concept_code: '07014005'
+    iptc_name: 'health / medical specialisation / obstetricsgynecology'
+  Iptc_07015000:
+    iptc_id: 463
+    iptc_concept_code: '07015000'
+    iptc_name: 'health / medical service'
+  Iptc_07016000:
+    iptc_id: 464
+    iptc_concept_code: '07016000'
+    iptc_name: 'health / physical fitness'
+  Iptc_07017000:
+    iptc_id: 465
+    iptc_concept_code: '07017000'
+    iptc_name: 'health / illness'
+  Iptc_07017001:
+    iptc_id: 466
+    iptc_concept_code: '07017001'
+    iptc_name: 'health / illness / mental illness'
+  Iptc_07017002:
+    iptc_id: 467
+    iptc_concept_code: '07017002'
+    iptc_name: 'health / illness / eating disorder'
+  Iptc_07017003:
+    iptc_id: 468
+    iptc_concept_code: '07017003'
+    iptc_name: 'health / illness / obesity'
+  Iptc_07018000:
+    iptc_id: 469
+    iptc_concept_code: '07018000'
+    iptc_name: 'health / medical conditions'
+  Iptc_07019000:
+    iptc_id: 470
+    iptc_concept_code: '07019000'
+    iptc_name: 'health / patient'
+  Iptc_08000000:
+    iptc_id: 471
+    iptc_concept_code: '08000000'
+    iptc_name: 'human interest'
+  Iptc_08001000:
+    iptc_id: 472
+    iptc_concept_code: '08001000'
+    iptc_name: 'human interest / animal'
+  Iptc_08002000:
+    iptc_id: 473
+    iptc_concept_code: '08002000'
+    iptc_name: 'human interest / curiosity'
+  Iptc_08003000:
+    iptc_id: 474
+    iptc_concept_code: '08003000'
+    iptc_name: 'human interest / people'
+  Iptc_08003001:
+    iptc_id: 475
+    iptc_concept_code: '08003001'
+    iptc_name: 'human interest / people / advice'
+  Iptc_08003002:
+    iptc_id: 476
+    iptc_concept_code: '08003002'
+    iptc_name: 'human interest / people / celebrity'
+  Iptc_08003003:
+    iptc_id: 477
+    iptc_concept_code: '08003003'
+    iptc_name: 'human interest / people / accomplishment'
+  Iptc_08003004:
+    iptc_id: 478
+    iptc_concept_code: '08003004'
+    iptc_name: 'human interest / people / human mishap'
+  Iptc_08003005:
+    iptc_id: 479
+    iptc_concept_code: '08003005'
+    iptc_name: 'human interest / people / fortune-telling'
+  Iptc_08004000:
+    iptc_id: 480
+    iptc_concept_code: '08004000'
+    iptc_name: 'human interest / mystery'
+  Iptc_08005000:
+    iptc_id: 481
+    iptc_concept_code: '08005000'
+    iptc_name: 'human interest / society'
+  Iptc_08005001:
+    iptc_id: 482
+    iptc_concept_code: '08005001'
+    iptc_name: 'human interest / society / ceremony'
+  Iptc_08005002:
+    iptc_id: 483
+    iptc_concept_code: '08005002'
+    iptc_name: 'human interest / society / death'
+  Iptc_08005003:
+    iptc_id: 484
+    iptc_concept_code: '08005003'
+    iptc_name: 'human interest / society / funeral'
+  Iptc_08005004:
+    iptc_id: 485
+    iptc_concept_code: '08005004'
+    iptc_name: 'human interest / society / estate bestowal'
+  Iptc_08005005:
+    iptc_id: 486
+    iptc_concept_code: '08005005'
+    iptc_name: 'human interest / society / memorial'
+  Iptc_08006000:
+    iptc_id: 487
+    iptc_concept_code: '08006000'
+    iptc_name: 'human interest / award and prize'
+  Iptc_08006001:
+    iptc_id: 488
+    iptc_concept_code: '08006001'
+    iptc_name: 'human interest / award and prize / record'
+  Iptc_08007000:
+    iptc_id: 489
+    iptc_concept_code: '08007000'
+    iptc_name: 'human interest / imperial and royal matters'
+  Iptc_08008000:
+    iptc_id: 490
+    iptc_concept_code: '08008000'
+    iptc_name: 'human interest / plant'
+  Iptc_09000000:
+    iptc_id: 491
+    iptc_concept_code: '09000000'
+    iptc_name: 'labour'
+  Iptc_09001000:
+    iptc_id: 492
+    iptc_concept_code: '09001000'
+    iptc_name: 'labour / apprentices'
+  Iptc_09002000:
+    iptc_id: 493
+    iptc_concept_code: '09002000'
+    iptc_name: 'labour / collective contract'
+  Iptc_09002001:
+    iptc_id: 494
+    iptc_concept_code: '09002001'
+    iptc_name: 'labour / collective contract / contract issue-wages'
+  Iptc_09002002:
+    iptc_id: 495
+    iptc_concept_code: '09002002'
+    iptc_name: 'labour / collective contract / contract issue-healthcare'
+  Iptc_09002003:
+    iptc_id: 496
+    iptc_concept_code: '09002003'
+    iptc_name: 'labour / collective contract / contract issue-work rules'
+  Iptc_09003000:
+    iptc_id: 497
+    iptc_concept_code: '09003000'
+    iptc_name: 'labour / employment'
+  Iptc_09003001:
+    iptc_id: 498
+    iptc_concept_code: '09003001'
+    iptc_name: 'labour / employment / labor market'
+  Iptc_09003002:
+    iptc_id: 499
+    iptc_concept_code: '09003002'
+    iptc_name: 'labour / employment / job layoffs'
+  Iptc_09003003:
+    iptc_id: 500
+    iptc_concept_code: '09003003'
+    iptc_name: 'labour / employment / child labor'
+  Iptc_09003004:
+    iptc_id: 501
+    iptc_concept_code: '09003004'
+    iptc_name: 'labour / employment / occupations'
+  Iptc_09004000:
+    iptc_id: 502
+    iptc_concept_code: '09004000'
+    iptc_name: 'labour / labour dispute'
+  Iptc_09005000:
+    iptc_id: 503
+    iptc_concept_code: '09005000'
+    iptc_name: 'labour / labour legislation'
+  Iptc_09006000:
+    iptc_id: 504
+    iptc_concept_code: '09006000'
+    iptc_name: 'labour / retirement'
+  Iptc_09007000:
+    iptc_id: 505
+    iptc_concept_code: '09007000'
+    iptc_name: 'labour / retraining'
+  Iptc_09008000:
+    iptc_id: 506
+    iptc_concept_code: '09008000'
+    iptc_name: 'labour / strike'
+  Iptc_09009000:
+    iptc_id: 507
+    iptc_concept_code: '09009000'
+    iptc_name: 'labour / unemployment'
+  Iptc_09010000:
+    iptc_id: 508
+    iptc_concept_code: '09010000'
+    iptc_name: 'labour / unions'
+  Iptc_09011000:
+    iptc_id: 509
+    iptc_concept_code: '09011000'
+    iptc_name: 'labour / wage and pension'
+  Iptc_09011001:
+    iptc_id: 510
+    iptc_concept_code: '09011001'
+    iptc_name: 'labour / wage and pension / employee benefits'
+  Iptc_09011002:
+    iptc_id: 511
+    iptc_concept_code: '09011002'
+    iptc_name: 'labour / wage and pension / social security'
+  Iptc_09012000:
+    iptc_id: 512
+    iptc_concept_code: '09012000'
+    iptc_name: 'labour / work relations'
+  Iptc_09013000:
+    iptc_id: 513
+    iptc_concept_code: '09013000'
+    iptc_name: 'labour / health and safety at work'
+  Iptc_09014000:
+    iptc_id: 514
+    iptc_concept_code: '09014000'
+    iptc_name: 'labour / advanced training'
+  Iptc_09015000:
+    iptc_id: 515
+    iptc_concept_code: '09015000'
+    iptc_name: 'labour / employer'
+  Iptc_09016000:
+    iptc_id: 516
+    iptc_concept_code: '09016000'
+    iptc_name: 'labour / employee'
+  Iptc_10000000:
+    iptc_id: 517
+    iptc_concept_code: '10000000'
+    iptc_name: 'lifestyle and leisure'
+  Iptc_10001000:
+    iptc_id: 518
+    iptc_concept_code: '10001000'
+    iptc_name: 'lifestyle and leisure / game'
+  Iptc_10001001:
+    iptc_id: 519
+    iptc_concept_code: '10001001'
+    iptc_name: 'lifestyle and leisure / game / Go'
+  Iptc_10001002:
+    iptc_id: 520
+    iptc_concept_code: '10001002'
+    iptc_name: 'lifestyle and leisure / game / chess'
+  Iptc_10001003:
+    iptc_id: 521
+    iptc_concept_code: '10001003'
+    iptc_name: 'lifestyle and leisure / game / bridge'
+  Iptc_10001004:
+    iptc_id: 522
+    iptc_concept_code: '10001004'
+    iptc_name: 'lifestyle and leisure / game / shogi'
+  Iptc_10002000:
+    iptc_id: 523
+    iptc_concept_code: '10002000'
+    iptc_name: 'lifestyle and leisure / gaming and lottery'
+  Iptc_10003000:
+    iptc_id: 524
+    iptc_concept_code: '10003000'
+    iptc_name: 'lifestyle and leisure / gastronomy'
+  Iptc_10003001:
+    iptc_id: 525
+    iptc_concept_code: '10003001'
+    iptc_name: 'lifestyle and leisure / gastronomy / organic foods'
+  Iptc_10004000:
+    iptc_id: 526
+    iptc_concept_code: '10004000'
+    iptc_name: 'lifestyle and leisure / hobby'
+  Iptc_10004001:
+    iptc_id: 527
+    iptc_concept_code: '10004001'
+    iptc_name: 'lifestyle and leisure / hobby / DIY'
+  Iptc_10004002:
+    iptc_id: 528
+    iptc_concept_code: '10004002'
+    iptc_name: 'lifestyle and leisure / hobby / shopping'
+  Iptc_10004003:
+    iptc_id: 529
+    iptc_concept_code: '10004003'
+    iptc_name: 'lifestyle and leisure / hobby / gardening'
+  Iptc_10005000:
+    iptc_id: 530
+    iptc_concept_code: '10005000'
+    iptc_name: 'lifestyle and leisure / holiday or vacation'
+  Iptc_10006000:
+    iptc_id: 531
+    iptc_concept_code: '10006000'
+    iptc_name: 'lifestyle and leisure / tourism'
+  Iptc_10007000:
+    iptc_id: 532
+    iptc_concept_code: '10007000'
+    iptc_name: 'lifestyle and leisure / travel and commuting'
+  Iptc_10007001:
+    iptc_id: 533
+    iptc_concept_code: '10007001'
+    iptc_name: 'lifestyle and leisure / travel and commuting / traffic'
+  Iptc_10008000:
+    iptc_id: 534
+    iptc_concept_code: '10008000'
+    iptc_name: 'lifestyle and leisure / club and association'
+  Iptc_10009000:
+    iptc_id: 535
+    iptc_concept_code: '10009000'
+    iptc_name: 'lifestyle and leisure / lifestyle'
+  Iptc_10010000:
+    iptc_id: 536
+    iptc_concept_code: '10010000'
+    iptc_name: 'lifestyle and leisure / leisure'
+  Iptc_10011000:
+    iptc_id: 537
+    iptc_concept_code: '10011000'
+    iptc_name: 'lifestyle and leisure / public holiday'
+  Iptc_10012000:
+    iptc_id: 538
+    iptc_concept_code: '10012000'
+    iptc_name: 'lifestyle and leisure / hunting'
+  Iptc_10013000:
+    iptc_id: 539
+    iptc_concept_code: '10013000'
+    iptc_name: 'lifestyle and leisure / fishing'
+  Iptc_10014000:
+    iptc_id: 540
+    iptc_concept_code: '10014000'
+    iptc_name: 'lifestyle and leisure / auto trends'
+  Iptc_10015000:
+    iptc_id: 541
+    iptc_concept_code: '10015000'
+    iptc_name: 'lifestyle and leisure / adventure'
+  Iptc_10016000:
+    iptc_id: 542
+    iptc_concept_code: '10016000'
+    iptc_name: 'lifestyle and leisure / beauty'
+  Iptc_10017000:
+    iptc_id: 543
+    iptc_concept_code: '10017000'
+    iptc_name: 'lifestyle and leisure / consumer issue'
+  Iptc_10018000:
+    iptc_id: 544
+    iptc_concept_code: '10018000'
+    iptc_name: 'lifestyle and leisure / wedding'
+  Iptc_11000000:
+    iptc_id: 545
+    iptc_concept_code: '11000000'
+    iptc_name: 'politics'
+  Iptc_11001000:
+    iptc_id: 546
+    iptc_concept_code: '11001000'
+    iptc_name: 'politics / defence'
+  Iptc_11001001:
+    iptc_id: 547
+    iptc_concept_code: '11001001'
+    iptc_name: 'politics / defence / veterans affairs'
+  Iptc_11001002:
+    iptc_id: 548
+    iptc_concept_code: '11001002'
+    iptc_name: 'politics / defence / national security'
+  Iptc_11001003:
+    iptc_id: 549
+    iptc_concept_code: '11001003'
+    iptc_name: 'politics / defence / security measures'
+  Iptc_11001004:
+    iptc_id: 550
+    iptc_concept_code: '11001004'
+    iptc_name: 'politics / defence / armed Forces'
+  Iptc_11001005:
+    iptc_id: 551
+    iptc_concept_code: '11001005'
+    iptc_name: 'politics / defence / military equipment'
+  Iptc_11001006:
+    iptc_id: 552
+    iptc_concept_code: '11001006'
+    iptc_name: 'politics / defence / firearms'
+  Iptc_11001007:
+    iptc_id: 553
+    iptc_concept_code: '11001007'
+    iptc_name: 'politics / defence / biological and chemical weapons'
+  Iptc_11001008:
+    iptc_id: 554
+    iptc_concept_code: '11001008'
+    iptc_name: 'politics / defence / missile systems'
+  Iptc_11001009:
+    iptc_id: 555
+    iptc_concept_code: '11001009'
+    iptc_name: 'politics / defence / nuclear weapons'
+  Iptc_11002000:
+    iptc_id: 556
+    iptc_concept_code: '11002000'
+    iptc_name: 'politics / diplomacy'
+  Iptc_11002001:
+    iptc_id: 557
+    iptc_concept_code: '11002001'
+    iptc_name: 'politics / diplomacy / summit'
+  Iptc_11002002:
+    iptc_id: 558
+    iptc_concept_code: '11002002'
+    iptc_name: 'politics / diplomacy / international relations'
+  Iptc_11002003:
+    iptc_id: 559
+    iptc_concept_code: '11002003'
+    iptc_name: 'politics / diplomacy / peace negotiations'
+  Iptc_11002004:
+    iptc_id: 560
+    iptc_concept_code: '11002004'
+    iptc_name: 'politics / diplomacy / alliances'
+  Iptc_11003000:
+    iptc_id: 561
+    iptc_concept_code: '11003000'
+    iptc_name: 'politics / election'
+  Iptc_11003001:
+    iptc_id: 562
+    iptc_concept_code: '11003001'
+    iptc_name: 'politics / election / political candidates'
+  Iptc_11003002:
+    iptc_id: 563
+    iptc_concept_code: '11003002'
+    iptc_name: 'politics / election / political campaigns'
+  Iptc_11003003:
+    iptc_id: 564
+    iptc_concept_code: '11003003'
+    iptc_name: 'politics / election / campaign finance'
+  Iptc_11003004:
+    iptc_id: 565
+    iptc_concept_code: '11003004'
+    iptc_name: 'politics / election / national elections'
+  Iptc_11003005:
+    iptc_id: 566
+    iptc_concept_code: '11003005'
+    iptc_name: 'politics / election / regional elections'
+  Iptc_11003006:
+    iptc_id: 567
+    iptc_concept_code: '11003006'
+    iptc_name: 'politics / election / local elections'
+  Iptc_11003007:
+    iptc_id: 568
+    iptc_concept_code: '11003007'
+    iptc_name: 'politics / election / voting'
+  Iptc_11003008:
+    iptc_id: 569
+    iptc_concept_code: '11003008'
+    iptc_name: 'politics / election / poll'
+  Iptc_11003009:
+    iptc_id: 570
+    iptc_concept_code: '11003009'
+    iptc_name: 'politics / election / european elections'
+  Iptc_11003010:
+    iptc_id: 571
+    iptc_concept_code: '11003010'
+    iptc_name: 'politics / election / primary'
+  Iptc_11004000:
+    iptc_id: 572
+    iptc_concept_code: '11004000'
+    iptc_name: 'politics / espionage and intelligence'
+  Iptc_11005000:
+    iptc_id: 573
+    iptc_concept_code: '11005000'
+    iptc_name: 'politics / foreign aid'
+  Iptc_11005001:
+    iptc_id: 574
+    iptc_concept_code: '11005001'
+    iptc_name: 'politics / foreign aid / economic sanction'
+  Iptc_11006000:
+    iptc_id: 575
+    iptc_concept_code: '11006000'
+    iptc_name: 'politics / government'
+  Iptc_11006001:
+    iptc_id: 576
+    iptc_concept_code: '11006001'
+    iptc_name: 'politics / government / civil and public service'
+  Iptc_11006002:
+    iptc_id: 577
+    iptc_concept_code: '11006002'
+    iptc_name: 'politics / government / safety of citizens'
+  Iptc_11006003:
+    iptc_id: 578
+    iptc_concept_code: '11006003'
+    iptc_name: 'politics / government / think tank'
+  Iptc_11006004:
+    iptc_id: 579
+    iptc_concept_code: '11006004'
+    iptc_name: 'politics / government / national government'
+  Iptc_11006005:
+    iptc_id: 580
+    iptc_concept_code: '11006005'
+    iptc_name: 'politics / government / executive'
+  Iptc_11006006:
+    iptc_id: 581
+    iptc_concept_code: '11006006'
+    iptc_name: 'politics / government / heads of state'
+  Iptc_11006007:
+    iptc_id: 582
+    iptc_concept_code: '11006007'
+    iptc_name: 'politics / government / government departments'
+  Iptc_11006008:
+    iptc_id: 583
+    iptc_concept_code: '11006008'
+    iptc_name: 'politics / government / public officials'
+  Iptc_11006009:
+    iptc_id: 584
+    iptc_concept_code: '11006009'
+    iptc_name: 'politics / government / ministers'
+  Iptc_11006010:
+    iptc_id: 585
+    iptc_concept_code: '11006010'
+    iptc_name: 'politics / government / public employees'
+  Iptc_11006011:
+    iptc_id: 586
+    iptc_concept_code: '11006011'
+    iptc_name: 'politics / government / privatisation'
+  Iptc_11006012:
+    iptc_id: 587
+    iptc_concept_code: '11006012'
+    iptc_name: 'politics / government / nationalisation'
+  Iptc_11006013:
+    iptc_id: 588
+    iptc_concept_code: '11006013'
+    iptc_name: 'politics / government / impeachment'
+  Iptc_11007000:
+    iptc_id: 589
+    iptc_concept_code: '11007000'
+    iptc_name: 'politics / human rights'
+  Iptc_11008000:
+    iptc_id: 590
+    iptc_concept_code: '11008000'
+    iptc_name: 'politics / local authority'
+  Iptc_11009000:
+    iptc_id: 591
+    iptc_concept_code: '11009000'
+    iptc_name: 'politics / parliament'
+  Iptc_11009001:
+    iptc_id: 592
+    iptc_concept_code: '11009001'
+    iptc_name: 'politics / parliament / upper house'
+  Iptc_11009002:
+    iptc_id: 593
+    iptc_concept_code: '11009002'
+    iptc_name: 'politics / parliament / lower house'
+  Iptc_11010000:
+    iptc_id: 594
+    iptc_concept_code: '11010000'
+    iptc_name: 'politics / parties and movements'
+  Iptc_11010001:
+    iptc_id: 595
+    iptc_concept_code: '11010001'
+    iptc_name: 'politics / parties and movements / non government organizations'
+  Iptc_11011000:
+    iptc_id: 596
+    iptc_concept_code: '11011000'
+    iptc_name: 'politics / refugee'
+  Iptc_11012000:
+    iptc_id: 597
+    iptc_concept_code: '11012000'
+    iptc_name: 'politics / regional authority'
+  Iptc_11013000:
+    iptc_id: 598
+    iptc_concept_code: '11013000'
+    iptc_name: 'politics / state budget and tax'
+  Iptc_11013001:
+    iptc_id: 599
+    iptc_concept_code: '11013001'
+    iptc_name: 'politics / state budget and tax / public finance'
+  Iptc_11015000:
+    iptc_id: 600
+    iptc_concept_code: '11015000'
+    iptc_name: 'politics / constitution'
+  Iptc_11016000:
+    iptc_id: 601
+    iptc_concept_code: '11016000'
+    iptc_name: 'politics / interior policy'
+  Iptc_11016001:
+    iptc_id: 602
+    iptc_concept_code: '11016001'
+    iptc_name: 'politics / interior policy / data protection'
+  Iptc_11016002:
+    iptc_id: 603
+    iptc_concept_code: '11016002'
+    iptc_name: 'politics / interior policy / housing and urban planning'
+  Iptc_11016003:
+    iptc_id: 604
+    iptc_concept_code: '11016003'
+    iptc_name: 'politics / interior policy / pension and welfare'
+  Iptc_11016004:
+    iptc_id: 605
+    iptc_concept_code: '11016004'
+    iptc_name: 'politics / interior policy / personal weapon control'
+  Iptc_11016005:
+    iptc_id: 606
+    iptc_concept_code: '11016005'
+    iptc_name: 'politics / interior policy / indigenous people'
+  Iptc_11016006:
+    iptc_id: 607
+    iptc_concept_code: '11016006'
+    iptc_name: 'politics / interior policy / personal data collection'
+  Iptc_11016007:
+    iptc_id: 608
+    iptc_concept_code: '11016007'
+    iptc_name: 'politics / interior policy / planning inquiries'
+  Iptc_11017000:
+    iptc_id: 609
+    iptc_concept_code: '11017000'
+    iptc_name: 'politics / migration'
+  Iptc_11018000:
+    iptc_id: 610
+    iptc_concept_code: '11018000'
+    iptc_name: 'politics / citizens initiative and recall'
+  Iptc_11019000:
+    iptc_id: 611
+    iptc_concept_code: '11019000'
+    iptc_name: 'politics / referenda'
+  Iptc_11020000:
+    iptc_id: 612
+    iptc_concept_code: '11020000'
+    iptc_name: 'politics / nuclear policy'
+  Iptc_11021000:
+    iptc_id: 613
+    iptc_concept_code: '11021000'
+    iptc_name: 'politics / lobbying'
+  Iptc_11022000:
+    iptc_id: 614
+    iptc_concept_code: '11022000'
+    iptc_name: 'politics / regulatory policy and organisation'
+  Iptc_11023000:
+    iptc_id: 615
+    iptc_concept_code: '11023000'
+    iptc_name: 'politics / censorship'
+  Iptc_11024000:
+    iptc_id: 616
+    iptc_concept_code: '11024000'
+    iptc_name: 'politics / politics'
+  Iptc_11024001:
+    iptc_id: 617
+    iptc_concept_code: '11024001'
+    iptc_name: 'politics / politics / political systems'
+  Iptc_11024002:
+    iptc_id: 618
+    iptc_concept_code: '11024002'
+    iptc_name: 'politics / politics / democracy'
+  Iptc_11024003:
+    iptc_id: 619
+    iptc_concept_code: '11024003'
+    iptc_name: 'politics / politics / political development'
+  Iptc_11025000:
+    iptc_id: 620
+    iptc_concept_code: '11025000'
+    iptc_name: 'politics / freedom of the press'
+  Iptc_11026000:
+    iptc_id: 621
+    iptc_concept_code: '11026000'
+    iptc_name: 'politics / freedom of religion'
+  Iptc_11027000:
+    iptc_id: 622
+    iptc_concept_code: '11027000'
+    iptc_name: 'politics / treaty'
+  Iptc_11028000:
+    iptc_id: 623
+    iptc_concept_code: '11028000'
+    iptc_name: 'politics / international organisation'
+  Iptc_12000000:
+    iptc_id: 624
+    iptc_concept_code: '12000000'
+    iptc_name: 'religion and belief'
+  Iptc_12001000:
+    iptc_id: 625
+    iptc_concept_code: '12001000'
+    iptc_name: 'religion and belief / cult and sect'
+  Iptc_12002000:
+    iptc_id: 626
+    iptc_concept_code: '12002000'
+    iptc_name: 'religion and belief / belief'
+  Iptc_12002001:
+    iptc_id: 627
+    iptc_concept_code: '12002001'
+    iptc_name: 'religion and belief / belief / unificationism'
+  Iptc_12002002:
+    iptc_id: 628
+    iptc_concept_code: '12002002'
+    iptc_name: 'religion and belief / belief / scientology'
+  Iptc_12003000:
+    iptc_id: 629
+    iptc_concept_code: '12003000'
+    iptc_name: 'religion and belief / freemasonry'
+  Iptc_12006000:
+    iptc_id: 630
+    iptc_concept_code: '12006000'
+    iptc_name: 'religion and belief / values'
+  Iptc_12006001:
+    iptc_id: 631
+    iptc_concept_code: '12006001'
+    iptc_name: 'religion and belief / values / ethics'
+  Iptc_12006002:
+    iptc_id: 632
+    iptc_concept_code: '12006002'
+    iptc_name: 'religion and belief / values / corrupt practices'
+  Iptc_12007000:
+    iptc_id: 633
+    iptc_concept_code: '12007000'
+    iptc_name: 'religion and belief / church and state relations'
+  Iptc_12008000:
+    iptc_id: 634
+    iptc_concept_code: '12008000'
+    iptc_name: 'religion and belief / philosophy'
+  Iptc_12009000:
+    iptc_id: 635
+    iptc_concept_code: '12009000'
+    iptc_name: 'religion and belief / christianity'
+  Iptc_12009001:
+    iptc_id: 636
+    iptc_concept_code: '12009001'
+    iptc_name: 'religion and belief / christianity / protestant'
+  Iptc_12009002:
+    iptc_id: 637
+    iptc_concept_code: '12009002'
+    iptc_name: 'religion and belief / christianity / lutheran'
+  Iptc_12009003:
+    iptc_id: 638
+    iptc_concept_code: '12009003'
+    iptc_name: 'religion and belief / christianity / reformed'
+  Iptc_12009004:
+    iptc_id: 639
+    iptc_concept_code: '12009004'
+    iptc_name: 'religion and belief / christianity / anglican'
+  Iptc_12009005:
+    iptc_id: 640
+    iptc_concept_code: '12009005'
+    iptc_name: 'religion and belief / christianity / methodist'
+  Iptc_12009006:
+    iptc_id: 641
+    iptc_concept_code: '12009006'
+    iptc_name: 'religion and belief / christianity / baptist'
+  Iptc_12009007:
+    iptc_id: 642
+    iptc_concept_code: '12009007'
+    iptc_name: 'religion and belief / christianity / mennonite'
+  Iptc_12009009:
+    iptc_id: 643
+    iptc_concept_code: '12009009'
+    iptc_name: 'religion and belief / christianity / mormon'
+  Iptc_12009010:
+    iptc_id: 644
+    iptc_concept_code: '12009010'
+    iptc_name: 'religion and belief / christianity / roman catholic'
+  Iptc_12009011:
+    iptc_id: 645
+    iptc_concept_code: '12009011'
+    iptc_name: 'religion and belief / christianity / old catholic'
+  Iptc_12009012:
+    iptc_id: 646
+    iptc_concept_code: '12009012'
+    iptc_name: 'religion and belief / christianity / orthodoxy'
+  Iptc_12009013:
+    iptc_id: 647
+    iptc_concept_code: '12009013'
+    iptc_name: 'religion and belief / christianity / salvation army'
+  Iptc_12010000:
+    iptc_id: 648
+    iptc_concept_code: '12010000'
+    iptc_name: 'religion and belief / islam'
+  Iptc_12011000:
+    iptc_id: 649
+    iptc_concept_code: '12011000'
+    iptc_name: 'religion and belief / judaism'
+  Iptc_12012000:
+    iptc_id: 650
+    iptc_concept_code: '12012000'
+    iptc_name: 'religion and belief / buddhism'
+  Iptc_12013000:
+    iptc_id: 651
+    iptc_concept_code: '12013000'
+    iptc_name: 'religion and belief / hinduism'
+  Iptc_12014000:
+    iptc_id: 652
+    iptc_concept_code: '12014000'
+    iptc_name: 'religion and belief / religious festival or holiday'
+  Iptc_12014001:
+    iptc_id: 653
+    iptc_concept_code: '12014001'
+    iptc_name: 'religion and belief / religious festival or holiday / christmas'
+  Iptc_12014002:
+    iptc_id: 654
+    iptc_concept_code: '12014002'
+    iptc_name: 'religion and belief / religious festival or holiday / easter'
+  Iptc_12014003:
+    iptc_id: 655
+    iptc_concept_code: '12014003'
+    iptc_name: 'religion and belief / religious festival or holiday / pentecost'
+  Iptc_12014004:
+    iptc_id: 656
+    iptc_concept_code: '12014004'
+    iptc_name: 'religion and belief / religious festival or holiday / ramadan'
+  Iptc_12014005:
+    iptc_id: 657
+    iptc_concept_code: '12014005'
+    iptc_name: 'religion and belief / religious festival or holiday / yom kippur'
+  Iptc_12015000:
+    iptc_id: 658
+    iptc_concept_code: '12015000'
+    iptc_name: 'religion and belief / religious leader'
+  Iptc_12015001:
+    iptc_id: 659
+    iptc_concept_code: '12015001'
+    iptc_name: 'religion and belief / religious leader / pope'
+  Iptc_12016000:
+    iptc_id: 660
+    iptc_concept_code: '12016000'
+    iptc_name: 'religion and belief / nature religion'
+  Iptc_12017000:
+    iptc_id: 661
+    iptc_concept_code: '12017000'
+    iptc_name: 'religion and belief / taoism'
+  Iptc_12018000:
+    iptc_id: 662
+    iptc_concept_code: '12018000'
+    iptc_name: 'religion and belief / shintoism'
+  Iptc_12019000:
+    iptc_id: 663
+    iptc_concept_code: '12019000'
+    iptc_name: 'religion and belief / sikhism'
+  Iptc_12020000:
+    iptc_id: 664
+    iptc_concept_code: '12020000'
+    iptc_name: 'religion and belief / jainism'
+  Iptc_12021000:
+    iptc_id: 665
+    iptc_concept_code: '12021000'
+    iptc_name: 'religion and belief / parsasm'
+  Iptc_12022000:
+    iptc_id: 666
+    iptc_concept_code: '12022000'
+    iptc_name: 'religion and belief / confucianism'
+  Iptc_12023000:
+    iptc_id: 667
+    iptc_concept_code: '12023000'
+    iptc_name: 'religion and belief / religious text'
+  Iptc_12023001:
+    iptc_id: 668
+    iptc_concept_code: '12023001'
+    iptc_name: 'religion and belief / religious text / bible'
+  Iptc_12023002:
+    iptc_id: 669
+    iptc_concept_code: '12023002'
+    iptc_name: 'religion and belief / religious text / quran'
+  Iptc_12023003:
+    iptc_id: 670
+    iptc_concept_code: '12023003'
+    iptc_name: 'religion and belief / religious text / torah'
+  Iptc_12024000:
+    iptc_id: 671
+    iptc_concept_code: '12024000'
+    iptc_name: 'religion and belief / interreligious dialogue'
+  Iptc_12025000:
+    iptc_id: 672
+    iptc_concept_code: '12025000'
+    iptc_name: 'religion and belief / religious event'
+  Iptc_12025001:
+    iptc_id: 673
+    iptc_concept_code: '12025001'
+    iptc_name: 'religion and belief / religious event / catholic convention'
+  Iptc_12025002:
+    iptc_id: 674
+    iptc_concept_code: '12025002'
+    iptc_name: 'religion and belief / religious event / protestant convention'
+  Iptc_12025004:
+    iptc_id: 675
+    iptc_concept_code: '12025004'
+    iptc_name: 'religion and belief / religious event / ritual'
+  Iptc_12026000:
+    iptc_id: 676
+    iptc_concept_code: '12026000'
+    iptc_name: 'religion and belief / concordat'
+  Iptc_12027000:
+    iptc_id: 677
+    iptc_concept_code: '12027000'
+    iptc_name: 'religion and belief / ecumenism'
+  Iptc_13000000:
+    iptc_id: 678
+    iptc_concept_code: '13000000'
+    iptc_name: 'science and technology'
+  Iptc_13001000:
+    iptc_id: 679
+    iptc_concept_code: '13001000'
+    iptc_name: 'science and technology / applied science'
+  Iptc_13001001:
+    iptc_id: 680
+    iptc_concept_code: '13001001'
+    iptc_name: 'science and technology / applied science / physics'
+  Iptc_13001002:
+    iptc_id: 681
+    iptc_concept_code: '13001002'
+    iptc_name: 'science and technology / applied science / chemistry'
+  Iptc_13001003:
+    iptc_id: 682
+    iptc_concept_code: '13001003'
+    iptc_name: 'science and technology / applied science / cosmology'
+  Iptc_13001004:
+    iptc_id: 683
+    iptc_concept_code: '13001004'
+    iptc_name: 'science and technology / applied science / particle physics'
+  Iptc_13002000:
+    iptc_id: 684
+    iptc_concept_code: '13002000'
+    iptc_name: 'science and technology / engineering'
+  Iptc_13002001:
+    iptc_id: 685
+    iptc_concept_code: '13002001'
+    iptc_name: 'science and technology / engineering / material science'
+  Iptc_13003000:
+    iptc_id: 686
+    iptc_concept_code: '13003000'
+    iptc_name: 'science and technology / human science'
+  Iptc_13003001:
+    iptc_id: 687
+    iptc_concept_code: '13003001'
+    iptc_name: 'science and technology / human science / social sciences'
+  Iptc_13003002:
+    iptc_id: 688
+    iptc_concept_code: '13003002'
+    iptc_name: 'science and technology / human science / history'
+  Iptc_13003003:
+    iptc_id: 689
+    iptc_concept_code: '13003003'
+    iptc_name: 'science and technology / human science / psychology'
+  Iptc_13003004:
+    iptc_id: 690
+    iptc_concept_code: '13003004'
+    iptc_name: 'science and technology / human science / sociology'
+  Iptc_13003005:
+    iptc_id: 691
+    iptc_concept_code: '13003005'
+    iptc_name: 'science and technology / human science / anthropology'
+  Iptc_13004000:
+    iptc_id: 692
+    iptc_concept_code: '13004000'
+    iptc_name: 'science and technology / natural science'
+  Iptc_13004001:
+    iptc_id: 693
+    iptc_concept_code: '13004001'
+    iptc_name: 'science and technology / natural science / geology'
+  Iptc_13004002:
+    iptc_id: 694
+    iptc_concept_code: '13004002'
+    iptc_name: 'science and technology / natural science / paleontology'
+  Iptc_13004003:
+    iptc_id: 695
+    iptc_concept_code: '13004003'
+    iptc_name: 'science and technology / natural science / geography'
+  Iptc_13004004:
+    iptc_id: 696
+    iptc_concept_code: '13004004'
+    iptc_name: 'science and technology / natural science / botany'
+  Iptc_13004005:
+    iptc_id: 697
+    iptc_concept_code: '13004005'
+    iptc_name: 'science and technology / natural science / zoology'
+  Iptc_13004006:
+    iptc_id: 698
+    iptc_concept_code: '13004006'
+    iptc_name: 'science and technology / natural science / physiology'
+  Iptc_13004007:
+    iptc_id: 699
+    iptc_concept_code: '13004007'
+    iptc_name: 'science and technology / natural science / astronomy'
+  Iptc_13004008:
+    iptc_id: 700
+    iptc_concept_code: '13004008'
+    iptc_name: 'science and technology / natural science / biology'
+  Iptc_13005000:
+    iptc_id: 701
+    iptc_concept_code: '13005000'
+    iptc_name: 'science and technology / philosophical science'
+  Iptc_13006000:
+    iptc_id: 702
+    iptc_concept_code: '13006000'
+    iptc_name: 'science and technology / research'
+  Iptc_13006001:
+    iptc_id: 703
+    iptc_concept_code: '13006001'
+    iptc_name: 'science and technology / research / survey'
+  Iptc_13007000:
+    iptc_id: 704
+    iptc_concept_code: '13007000'
+    iptc_name: 'science and technology / scientific exploration'
+  Iptc_13008000:
+    iptc_id: 705
+    iptc_concept_code: '13008000'
+    iptc_name: 'science and technology / space programme'
+  Iptc_13009000:
+    iptc_id: 706
+    iptc_concept_code: '13009000'
+    iptc_name: 'science and technology / science'
+  Iptc_13010000:
+    iptc_id: 707
+    iptc_concept_code: '13010000'
+    iptc_name: 'science and technology / technology'
+  Iptc_13010001:
+    iptc_id: 708
+    iptc_concept_code: '13010001'
+    iptc_name: 'science and technology / technology / rocketry'
+  Iptc_13010002:
+    iptc_id: 709
+    iptc_concept_code: '13010002'
+    iptc_name: 'science and technology / technology / laser'
+  Iptc_13011000:
+    iptc_id: 710
+    iptc_concept_code: '13011000'
+    iptc_name: 'science and technology / standards'
+  Iptc_13012000:
+    iptc_id: 711
+    iptc_concept_code: '13012000'
+    iptc_name: 'science and technology / animal science'
+  Iptc_13013000:
+    iptc_id: 712
+    iptc_concept_code: '13013000'
+    iptc_name: 'science and technology / micro science'
+  Iptc_13014000:
+    iptc_id: 713
+    iptc_concept_code: '13014000'
+    iptc_name: 'science and technology / marine science'
+  Iptc_13015000:
+    iptc_id: 714
+    iptc_concept_code: '13015000'
+    iptc_name: 'science and technology / weather science'
+  Iptc_13016000:
+    iptc_id: 715
+    iptc_concept_code: '13016000'
+    iptc_name: 'science and technology / electronics'
+  Iptc_13017000:
+    iptc_id: 716
+    iptc_concept_code: '13017000'
+    iptc_name: 'science and technology / identification technology'
+  Iptc_13018000:
+    iptc_id: 717
+    iptc_concept_code: '13018000'
+    iptc_name: 'science and technology / mathematics'
+  Iptc_13019000:
+    iptc_id: 718
+    iptc_concept_code: '13019000'
+    iptc_name: 'science and technology / biotechnology'
+  Iptc_13020000:
+    iptc_id: 719
+    iptc_concept_code: '13020000'
+    iptc_name: 'science and technology / agricultural research and technology'
+  Iptc_13021000:
+    iptc_id: 720
+    iptc_concept_code: '13021000'
+    iptc_name: 'science and technology / nanotechnology'
+  Iptc_13022000:
+    iptc_id: 721
+    iptc_concept_code: '13022000'
+    iptc_name: 'science and technology / ITcomputer sciences'
+  Iptc_13023000:
+    iptc_id: 722
+    iptc_concept_code: '13023000'
+    iptc_name: 'science and technology / scientific institutions'
+  Iptc_14000000:
+    iptc_id: 723
+    iptc_concept_code: '14000000'
+    iptc_name: 'social issue'
+  Iptc_14001000:
+    iptc_id: 724
+    iptc_concept_code: '14001000'
+    iptc_name: 'social issue / addiction'
+  Iptc_14002000:
+    iptc_id: 725
+    iptc_concept_code: '14002000'
+    iptc_name: 'social issue / charity'
+  Iptc_14003000:
+    iptc_id: 726
+    iptc_concept_code: '14003000'
+    iptc_name: 'social issue / demographics'
+  Iptc_14003001:
+    iptc_id: 727
+    iptc_concept_code: '14003001'
+    iptc_name: 'social issue / demographics / population and census'
+  Iptc_14003002:
+    iptc_id: 728
+    iptc_concept_code: '14003002'
+    iptc_name: 'social issue / demographics / immigration'
+  Iptc_14003003:
+    iptc_id: 729
+    iptc_concept_code: '14003003'
+    iptc_name: 'social issue / demographics / illegal immigrants'
+  Iptc_14003004:
+    iptc_id: 730
+    iptc_concept_code: '14003004'
+    iptc_name: 'social issue / demographics / emigrants'
+  Iptc_14004000:
+    iptc_id: 731
+    iptc_concept_code: '14004000'
+    iptc_name: 'social issue / disabled'
+  Iptc_14005000:
+    iptc_id: 732
+    iptc_concept_code: '14005000'
+    iptc_name: 'social issue / euthanasia'
+  Iptc_14005001:
+    iptc_id: 733
+    iptc_concept_code: '14005001'
+    iptc_name: 'social issue / euthanasia / suicide'
+  Iptc_14006000:
+    iptc_id: 734
+    iptc_concept_code: '14006000'
+    iptc_name: 'social issue / family'
+  Iptc_14006001:
+    iptc_id: 735
+    iptc_concept_code: '14006001'
+    iptc_name: 'social issue / family / parent and child'
+  Iptc_14006002:
+    iptc_id: 736
+    iptc_concept_code: '14006002'
+    iptc_name: 'social issue / family / adoption'
+  Iptc_14006003:
+    iptc_id: 737
+    iptc_concept_code: '14006003'
+    iptc_name: 'social issue / family / marriage'
+  Iptc_14006004:
+    iptc_id: 738
+    iptc_concept_code: '14006004'
+    iptc_name: 'social issue / family / divorce'
+  Iptc_14006005:
+    iptc_id: 739
+    iptc_concept_code: '14006005'
+    iptc_name: 'social issue / family / sex'
+  Iptc_14006006:
+    iptc_id: 740
+    iptc_concept_code: '14006006'
+    iptc_name: 'social issue / family / courtship'
+  Iptc_14007000:
+    iptc_id: 741
+    iptc_concept_code: '14007000'
+    iptc_name: 'social issue / family planning'
+  Iptc_14008000:
+    iptc_id: 742
+    iptc_concept_code: '14008000'
+    iptc_name: 'social issue / health insurance'
+  Iptc_14009000:
+    iptc_id: 743
+    iptc_concept_code: '14009000'
+    iptc_name: 'social issue / homelessness'
+  Iptc_14010000:
+    iptc_id: 744
+    iptc_concept_code: '14010000'
+    iptc_name: 'social issue / minority group'
+  Iptc_14010001:
+    iptc_id: 745
+    iptc_concept_code: '14010001'
+    iptc_name: 'social issue / minority group / gays and lesbians'
+  Iptc_14010002:
+    iptc_id: 746
+    iptc_concept_code: '14010002'
+    iptc_name: 'social issue / minority group / national or ethnic minority'
+  Iptc_14011000:
+    iptc_id: 747
+    iptc_concept_code: '14011000'
+    iptc_name: 'social issue / pornography'
+  Iptc_14012000:
+    iptc_id: 748
+    iptc_concept_code: '14012000'
+    iptc_name: 'social issue / poverty'
+  Iptc_14013000:
+    iptc_id: 749
+    iptc_concept_code: '14013000'
+    iptc_name: 'social issue / prostitution'
+  Iptc_14014000:
+    iptc_id: 750
+    iptc_concept_code: '14014000'
+    iptc_name: 'social issue / racism'
+  Iptc_14015000:
+    iptc_id: 751
+    iptc_concept_code: '14015000'
+    iptc_name: 'social issue / welfare'
+  Iptc_14016000:
+    iptc_id: 752
+    iptc_concept_code: '14016000'
+    iptc_name: 'social issue / abortion'
+  Iptc_14017000:
+    iptc_id: 753
+    iptc_concept_code: '14017000'
+    iptc_name: 'social issue / missing person'
+  Iptc_14017001:
+    iptc_id: 754
+    iptc_concept_code: '14017001'
+    iptc_name: 'social issue / missing person / missing due to hostilities'
+  Iptc_14018000:
+    iptc_id: 755
+    iptc_concept_code: '14018000'
+    iptc_name: 'social issue / long term care'
+  Iptc_14019000:
+    iptc_id: 756
+    iptc_concept_code: '14019000'
+    iptc_name: 'social issue / juvenile delinquency'
+  Iptc_14020000:
+    iptc_id: 757
+    iptc_concept_code: '14020000'
+    iptc_name: 'social issue / nuclear radiation victims'
+  Iptc_14021000:
+    iptc_id: 758
+    iptc_concept_code: '14021000'
+    iptc_name: 'social issue / slavery'
+  Iptc_14022000:
+    iptc_id: 759
+    iptc_concept_code: '14022000'
+    iptc_name: 'social issue / abusive behaviour'
+  Iptc_14023000:
+    iptc_id: 760
+    iptc_concept_code: '14023000'
+    iptc_name: 'social issue / death and dying'
+  Iptc_14024000:
+    iptc_id: 761
+    iptc_concept_code: '14024000'
+    iptc_name: 'social issue / people'
+  Iptc_14024001:
+    iptc_id: 762
+    iptc_concept_code: '14024001'
+    iptc_name: 'social issue / people / children'
+  Iptc_14024002:
+    iptc_id: 763
+    iptc_concept_code: '14024002'
+    iptc_name: 'social issue / people / infants'
+  Iptc_14024003:
+    iptc_id: 764
+    iptc_concept_code: '14024003'
+    iptc_name: 'social issue / people / teen-agers'
+  Iptc_14024004:
+    iptc_id: 765
+    iptc_concept_code: '14024004'
+    iptc_name: 'social issue / people / adults'
+  Iptc_14024005:
+    iptc_id: 766
+    iptc_concept_code: '14024005'
+    iptc_name: 'social issue / people / senior citizens'
+  Iptc_14025000:
+    iptc_id: 767
+    iptc_concept_code: '14025000'
+    iptc_name: 'social issue / social issues'
+  Iptc_14025001:
+    iptc_id: 768
+    iptc_concept_code: '14025001'
+    iptc_name: 'social issue / social issues / social conditions'
+  Iptc_14025002:
+    iptc_id: 769
+    iptc_concept_code: '14025002'
+    iptc_name: 'social issue / social issues / social problems'
+  Iptc_14025003:
+    iptc_id: 770
+    iptc_concept_code: '14025003'
+    iptc_name: 'social issue / social issues / discrimination'
+  Iptc_14025004:
+    iptc_id: 771
+    iptc_concept_code: '14025004'
+    iptc_name: 'social issue / social issues / social services'
+  Iptc_14025005:
+    iptc_id: 772
+    iptc_concept_code: '14025005'
+    iptc_name: 'social issue / social issues / death penalty policies'
+  Iptc_14026000:
+    iptc_id: 773
+    iptc_concept_code: '14026000'
+    iptc_name: 'social issue / ordnance clearance'
+  Iptc_14027000:
+    iptc_id: 774
+    iptc_concept_code: '14027000'
+    iptc_name: 'social issue / reconstruction'
+  Iptc_15000000:
+    iptc_id: 775
+    iptc_concept_code: '15000000'
+    iptc_name: 'sport'
+  Iptc_15001000:
+    iptc_id: 776
+    iptc_concept_code: '15001000'
+    iptc_name: 'sport / aero and aviation sport'
+  Iptc_15001001:
+    iptc_id: 777
+    iptc_concept_code: '15001001'
+    iptc_name: 'sport / aero and aviation sport / parachuting'
+  Iptc_15001002:
+    iptc_id: 778
+    iptc_concept_code: '15001002'
+    iptc_name: 'sport / aero and aviation sport / sky diving'
+  Iptc_15002000:
+    iptc_id: 779
+    iptc_concept_code: '15002000'
+    iptc_name: 'sport / alpine skiing'
+  Iptc_15002001:
+    iptc_id: 780
+    iptc_concept_code: '15002001'
+    iptc_name: 'sport / alpine skiing / downhill'
+  Iptc_15002002:
+    iptc_id: 781
+    iptc_concept_code: '15002002'
+    iptc_name: 'sport / alpine skiing / giant slalom'
+  Iptc_15002003:
+    iptc_id: 782
+    iptc_concept_code: '15002003'
+    iptc_name: 'sport / alpine skiing / super G'
+  Iptc_15002004:
+    iptc_id: 783
+    iptc_concept_code: '15002004'
+    iptc_name: 'sport / alpine skiing / slalom'
+  Iptc_15002005:
+    iptc_id: 784
+    iptc_concept_code: '15002005'
+    iptc_name: 'sport / alpine skiing / combined'
+  Iptc_15003000:
+    iptc_id: 785
+    iptc_concept_code: '15003000'
+    iptc_name: 'sport / American football'
+  Iptc_15003001:
+    iptc_id: 786
+    iptc_concept_code: '15003001'
+    iptc_name: 'sport / American football / National Football League'
+  Iptc_15003002:
+    iptc_id: 787
+    iptc_concept_code: '15003002'
+    iptc_name: 'sport / American football / CFL'
+  Iptc_15004000:
+    iptc_id: 788
+    iptc_concept_code: '15004000'
+    iptc_name: 'sport / archery'
+  Iptc_15004001:
+    iptc_id: 789
+    iptc_concept_code: '15004001'
+    iptc_name: 'sport / archery / FITA Outdoor target archery'
+  Iptc_15004002:
+    iptc_id: 790
+    iptc_concept_code: '15004002'
+    iptc_name: 'sport / archery / crossbow shooting'
+  Iptc_15005000:
+    iptc_id: 791
+    iptc_concept_code: '15005000'
+    iptc_name: 'sport / athletics track and field'
+  Iptc_15005001:
+    iptc_id: 792
+    iptc_concept_code: '15005001'
+    iptc_name: 'sport / athletics track and field / 100 m'
+  Iptc_15005002:
+    iptc_id: 793
+    iptc_concept_code: '15005002'
+    iptc_name: 'sport / athletics track and field / 200 m'
+  Iptc_15005003:
+    iptc_id: 794
+    iptc_concept_code: '15005003'
+    iptc_name: 'sport / athletics track and field / 400 m'
+  Iptc_15005004:
+    iptc_id: 795
+    iptc_concept_code: '15005004'
+    iptc_name: 'sport / athletics track and field / 800 m'
+  Iptc_15005005:
+    iptc_id: 796
+    iptc_concept_code: '15005005'
+    iptc_name: 'sport / athletics track and field / 1000 m'
+  Iptc_15005006:
+    iptc_id: 797
+    iptc_concept_code: '15005006'
+    iptc_name: 'sport / athletics track and field / 1500 m'
+  Iptc_15005007:
+    iptc_id: 798
+    iptc_concept_code: '15005007'
+    iptc_name: 'sport / athletics track and field / mile'
+  Iptc_15005008:
+    iptc_id: 799
+    iptc_concept_code: '15005008'
+    iptc_name: 'sport / athletics track and field / 2000 m'
+  Iptc_15005009:
+    iptc_id: 800
+    iptc_concept_code: '15005009'
+    iptc_name: 'sport / athletics track and field / 3000 m'
+  Iptc_15005010:
+    iptc_id: 801
+    iptc_concept_code: '15005010'
+    iptc_name: 'sport / athletics track and field / 5000 m'
+  Iptc_15005011:
+    iptc_id: 802
+    iptc_concept_code: '15005011'
+    iptc_name: 'sport / athletics track and field / 10000 m'
+  Iptc_15005012:
+    iptc_id: 803
+    iptc_concept_code: '15005012'
+    iptc_name: 'sport / athletics track and field / 20 km'
+  Iptc_15005013:
+    iptc_id: 804
+    iptc_concept_code: '15005013'
+    iptc_name: 'sport / athletics track and field / one hour'
+  Iptc_15005014:
+    iptc_id: 805
+    iptc_concept_code: '15005014'
+    iptc_name: 'sport / athletics track and field / 25000'
+  Iptc_15005015:
+    iptc_id: 806
+    iptc_concept_code: '15005015'
+    iptc_name: 'sport / athletics track and field / 30000'
+  Iptc_15005016:
+    iptc_id: 807
+    iptc_concept_code: '15005016'
+    iptc_name: 'sport / athletics track and field / 110 m hurdles'
+  Iptc_15005017:
+    iptc_id: 808
+    iptc_concept_code: '15005017'
+    iptc_name: 'sport / athletics track and field / 400 m hurdles'
+  Iptc_15005018:
+    iptc_id: 809
+    iptc_concept_code: '15005018'
+    iptc_name: 'sport / athletics track and field / 3000 m steeplechase'
+  Iptc_15005019:
+    iptc_id: 810
+    iptc_concept_code: '15005019'
+    iptc_name: 'sport / athletics track and field / high jump'
+  Iptc_15005020:
+    iptc_id: 811
+    iptc_concept_code: '15005020'
+    iptc_name: 'sport / athletics track and field / pole vault'
+  Iptc_15005021:
+    iptc_id: 812
+    iptc_concept_code: '15005021'
+    iptc_name: 'sport / athletics track and field / long jump'
+  Iptc_15005022:
+    iptc_id: 813
+    iptc_concept_code: '15005022'
+    iptc_name: 'sport / athletics track and field / triple jump'
+  Iptc_15005023:
+    iptc_id: 814
+    iptc_concept_code: '15005023'
+    iptc_name: 'sport / athletics track and field / shot put'
+  Iptc_15005024:
+    iptc_id: 815
+    iptc_concept_code: '15005024'
+    iptc_name: 'sport / athletics track and field / discus throw'
+  Iptc_15005025:
+    iptc_id: 816
+    iptc_concept_code: '15005025'
+    iptc_name: 'sport / athletics track and field / hammer throw'
+  Iptc_15005026:
+    iptc_id: 817
+    iptc_concept_code: '15005026'
+    iptc_name: 'sport / athletics track and field / javelin throw'
+  Iptc_15005027:
+    iptc_id: 818
+    iptc_concept_code: '15005027'
+    iptc_name: 'sport / athletics track and field / decathlon'
+  Iptc_15005028:
+    iptc_id: 819
+    iptc_concept_code: '15005028'
+    iptc_name: 'sport / athletics track and field / 4x100 m'
+  Iptc_15005029:
+    iptc_id: 820
+    iptc_concept_code: '15005029'
+    iptc_name: 'sport / athletics track and field / 4x200 m'
+  Iptc_15005030:
+    iptc_id: 821
+    iptc_concept_code: '15005030'
+    iptc_name: 'sport / athletics track and field / 4x400 m'
+  Iptc_15005031:
+    iptc_id: 822
+    iptc_concept_code: '15005031'
+    iptc_name: 'sport / athletics track and field / 4x800 m'
+  Iptc_15005032:
+    iptc_id: 823
+    iptc_concept_code: '15005032'
+    iptc_name: 'sport / athletics track and field / 4x1500 m'
+  Iptc_15005033:
+    iptc_id: 824
+    iptc_concept_code: '15005033'
+    iptc_name: 'sport / athletics track and field / walk 1 h'
+  Iptc_15005034:
+    iptc_id: 825
+    iptc_concept_code: '15005034'
+    iptc_name: 'sport / athletics track and field / walk 2 h'
+  Iptc_15005035:
+    iptc_id: 826
+    iptc_concept_code: '15005035'
+    iptc_name: 'sport / athletics track and field / 10 km walk'
+  Iptc_15005036:
+    iptc_id: 827
+    iptc_concept_code: '15005036'
+    iptc_name: 'sport / athletics track and field / 15 km walk'
+  Iptc_15005037:
+    iptc_id: 828
+    iptc_concept_code: '15005037'
+    iptc_name: 'sport / athletics track and field / 20 km walk'
+  Iptc_15005038:
+    iptc_id: 829
+    iptc_concept_code: '15005038'
+    iptc_name: 'sport / athletics track and field / 30 km walk'
+  Iptc_15005039:
+    iptc_id: 830
+    iptc_concept_code: '15005039'
+    iptc_name: 'sport / athletics track and field / 50 km walk'
+  Iptc_15005040:
+    iptc_id: 831
+    iptc_concept_code: '15005040'
+    iptc_name: 'sport / athletics track and field / 100 m hurdles'
+  Iptc_15005041:
+    iptc_id: 832
+    iptc_concept_code: '15005041'
+    iptc_name: 'sport / athletics track and field / 5 km walk'
+  Iptc_15005042:
+    iptc_id: 833
+    iptc_concept_code: '15005042'
+    iptc_name: 'sport / athletics track and field / heptathlon'
+  Iptc_15005043:
+    iptc_id: 834
+    iptc_concept_code: '15005043'
+    iptc_name: 'sport / athletics track and field / 1500 m walk'
+  Iptc_15005044:
+    iptc_id: 835
+    iptc_concept_code: '15005044'
+    iptc_name: 'sport / athletics track and field / 2000 m walk'
+  Iptc_15005045:
+    iptc_id: 836
+    iptc_concept_code: '15005045'
+    iptc_name: 'sport / athletics track and field / 3000 m walk'
+  Iptc_15005046:
+    iptc_id: 837
+    iptc_concept_code: '15005046'
+    iptc_name: 'sport / athletics track and field / 50 m'
+  Iptc_15005047:
+    iptc_id: 838
+    iptc_concept_code: '15005047'
+    iptc_name: 'sport / athletics track and field / 50 m hurdles'
+  Iptc_15005048:
+    iptc_id: 839
+    iptc_concept_code: '15005048'
+    iptc_name: 'sport / athletics track and field / 50 yards'
+  Iptc_15005049:
+    iptc_id: 840
+    iptc_concept_code: '15005049'
+    iptc_name: 'sport / athletics track and field / 50 yard hurdles'
+  Iptc_15005050:
+    iptc_id: 841
+    iptc_concept_code: '15005050'
+    iptc_name: 'sport / athletics track and field / 60 m'
+  Iptc_15005051:
+    iptc_id: 842
+    iptc_concept_code: '15005051'
+    iptc_name: 'sport / athletics track and field / 60 m hurdles'
+  Iptc_15005052:
+    iptc_id: 843
+    iptc_concept_code: '15005052'
+    iptc_name: 'sport / athletics track and field / 60 yards'
+  Iptc_15005053:
+    iptc_id: 844
+    iptc_concept_code: '15005053'
+    iptc_name: 'sport / athletics track and field / 60 yard hurdles'
+  Iptc_15005054:
+    iptc_id: 845
+    iptc_concept_code: '15005054'
+    iptc_name: 'sport / athletics track and field / 100 yards'
+  Iptc_15005055:
+    iptc_id: 846
+    iptc_concept_code: '15005055'
+    iptc_name: 'sport / athletics track and field / 100 yard hurdles'
+  Iptc_15005056:
+    iptc_id: 847
+    iptc_concept_code: '15005056'
+    iptc_name: 'sport / athletics track and field / 300 m'
+  Iptc_15005057:
+    iptc_id: 848
+    iptc_concept_code: '15005057'
+    iptc_name: 'sport / athletics track and field / 300 yards'
+  Iptc_15005058:
+    iptc_id: 849
+    iptc_concept_code: '15005058'
+    iptc_name: 'sport / athletics track and field / 440 yards'
+  Iptc_15005059:
+    iptc_id: 850
+    iptc_concept_code: '15005059'
+    iptc_name: 'sport / athletics track and field / 500 m'
+  Iptc_15005060:
+    iptc_id: 851
+    iptc_concept_code: '15005060'
+    iptc_name: 'sport / athletics track and field / 500 yards'
+  Iptc_15005061:
+    iptc_id: 852
+    iptc_concept_code: '15005061'
+    iptc_name: 'sport / athletics track and field / 600 m'
+  Iptc_15005062:
+    iptc_id: 853
+    iptc_concept_code: '15005062'
+    iptc_name: 'sport / athletics track and field / 600 yards'
+  Iptc_15005063:
+    iptc_id: 854
+    iptc_concept_code: '15005063'
+    iptc_name: 'sport / athletics track and field / 880 yards'
+  Iptc_15005064:
+    iptc_id: 855
+    iptc_concept_code: '15005064'
+    iptc_name: 'sport / athletics track and field / 1000 yards'
+  Iptc_15005065:
+    iptc_id: 856
+    iptc_concept_code: '15005065'
+    iptc_name: 'sport / athletics track and field / 2 miles'
+  Iptc_15005066:
+    iptc_id: 857
+    iptc_concept_code: '15005066'
+    iptc_name: 'sport / athletics track and field / 3 miles'
+  Iptc_15005067:
+    iptc_id: 858
+    iptc_concept_code: '15005067'
+    iptc_name: 'sport / athletics track and field / 6 miles'
+  Iptc_15005068:
+    iptc_id: 859
+    iptc_concept_code: '15005068'
+    iptc_name: 'sport / athletics track and field / 4x1 mile'
+  Iptc_15005069:
+    iptc_id: 860
+    iptc_concept_code: '15005069'
+    iptc_name: 'sport / athletics track and field / pentathlon'
+  Iptc_15006000:
+    iptc_id: 861
+    iptc_concept_code: '15006000'
+    iptc_name: 'sport / badminton'
+  Iptc_15007000:
+    iptc_id: 862
+    iptc_concept_code: '15007000'
+    iptc_name: 'sport / baseball'
+  Iptc_15007001:
+    iptc_id: 863
+    iptc_concept_code: '15007001'
+    iptc_name: 'sport / baseball / Major League Baseball - American League'
+  Iptc_15007002:
+    iptc_id: 864
+    iptc_concept_code: '15007002'
+    iptc_name: 'sport / baseball / Major League Baseball - National League'
+  Iptc_15007003:
+    iptc_id: 865
+    iptc_concept_code: '15007003'
+    iptc_name: 'sport / baseball / Major League Baseball - Special'
+  Iptc_15007004:
+    iptc_id: 866
+    iptc_concept_code: '15007004'
+    iptc_name: 'sport / baseball / rubberball baseball'
+  Iptc_15007005:
+    iptc_id: 867
+    iptc_concept_code: '15007005'
+    iptc_name: 'sport / baseball / Major League Baseball Playoffs'
+  Iptc_15007006:
+    iptc_id: 868
+    iptc_concept_code: '15007006'
+    iptc_name: 'sport / baseball / World Series'
+  Iptc_15008000:
+    iptc_id: 869
+    iptc_concept_code: '15008000'
+    iptc_name: 'sport / basketball'
+  Iptc_15008001:
+    iptc_id: 870
+    iptc_concept_code: '15008001'
+    iptc_name: 'sport / basketball / National Basketball Association'
+  Iptc_15008002:
+    iptc_id: 871
+    iptc_concept_code: '15008002'
+    iptc_name: 'sport / basketball / professional - Women general'
+  Iptc_15008003:
+    iptc_id: 872
+    iptc_concept_code: '15008003'
+    iptc_name: 'sport / basketball / Swiss netball'
+  Iptc_15008004:
+    iptc_id: 873
+    iptc_concept_code: '15008004'
+    iptc_name: 'sport / basketball / German netball'
+  Iptc_15008005:
+    iptc_id: 874
+    iptc_concept_code: '15008005'
+    iptc_name: 'sport / basketball / Dutch netball'
+  Iptc_15009000:
+    iptc_id: 875
+    iptc_concept_code: '15009000'
+    iptc_name: 'sport / biathlon'
+  Iptc_15009001:
+    iptc_id: 876
+    iptc_concept_code: '15009001'
+    iptc_name: 'sport / biathlon / 7.5 km'
+  Iptc_15009002:
+    iptc_id: 877
+    iptc_concept_code: '15009002'
+    iptc_name: 'sport / biathlon / 10 km'
+  Iptc_15009003:
+    iptc_id: 878
+    iptc_concept_code: '15009003'
+    iptc_name: 'sport / biathlon / 15 km'
+  Iptc_15009004:
+    iptc_id: 879
+    iptc_concept_code: '15009004'
+    iptc_name: 'sport / biathlon / 20 km'
+  Iptc_15009005:
+    iptc_id: 880
+    iptc_concept_code: '15009005'
+    iptc_name: 'sport / biathlon / 4x7.5 km relay'
+  Iptc_15009006:
+    iptc_id: 881
+    iptc_concept_code: '15009006'
+    iptc_name: 'sport / biathlon / 12.5 km pursuit'
+  Iptc_15010000:
+    iptc_id: 882
+    iptc_concept_code: '15010000'
+    iptc_name: 'sport / billiards snooker and pool'
+  Iptc_15010001:
+    iptc_id: 883
+    iptc_concept_code: '15010001'
+    iptc_name: 'sport / billiards snooker and pool / 8 ball'
+  Iptc_15010002:
+    iptc_id: 884
+    iptc_concept_code: '15010002'
+    iptc_name: 'sport / billiards snooker and pool / 9 ball'
+  Iptc_15010003:
+    iptc_id: 885
+    iptc_concept_code: '15010003'
+    iptc_name: 'sport / billiards snooker and pool / 14.1'
+  Iptc_15010006:
+    iptc_id: 886
+    iptc_concept_code: '15010006'
+    iptc_name: 'sport / billiards snooker and pool / snooker'
+  Iptc_15011000:
+    iptc_id: 887
+    iptc_concept_code: '15011000'
+    iptc_name: 'sport / bobsleigh'
+  Iptc_15011001:
+    iptc_id: 888
+    iptc_concept_code: '15011001'
+    iptc_name: 'sport / bobsleigh / two-man sled'
+  Iptc_15011002:
+    iptc_id: 889
+    iptc_concept_code: '15011002'
+    iptc_name: 'sport / bobsleigh / four-man sled'
+  Iptc_15012000:
+    iptc_id: 890
+    iptc_concept_code: '15012000'
+    iptc_name: 'sport / bowling'
+  Iptc_15013000:
+    iptc_id: 891
+    iptc_concept_code: '15013000'
+    iptc_name: 'sport / bowls and petanque'
+  Iptc_15014000:
+    iptc_id: 892
+    iptc_concept_code: '15014000'
+    iptc_name: 'sport / boxing'
+  Iptc_15014001:
+    iptc_id: 893
+    iptc_concept_code: '15014001'
+    iptc_name: 'sport / boxing / super-heavyweight'
+  Iptc_15014002:
+    iptc_id: 894
+    iptc_concept_code: '15014002'
+    iptc_name: 'sport / boxing / heavyweight'
+  Iptc_15014003:
+    iptc_id: 895
+    iptc_concept_code: '15014003'
+    iptc_name: 'sport / boxing / cruiserweight'
+  Iptc_15014004:
+    iptc_id: 896
+    iptc_concept_code: '15014004'
+    iptc_name: 'sport / boxing / light-heavyweight'
+  Iptc_15014005:
+    iptc_id: 897
+    iptc_concept_code: '15014005'
+    iptc_name: 'sport / boxing / super-middleweight'
+  Iptc_15014006:
+    iptc_id: 898
+    iptc_concept_code: '15014006'
+    iptc_name: 'sport / boxing / middleweight'
+  Iptc_15014007:
+    iptc_id: 899
+    iptc_concept_code: '15014007'
+    iptc_name: 'sport / boxing / light-middleweight'
+  Iptc_15014008:
+    iptc_id: 900
+    iptc_concept_code: '15014008'
+    iptc_name: 'sport / boxing / welterweight'
+  Iptc_15014009:
+    iptc_id: 901
+    iptc_concept_code: '15014009'
+    iptc_name: 'sport / boxing / light-welterweight'
+  Iptc_15014010:
+    iptc_id: 902
+    iptc_concept_code: '15014010'
+    iptc_name: 'sport / boxing / lightweight'
+  Iptc_15014011:
+    iptc_id: 903
+    iptc_concept_code: '15014011'
+    iptc_name: 'sport / boxing / super-featherweight'
+  Iptc_15014012:
+    iptc_id: 904
+    iptc_concept_code: '15014012'
+    iptc_name: 'sport / boxing / featherweight'
+  Iptc_15014013:
+    iptc_id: 905
+    iptc_concept_code: '15014013'
+    iptc_name: 'sport / boxing / super-bantamweight'
+  Iptc_15014014:
+    iptc_id: 906
+    iptc_concept_code: '15014014'
+    iptc_name: 'sport / boxing / bantamweight'
+  Iptc_15014015:
+    iptc_id: 907
+    iptc_concept_code: '15014015'
+    iptc_name: 'sport / boxing / super-flyweight'
+  Iptc_15014016:
+    iptc_id: 908
+    iptc_concept_code: '15014016'
+    iptc_name: 'sport / boxing / flyweight'
+  Iptc_15014017:
+    iptc_id: 909
+    iptc_concept_code: '15014017'
+    iptc_name: 'sport / boxing / light flyweight'
+  Iptc_15014018:
+    iptc_id: 910
+    iptc_concept_code: '15014018'
+    iptc_name: 'sport / boxing / straw'
+  Iptc_15014019:
+    iptc_id: 911
+    iptc_concept_code: '15014019'
+    iptc_name: 'sport / boxing / IBF'
+  Iptc_15014020:
+    iptc_id: 912
+    iptc_concept_code: '15014020'
+    iptc_name: 'sport / boxing / WBA'
+  Iptc_15014021:
+    iptc_id: 913
+    iptc_concept_code: '15014021'
+    iptc_name: 'sport / boxing / WBC'
+  Iptc_15014022:
+    iptc_id: 914
+    iptc_concept_code: '15014022'
+    iptc_name: 'sport / boxing / WBO'
+  Iptc_15014023:
+    iptc_id: 915
+    iptc_concept_code: '15014023'
+    iptc_name: 'sport / boxing / French boxing'
+  Iptc_15014024:
+    iptc_id: 916
+    iptc_concept_code: '15014024'
+    iptc_name: 'sport / boxing / Thai boxing'
+  Iptc_15015000:
+    iptc_id: 917
+    iptc_concept_code: '15015000'
+    iptc_name: 'sport / canoeing and kayaking'
+  Iptc_15015001:
+    iptc_id: 918
+    iptc_concept_code: '15015001'
+    iptc_name: 'sport / canoeing and kayaking / Slalom'
+  Iptc_15015002:
+    iptc_id: 919
+    iptc_concept_code: '15015002'
+    iptc_name: 'sport / canoeing and kayaking / 200 m'
+  Iptc_15015003:
+    iptc_id: 920
+    iptc_concept_code: '15015003'
+    iptc_name: 'sport / canoeing and kayaking / 500 m'
+  Iptc_15015004:
+    iptc_id: 921
+    iptc_concept_code: '15015004'
+    iptc_name: 'sport / canoeing and kayaking / 1000 m'
+  Iptc_15015005:
+    iptc_id: 922
+    iptc_concept_code: '15015005'
+    iptc_name: 'sport / canoeing and kayaking / K1'
+  Iptc_15015006:
+    iptc_id: 923
+    iptc_concept_code: '15015006'
+    iptc_name: 'sport / canoeing and kayaking / K2'
+  Iptc_15015007:
+    iptc_id: 924
+    iptc_concept_code: '15015007'
+    iptc_name: 'sport / canoeing and kayaking / K4'
+  Iptc_15015008:
+    iptc_id: 925
+    iptc_concept_code: '15015008'
+    iptc_name: 'sport / canoeing and kayaking / C1'
+  Iptc_15015009:
+    iptc_id: 926
+    iptc_concept_code: '15015009'
+    iptc_name: 'sport / canoeing and kayaking / C2'
+  Iptc_15015010:
+    iptc_id: 927
+    iptc_concept_code: '15015010'
+    iptc_name: 'sport / canoeing and kayaking / C4'
+  Iptc_15015011:
+    iptc_id: 928
+    iptc_concept_code: '15015011'
+    iptc_name: 'sport / canoeing and kayaking / canoe sailing'
+  Iptc_15015012:
+    iptc_id: 929
+    iptc_concept_code: '15015012'
+    iptc_name: 'sport / canoeing and kayaking / pontoniering'
+  Iptc_15016000:
+    iptc_id: 930
+    iptc_concept_code: '15016000'
+    iptc_name: 'sport / climbing'
+  Iptc_15016001:
+    iptc_id: 931
+    iptc_concept_code: '15016001'
+    iptc_name: 'sport / climbing / mountaineering'
+  Iptc_15016002:
+    iptc_id: 932
+    iptc_concept_code: '15016002'
+    iptc_name: 'sport / climbing / sport climbing'
+  Iptc_15017000:
+    iptc_id: 933
+    iptc_concept_code: '15017000'
+    iptc_name: 'sport / cricket'
+  Iptc_15018000:
+    iptc_id: 934
+    iptc_concept_code: '15018000'
+    iptc_name: 'sport / curling'
+  Iptc_15018001:
+    iptc_id: 935
+    iptc_concept_code: '15018001'
+    iptc_name: 'sport / curling / icestock sport'
+  Iptc_15019000:
+    iptc_id: 936
+    iptc_concept_code: '15019000'
+    iptc_name: 'sport / cycling'
+  Iptc_15019001:
+    iptc_id: 937
+    iptc_concept_code: '15019001'
+    iptc_name: 'sport / cycling / track'
+  Iptc_15019002:
+    iptc_id: 938
+    iptc_concept_code: '15019002'
+    iptc_name: 'sport / cycling / pursuit'
+  Iptc_15019003:
+    iptc_id: 939
+    iptc_concept_code: '15019003'
+    iptc_name: 'sport / cycling / Olympic sprint'
+  Iptc_15019004:
+    iptc_id: 940
+    iptc_concept_code: '15019004'
+    iptc_name: 'sport / cycling / sprint'
+  Iptc_15019005:
+    iptc_id: 941
+    iptc_concept_code: '15019005'
+    iptc_name: 'sport / cycling / Keirin'
+  Iptc_15019006:
+    iptc_id: 942
+    iptc_concept_code: '15019006'
+    iptc_name: 'sport / cycling / points race'
+  Iptc_15019007:
+    iptc_id: 943
+    iptc_concept_code: '15019007'
+    iptc_name: 'sport / cycling / Madison race'
+  Iptc_15019008:
+    iptc_id: 944
+    iptc_concept_code: '15019008'
+    iptc_name: 'sport / cycling / 500 m time trial'
+  Iptc_15019009:
+    iptc_id: 945
+    iptc_concept_code: '15019009'
+    iptc_name: 'sport / cycling / 1 km time trial'
+  Iptc_15019010:
+    iptc_id: 946
+    iptc_concept_code: '15019010'
+    iptc_name: 'sport / cycling / one hour'
+  Iptc_15019011:
+    iptc_id: 947
+    iptc_concept_code: '15019011'
+    iptc_name: 'sport / cycling / road race'
+  Iptc_15019012:
+    iptc_id: 948
+    iptc_concept_code: '15019012'
+    iptc_name: 'sport / cycling / road time trial'
+  Iptc_15019013:
+    iptc_id: 949
+    iptc_concept_code: '15019013'
+    iptc_name: 'sport / cycling / staging race'
+  Iptc_15019014:
+    iptc_id: 950
+    iptc_concept_code: '15019014'
+    iptc_name: 'sport / cycling / cyclo-cross'
+  Iptc_15019015:
+    iptc_id: 951
+    iptc_concept_code: '15019015'
+    iptc_name: 'sport / cycling / Vtt'
+  Iptc_15019016:
+    iptc_id: 952
+    iptc_concept_code: '15019016'
+    iptc_name: 'sport / cycling / Vtt-cross'
+  Iptc_15019017:
+    iptc_id: 953
+    iptc_concept_code: '15019017'
+    iptc_name: 'sport / cycling / Vtt-downhill'
+  Iptc_15019018:
+    iptc_id: 954
+    iptc_concept_code: '15019018'
+    iptc_name: 'sport / cycling / bi-crossing'
+  Iptc_15019019:
+    iptc_id: 955
+    iptc_concept_code: '15019019'
+    iptc_name: 'sport / cycling / trial'
+  Iptc_15019020:
+    iptc_id: 956
+    iptc_concept_code: '15019020'
+    iptc_name: 'sport / cycling / artistic cycling'
+  Iptc_15019021:
+    iptc_id: 957
+    iptc_concept_code: '15019021'
+    iptc_name: 'sport / cycling / cycle ball'
+  Iptc_15020000:
+    iptc_id: 958
+    iptc_concept_code: '15020000'
+    iptc_name: 'sport / dancing'
+  Iptc_15021000:
+    iptc_id: 959
+    iptc_concept_code: '15021000'
+    iptc_name: 'sport / diving'
+  Iptc_15021001:
+    iptc_id: 960
+    iptc_concept_code: '15021001'
+    iptc_name: 'sport / diving / 10 m platform'
+  Iptc_15021002:
+    iptc_id: 961
+    iptc_concept_code: '15021002'
+    iptc_name: 'sport / diving / 10 m platform synchronised'
+  Iptc_15021003:
+    iptc_id: 962
+    iptc_concept_code: '15021003'
+    iptc_name: 'sport / diving / 3 m springboard'
+  Iptc_15021004:
+    iptc_id: 963
+    iptc_concept_code: '15021004'
+    iptc_name: 'sport / diving / 3 m springboard synchronised'
+  Iptc_15021005:
+    iptc_id: 964
+    iptc_concept_code: '15021005'
+    iptc_name: 'sport / diving / subaquatics'
+  Iptc_15021006:
+    iptc_id: 965
+    iptc_concept_code: '15021006'
+    iptc_name: 'sport / diving / scuba diving'
+  Iptc_15022000:
+    iptc_id: 966
+    iptc_concept_code: '15022000'
+    iptc_name: 'sport / equestrian'
+  Iptc_15022001:
+    iptc_id: 967
+    iptc_concept_code: '15022001'
+    iptc_name: 'sport / equestrian / three-day event'
+  Iptc_15022002:
+    iptc_id: 968
+    iptc_concept_code: '15022002'
+    iptc_name: 'sport / equestrian / dressage'
+  Iptc_15022003:
+    iptc_id: 969
+    iptc_concept_code: '15022003'
+    iptc_name: 'sport / equestrian / jumping'
+  Iptc_15022004:
+    iptc_id: 970
+    iptc_concept_code: '15022004'
+    iptc_name: 'sport / equestrian / cross country'
+  Iptc_15023000:
+    iptc_id: 971
+    iptc_concept_code: '15023000'
+    iptc_name: 'sport / fencing'
+  Iptc_15023001:
+    iptc_id: 972
+    iptc_concept_code: '15023001'
+    iptc_name: 'sport / fencing / epee'
+  Iptc_15023002:
+    iptc_id: 973
+    iptc_concept_code: '15023002'
+    iptc_name: 'sport / fencing / foil'
+  Iptc_15023003:
+    iptc_id: 974
+    iptc_concept_code: '15023003'
+    iptc_name: 'sport / fencing / sabre'
+  Iptc_15024000:
+    iptc_id: 975
+    iptc_concept_code: '15024000'
+    iptc_name: 'sport / field Hockey'
+  Iptc_15024001:
+    iptc_id: 976
+    iptc_concept_code: '15024001'
+    iptc_name: 'sport / field Hockey / roll hockey'
+  Iptc_15025000:
+    iptc_id: 977
+    iptc_concept_code: '15025000'
+    iptc_name: 'sport / figure Skating'
+  Iptc_15025001:
+    iptc_id: 978
+    iptc_concept_code: '15025001'
+    iptc_name: 'sport / figure Skating / singles'
+  Iptc_15025002:
+    iptc_id: 979
+    iptc_concept_code: '15025002'
+    iptc_name: 'sport / figure Skating / pairs'
+  Iptc_15025003:
+    iptc_id: 980
+    iptc_concept_code: '15025003'
+    iptc_name: 'sport / figure Skating / ice dance'
+  Iptc_15026000:
+    iptc_id: 981
+    iptc_concept_code: '15026000'
+    iptc_name: 'sport / freestyle Skiing'
+  Iptc_15026001:
+    iptc_id: 982
+    iptc_concept_code: '15026001'
+    iptc_name: 'sport / freestyle Skiing / moguls'
+  Iptc_15026002:
+    iptc_id: 983
+    iptc_concept_code: '15026002'
+    iptc_name: 'sport / freestyle Skiing / aerials'
+  Iptc_15026003:
+    iptc_id: 984
+    iptc_concept_code: '15026003'
+    iptc_name: 'sport / freestyle Skiing / artistic skiing'
+  Iptc_15027000:
+    iptc_id: 985
+    iptc_concept_code: '15027000'
+    iptc_name: 'sport / golf'
+  Iptc_15028000:
+    iptc_id: 986
+    iptc_concept_code: '15028000'
+    iptc_name: 'sport / gymnastics'
+  Iptc_15028001:
+    iptc_id: 987
+    iptc_concept_code: '15028001'
+    iptc_name: 'sport / gymnastics / floor exercise'
+  Iptc_15028002:
+    iptc_id: 988
+    iptc_concept_code: '15028002'
+    iptc_name: 'sport / gymnastics / vault'
+  Iptc_15028003:
+    iptc_id: 989
+    iptc_concept_code: '15028003'
+    iptc_name: 'sport / gymnastics / pommel horse'
+  Iptc_15028004:
+    iptc_id: 990
+    iptc_concept_code: '15028004'
+    iptc_name: 'sport / gymnastics / uneven bars'
+  Iptc_15028005:
+    iptc_id: 991
+    iptc_concept_code: '15028005'
+    iptc_name: 'sport / gymnastics / parallel bars'
+  Iptc_15028006:
+    iptc_id: 992
+    iptc_concept_code: '15028006'
+    iptc_name: 'sport / gymnastics / horizontal bar'
+  Iptc_15028007:
+    iptc_id: 993
+    iptc_concept_code: '15028007'
+    iptc_name: 'sport / gymnastics / rings'
+  Iptc_15028008:
+    iptc_id: 994
+    iptc_concept_code: '15028008'
+    iptc_name: 'sport / gymnastics / beam'
+  Iptc_15028009:
+    iptc_id: 995
+    iptc_concept_code: '15028009'
+    iptc_name: 'sport / gymnastics / rhythmic'
+  Iptc_15028010:
+    iptc_id: 996
+    iptc_concept_code: '15028010'
+    iptc_name: 'sport / gymnastics / clubs'
+  Iptc_15028011:
+    iptc_id: 997
+    iptc_concept_code: '15028011'
+    iptc_name: 'sport / gymnastics / hoop'
+  Iptc_15028012:
+    iptc_id: 998
+    iptc_concept_code: '15028012'
+    iptc_name: 'sport / gymnastics / ribbon'
+  Iptc_15028013:
+    iptc_id: 999
+    iptc_concept_code: '15028013'
+    iptc_name: 'sport / gymnastics / rope'
+  Iptc_15028014:
+    iptc_id: 1000
+    iptc_concept_code: '15028014'
+    iptc_name: 'sport / gymnastics / ball'
+  Iptc_15028015:
+    iptc_id: 1001
+    iptc_concept_code: '15028015'
+    iptc_name: 'sport / gymnastics / trampoline'
+  Iptc_15029000:
+    iptc_id: 1002
+    iptc_concept_code: '15029000'
+    iptc_name: 'sport / handball'
+  Iptc_15030000:
+    iptc_id: 1003
+    iptc_concept_code: '15030000'
+    iptc_name: 'sport / horse racing harness racing'
+  Iptc_15030001:
+    iptc_id: 1004
+    iptc_concept_code: '15030001'
+    iptc_name: 'sport / horse racing harness racing / flat racing'
+  Iptc_15030002:
+    iptc_id: 1005
+    iptc_concept_code: '15030002'
+    iptc_name: 'sport / horse racing harness racing / steeple chase'
+  Iptc_15030003:
+    iptc_id: 1006
+    iptc_concept_code: '15030003'
+    iptc_name: 'sport / horse racing harness racing / trotting'
+  Iptc_15030004:
+    iptc_id: 1007
+    iptc_concept_code: '15030004'
+    iptc_name: 'sport / horse racing harness racing / cross country'
+  Iptc_15031000:
+    iptc_id: 1008
+    iptc_concept_code: '15031000'
+    iptc_name: 'sport / ice hockey'
+  Iptc_15031001:
+    iptc_id: 1009
+    iptc_concept_code: '15031001'
+    iptc_name: 'sport / ice hockey / National Hockey League'
+  Iptc_15031002:
+    iptc_id: 1010
+    iptc_concept_code: '15031002'
+    iptc_name: 'sport / ice hockey / sledge hockey'
+  Iptc_15032000:
+    iptc_id: 1011
+    iptc_concept_code: '15032000'
+    iptc_name: 'sport / Jai Alai'
+  Iptc_15032001:
+    iptc_id: 1012
+    iptc_concept_code: '15032001'
+    iptc_name: 'sport / Jai Alai / fronton'
+  Iptc_15032002:
+    iptc_id: 1013
+    iptc_concept_code: '15032002'
+    iptc_name: 'sport / Jai Alai / jai-alai'
+  Iptc_15032003:
+    iptc_id: 1014
+    iptc_concept_code: '15032003'
+    iptc_name: 'sport / Jai Alai / left wall'
+  Iptc_15032004:
+    iptc_id: 1015
+    iptc_concept_code: '15032004'
+    iptc_name: 'sport / Jai Alai / trinquet'
+  Iptc_15032005:
+    iptc_id: 1016
+    iptc_concept_code: '15032005'
+    iptc_name: 'sport / Jai Alai / rebot'
+  Iptc_15032006:
+    iptc_id: 1017
+    iptc_concept_code: '15032006'
+    iptc_name: 'sport / Jai Alai / chistera ancha'
+  Iptc_15032007:
+    iptc_id: 1018
+    iptc_concept_code: '15032007'
+    iptc_name: 'sport / Jai Alai / chistera corta'
+  Iptc_15032008:
+    iptc_id: 1019
+    iptc_concept_code: '15032008'
+    iptc_name: 'sport / Jai Alai / bare hand'
+  Iptc_15032009:
+    iptc_id: 1020
+    iptc_concept_code: '15032009'
+    iptc_name: 'sport / Jai Alai / pala-ancha'
+  Iptc_15032010:
+    iptc_id: 1021
+    iptc_concept_code: '15032010'
+    iptc_name: 'sport / Jai Alai / pala-corta'
+  Iptc_15032011:
+    iptc_id: 1022
+    iptc_concept_code: '15032011'
+    iptc_name: 'sport / Jai Alai / pasaka'
+  Iptc_15032012:
+    iptc_id: 1023
+    iptc_concept_code: '15032012'
+    iptc_name: 'sport / Jai Alai / xare'
+  Iptc_15033000:
+    iptc_id: 1024
+    iptc_concept_code: '15033000'
+    iptc_name: 'sport / judo'
+  Iptc_15033001:
+    iptc_id: 1025
+    iptc_concept_code: '15033001'
+    iptc_name: 'sport / judo / heavyweight'
+  Iptc_15033002:
+    iptc_id: 1026
+    iptc_concept_code: '15033002'
+    iptc_name: 'sport / judo / half-heavyweight'
+  Iptc_15033003:
+    iptc_id: 1027
+    iptc_concept_code: '15033003'
+    iptc_name: 'sport / judo / middleweight'
+  Iptc_15033004:
+    iptc_id: 1028
+    iptc_concept_code: '15033004'
+    iptc_name: 'sport / judo / half-middleweight'
+  Iptc_15033005:
+    iptc_id: 1029
+    iptc_concept_code: '15033005'
+    iptc_name: 'sport / judo / half-lightweight'
+  Iptc_15033006:
+    iptc_id: 1030
+    iptc_concept_code: '15033006'
+    iptc_name: 'sport / judo / lightweight'
+  Iptc_15033007:
+    iptc_id: 1031
+    iptc_concept_code: '15033007'
+    iptc_name: 'sport / judo / extra lightweight'
+  Iptc_15034000:
+    iptc_id: 1032
+    iptc_concept_code: '15034000'
+    iptc_name: 'sport / karate'
+  Iptc_15034001:
+    iptc_id: 1033
+    iptc_concept_code: '15034001'
+    iptc_name: 'sport / karate / sparring'
+  Iptc_15035000:
+    iptc_id: 1034
+    iptc_concept_code: '15035000'
+    iptc_name: 'sport / lacrosse'
+  Iptc_15036000:
+    iptc_id: 1035
+    iptc_concept_code: '15036000'
+    iptc_name: 'sport / luge'
+  Iptc_15036001:
+    iptc_id: 1036
+    iptc_concept_code: '15036001'
+    iptc_name: 'sport / luge / singles'
+  Iptc_15036002:
+    iptc_id: 1037
+    iptc_concept_code: '15036002'
+    iptc_name: 'sport / luge / doubles'
+  Iptc_15037000:
+    iptc_id: 1038
+    iptc_concept_code: '15037000'
+    iptc_name: 'sport / marathon'
+  Iptc_15038000:
+    iptc_id: 1039
+    iptc_concept_code: '15038000'
+    iptc_name: 'sport / modern pentathlon'
+  Iptc_15038001:
+    iptc_id: 1040
+    iptc_concept_code: '15038001'
+    iptc_name: 'sport / modern pentathlon / running'
+  Iptc_15038002:
+    iptc_id: 1041
+    iptc_concept_code: '15038002'
+    iptc_name: 'sport / modern pentathlon / shooting'
+  Iptc_15038003:
+    iptc_id: 1042
+    iptc_concept_code: '15038003'
+    iptc_name: 'sport / modern pentathlon / swimming'
+  Iptc_15038004:
+    iptc_id: 1043
+    iptc_concept_code: '15038004'
+    iptc_name: 'sport / modern pentathlon / fencing'
+  Iptc_15038005:
+    iptc_id: 1044
+    iptc_concept_code: '15038005'
+    iptc_name: 'sport / modern pentathlon / showjumping'
+  Iptc_15039000:
+    iptc_id: 1045
+    iptc_concept_code: '15039000'
+    iptc_name: 'sport / motor racing'
+  Iptc_15039001:
+    iptc_id: 1046
+    iptc_concept_code: '15039001'
+    iptc_name: 'sport / motor racing / Formula One'
+  Iptc_15039002:
+    iptc_id: 1047
+    iptc_concept_code: '15039002'
+    iptc_name: 'sport / motor racing / F3000'
+  Iptc_15039003:
+    iptc_id: 1048
+    iptc_concept_code: '15039003'
+    iptc_name: 'sport / motor racing / endurance'
+  Iptc_15039004:
+    iptc_id: 1049
+    iptc_concept_code: '15039004'
+    iptc_name: 'sport / motor racing / Indy'
+  Iptc_15039005:
+    iptc_id: 1050
+    iptc_concept_code: '15039005'
+    iptc_name: 'sport / motor racing / CART'
+  Iptc_15039006:
+    iptc_id: 1051
+    iptc_concept_code: '15039006'
+    iptc_name: 'sport / motor racing / NHRA'
+  Iptc_15039007:
+    iptc_id: 1052
+    iptc_concept_code: '15039007'
+    iptc_name: 'sport / motor racing / NASCAR'
+  Iptc_15039008:
+    iptc_id: 1053
+    iptc_concept_code: '15039008'
+    iptc_name: 'sport / motor racing / TRUCKI'
+  Iptc_15040000:
+    iptc_id: 1054
+    iptc_concept_code: '15040000'
+    iptc_name: 'sport / motor rallying'
+  Iptc_15040001:
+    iptc_id: 1055
+    iptc_concept_code: '15040001'
+    iptc_name: 'sport / motor rallying / rallying'
+  Iptc_15040002:
+    iptc_id: 1056
+    iptc_concept_code: '15040002'
+    iptc_name: 'sport / motor rallying / pursuit'
+  Iptc_15040003:
+    iptc_id: 1057
+    iptc_concept_code: '15040003'
+    iptc_name: 'sport / motor rallying / rallycross'
+  Iptc_15041000:
+    iptc_id: 1058
+    iptc_concept_code: '15041000'
+    iptc_name: 'sport / motorcycling'
+  Iptc_15041001:
+    iptc_id: 1059
+    iptc_concept_code: '15041001'
+    iptc_name: 'sport / motorcycling / speed-Grand-Prix'
+  Iptc_15041002:
+    iptc_id: 1060
+    iptc_concept_code: '15041002'
+    iptc_name: 'sport / motorcycling / enduro'
+  Iptc_15041003:
+    iptc_id: 1061
+    iptc_concept_code: '15041003'
+    iptc_name: 'sport / motorcycling / grass-track'
+  Iptc_15041004:
+    iptc_id: 1062
+    iptc_concept_code: '15041004'
+    iptc_name: 'sport / motorcycling / moto-ball'
+  Iptc_15041005:
+    iptc_id: 1063
+    iptc_concept_code: '15041005'
+    iptc_name: 'sport / motorcycling / moto-cross'
+  Iptc_15041006:
+    iptc_id: 1064
+    iptc_concept_code: '15041006'
+    iptc_name: 'sport / motorcycling / rallying'
+  Iptc_15041007:
+    iptc_id: 1065
+    iptc_concept_code: '15041007'
+    iptc_name: 'sport / motorcycling / trial'
+  Iptc_15041008:
+    iptc_id: 1066
+    iptc_concept_code: '15041008'
+    iptc_name: 'sport / motorcycling / endurance'
+  Iptc_15041009:
+    iptc_id: 1067
+    iptc_concept_code: '15041009'
+    iptc_name: 'sport / motorcycling / superbike'
+  Iptc_15041010:
+    iptc_id: 1068
+    iptc_concept_code: '15041010'
+    iptc_name: 'sport / motorcycling / 125 cm3'
+  Iptc_15041011:
+    iptc_id: 1069
+    iptc_concept_code: '15041011'
+    iptc_name: 'sport / motorcycling / 250 cm3'
+  Iptc_15041012:
+    iptc_id: 1070
+    iptc_concept_code: '15041012'
+    iptc_name: 'sport / motorcycling / 500 cm3'
+  Iptc_15041013:
+    iptc_id: 1071
+    iptc_concept_code: '15041013'
+    iptc_name: 'sport / motorcycling / side-cars'
+  Iptc_15041014:
+    iptc_id: 1072
+    iptc_concept_code: '15041014'
+    iptc_name: 'sport / motorcycling / motoGP'
+  Iptc_15042000:
+    iptc_id: 1073
+    iptc_concept_code: '15042000'
+    iptc_name: 'sport / netball'
+  Iptc_15043000:
+    iptc_id: 1074
+    iptc_concept_code: '15043000'
+    iptc_name: 'sport / nordic skiing'
+  Iptc_15043001:
+    iptc_id: 1075
+    iptc_concept_code: '15043001'
+    iptc_name: 'sport / nordic skiing / cross-country'
+  Iptc_15043002:
+    iptc_id: 1076
+    iptc_concept_code: '15043002'
+    iptc_name: 'sport / nordic skiing / 5 km classical time'
+  Iptc_15043003:
+    iptc_id: 1077
+    iptc_concept_code: '15043003'
+    iptc_name: 'sport / nordic skiing / 10 km classical style'
+  Iptc_15043004:
+    iptc_id: 1078
+    iptc_concept_code: '15043004'
+    iptc_name: 'sport / nordic skiing / 10 km pursuit free style'
+  Iptc_15043005:
+    iptc_id: 1079
+    iptc_concept_code: '15043005'
+    iptc_name: 'sport / nordic skiing / 15 km classical style'
+  Iptc_15043006:
+    iptc_id: 1080
+    iptc_concept_code: '15043006'
+    iptc_name: 'sport / nordic skiing / 15 km pursuit free style'
+  Iptc_15043007:
+    iptc_id: 1081
+    iptc_concept_code: '15043007'
+    iptc_name: 'sport / nordic skiing / 10 km 15 km combined'
+  Iptc_15043008:
+    iptc_id: 1082
+    iptc_concept_code: '15043008'
+    iptc_name: 'sport / nordic skiing / 30 km classical style'
+  Iptc_15043009:
+    iptc_id: 1083
+    iptc_concept_code: '15043009'
+    iptc_name: 'sport / nordic skiing / 30km free style'
+  Iptc_15043010:
+    iptc_id: 1084
+    iptc_concept_code: '15043010'
+    iptc_name: 'sport / nordic skiing / 50 km free style'
+  Iptc_15043011:
+    iptc_id: 1085
+    iptc_concept_code: '15043011'
+    iptc_name: 'sport / nordic skiing / 4x5 km relay'
+  Iptc_15043012:
+    iptc_id: 1086
+    iptc_concept_code: '15043012'
+    iptc_name: 'sport / nordic skiing / 4x10 km relay'
+  Iptc_15043013:
+    iptc_id: 1087
+    iptc_concept_code: '15043013'
+    iptc_name: 'sport / nordic skiing / nordic combined'
+  Iptc_15043014:
+    iptc_id: 1088
+    iptc_concept_code: '15043014'
+    iptc_name: 'sport / nordic skiing / raid'
+  Iptc_15043015:
+    iptc_id: 1089
+    iptc_concept_code: '15043015'
+    iptc_name: 'sport / nordic skiing / 5 km pursuit free style'
+  Iptc_15043016:
+    iptc_id: 1090
+    iptc_concept_code: '15043016'
+    iptc_name: 'sport / nordic skiing / 1.5 km sprint free'
+  Iptc_15043017:
+    iptc_id: 1091
+    iptc_concept_code: '15043017'
+    iptc_name: 'sport / nordic skiing / 50 km classic style'
+  Iptc_15044000:
+    iptc_id: 1092
+    iptc_concept_code: '15044000'
+    iptc_name: 'sport / orienteering'
+  Iptc_15044001:
+    iptc_id: 1093
+    iptc_concept_code: '15044001'
+    iptc_name: 'sport / orienteering / ski orienteering'
+  Iptc_15045000:
+    iptc_id: 1094
+    iptc_concept_code: '15045000'
+    iptc_name: 'sport / polo'
+  Iptc_15046000:
+    iptc_id: 1095
+    iptc_concept_code: '15046000'
+    iptc_name: 'sport / power boating'
+  Iptc_15046001:
+    iptc_id: 1096
+    iptc_concept_code: '15046001'
+    iptc_name: 'sport / power boating / F1'
+  Iptc_15046002:
+    iptc_id: 1097
+    iptc_concept_code: '15046002'
+    iptc_name: 'sport / power boating / F2'
+  Iptc_15047000:
+    iptc_id: 1098
+    iptc_concept_code: '15047000'
+    iptc_name: 'sport / rowing'
+  Iptc_15047001:
+    iptc_id: 1099
+    iptc_concept_code: '15047001'
+    iptc_name: 'sport / rowing / single sculls'
+  Iptc_15047002:
+    iptc_id: 1100
+    iptc_concept_code: '15047002'
+    iptc_name: 'sport / rowing / double sculls'
+  Iptc_15047003:
+    iptc_id: 1101
+    iptc_concept_code: '15047003'
+    iptc_name: 'sport / rowing / quadruple sculls'
+  Iptc_15047004:
+    iptc_id: 1102
+    iptc_concept_code: '15047004'
+    iptc_name: 'sport / rowing / coxless pair'
+  Iptc_15047005:
+    iptc_id: 1103
+    iptc_concept_code: '15047005'
+    iptc_name: 'sport / rowing / coxless four'
+  Iptc_15047006:
+    iptc_id: 1104
+    iptc_concept_code: '15047006'
+    iptc_name: 'sport / rowing / eight'
+  Iptc_15047007:
+    iptc_id: 1105
+    iptc_concept_code: '15047007'
+    iptc_name: 'sport / rowing / lightweight'
+  Iptc_15048000:
+    iptc_id: 1106
+    iptc_concept_code: '15048000'
+    iptc_name: 'sport / rugby league'
+  Iptc_15049000:
+    iptc_id: 1107
+    iptc_concept_code: '15049000'
+    iptc_name: 'sport / rugby union'
+  Iptc_15049001:
+    iptc_id: 1108
+    iptc_concept_code: '15049001'
+    iptc_name: 'sport / rugby union / rugby 7'
+  Iptc_15050000:
+    iptc_id: 1109
+    iptc_concept_code: '15050000'
+    iptc_name: 'sport / sailing'
+  Iptc_15050001:
+    iptc_id: 1110
+    iptc_concept_code: '15050001'
+    iptc_name: 'sport / sailing / Tornado'
+  Iptc_15050002:
+    iptc_id: 1111
+    iptc_concept_code: '15050002'
+    iptc_name: 'sport / sailing / soling'
+  Iptc_15050003:
+    iptc_id: 1112
+    iptc_concept_code: '15050003'
+    iptc_name: 'sport / sailing / 49er'
+  Iptc_15050004:
+    iptc_id: 1113
+    iptc_concept_code: '15050004'
+    iptc_name: 'sport / sailing / Europe'
+  Iptc_15050005:
+    iptc_id: 1114
+    iptc_concept_code: '15050005'
+    iptc_name: 'sport / sailing / Laser'
+  Iptc_15050006:
+    iptc_id: 1115
+    iptc_concept_code: '15050006'
+    iptc_name: 'sport / sailing / 470'
+  Iptc_15050007:
+    iptc_id: 1116
+    iptc_concept_code: '15050007'
+    iptc_name: 'sport / sailing / Finn'
+  Iptc_15050008:
+    iptc_id: 1117
+    iptc_concept_code: '15050008'
+    iptc_name: 'sport / sailing / Star'
+  Iptc_15050009:
+    iptc_id: 1118
+    iptc_concept_code: '15050009'
+    iptc_name: 'sport / sailing / flying dutchmann'
+  Iptc_15050010:
+    iptc_id: 1119
+    iptc_concept_code: '15050010'
+    iptc_name: 'sport / sailing / 505'
+  Iptc_15050011:
+    iptc_id: 1120
+    iptc_concept_code: '15050011'
+    iptc_name: 'sport / sailing / staging race'
+  Iptc_15050012:
+    iptc_id: 1121
+    iptc_concept_code: '15050012'
+    iptc_name: 'sport / sailing / around the world'
+  Iptc_15050013:
+    iptc_id: 1122
+    iptc_concept_code: '15050013'
+    iptc_name: 'sport / sailing / monohull'
+  Iptc_15050014:
+    iptc_id: 1123
+    iptc_concept_code: '15050014'
+    iptc_name: 'sport / sailing / multihulls'
+  Iptc_15050015:
+    iptc_id: 1124
+    iptc_concept_code: '15050015'
+    iptc_name: 'sport / sailing / yngling'
+  Iptc_15050016:
+    iptc_id: 1125
+    iptc_concept_code: '15050016'
+    iptc_name: 'sport / sailing / mistral'
+  Iptc_15051000:
+    iptc_id: 1126
+    iptc_concept_code: '15051000'
+    iptc_name: 'sport / shooting'
+  Iptc_15051001:
+    iptc_id: 1127
+    iptc_concept_code: '15051001'
+    iptc_name: 'sport / shooting / 10 m air rifle'
+  Iptc_15051002:
+    iptc_id: 1128
+    iptc_concept_code: '15051002'
+    iptc_name: 'sport / shooting / 10 m air pistol'
+  Iptc_15051003:
+    iptc_id: 1129
+    iptc_concept_code: '15051003'
+    iptc_name: 'sport / shooting / 10 m running target'
+  Iptc_15051004:
+    iptc_id: 1130
+    iptc_concept_code: '15051004'
+    iptc_name: 'sport / shooting / 25 m rapid fire pistol'
+  Iptc_15051005:
+    iptc_id: 1131
+    iptc_concept_code: '15051005'
+    iptc_name: 'sport / shooting / 25 m sport pistol'
+  Iptc_15051006:
+    iptc_id: 1132
+    iptc_concept_code: '15051006'
+    iptc_name: 'sport / shooting / 50 m free pistol'
+  Iptc_15051007:
+    iptc_id: 1133
+    iptc_concept_code: '15051007'
+    iptc_name: 'sport / shooting / 50 m free rifle prone'
+  Iptc_15051008:
+    iptc_id: 1134
+    iptc_concept_code: '15051008'
+    iptc_name: 'sport / shooting / 50 m free rifle 3x40'
+  Iptc_15051009:
+    iptc_id: 1135
+    iptc_concept_code: '15051009'
+    iptc_name: 'sport / shooting / 50 m sport rifle 3x20'
+  Iptc_15051010:
+    iptc_id: 1136
+    iptc_concept_code: '15051010'
+    iptc_name: 'sport / shooting / trap'
+  Iptc_15051011:
+    iptc_id: 1137
+    iptc_concept_code: '15051011'
+    iptc_name: 'sport / shooting / double trap'
+  Iptc_15051012:
+    iptc_id: 1138
+    iptc_concept_code: '15051012'
+    iptc_name: 'sport / shooting / skeet'
+  Iptc_15052000:
+    iptc_id: 1139
+    iptc_concept_code: '15052000'
+    iptc_name: 'sport / ski jumping'
+  Iptc_15052001:
+    iptc_id: 1140
+    iptc_concept_code: '15052001'
+    iptc_name: 'sport / ski jumping / K90 jump'
+  Iptc_15052002:
+    iptc_id: 1141
+    iptc_concept_code: '15052002'
+    iptc_name: 'sport / ski jumping / K120 jump'
+  Iptc_15052003:
+    iptc_id: 1142
+    iptc_concept_code: '15052003'
+    iptc_name: 'sport / ski jumping / K180'
+  Iptc_15053000:
+    iptc_id: 1143
+    iptc_concept_code: '15053000'
+    iptc_name: 'sport / snow boarding'
+  Iptc_15053001:
+    iptc_id: 1144
+    iptc_concept_code: '15053001'
+    iptc_name: 'sport / snow boarding / giant slalom'
+  Iptc_15053002:
+    iptc_id: 1145
+    iptc_concept_code: '15053002'
+    iptc_name: 'sport / snow boarding / half-pipe'
+  Iptc_15054000:
+    iptc_id: 1146
+    iptc_concept_code: '15054000'
+    iptc_name: 'sport / soccer'
+  Iptc_15055000:
+    iptc_id: 1147
+    iptc_concept_code: '15055000'
+    iptc_name: 'sport / softball'
+  Iptc_15056000:
+    iptc_id: 1148
+    iptc_concept_code: '15056000'
+    iptc_name: 'sport / speed skating'
+  Iptc_15056001:
+    iptc_id: 1149
+    iptc_concept_code: '15056001'
+    iptc_name: 'sport / speed skating / 500 m'
+  Iptc_15056002:
+    iptc_id: 1150
+    iptc_concept_code: '15056002'
+    iptc_name: 'sport / speed skating / 1000 m'
+  Iptc_15056003:
+    iptc_id: 1151
+    iptc_concept_code: '15056003'
+    iptc_name: 'sport / speed skating / 1500 m'
+  Iptc_15056004:
+    iptc_id: 1152
+    iptc_concept_code: '15056004'
+    iptc_name: 'sport / speed skating / 3000 m'
+  Iptc_15056005:
+    iptc_id: 1153
+    iptc_concept_code: '15056005'
+    iptc_name: 'sport / speed skating / 5000 m'
+  Iptc_15056006:
+    iptc_id: 1154
+    iptc_concept_code: '15056006'
+    iptc_name: 'sport / speed skating / 10000 m'
+  Iptc_15056007:
+    iptc_id: 1155
+    iptc_concept_code: '15056007'
+    iptc_name: 'sport / speed skating / Short-track'
+  Iptc_15056008:
+    iptc_id: 1156
+    iptc_concept_code: '15056008'
+    iptc_name: 'sport / speed skating / st 500 m'
+  Iptc_15056009:
+    iptc_id: 1157
+    iptc_concept_code: '15056009'
+    iptc_name: 'sport / speed skating / st 1000m'
+  Iptc_15056010:
+    iptc_id: 1158
+    iptc_concept_code: '15056010'
+    iptc_name: 'sport / speed skating / st 1500m'
+  Iptc_15056011:
+    iptc_id: 1159
+    iptc_concept_code: '15056011'
+    iptc_name: 'sport / speed skating / st 3000m'
+  Iptc_15056012:
+    iptc_id: 1160
+    iptc_concept_code: '15056012'
+    iptc_name: 'sport / speed skating / st 3000m relay'
+  Iptc_15056013:
+    iptc_id: 1161
+    iptc_concept_code: '15056013'
+    iptc_name: 'sport / speed skating / st 5000m'
+  Iptc_15056014:
+    iptc_id: 1162
+    iptc_concept_code: '15056014'
+    iptc_name: 'sport / speed skating / st 5000m relay'
+  Iptc_15057000:
+    iptc_id: 1163
+    iptc_concept_code: '15057000'
+    iptc_name: 'sport / speedway'
+  Iptc_15058000:
+    iptc_id: 1164
+    iptc_concept_code: '15058000'
+    iptc_name: 'sport / sports organisations'
+  Iptc_15058001:
+    iptc_id: 1165
+    iptc_concept_code: '15058001'
+    iptc_name: 'sport / sports organisations / IOC'
+  Iptc_15058002:
+    iptc_id: 1166
+    iptc_concept_code: '15058002'
+    iptc_name: 'sport / sports organisations / international federation'
+  Iptc_15058003:
+    iptc_id: 1167
+    iptc_concept_code: '15058003'
+    iptc_name: 'sport / sports organisations / continental federation'
+  Iptc_15058004:
+    iptc_id: 1168
+    iptc_concept_code: '15058004'
+    iptc_name: 'sport / sports organisations / national federation'
+  Iptc_15058005:
+    iptc_id: 1169
+    iptc_concept_code: '15058005'
+    iptc_name: 'sport / sports organisations / GAISF'
+  Iptc_15059000:
+    iptc_id: 1170
+    iptc_concept_code: '15059000'
+    iptc_name: 'sport / squash'
+  Iptc_15060000:
+    iptc_id: 1171
+    iptc_concept_code: '15060000'
+    iptc_name: 'sport / sumo wrestling'
+  Iptc_15061000:
+    iptc_id: 1172
+    iptc_concept_code: '15061000'
+    iptc_name: 'sport / surfing'
+  Iptc_15062000:
+    iptc_id: 1173
+    iptc_concept_code: '15062000'
+    iptc_name: 'sport / swimming'
+  Iptc_15062001:
+    iptc_id: 1174
+    iptc_concept_code: '15062001'
+    iptc_name: 'sport / swimming / 50 m freestyle'
+  Iptc_15062002:
+    iptc_id: 1175
+    iptc_concept_code: '15062002'
+    iptc_name: 'sport / swimming / 100 m freestyle'
+  Iptc_15062003:
+    iptc_id: 1176
+    iptc_concept_code: '15062003'
+    iptc_name: 'sport / swimming / 200 m freestyle'
+  Iptc_15062004:
+    iptc_id: 1177
+    iptc_concept_code: '15062004'
+    iptc_name: 'sport / swimming / 400 m freestyle'
+  Iptc_15062005:
+    iptc_id: 1178
+    iptc_concept_code: '15062005'
+    iptc_name: 'sport / swimming / 800 m freestyle'
+  Iptc_15062006:
+    iptc_id: 1179
+    iptc_concept_code: '15062006'
+    iptc_name: 'sport / swimming / 1500 m freestyle'
+  Iptc_15062007:
+    iptc_id: 1180
+    iptc_concept_code: '15062007'
+    iptc_name: 'sport / swimming / relay 4x50 m freestyle'
+  Iptc_15062008:
+    iptc_id: 1181
+    iptc_concept_code: '15062008'
+    iptc_name: 'sport / swimming / relay 4x100 m freestyle'
+  Iptc_15062009:
+    iptc_id: 1182
+    iptc_concept_code: '15062009'
+    iptc_name: 'sport / swimming / relay 4x200 m freestyle'
+  Iptc_15062010:
+    iptc_id: 1183
+    iptc_concept_code: '15062010'
+    iptc_name: 'sport / swimming / 50 m backstroke'
+  Iptc_15062011:
+    iptc_id: 1184
+    iptc_concept_code: '15062011'
+    iptc_name: 'sport / swimming / 100 m backstroke'
+  Iptc_15062012:
+    iptc_id: 1185
+    iptc_concept_code: '15062012'
+    iptc_name: 'sport / swimming / 200 m backstroke'
+  Iptc_15062013:
+    iptc_id: 1186
+    iptc_concept_code: '15062013'
+    iptc_name: 'sport / swimming / 50 m breaststroke'
+  Iptc_15062014:
+    iptc_id: 1187
+    iptc_concept_code: '15062014'
+    iptc_name: 'sport / swimming / 100 m breaststroke'
+  Iptc_15062015:
+    iptc_id: 1188
+    iptc_concept_code: '15062015'
+    iptc_name: 'sport / swimming / 200 m breaststroke'
+  Iptc_15062016:
+    iptc_id: 1189
+    iptc_concept_code: '15062016'
+    iptc_name: 'sport / swimming / 50 m butterfly'
+  Iptc_15062017:
+    iptc_id: 1190
+    iptc_concept_code: '15062017'
+    iptc_name: 'sport / swimming / 100 m butterfly'
+  Iptc_15062018:
+    iptc_id: 1191
+    iptc_concept_code: '15062018'
+    iptc_name: 'sport / swimming / 200 m butterfly'
+  Iptc_15062019:
+    iptc_id: 1192
+    iptc_concept_code: '15062019'
+    iptc_name: 'sport / swimming / 100 m medley'
+  Iptc_15062020:
+    iptc_id: 1193
+    iptc_concept_code: '15062020'
+    iptc_name: 'sport / swimming / 200 m medley'
+  Iptc_15062021:
+    iptc_id: 1194
+    iptc_concept_code: '15062021'
+    iptc_name: 'sport / swimming / 400 m medley'
+  Iptc_15062022:
+    iptc_id: 1195
+    iptc_concept_code: '15062022'
+    iptc_name: 'sport / swimming / relay 4x50 m medlay'
+  Iptc_15062023:
+    iptc_id: 1196
+    iptc_concept_code: '15062023'
+    iptc_name: 'sport / swimming / relay4x100 m medley'
+  Iptc_15062024:
+    iptc_id: 1197
+    iptc_concept_code: '15062024'
+    iptc_name: 'sport / swimming / short course'
+  Iptc_15062025:
+    iptc_id: 1198
+    iptc_concept_code: '15062025'
+    iptc_name: 'sport / swimming / synchronised technical routine'
+  Iptc_15062026:
+    iptc_id: 1199
+    iptc_concept_code: '15062026'
+    iptc_name: 'sport / swimming / synchronised free routine'
+  Iptc_15063000:
+    iptc_id: 1200
+    iptc_concept_code: '15063000'
+    iptc_name: 'sport / table tennis'
+  Iptc_15064000:
+    iptc_id: 1201
+    iptc_concept_code: '15064000'
+    iptc_name: 'sport / Taekwon-Do'
+  Iptc_15064001:
+    iptc_id: 1202
+    iptc_concept_code: '15064001'
+    iptc_name: 'sport / Taekwon-Do / under 49 kg'
+  Iptc_15064002:
+    iptc_id: 1203
+    iptc_concept_code: '15064002'
+    iptc_name: 'sport / Taekwon-Do / under 58 kg'
+  Iptc_15064003:
+    iptc_id: 1204
+    iptc_concept_code: '15064003'
+    iptc_name: 'sport / Taekwon-Do / 49-57 kg'
+  Iptc_15064004:
+    iptc_id: 1205
+    iptc_concept_code: '15064004'
+    iptc_name: 'sport / Taekwon-Do / 58-68 kg'
+  Iptc_15064005:
+    iptc_id: 1206
+    iptc_concept_code: '15064005'
+    iptc_name: 'sport / Taekwon-Do / 57-67 kg'
+  Iptc_15064006:
+    iptc_id: 1207
+    iptc_concept_code: '15064006'
+    iptc_name: 'sport / Taekwon-Do / 68-80 kg'
+  Iptc_15064007:
+    iptc_id: 1208
+    iptc_concept_code: '15064007'
+    iptc_name: 'sport / Taekwon-Do / over 67 kg'
+  Iptc_15064008:
+    iptc_id: 1209
+    iptc_concept_code: '15064008'
+    iptc_name: 'sport / Taekwon-Do / over 80 kg'
+  Iptc_15065000:
+    iptc_id: 1210
+    iptc_concept_code: '15065000'
+    iptc_name: 'sport / tennis'
+  Iptc_15065001:
+    iptc_id: 1211
+    iptc_concept_code: '15065001'
+    iptc_name: 'sport / tennis / soft tennis'
+  Iptc_15066000:
+    iptc_id: 1212
+    iptc_concept_code: '15066000'
+    iptc_name: 'sport / triathlon'
+  Iptc_15066001:
+    iptc_id: 1213
+    iptc_concept_code: '15066001'
+    iptc_name: 'sport / triathlon / triathlon swimming'
+  Iptc_15066002:
+    iptc_id: 1214
+    iptc_concept_code: '15066002'
+    iptc_name: 'sport / triathlon / triathlon cycling'
+  Iptc_15066003:
+    iptc_id: 1215
+    iptc_concept_code: '15066003'
+    iptc_name: 'sport / triathlon / triathlon run'
+  Iptc_15067000:
+    iptc_id: 1216
+    iptc_concept_code: '15067000'
+    iptc_name: 'sport / volleyball'
+  Iptc_15067001:
+    iptc_id: 1217
+    iptc_concept_code: '15067001'
+    iptc_name: 'sport / volleyball / beach volleyball'
+  Iptc_15068000:
+    iptc_id: 1218
+    iptc_concept_code: '15068000'
+    iptc_name: 'sport / water polo'
+  Iptc_15069000:
+    iptc_id: 1219
+    iptc_concept_code: '15069000'
+    iptc_name: 'sport / water skiing'
+  Iptc_15069001:
+    iptc_id: 1220
+    iptc_concept_code: '15069001'
+    iptc_name: 'sport / water skiing / slalom'
+  Iptc_15069002:
+    iptc_id: 1221
+    iptc_concept_code: '15069002'
+    iptc_name: 'sport / water skiing / trick'
+  Iptc_15069003:
+    iptc_id: 1222
+    iptc_concept_code: '15069003'
+    iptc_name: 'sport / water skiing / jump'
+  Iptc_15069004:
+    iptc_id: 1223
+    iptc_concept_code: '15069004'
+    iptc_name: 'sport / water skiing / combined'
+  Iptc_15070000:
+    iptc_id: 1224
+    iptc_concept_code: '15070000'
+    iptc_name: 'sport / weightlifting'
+  Iptc_15070001:
+    iptc_id: 1225
+    iptc_concept_code: '15070001'
+    iptc_name: 'sport / weightlifting / snatch'
+  Iptc_15070002:
+    iptc_id: 1226
+    iptc_concept_code: '15070002'
+    iptc_name: 'sport / weightlifting / clean and jerk'
+  Iptc_15070003:
+    iptc_id: 1227
+    iptc_concept_code: '15070003'
+    iptc_name: 'sport / weightlifting / 48 kg'
+  Iptc_15070004:
+    iptc_id: 1228
+    iptc_concept_code: '15070004'
+    iptc_name: 'sport / weightlifting / 53 kg'
+  Iptc_15070005:
+    iptc_id: 1229
+    iptc_concept_code: '15070005'
+    iptc_name: 'sport / weightlifting / 63 kg'
+  Iptc_15070006:
+    iptc_id: 1230
+    iptc_concept_code: '15070006'
+    iptc_name: 'sport / weightlifting / 75 kg'
+  Iptc_15070007:
+    iptc_id: 1231
+    iptc_concept_code: '15070007'
+    iptc_name: 'sport / weightlifting / over 75 kg'
+  Iptc_15070008:
+    iptc_id: 1232
+    iptc_concept_code: '15070008'
+    iptc_name: 'sport / weightlifting / 56 kg'
+  Iptc_15070009:
+    iptc_id: 1233
+    iptc_concept_code: '15070009'
+    iptc_name: 'sport / weightlifting / 62 kg'
+  Iptc_15070010:
+    iptc_id: 1234
+    iptc_concept_code: '15070010'
+    iptc_name: 'sport / weightlifting / 69 kg'
+  Iptc_15070011:
+    iptc_id: 1235
+    iptc_concept_code: '15070011'
+    iptc_name: 'sport / weightlifting / 77 kg'
+  Iptc_15070012:
+    iptc_id: 1236
+    iptc_concept_code: '15070012'
+    iptc_name: 'sport / weightlifting / 85 kg'
+  Iptc_15070013:
+    iptc_id: 1237
+    iptc_concept_code: '15070013'
+    iptc_name: 'sport / weightlifting / 94 kg'
+  Iptc_15070014:
+    iptc_id: 1238
+    iptc_concept_code: '15070014'
+    iptc_name: 'sport / weightlifting / 105 kg'
+  Iptc_15070015:
+    iptc_id: 1239
+    iptc_concept_code: '15070015'
+    iptc_name: 'sport / weightlifting / over 105 kg'
+  Iptc_15070016:
+    iptc_id: 1240
+    iptc_concept_code: '15070016'
+    iptc_name: 'sport / weightlifting / powerlifting'
+  Iptc_15071000:
+    iptc_id: 1241
+    iptc_concept_code: '15071000'
+    iptc_name: 'sport / windsurfing'
+  Iptc_15071001:
+    iptc_id: 1242
+    iptc_concept_code: '15071001'
+    iptc_name: 'sport / windsurfing / ocean'
+  Iptc_15071002:
+    iptc_id: 1243
+    iptc_concept_code: '15071002'
+    iptc_name: 'sport / windsurfing / lake'
+  Iptc_15071003:
+    iptc_id: 1244
+    iptc_concept_code: '15071003'
+    iptc_name: 'sport / windsurfing / river'
+  Iptc_15071004:
+    iptc_id: 1245
+    iptc_concept_code: '15071004'
+    iptc_name: 'sport / windsurfing / land'
+  Iptc_15072000:
+    iptc_id: 1246
+    iptc_concept_code: '15072000'
+    iptc_name: 'sport / wrestling'
+  Iptc_15072001:
+    iptc_id: 1247
+    iptc_concept_code: '15072001'
+    iptc_name: 'sport / wrestling / freestyle'
+  Iptc_15072002:
+    iptc_id: 1248
+    iptc_concept_code: '15072002'
+    iptc_name: 'sport / wrestling / greco-roman'
+  Iptc_15072003:
+    iptc_id: 1249
+    iptc_concept_code: '15072003'
+    iptc_name: 'sport / wrestling / over 130 kg'
+  Iptc_15072004:
+    iptc_id: 1250
+    iptc_concept_code: '15072004'
+    iptc_name: 'sport / wrestling / 130 kg'
+  Iptc_15072005:
+    iptc_id: 1251
+    iptc_concept_code: '15072005'
+    iptc_name: 'sport / wrestling / 97 kg'
+  Iptc_15072006:
+    iptc_id: 1252
+    iptc_concept_code: '15072006'
+    iptc_name: 'sport / wrestling / 85 kg'
+  Iptc_15072007:
+    iptc_id: 1253
+    iptc_concept_code: '15072007'
+    iptc_name: 'sport / wrestling / 76 kg'
+  Iptc_15072008:
+    iptc_id: 1254
+    iptc_concept_code: '15072008'
+    iptc_name: 'sport / wrestling / 69 kg'
+  Iptc_15072009:
+    iptc_id: 1255
+    iptc_concept_code: '15072009'
+    iptc_name: 'sport / wrestling / 63 kg'
+  Iptc_15072010:
+    iptc_id: 1256
+    iptc_concept_code: '15072010'
+    iptc_name: 'sport / wrestling / 58 kg'
+  Iptc_15072011:
+    iptc_id: 1257
+    iptc_concept_code: '15072011'
+    iptc_name: 'sport / wrestling / 54 kg'
+  Iptc_15072012:
+    iptc_id: 1258
+    iptc_concept_code: '15072012'
+    iptc_name: 'sport / wrestling / Swiss wrestling'
+  Iptc_15073000:
+    iptc_id: 1259
+    iptc_concept_code: '15073000'
+    iptc_name: 'sport / sports event'
+  Iptc_15073001:
+    iptc_id: 1260
+    iptc_concept_code: '15073001'
+    iptc_name: 'sport / sports event / Summer Olympics'
+  Iptc_15073002:
+    iptc_id: 1261
+    iptc_concept_code: '15073002'
+    iptc_name: 'sport / sports event / Winter Olympics'
+  Iptc_15073003:
+    iptc_id: 1262
+    iptc_concept_code: '15073003'
+    iptc_name: 'sport / sports event / Summer universiade'
+  Iptc_15073004:
+    iptc_id: 1263
+    iptc_concept_code: '15073004'
+    iptc_name: 'sport / sports event / Winter Universiade'
+  Iptc_15073005:
+    iptc_id: 1264
+    iptc_concept_code: '15073005'
+    iptc_name: 'sport / sports event / Commonwealth Games'
+  Iptc_15073006:
+    iptc_id: 1265
+    iptc_concept_code: '15073006'
+    iptc_name: 'sport / sports event / Winter Goodwill Games'
+  Iptc_15073007:
+    iptc_id: 1266
+    iptc_concept_code: '15073007'
+    iptc_name: 'sport / sports event / Summer Asian Games'
+  Iptc_15073008:
+    iptc_id: 1267
+    iptc_concept_code: '15073008'
+    iptc_name: 'sport / sports event / Winter Asian Games'
+  Iptc_15073009:
+    iptc_id: 1268
+    iptc_concept_code: '15073009'
+    iptc_name: 'sport / sports event / Panamerican Games'
+  Iptc_15073010:
+    iptc_id: 1269
+    iptc_concept_code: '15073010'
+    iptc_name: 'sport / sports event / African Games'
+  Iptc_15073011:
+    iptc_id: 1270
+    iptc_concept_code: '15073011'
+    iptc_name: 'sport / sports event / Mediterranean Games'
+  Iptc_15073012:
+    iptc_id: 1271
+    iptc_concept_code: '15073012'
+    iptc_name: 'sport / sports event / SouthEast Asiatic Games'
+  Iptc_15073013:
+    iptc_id: 1272
+    iptc_concept_code: '15073013'
+    iptc_name: 'sport / sports event / PanPacific Games'
+  Iptc_15073014:
+    iptc_id: 1273
+    iptc_concept_code: '15073014'
+    iptc_name: 'sport / sports event / SouthPacific Games'
+  Iptc_15073015:
+    iptc_id: 1274
+    iptc_concept_code: '15073015'
+    iptc_name: 'sport / sports event / PanArabic Games'
+  Iptc_15073016:
+    iptc_id: 1275
+    iptc_concept_code: '15073016'
+    iptc_name: 'sport / sports event / Summer Goodwill Games'
+  Iptc_15073017:
+    iptc_id: 1276
+    iptc_concept_code: '15073017'
+    iptc_name: 'sport / sports event / World games'
+  Iptc_15073018:
+    iptc_id: 1277
+    iptc_concept_code: '15073018'
+    iptc_name: 'sport / sports event / World Cup'
+  Iptc_15073019:
+    iptc_id: 1278
+    iptc_concept_code: '15073019'
+    iptc_name: 'sport / sports event / intercontinental cup'
+  Iptc_15073020:
+    iptc_id: 1279
+    iptc_concept_code: '15073020'
+    iptc_name: 'sport / sports event / continental cup'
+  Iptc_15073021:
+    iptc_id: 1280
+    iptc_concept_code: '15073021'
+    iptc_name: 'sport / sports event / international cup'
+  Iptc_15073022:
+    iptc_id: 1281
+    iptc_concept_code: '15073022'
+    iptc_name: 'sport / sports event / National Cup'
+  Iptc_15073023:
+    iptc_id: 1282
+    iptc_concept_code: '15073023'
+    iptc_name: 'sport / sports event / interregional cup'
+  Iptc_15073024:
+    iptc_id: 1283
+    iptc_concept_code: '15073024'
+    iptc_name: 'sport / sports event / regional cup'
+  Iptc_15073025:
+    iptc_id: 1284
+    iptc_concept_code: '15073025'
+    iptc_name: 'sport / sports event / league cup'
+  Iptc_15073026:
+    iptc_id: 1285
+    iptc_concept_code: '15073026'
+    iptc_name: 'sport / sports event / world championship'
+  Iptc_15073027:
+    iptc_id: 1286
+    iptc_concept_code: '15073027'
+    iptc_name: 'sport / sports event / intercontinental championship'
+  Iptc_15073028:
+    iptc_id: 1287
+    iptc_concept_code: '15073028'
+    iptc_name: 'sport / sports event / continental championship 1st level'
+  Iptc_15073029:
+    iptc_id: 1288
+    iptc_concept_code: '15073029'
+    iptc_name: 'sport / sports event / continental championship 2nd level'
+  Iptc_15073030:
+    iptc_id: 1289
+    iptc_concept_code: '15073030'
+    iptc_name: 'sport / sports event / continental championship 3rd level'
+  Iptc_15073031:
+    iptc_id: 1290
+    iptc_concept_code: '15073031'
+    iptc_name: 'sport / sports event / national championship 1st level'
+  Iptc_15073032:
+    iptc_id: 1291
+    iptc_concept_code: '15073032'
+    iptc_name: 'sport / sports event / national championship 2nd level'
+  Iptc_15073033:
+    iptc_id: 1292
+    iptc_concept_code: '15073033'
+    iptc_name: 'sport / sports event / national championship3rdlevel'
+  Iptc_15073034:
+    iptc_id: 1293
+    iptc_concept_code: '15073034'
+    iptc_name: 'sport / sports event / national championship 4th level'
+  Iptc_15073035:
+    iptc_id: 1294
+    iptc_concept_code: '15073035'
+    iptc_name: 'sport / sports event / regional championship'
+  Iptc_15073036:
+    iptc_id: 1295
+    iptc_concept_code: '15073036'
+    iptc_name: 'sport / sports event / Grand Prix'
+  Iptc_15073037:
+    iptc_id: 1296
+    iptc_concept_code: '15073037'
+    iptc_name: 'sport / sports event / intercontinental tournament'
+  Iptc_15073038:
+    iptc_id: 1297
+    iptc_concept_code: '15073038'
+    iptc_name: 'sport / sports event / continental tournament'
+  Iptc_15073039:
+    iptc_id: 1298
+    iptc_concept_code: '15073039'
+    iptc_name: 'sport / sports event / international tournament'
+  Iptc_15073040:
+    iptc_id: 1299
+    iptc_concept_code: '15073040'
+    iptc_name: 'sport / sports event / national tournament'
+  Iptc_15073041:
+    iptc_id: 1300
+    iptc_concept_code: '15073041'
+    iptc_name: 'sport / sports event / inter-nations competition'
+  Iptc_15073042:
+    iptc_id: 1301
+    iptc_concept_code: '15073042'
+    iptc_name: 'sport / sports event / inter-clubs competition'
+  Iptc_15073043:
+    iptc_id: 1302
+    iptc_concept_code: '15073043'
+    iptc_name: 'sport / sports event / friendly competition'
+  Iptc_15073044:
+    iptc_id: 1303
+    iptc_concept_code: '15073044'
+    iptc_name: 'sport / sports event / all-stars competition'
+  Iptc_15073045:
+    iptc_id: 1304
+    iptc_concept_code: '15073045'
+    iptc_name: 'sport / sports event / exhibition'
+  Iptc_15073046:
+    iptc_id: 1305
+    iptc_concept_code: '15073046'
+    iptc_name: 'sport / sports event / Super Bowl'
+  Iptc_15073047:
+    iptc_id: 1306
+    iptc_concept_code: '15073047'
+    iptc_name: 'sport / sports event / paralympic games'
+  Iptc_15074000:
+    iptc_id: 1307
+    iptc_concept_code: '15074000'
+    iptc_name: 'sport / rodeo'
+  Iptc_15074001:
+    iptc_id: 1308
+    iptc_concept_code: '15074001'
+    iptc_name: 'sport / rodeo / barrel racing'
+  Iptc_15074002:
+    iptc_id: 1309
+    iptc_concept_code: '15074002'
+    iptc_name: 'sport / rodeo / calf roping'
+  Iptc_15074003:
+    iptc_id: 1310
+    iptc_concept_code: '15074003'
+    iptc_name: 'sport / rodeo / bull riding'
+  Iptc_15074004:
+    iptc_id: 1311
+    iptc_concept_code: '15074004'
+    iptc_name: 'sport / rodeo / bulldogging'
+  Iptc_15074005:
+    iptc_id: 1312
+    iptc_concept_code: '15074005'
+    iptc_name: 'sport / rodeo / saddle bronc'
+  Iptc_15074006:
+    iptc_id: 1313
+    iptc_concept_code: '15074006'
+    iptc_name: 'sport / rodeo / bareback'
+  Iptc_15074007:
+    iptc_id: 1314
+    iptc_concept_code: '15074007'
+    iptc_name: 'sport / rodeo / goat roping'
+  Iptc_15075000:
+    iptc_id: 1315
+    iptc_concept_code: '15075000'
+    iptc_name: 'sport / mini golf sport'
+  Iptc_15076000:
+    iptc_id: 1316
+    iptc_concept_code: '15076000'
+    iptc_name: 'sport / bandy'
+  Iptc_15077000:
+    iptc_id: 1317
+    iptc_concept_code: '15077000'
+    iptc_name: 'sport / flying disc'
+  Iptc_15077001:
+    iptc_id: 1318
+    iptc_concept_code: '15077001'
+    iptc_name: 'sport / flying disc / ultimate'
+  Iptc_15077002:
+    iptc_id: 1319
+    iptc_concept_code: '15077002'
+    iptc_name: 'sport / flying disc / guts'
+  Iptc_15077003:
+    iptc_id: 1320
+    iptc_concept_code: '15077003'
+    iptc_name: 'sport / flying disc / overall'
+  Iptc_15077004:
+    iptc_id: 1321
+    iptc_concept_code: '15077004'
+    iptc_name: 'sport / flying disc / distance'
+  Iptc_15077005:
+    iptc_id: 1322
+    iptc_concept_code: '15077005'
+    iptc_name: 'sport / flying disc / discathon'
+  Iptc_15077006:
+    iptc_id: 1323
+    iptc_concept_code: '15077006'
+    iptc_name: 'sport / flying disc / DDC'
+  Iptc_15077007:
+    iptc_id: 1324
+    iptc_concept_code: '15077007'
+    iptc_name: 'sport / flying disc / SCF'
+  Iptc_15077008:
+    iptc_id: 1325
+    iptc_concept_code: '15077008'
+    iptc_name: 'sport / flying disc / freestyle'
+  Iptc_15077009:
+    iptc_id: 1326
+    iptc_concept_code: '15077009'
+    iptc_name: 'sport / flying disc / accuracy'
+  Iptc_15077010:
+    iptc_id: 1327
+    iptc_concept_code: '15077010'
+    iptc_name: 'sport / flying disc / disc golf'
+  Iptc_15078000:
+    iptc_id: 1328
+    iptc_concept_code: '15078000'
+    iptc_name: 'sport / floorball'
+  Iptc_15079000:
+    iptc_id: 1329
+    iptc_concept_code: '15079000'
+    iptc_name: 'sport / casting'
+  Iptc_15080000:
+    iptc_id: 1330
+    iptc_concept_code: '15080000'
+    iptc_name: 'sport / tug-of-war'
+  Iptc_15081000:
+    iptc_id: 1331
+    iptc_concept_code: '15081000'
+    iptc_name: 'sport / croquette'
+  Iptc_15082000:
+    iptc_id: 1332
+    iptc_concept_code: '15082000'
+    iptc_name: 'sport / dog racing'
+  Iptc_15082001:
+    iptc_id: 1333
+    iptc_concept_code: '15082001'
+    iptc_name: 'sport / dog racing / sled'
+  Iptc_15082002:
+    iptc_id: 1334
+    iptc_concept_code: '15082002'
+    iptc_name: 'sport / dog racing / oval track'
+  Iptc_15083000:
+    iptc_id: 1335
+    iptc_concept_code: '15083000'
+    iptc_name: 'sport / skeleton'
+  Iptc_15084000:
+    iptc_id: 1336
+    iptc_concept_code: '15084000'
+    iptc_name: 'sport / Australian rules football'
+  Iptc_15085000:
+    iptc_id: 1337
+    iptc_concept_code: '15085000'
+    iptc_name: 'sport / Canadian football'
+  Iptc_15086000:
+    iptc_id: 1338
+    iptc_concept_code: '15086000'
+    iptc_name: 'sport / duathlon'
+  Iptc_15087000:
+    iptc_id: 1339
+    iptc_concept_code: '15087000'
+    iptc_name: 'sport / hornuss'
+  Iptc_15088000:
+    iptc_id: 1340
+    iptc_concept_code: '15088000'
+    iptc_name: 'sport / fist ball'
+  Iptc_15089000:
+    iptc_id: 1341
+    iptc_concept_code: '15089000'
+    iptc_name: 'sport / inline skating'
+  Iptc_15090000:
+    iptc_id: 1342
+    iptc_concept_code: '15090000'
+    iptc_name: 'sport / grass ski'
+  Iptc_15091000:
+    iptc_id: 1343
+    iptc_concept_code: '15091000'
+    iptc_name: 'sport / snowbiking'
+  Iptc_15092000:
+    iptc_id: 1344
+    iptc_concept_code: '15092000'
+    iptc_name: 'sport / twirling'
+  Iptc_15093000:
+    iptc_id: 1345
+    iptc_concept_code: '15093000'
+    iptc_name: 'sport / kendo'
+  Iptc_15094000:
+    iptc_id: 1346
+    iptc_concept_code: '15094000'
+    iptc_name: 'sport / jukendo'
+  Iptc_15095000:
+    iptc_id: 1347
+    iptc_concept_code: '15095000'
+    iptc_name: 'sport / naginata'
+  Iptc_15096000:
+    iptc_id: 1348
+    iptc_concept_code: '15096000'
+    iptc_name: 'sport / kyudo'
+  Iptc_15097000:
+    iptc_id: 1349
+    iptc_concept_code: '15097000'
+    iptc_name: 'sport / kabaddi'
+  Iptc_15098000:
+    iptc_id: 1350
+    iptc_concept_code: '15098000'
+    iptc_name: 'sport / sepak takraw'
+  Iptc_15099000:
+    iptc_id: 1351
+    iptc_concept_code: '15099000'
+    iptc_name: 'sport / wushu'
+  Iptc_15100000:
+    iptc_id: 1352
+    iptc_concept_code: '15100000'
+    iptc_name: 'sport / darts'
+  Iptc_15101000:
+    iptc_id: 1353
+    iptc_concept_code: '15101000'
+    iptc_name: 'sport / bodybuilding'
+  Iptc_15102000:
+    iptc_id: 1354
+    iptc_concept_code: '15102000'
+    iptc_name: 'sport / sports disciplinary action'
+  Iptc_15103000:
+    iptc_id: 1355
+    iptc_concept_code: '15103000'
+    iptc_name: 'sport / sports awards'
+  Iptc_16000000:
+    iptc_id: 1356
+    iptc_concept_code: '16000000'
+    iptc_name: 'unrest conflicts and war'
+  Iptc_16001000:
+    iptc_id: 1357
+    iptc_concept_code: '16001000'
+    iptc_name: 'unrest conflicts and war / act of terror'
+  Iptc_16002000:
+    iptc_id: 1358
+    iptc_concept_code: '16002000'
+    iptc_name: 'unrest conflicts and war / armed conflict'
+  Iptc_16003000:
+    iptc_id: 1359
+    iptc_concept_code: '16003000'
+    iptc_name: 'unrest conflicts and war / civil unrest'
+  Iptc_16003001:
+    iptc_id: 1360
+    iptc_concept_code: '16003001'
+    iptc_name: 'unrest conflicts and war / civil unrest / revolutions'
+  Iptc_16003002:
+    iptc_id: 1361
+    iptc_concept_code: '16003002'
+    iptc_name: 'unrest conflicts and war / civil unrest / rebellions'
+  Iptc_16003003:
+    iptc_id: 1362
+    iptc_concept_code: '16003003'
+    iptc_name: 'unrest conflicts and war / civil unrest / political dissent'
+  Iptc_16003004:
+    iptc_id: 1363
+    iptc_concept_code: '16003004'
+    iptc_name: 'unrest conflicts and war / civil unrest / religious conflict'
+  Iptc_16003005:
+    iptc_id: 1364
+    iptc_concept_code: '16003005'
+    iptc_name: 'unrest conflicts and war / civil unrest / social conflict'
+  Iptc_16004000:
+    iptc_id: 1365
+    iptc_concept_code: '16004000'
+    iptc_name: 'unrest conflicts and war / coup detat'
+  Iptc_16005000:
+    iptc_id: 1366
+    iptc_concept_code: '16005000'
+    iptc_name: 'unrest conflicts and war / guerrilla activity'
+  Iptc_16005001:
+    iptc_id: 1367
+    iptc_concept_code: '16005001'
+    iptc_name: 'unrest conflicts and war / guerrilla activity / bioterrorism'
+  Iptc_16005002:
+    iptc_id: 1368
+    iptc_concept_code: '16005002'
+    iptc_name: 'unrest conflicts and war / guerrilla activity / bombings'
+  Iptc_16006000:
+    iptc_id: 1369
+    iptc_concept_code: '16006000'
+    iptc_name: 'unrest conflicts and war / massacre'
+  Iptc_16006001:
+    iptc_id: 1370
+    iptc_concept_code: '16006001'
+    iptc_name: 'unrest conflicts and war / massacre / genocide'
+  Iptc_16007000:
+    iptc_id: 1371
+    iptc_concept_code: '16007000'
+    iptc_name: 'unrest conflicts and war / riots'
+  Iptc_16008000:
+    iptc_id: 1372
+    iptc_concept_code: '16008000'
+    iptc_name: 'unrest conflicts and war / demonstration'
+  Iptc_16009000:
+    iptc_id: 1373
+    iptc_concept_code: '16009000'
+    iptc_name: 'unrest conflicts and war / war'
+  Iptc_16009001:
+    iptc_id: 1374
+    iptc_concept_code: '16009001'
+    iptc_name: 'unrest conflicts and war / war / civil war'
+  Iptc_16009002:
+    iptc_id: 1375
+    iptc_concept_code: '16009002'
+    iptc_name: 'unrest conflicts and war / war / international military intervention'
+  Iptc_16009003:
+    iptc_id: 1376
+    iptc_concept_code: '16009003'
+    iptc_name: 'unrest conflicts and war / war / prisoners and detainees'
+  Iptc_16010000:
+    iptc_id: 1377
+    iptc_concept_code: '16010000'
+    iptc_name: 'unrest conflicts and war / conflict'
+  Iptc_16010001:
+    iptc_id: 1378
+    iptc_concept_code: '16010001'
+    iptc_name: 'unrest conflicts and war / conflict / peacekeeping force'
+  Iptc_16011000:
+    iptc_id: 1379
+    iptc_concept_code: '16011000'
+    iptc_name: 'unrest conflicts and war / crisis'
+  Iptc_16012000:
+    iptc_id: 1380
+    iptc_concept_code: '16012000'
+    iptc_name: 'unrest conflicts and war / weaponry'
+  Iptc_17000000:
+    iptc_id: 1381
+    iptc_concept_code: '17000000'
+    iptc_name: 'weather'
+  Iptc_17001000:
+    iptc_id: 1382
+    iptc_concept_code: '17001000'
+    iptc_name: 'weather / forecast'
+  Iptc_17002000:
+    iptc_id: 1383
+    iptc_concept_code: '17002000'
+    iptc_name: 'weather / global change'
+  Iptc_17003000:
+    iptc_id: 1384
+    iptc_concept_code: '17003000'
+    iptc_name: 'weather / report'
+  Iptc_17003001:
+    iptc_id: 1385
+    iptc_concept_code: '17003001'
+    iptc_name: 'weather / report / weather news'
+  Iptc_17004000:
+    iptc_id: 1386
+    iptc_concept_code: '17004000'
+    iptc_name: 'weather / statistic'
+  Iptc_17005000:
+    iptc_id: 1387
+    iptc_concept_code: '17005000'
+    iptc_name: 'weather / warning'

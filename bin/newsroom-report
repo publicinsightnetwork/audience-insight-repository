@@ -1,0 +1,118 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2012 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Data::Dump qw( dump );
+use Getopt::Long;
+use Pod::Usage;
+use Rose::DateTime::Parser;
+use AIR2::Organization;
+use AIR2::Project;
+use Rose::DB::Object::Manager;
+use Statistics::Basic qw(:all);
+
+#################
+# totals
+
+my $inqs = AIR2::Inquiry->fetch_all_iterator(
+    query => [
+        inq_status => [qw( A E L S )],
+        inq_type   => [qw( Q F )],
+    ]
+);
+my @subm_per_query  = ();
+my @sent_per_query  = ();
+my $num_submissions = 0;
+my $num_queries     = 0;
+while ( my $inq = $inqs->next ) {
+    $num_queries++;
+    my $num_sub  = $inq->has_related('src_response_sets');
+    my $num_sent = $inq->has_related('src_inquiries');
+    $num_submissions += $num_sub;
+    push @subm_per_query, $num_sub;
+    push @sent_per_query, $num_sent;
+}
+
+my $subm_mean = mean(@subm_per_query) + 0;
+my $sent_mean = mean(@sent_per_query) + 0;
+
+printf( "Total PIN Queries:            %d\n",    $num_queries );
+printf( "Total PIN Submissions:        %d\n",    $num_submissions );
+printf( "Mean PIN Submissions/Query:   %d\n",    $subm_mean );
+printf( "Mean PIN Sent/Query:          %d\n",    $sent_mean );
+printf( "PIN Batting Avg:              %0.3f\n", $subm_mean / $sent_mean );
+printf( "%s\n",                                  '-' x 72 );
+
+##################
+# newsrooms
+
+my $orgs = AIR2::Organization->fetch_all( sort_by => 'org_name' );
+
+for my $org (@$orgs) {
+    printf( "Newsroom:                 %s\n", $org->org_name );
+    printf( "Created:                  %s\n", $org->org_cre_dtim );
+    my $num_queries     = 0;
+    my $num_submissions = 0;
+    my %sources;
+    my @subm_per_query = ();
+    my @sent_per_query = ();
+    my $inqs           = $org->inquiries_iterator;
+INQ: while ( my $inq = $inqs->next ) {
+
+        $num_queries++;
+
+        my $num_sent = $inq->has_related('src_inquiries');
+        my $num_sub  = $inq->has_related('src_response_sets');
+        $num_submissions += $num_sub;
+        push @subm_per_query, $num_sub;
+        push @sent_per_query, $num_sent;
+        my $srss = $inq->src_response_sets_iterator;
+        while ( my $srs = $srss->next ) {
+            $sources{ $srs->srs_src_id }++;
+        }
+
+    }
+
+    my $subm_mean   = @subm_per_query ? mean(@subm_per_query)   : 0;
+    my $sent_mean   = @sent_per_query ? mean(@sent_per_query)   : 0;
+    my $subm_median = @subm_per_query ? median(@subm_per_query) : 0;
+    my $sent_median = @sent_per_query ? median(@sent_per_query) : 0;
+    printf( "Total Queries:            %d\n", $num_queries );
+    printf( "Total Submissions:        %d\n", $num_submissions );
+    printf( "Total Sources:            %d\n", scalar keys %sources );
+    printf( "Median Submissions/Query: %d\n", $subm_median );
+    printf( "Mean Submissions/Query:   %d\n", $subm_mean );
+    printf( "Median Sent/Query:        %d\n", $sent_median );
+    printf( "Mean Sent/Query:          %d\n", $sent_mean );
+
+    if ( $sent_mean > 0 ) {
+        printf( "Batting Avg:              %0.3f\n",
+            $subm_mean / $sent_mean );
+    }
+
+    printf( "%s\n", '-' x 72 );
+
+}

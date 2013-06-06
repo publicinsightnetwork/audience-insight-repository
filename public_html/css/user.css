@@ -1,0 +1,76 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful, 
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License 
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* hide editwin buttons for this page */
+.air2-editwin .row-edit, .air2-editwin .row-delete {
+    visibility: hidden;
+    opacity: 0.8;
+    font-size: 10px;
+}
+.air2-editwin .row-over .row-edit, .air2-editwin .row-over .row-delete {
+    visibility: visible;
+}
+
+/* user profile style */
+.air2-user-info {
+    padding: 5px 8px;
+}
+.air2-user-info .photo {
+    height: 90px;
+    min-width: 75px;
+}
+.air2-user-info .photo img {
+    max-width: 150px;
+    border-radius: 2px;
+}
+.air2-user-info .info {
+    padding-left: 20px;
+    font-size: 13px;
+}
+.air2-user-info .info a {
+    font-weight: bold;
+}
+.air2-user-info .info li {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 7px;
+    padding-bottom: 7px;
+}
+.air2-user-info .info .change-password {
+    font-weight: normal;
+    color: #999;
+}
+.air2-user-info .info .phone {
+    font-weight: bold;
+}
+
+/* user org style */
+.air2-user-organization .role {
+    background: #f9f9f9;
+    border: 1px solid #e3e3e3;
+    padding: 3px 5px;
+    margin-right: 6px;
+}
+
+/* user support link */
+.air2-user-network-support {
+    font-weight: normal !important;
+}

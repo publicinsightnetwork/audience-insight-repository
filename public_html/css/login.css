@@ -1,0 +1,144 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful, 
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License 
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+body {
+    background: #f9f9f9 url(img/back-gray.jpg) repeat;
+    font-family: arial, helvetica, sans-serif;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+}
+
+p, th, td {
+    font-family: arial, helvetica, sans-serif;
+    font-size: small;
+}
+
+h1, h2, h3, h4, h5, h6 { color: #666; background: #f9f9f9; border-top-right-radius: 2px; border-top-left-radius: 2px; }
+h1 { font-size: x-large; }
+h2 { font-size: 16px; }
+h3 { font-size: medium; }
+
+input {
+    border: 1px solid #d6d6d6;
+    padding: 7px 10px;
+    border-radius: 2px;
+}
+
+input[type=submit] {
+    background: #99cc66;
+    color: #fff;
+    padding: 8px 0;
+    margin: 0;
+    border-radius: 2px;
+    cursor: pointer;
+    border: 0;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: helvetica, sans-serif;
+    width: 222px;
+}
+
+input[type=submit]:hover {
+    background: #86b854;
+}
+
+header {
+    background: #B80007;
+    padding: 15px 20px;
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+header img {
+    width: 225px;
+    border: 0;
+}
+
+.error {
+    padding: 8px;
+    color: #d8000c;
+    background-color: #ffbaba;
+    border: 1px solid;
+    margin-bottom: 8px;
+}
+
+.wrap {
+    margin: 0 auto;
+    width: 1000px;
+}
+
+.panel {
+    text-align: center;
+    margin: 0 auto;
+    width: 296px;
+    background: #fff;
+    color: #777;
+    border: 1px solid #e3e3e3;
+    padding: 0 20px 20px;
+    box-shadow: 0 0 10px 1px rgba(221,221,221,.2);
+    border-radius: 5px;
+}
+
+.panel h2 {
+    border-bottom: 1px solid #eee; 
+    padding: 12px 0; 
+    margin: 0 -20px 15px;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.warning { color: #c00; font-size: medium; font-weight: bold; }
+
+table {
+    border-collapse: collapse;
+}
+
+td {
+    padding-bottom: 10px;
+}
+
+ul {
+    margin: -10px 0 0;
+    padding-left: 24px;
+}
+
+#forgot-password {
+    text-align: right;
+    margin-bottom: 1em;
+}
+
+#copyright {
+    font-size: 13px;
+    color: #999;
+    padding: 20px;
+    text-align: center;
+}
+
+#copyright a, #copyright a:visited {
+    text-decoration: none;
+    color: #999;
+}
+
+#copyright a:hover {
+    color: #444;
+}

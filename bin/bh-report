@@ -1,0 +1,144 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Data::Dump qw( dump );
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Getopt::Long;
+
+use AIR2::Config;
+use AIR2::Utils;
+use AIR2::Source;
+sub logger { AIR2::Utils::logger(@_) }
+
+my $air2_db  = AIR2::DBManager->new()->get_write_handle;
+my $air2_dbh = $air2_db->retain_dbh;
+
+=pod
+
+=head1 NAME
+
+bh-report - get stats about budget hero players
+
+=cut
+
+#####################
+# 1) set categories #
+#####################
+my $since = "1990-01-01 00:00:00";
+my %cat_defs = (
+    everyone            => "select src_id from source where src_cre_dtim >= '$since'",
+    players             => "select src_id from source where src_id in (select sstat_src_id from src_stat where sstat_bh_play_dtim is not null) and src_cre_dtim >= '$since'",
+    non_players         => "select src_id from source where src_id not in (select sstat_src_id from src_stat where sstat_bh_play_dtim is not null) and src_cre_dtim >= '$since'",
+    signup_players      => "select src_id from source where src_id in (select sstat_src_id from src_stat where sstat_bh_signup_dtim is not null) and src_cre_dtim >= '$since'",
+    non_signup_players  => "select src_id from source where src_id in (select sstat_src_id from src_stat where sstat_bh_signup_dtim is null and sstat_bh_play_dtim is not null) and src_cre_dtim >= '$since'",
+);
+my @cat_order = qw(everyone players non_players signup_players non_signup_players);
+
+
+################
+# 2) set stats #
+################
+my %stat_defs = (
+    raw_count => "select count(*) from source where src_id in (?)",
+    # src_status
+    active         => "select count(*) from source where src_id in (?) and src_status in ('A', 'E')",
+    nonactive      => "select count(*) from source where src_id in (?) and src_status not in ('A', 'E')",
+    noemail        => "select count(*) from source where src_id in (?) and src_status = 'N'",
+    unsubscribed   => "select count(*) from source where src_id in (?) and src_status = 'U'",
+    # # submissions
+    subm_total     => "select count(*) from src_response_set where srs_src_id in (?)",
+    subm_1_or_more => "select count(*) from (select srs_src_id, count(*) as num from src_response_set where srs_src_id in (?) group by srs_src_id) a where a.num >= 1",
+    subm_2_or_more => "select count(*) from (select srs_src_id, count(*) as num from src_response_set where srs_src_id in (?) group by srs_src_id) a where a.num >= 2",
+    subm_3_or_more => "select count(*) from (select srs_src_id, count(*) as num from src_response_set where srs_src_id in (?) group by srs_src_id) a where a.num >= 3",
+    subm_4_or_more => "select count(*) from (select srs_src_id, count(*) as num from src_response_set where srs_src_id in (?) group by srs_src_id) a where a.num >= 4",
+    # # facts
+    fact_total     => "select count(*) from src_fact where sf_src_id in (?)",
+    fact_1_or_more => "select count(*) from (select sf_src_id, count(*) as num from src_fact where sf_src_id in (?) group by sf_src_id) a where a.num >= 1",
+    fact_2_or_more => "select count(*) from (select sf_src_id, count(*) as num from src_fact where sf_src_id in (?) group by sf_src_id) a where a.num >= 2",
+    fact_3_or_more => "select count(*) from (select sf_src_id, count(*) as num from src_fact where sf_src_id in (?) group by sf_src_id) a where a.num >= 3",
+    fact_4_or_more => "select count(*) from (select sf_src_id, count(*) as num from src_fact where sf_src_id in (?) group by sf_src_id) a where a.num >= 4",
+    fact_5_or_more => "select count(*) from (select sf_src_id, count(*) as num from src_fact where sf_src_id in (?) group by sf_src_id) a where a.num >= 5",
+    fact_6_or_more => "select count(*) from (select sf_src_id, count(*) as num from src_fact where sf_src_id in (?) group by sf_src_id) a where a.num >= 6",
+    # # vita
+    vita_total     => "select count(*) from src_vita where sv_src_id in (?)",
+    vita_1_or_more => "select count(*) from (select sv_src_id, count(*) as num from src_vita where sv_src_id in (?) group by sv_src_id) a where a.num >= 1",
+    vita_2_or_more => "select count(*) from (select sv_src_id, count(*) as num from src_vita where sv_src_id in (?) group by sv_src_id) a where a.num >= 2",
+    vita_3_or_more => "select count(*) from (select sv_src_id, count(*) as num from src_vita where sv_src_id in (?) group by sv_src_id) a where a.num >= 3",
+    # # queries sent
+    sent_total     => "select count(*) from src_inquiry where si_src_id in (?)",
+    # # activities logged
+    activity_total => "select count(*) from src_activity where sact_src_id in (?)",
+    # # outcomes
+    out_total      => "select count(*) from src_outcome where sout_src_id in (?)",
+    out_1_or_more  => "select count(*) from (select sout_src_id, count(*) as num from src_outcome where sout_src_id in (?) group by sout_src_id) a where a.num >= 1",
+    out_2_or_more  => "select count(*) from (select sout_src_id, count(*) as num from src_outcome where sout_src_id in (?) group by sout_src_id) a where a.num >= 2",
+    out_3_or_more  => "select count(*) from (select sout_src_id, count(*) as num from src_outcome where sout_src_id in (?) group by sout_src_id) a where a.num >= 3",
+);
+my @stat_order = qw(
+    raw_count
+    active nonactive noemail unsubscribed
+    subm_total subm_1_or_more subm_2_or_more subm_3_or_more subm_4_or_more
+    fact_total fact_1_or_more fact_2_or_more fact_3_or_more fact_4_or_more fact_5_or_more fact_6_or_more
+    vita_total vita_1_or_more vita_2_or_more vita_3_or_more
+    sent_total
+    activity_total
+    out_total out_1_or_more out_2_or_more out_3_or_more
+);
+
+
+######################
+# 3) Run the report! #
+######################
+my $FILENAME = 'budgethero_report.csv';
+
+# Open CSV file.
+open my $csv_file, '>', $FILENAME or die "Couldn't open $FILENAME for writing the report. Exiting.\n";
+
+# write header
+print $csv_file ' ,', join(',', @cat_order), "\n";
+
+# exec stat rows
+for my $key (@stat_order) {
+    print "--processing $key\n";
+
+    # print the left-hand column
+    print $csv_file $key, ',';
+
+    # process category columns
+    for my $cat (@cat_order) {
+        my $q = $stat_defs{$key};
+        my $cat_q = $cat_defs{$cat};
+        $q =~ s/\?/$cat_q/;
+        my $rs = $air2_dbh->selectrow_arrayref($q);
+        print $csv_file $rs->[0], ',';
+    }
+
+    # end with newline
+    print $csv_file "\n";
+}
+
+close $csv_file or die "Error closing $FILENAME. Exiting\n";
+print "Done!  Report generated: $FILENAME\n";

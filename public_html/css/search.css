@@ -1,0 +1,653 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+#air2-search-results .air2-panel-body {
+    min-height: 400px;
+    overflow: hidden;
+    padding-bottom: 0;
+}
+
+#air2-search-results .header-title { display: none; }
+
+#air2-search-results .header-total { display: none; }
+
+#air2-search-results .header-tools .x-form-field-trigger-wrap { margin: 1px 25px 0 0; }
+#air2-search-results .header-tools .x-form-check-wrap label { top: 0px; }
+#air2-search-results .header-tools .header-link { margin-top: 1px; }
+#air2-search-results .header-tools .header-hidden { margin: 1px 0 0 5px; color: #999; }
+#air2-search-results .header-tools .xtb-text { padding: 2px 4px 0; }
+
+#air2-search-results .header-tools .show-map button {
+    -webkit-border-bottom-right-radius: 0px;
+    -moz-border-radius-bottomright: 0px;
+    border-bottom-right-radius: 0px;
+    -webkit-border-top-right-radius: 0px;
+    -moz-border-radius-topright: 0px;
+    border-top-right-radius: 0px;
+}
+#air2-search-results .header-tools .hide-map button {
+    margin-left: 0;
+    -webkit-border-bottom-left-radius: 0px;
+    -moz-border-radius-bottomleft: 0px;
+    border-bottom-left-radius: 0px;
+    -webkit-border-top-left-radius: 0px;
+    -moz-border-radius-topleft: 0px;
+    border-top-left-radius: 0px;
+}
+
+#air2-search-results .air2-panel-header-tools {
+    font-size: 11px;
+    padding: 0;
+}
+
+#air2-search-results .air2-panel-footer.x-toolbar {
+    margin-top: 0;
+}
+
+#air2-search-results .air2-search-dv {
+    position: relative;
+}
+
+.air2-search-result table {
+    border-collapse: collapse;
+}
+
+.air2-search-result-selected table {
+    background-color: #f3f3f3;
+}
+
+.row-alternate .air2-search-result,
+.alt
+{
+    background-color: #efefef;
+}
+
+#air2-search-facets {
+    min-height: 200px;
+}
+
+.air2-facet-panel {
+    border-bottom: 1px dotted #eee;
+    padding: 5px 0;
+}
+
+.air2-facet-title {
+    background: no-repeat 4px 50%;
+    background: #fff;
+    /* color: #666; */
+}
+
+.air2-facet-title-hover {
+    /* background-color:#ddd; */
+    color: #111;
+}
+
+/* TODO get Drew to review this */
+.air2-facet-title-active {
+    background: #b51019; /* APM red */
+    color: #fff;
+}
+
+.air2-facet-title .x-panel-header-text {
+    vertical-align:middle;
+}
+
+.x-tree-node .air2-facet-pair,
+.x-tree-node .air2-facet-body
+{
+    display: inline;
+}
+
+/* no ext icons on facet trees */
+.air2-facet-panel .x-tree-node-icon {
+    display: none;
+}
+
+.air2-facet-pair {
+    font-size: 11px;
+    padding-left: 20px;
+}
+
+/* undo padding above in tree */
+.x-tree-node-anchor .air2-facet-pair {
+    padding-left: 0;
+}
+
+.air2-facet-pair input,
+.air2-facet-pair img,
+.air2-facet-pair label
+{
+    vertical-align:middle;
+}
+
+.air2-facet-pair label,
+.x-tree-node .air2-facet-value
+{
+    color: #666;
+}
+
+.air2-facet-pair .count {
+    color: #999;
+    padding-left: 2px;
+}
+
+.air2-facet-pair input,
+.air2-facet-pair img
+ {
+    margin-right: 3px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.air2-search-advpanel .air2-panel-body {
+}
+
+.air2-silolink-top {
+    display:none; /* TODO really need this? see search.js */
+}
+
+.air2-silolink {
+    padding: 8px;
+    color: #aaa;
+}
+
+.air2-silolink a {
+    color: #aaa;
+}
+
+.air2-silolink-current {
+    background-color: #fff;
+    width: 500px;   /* something bigger than the parent panel */
+    color: #000;
+    border: 1px solid #ddd;
+}
+
+.air2-panel.air2-search-silos {
+    background: transparent;
+    box-shadow: none;
+    border: 0;
+}
+
+.air2-search-silos .air2-panel-body {
+    padding: 0px;
+    overflow: visible;  /* so the -current child can be seen */
+    background: transparent;
+}
+
+.air2-silo-over {
+    cursor:pointer;
+}
+
+.air2-silo-over .air2-silolink {
+    background-color: #eee;
+}
+
+.air2-silo-over .air2-silolink-current {
+    background-color: #fff;
+}
+
+.air2-silo-over a {
+    text-decoration:none;
+    color: #666;
+}
+
+.air2-silolink-current a {
+    color: #000;
+    text-decoration:none;
+}
+
+.air2-silolink-current.air2-silo-over {
+    text-decoration:none;
+}
+
+#air2-search-filters .air2-panel-body {
+    padding: 0px;
+}
+
+#air2-search-filters .air2-panel-footer {
+    background-color: #fff;
+}
+
+.air2-loading-wrap {
+    text-align: center;
+}
+
+.air2-loading-img {
+    min-height: 400px;  /* should match #air2-search-results def above */
+    background-image: url('../lib/extjs/resources/images/default/shared/large-loading.gif');
+    background-position: 50%;
+    background-repeat: no-repeat;
+}
+
+.air2-loading-wrap span {
+    top: 220px;
+    position: relative;
+}
+
+.air2-filters-title {
+    line-height: 15px;
+    font-size: 12px;
+}
+
+.air2-search-result h3 {
+    color: #666;
+    text-shadow: 0 1px 0 #fff;
+    padding: 0 0 5px 0;
+    font-size: 14px;
+}
+
+.air2-search-result h3 a,
+.air2-search-result h3 a.visited
+{
+    text-decoration: none;
+}
+
+.air2-search-result h3 a:hover {
+    text-decoration: underline;
+}
+
+.air2-search-result {
+    padding: 8px 10px 8px 0;
+    line-height: 130%;
+    border-bottom: 1px solid #eee;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.air2-search-result:last-child {
+    margin-bottom: 8px;
+}
+
+.air2-search-result td {
+    vertical-align: top;
+    padding: 5px 0;
+}
+
+.air2-search-result strong {
+    color: #111;
+    font-weight: bold;
+}
+
+.air2-search-result .qa-info .lighter {
+    color: #bbb;
+}
+
+.air2-search-result li {
+    font-size: 11px;
+    padding: 3px 0 3px 20px;
+    border-bottom: 1px dotted #ccc;
+}
+
+.air2-search-result li.last {
+    border-bottom: 0;
+}
+
+/* the selection/dragging handle */
+.air2-search-result .checkbox-col {
+    padding: 0;
+    background: #fff;
+}
+.air2-search-result .checkbox-handle {
+    width: 20px;
+    height: 88px;
+    padding: 5px 0;
+    background: #eee url(img/icons/dragable.png) no-repeat 50% 50%;
+    border-right: 4px solid #ddd;
+    cursor: move;
+}
+.air2-search-result-selected .checkbox-handle {
+    background-color: #99ff99;
+    border-right-color: #89f689
+}
+
+.air2-search-result .checkbox-handle .drag-checkbox {
+    margin: 1px auto;
+    display: block;
+}
+
+span.result-map {
+    padding: 0 0 10px 35px;
+    background: url(img/icons/map-small.png) no-repeat 15px 0;
+}
+
+span.r-last {
+    margin-right: 10px;
+    color: #999;
+    font-size: 11px;
+}
+
+span.r-responded {
+    padding: 0 0 10px 35px;
+    background: url(img/icons/calendar-select.png) no-repeat 15px 0;
+}
+
+.r-activity {
+    background: #f6f6f6;
+    padding: 3px 0;
+    margin-top: 5px;
+    display: inline-block;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.r-activity span {
+    padding: 0 7px;
+    font-size: 11px;
+    color: #999;
+    text-shadow: 0 1px 0 #fff;
+}
+
+
+li.r-phone {
+    background: url(img/icons/mobile-phone-small.png) no-repeat 2px 4px;
+    min-height: 16px;
+}
+
+li.r-loc {
+    background: url(img/icons/map-small.png) no-repeat 1px 4px;
+    min-height: 16px;
+}
+
+li.r-mail {
+    background: url(img/icons/mail-small.png) no-repeat 0 4px;
+    min-height: 16px;
+}
+
+span.result-dark {
+    font-size: 11px;
+}
+
+.source-contact {
+    width: 225px;
+    margin: 0 20px 0 4px;
+}
+
+.source-contact .source-expand {
+    float: right;
+    min-width: 16px;
+    font-size: 10px;
+}
+
+.source-contact .source-expand:hover {
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.r-excerpt {
+    width: 450px;
+    word-wrap: break-word;
+}
+.s-excerpt {
+    margin: 0 20px 0 4px;
+    word-wrap: break-word;
+}
+
+.fancy-on {
+    background: #f6f6f6;
+}
+
+.highlight,
+b.h {
+    padding: 1px 3px;
+    background: #ffff66;
+    color: #333;
+    font-weight: normal;
+}
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+    font-size: 0;
+}
+
+.clearfix {
+    display: inline-block;
+}
+
+/* Hide from IE Mac \*/
+.clearfix {display:block;}
+/* End hide from IE Mac */
+
+.air2-search-qa {
+    border-bottom: 1px solid #ddd;
+    font-size: 12px;
+}
+
+.air2-search-question {
+    color: #666;
+    padding: 4px 4px 4px 6px;
+}
+
+.air2-search-answer {
+    color: #333;
+    padding: 4px 4px 4px 12px;
+}
+
+.air2-response-set .x-panel-header {
+    background-image: none;
+    background-color: #eee;
+    color: #666;
+    font-size: 12px;
+}
+
+#air2-advsearch-panel .x-toolbar {
+    background-image: none;
+    padding: 8px;
+    border-color: #eee;
+}
+
+.adv-search-form {
+    border: none;
+}
+
+.query-explain {
+    height: 100%;
+    padding: 7px 10px;
+    background-color: #fff;
+    color: #aaa;
+    border: none;
+    color: #111;
+    font-size: 12px;
+}
+
+.query-explain strong {
+    color: #aaa;
+}
+
+.adv-search-header .x-toolbar-right .xtb-text {
+    text-align: left;
+    width: 150px;
+}
+
+.air2-source-demographic {
+    padding: 4px;
+    border: 1px solid #ddd;
+    color: #111;
+}
+
+.air2-source-demographic th {
+    font-weight: bold;
+}
+
+.air2-source-demographic th,
+.air2-source-demographic td
+{
+    padding: 2px;
+}
+
+.picker-box {
+    padding: 4px;
+    border: none;
+    background: #fff;
+}
+
+.picker-box .picker-item {
+    /* border: 1px dotted #ddd; */
+    padding: 4px;
+}
+
+.picker-box .picker-item-selected {
+    background: #6699ff;
+    cursor: pointer;
+}
+
+/* inquiry results */
+.air2-search-result2 strong,
+.air2-search-result strong
+{
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.air2-search-result2 {
+    border-bottom: 1px solid #eee;
+    padding: 7px 5px 3px 7px;
+}
+
+.air2-search-result2 ul {
+    clear: both;
+    margin: 0;
+    padding: 0 0 5px;
+}
+
+.air2-search-result2 li {
+    padding: 1px 0 1px 20px;
+}
+
+.air2-search-result2 li.air2-search-excerpt {
+    margin: 0 0 8px 0;
+    padding: 6px 0 0 0;
+}
+
+.air2-search-result2 h3 {
+    float: left;
+    font-size: 15px;
+    margin: 7px 0 3px;
+    padding: 0;
+}
+
+.air2-search-inq-owner {
+    float: left;
+    margin: 8px 5px 0 3px;
+}
+
+.air2-search-child-count,
+.air2-search-child-count:visited
+{
+    float: left;
+    margin: 5px 0 0 5px;
+    background: #f3f3f3;
+    padding: 3px 5px;
+    border: 1px solid #e3e3e3;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    color: #999;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+a.air2-search-child-count:hover
+{
+    text-decoration: none;
+    color: #666;
+    border: 1px solid #ccc;
+}
+
+.air2-search-rank { padding-right: 1em; }
+
+.r-date {
+    font-size: 11px !important;
+    color: #999;
+}
+
+.r-snip-more { margin-top: 12px; }
+
+/* advanced search box */
+
+#air2-adv-search-button button { color: #eee !important; }
+
+#adv-search-form .x-form-field-wrap { margin-right: 7px; }
+
+.adv-search-header, .adv-search-clear {
+    background: #f6f6f6;
+    border: 1px solid #eee;
+    margin-top: 7px;
+}
+
+#adv-search-form .x-btn-text.air2-icon-remove { background-position: 3px center; }
+
+#air2-search-results .air2-btn button { margin-left: 4px; }
+
+#air2-search-results .air2-btn.merge-sources button {
+    background-color: #89f689;
+    color: #464;
+    border: 1px solid #9d9;
+    text-shadow: 0 1px 0 #9e9;
+}
+
+/* search mapping style */
+.air2-search-map {
+    margin: 0 -7px;
+    position: relative;
+    left: -105%;
+    height: 0;
+}
+.air2-search-map .ctrl-top { z-index: 10; top: 5px; }
+.air2-search-map .slide.active {
+    -webkit-box-shadow: inset 0px 6px 10px -6px #ccc;
+    -moz-box-shadow: inset 0px 6px 10px -6px #ccc;
+    box-shadow: inset 0px 6px 10px -6px #ccc;
+}
+.air2-search-map .air2-search-result { border-bottom: none; padding: 35px 8px 10px; }
+.air2-search-map .air2-search-result .checkbox-col { background: transparent; }
+.air2-search-map .air2-search-result-selected table { background: transparent; }
+.air2-search-map .air2-search-result:last-child { margin-bottom: 0; }
+.air2-search-map .smapp-show { overflow: visible; }
+.air2-search-map .air2-loading-wrap { height: 200px; }
+.air2-search-map .air2-loading-img { min-height: 200px; }
+.air2-search-map .air2-loading-wrap span { top: 120px; }
+.air2-search-map .smapp-map .ext-el-mask { display: none; }
+.air2-search-map .smapp-map .ext-el-mask-msg div { cursor: default; }
+
+#air2-search-help div {
+    padding: 8px;
+}
+
+#replace-query strong {
+    font-weight: bold;
+}
+
+.x-grid-group-hd:hover {
+    background-color: #eee;
+}
+
+.x-grid-group-body {
+    padding-left: 10px;
+    border: 1px dotted #aaa;
+}
+

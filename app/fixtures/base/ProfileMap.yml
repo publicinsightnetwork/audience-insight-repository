@@ -1,0 +1,117 @@
+ProfileMap:
+  # source
+  source_smartname:
+    pmap_id:           1
+    pmap_name:         src_smartname
+    pmap_display_name: Source Name (Full)
+  source_first:
+    pmap_id:           2
+    pmap_name:         src_firstname
+    pmap_display_name: Source First Name
+  source_last:
+    pmap_id:           3
+    pmap_name:         src_lastname
+    pmap_display_name: Source Last Name
+  # src_email
+  srcemail_address:
+    pmap_id:           10
+    pmap_name:         sem_email
+    pmap_display_name: Source Email
+  # src_phone_number
+  srcphone_number:
+    pmap_id:           20
+    pmap_name:         sph_number
+    pmap_display_name: Source Phone
+  # src_mail_address
+  srcmail_smartaddress:
+    pmap_id:           30
+    pmap_name:         smadd_smartaddress
+    pmap_display_name: Source Mail Address (Full)
+  srcmail_street:
+    pmap_id:           31
+    pmap_name:         smadd_line_1
+    pmap_display_name: Source Street Address
+  srcmail_city:
+    pmap_id:           32
+    pmap_name:         smadd_city
+    pmap_display_name: Source City
+  srcmail_state:
+    pmap_id:           33
+    pmap_name:         smadd_state
+    pmap_display_name: Source State
+  srcmail_zip:
+    pmap_id:           34
+    pmap_name:         smadd_zip
+    pmap_display_name: Source Postal Code
+  srcmail_country:
+    pmap_id:           35
+    pmap_name:         smadd_cntry
+    pmap_display_name: Source Country
+  # src_preference
+  srcpref_language:
+    pmap_id:           40
+    pmap_name:         pref_language
+    pmap_display_name: Source Preferred Language
+  # src_fact
+  srcfact_gender:
+    pmap_id:           60
+    pmap_name:         fact_gender
+    pmap_display_name: Source Gender
+  srcfact_income:
+    pmap_id:           61
+    pmap_name:         fact_household_income
+    pmap_display_name: Source Household Income
+  srcfact_education:
+    pmap_id:           62
+    pmap_name:         fact_education_level
+    pmap_display_name: Source Education Level
+  srcfact_political:
+    pmap_id:           63
+    pmap_name:         fact_political_affiliation
+    pmap_display_name: Source 
+  srcfact_ethnicity:
+    pmap_id:           64
+    pmap_name:         fact_ethnicity
+    pmap_display_name: Source Ethnicity
+  srcfact_religion:
+    pmap_id:           65
+    pmap_name:         fact_religion
+    pmap_display_name: Source Religion
+  srcfact_birth:
+    pmap_id:           66
+    pmap_name:         fact_birth_year
+    pmap_display_name: Source Birth Year
+  srcfact_website:
+    pmap_id:           67
+    pmap_name:         fact_source_website
+    pmap_display_name: Source Website
+  srcfact_lifecycle:
+    pmap_id:           68
+    pmap_name:         fact_lifecycle
+    pmap_display_name: Source Lifecycle
+  srcfact_timezone:
+    pmap_id:           69
+    pmap_name:         fact_timezone
+    pmap_display_name: Source Timezone
+  # src_vita
+  srcvita_experience:
+    pmap_id:           80
+    pmap_name:         vita_experience
+    pmap_display_name: Source Experience
+  srcvita_employer:
+    pmap_id:           81
+    pmap_name:         vita_employer
+    pmap_display_name: Source Employer
+  srcvita_occupation:
+    pmap_id:           82
+    pmap_name:         vita_occupation
+    pmap_display_name: Source Occupation
+  srcvita_interest:
+    pmap_id:           83
+    pmap_name:         vita_interest
+    pmap_display_name: Source Interest
+  # src_response_set
+  srcrespset_public:
+    pmap_id:           90
+    pmap_name:         srs_public_flag
+    pmap_display_name: Submission Publish Flag

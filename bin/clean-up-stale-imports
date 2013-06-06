@@ -1,0 +1,78 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Data::Dump qw( dump );
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use AIR2::Tank;
+
+my $air2_db  = AIR2::DBManager->new()->get_write_handle;
+my $air2_dbh = $air2_db->retain_dbh;
+
+my $days = shift(@ARGV) || 90;
+my ( $help, $debug, $dry_run, $quiet );
+GetOptions(
+    help    => \$help,
+    debug   => \$debug,
+    dry_run => \$dry_run,
+    quiet   => \$quiet,
+) or pod2usage(2);
+
+if ($help) {
+    pod2usage(2);
+}
+
+logger("Starting...\n") if $debug;
+
+my $ok = $air2_db->do_transaction(
+    sub {
+        my $n = 0;
+        my $whereClause
+            = "where tank_upd_dtim < DATE_SUB(NOW(), INTERVAL $days DAY) AND tank_status = 'R'";
+        $n += $air2_dbh->do("delete from tank $whereClause;");
+        logger("Deleted $n stale imports. \n") if $debug;
+
+        # complete!
+        unless ($quiet) {
+            print "Cleanup of stale imports complete!\n";
+            print "Nuked $n stale imports\n";
+        }
+
+        # rollback dry runs
+        if ($dry_run) {
+            die "DRY_RUN";
+        }
+    }
+);
+
+unless ($ok) {
+    my $err = $air2_db->error;
+    if ( $dry_run && $err =~ /DRY_RUN/ ) {
+        print "DRY_RUN... rolled back all changes!\n" unless $quiet;
+    }
+    else {
+        die "Error: $err";
+    }
+}

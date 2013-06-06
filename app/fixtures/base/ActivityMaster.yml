@@ -1,0 +1,279 @@
+ActivityMaster:
+  Activity_1:
+    actm_id: 1
+    actm_status: A
+    actm_name: Commentary or Other in-their-own-words output
+    actm_type: I
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_4:
+    actm_id: 4
+    actm_status: A
+    actm_name: Query response
+    actm_type: I
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_6:
+    actm_id: 6
+    actm_status: A
+    actm_name: Interviewed or Background source
+    actm_type: I
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_8:
+    actm_id: 8
+    actm_status: A
+    actm_name: Appeared in story
+    actm_type: I
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_10:
+    actm_id: 10
+    actm_status: A
+    actm_name: Signed up
+    actm_type: I
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_11:
+    actm_id: 11
+    actm_status: A
+    actm_name: Profile change
+    actm_type: A
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_13:
+    actm_id: 13
+    actm_status: A
+    actm_name: Sent Query
+    actm_type: C
+    actm_table_type: S
+    actm_contact_rule_flag: 1
+    actm_disp_seq: 10
+  Activity_16:
+    actm_id: 16
+    actm_status: A
+    actm_name: Invitation sent
+    actm_type: R
+    actm_table_type: S
+    actm_contact_rule_flag: 1
+    actm_disp_seq: 10
+  Activity_17:
+    actm_id: 17
+    actm_status: A
+    actm_name: Thank you sent
+    actm_type: R
+    actm_table_type: S
+    actm_contact_rule_flag: 1
+    actm_disp_seq: 10
+  Activity_18:
+    actm_id: 18
+    actm_status: A
+    actm_name: Welcome sent
+    actm_type: R
+    actm_table_type: S
+    actm_contact_rule_flag: 1
+    actm_disp_seq: 10
+  Activity_21:
+    actm_id: 21
+    actm_status: A
+    actm_name: Source re-subscribed
+    actm_type: S
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_22:
+    actm_id: 22
+    actm_status: A
+    actm_name: Source unsubscribed
+    actm_type: S
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_24:
+    actm_id: 24
+    actm_status: A
+    actm_name: Email Soft Bounce
+    actm_type: A
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_25:
+    actm_id: 25
+    actm_status: A
+    actm_name: Email Export to Mail Provider
+    actm_type: A
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_30:
+    actm_id: 30
+    actm_status: A
+    actm_name: interviewed sources
+    actm_type: J
+    actm_table_type: P
+    actm_contact_rule_flag: 1
+    actm_disp_seq: 10
+  Activity_31:
+    actm_id: 31
+    actm_status: A
+    actm_name: arranged/hosted insight session
+    actm_type: J
+    actm_table_type: P
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_32:
+    actm_id: 32
+    actm_status: A
+    actm_name: sent reminder
+    actm_type: A
+    actm_table_type: P
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_33:
+    actm_id: 33
+    actm_status: F
+    actm_name: ingested a feed
+    actm_type: U
+    actm_table_type: P
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_34:
+    actm_id: 34
+    actm_status: A
+    actm_name: Summary changed
+    actm_type: A
+    actm_table_type: P
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_35:
+    actm_id: 35
+    actm_status: A
+    actm_name: Members changed
+    actm_type: A
+    actm_table_type: P
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_40:
+    actm_id: 40
+    actm_status: A
+    actm_name: Exported in CSV
+    actm_type: O
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_41:
+    actm_id: 41
+    actm_status: A
+    actm_name: Analyst annotated profile
+    actm_type: J
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+  Activity_42:
+    actm_id: 42
+    actm_status: A
+    actm_name: Query added
+    actm_type: A
+    actm_table_type: P
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+#
+# These activities are used by the AIR2 CSV uploader
+#
+# EMAIL FROM
+  Activity_43:
+    actm_id: 43
+    actm_status: A
+    actm_name: Email From
+    actm_type: I
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+# EMAIL TO
+  Activity_29:
+    actm_id: 29
+    actm_status: A
+    actm_name: Email To
+    actm_type: C
+    actm_table_type: S
+    actm_contact_rule_flag: 1
+    actm_disp_seq: 10
+# PHONE FROM
+  Activity_44:
+    actm_id: 44
+    actm_status: A
+    actm_name: Phone Call From
+    actm_type: I
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+# PHONE TO
+  Activity_45:
+    actm_id: 45
+    actm_status: A
+    actm_name: Phone Call To
+    actm_type: C
+    actm_table_type: S
+    actm_contact_rule_flag: 1
+    actm_disp_seq: 10
+# TEXT FROM
+  Activity_36:
+    actm_id: 36
+    actm_status: A
+    actm_name: Text Message From
+    actm_type: I
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+# TEXT TO
+  Activity_37:
+    actm_id: 37
+    actm_status: A
+    actm_name: Text Message To
+    actm_type: C
+    actm_table_type: S
+    actm_contact_rule_flag: 1
+    actm_disp_seq: 10
+# IN-PERSON ACTION/EVENT
+  Activity_46:
+    actm_id: 46
+    actm_status: A
+    actm_name: In-Person Action
+    actm_type: I
+    actm_table_type: S
+    actm_contact_rule_flag: 1
+    actm_disp_seq: 10
+# ONLINE ACTION/EVENT
+  Activity_47:
+    actm_id: 47
+    actm_status: A
+    actm_name: Online Action
+    actm_type: I
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+# confirmation email sent
+  Activity_48:
+    actm_id: 48
+    actm_status: A
+    actm_name: Submission confirmation email sent
+    actm_type: R
+    actm_table_type: S
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+# querymaker
+  Activity_49:
+    actm_id: 49
+    actm_status: A
+    actm_name: Query updated
+    actm_type: A
+    actm_table_type: P
+    actm_contact_rule_flag: 0
+    actm_disp_seq: 10
+

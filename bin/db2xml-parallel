@@ -1,0 +1,170 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Data::Dump qw( dump );
+use AIR2::Config;
+use AIR2::SearchUtils;
+use Getopt::Long;
+use Pod::Usage;
+
+my ($help,   $bindir,   $debug,  $mod_since, $base_dir,
+    $increm, $idx_type, $script, $verbose,
+);
+$bindir = $FindBin::Bin;
+GetOptions(
+    'help'        => \$help,
+    'verbose'     => \$verbose,
+    'bindir=s'    => \$bindir,
+    'debug'       => \$debug,
+    'mod_since=s' => \$mod_since,
+    'base_dir=s'  => \$base_dir,
+    'increm'      => \$increm,
+    'idx_type=s'  => \$idx_type,
+    'script=s'    => \$script,
+) or pod2usage(2);
+pod2usage(1) if $help;
+
+pod2usage(2) unless @ARGV;
+
+pod2usage(2) if ( $increm and $mod_since );
+
+pod2usage(2) unless $script;
+
+pod2usage(2) unless $idx_type;
+
+=pod
+
+=head1 NAME
+
+db2xml-parallel - build XML files using fork+ssh across multiple servers
+
+=head1 SYNOPSIS
+
+ db2xml-parallel --idx idx --script name [--increm | --mod date_or_file] hostA .. hostN
+
+=head1 OPTIONS
+
+=head2 help
+
+=head2 bindir I<path>
+
+=head2 debug
+
+=head2 mod_since I<date_or_file>
+
+Pass I<date_or_file> through to the I<script>.
+
+=head2 base_dir I<path/to/search/dir>
+
+=head2 bindir I<path/to/air2/bin>
+
+=head2 increm
+
+Use last_modified file for each host. Cannot use --mod_since with --increm.
+
+=head2 script I<file_name>
+
+The actual 2xml script to use.
+
+=head2 idx_type I<type>
+
+I<type> is usually 'sources' or 'responses' and should match I<script>.
+
+=cut
+
+my @hosts   = @ARGV;
+my $n_pools = scalar(@hosts);
+if ( !$base_dir ) {
+    $base_dir = AIR2::Config::get_search_xml->subdir($idx_type);
+}
+else {
+    $base_dir = Path::Class::Dir->new($base_dir);
+}
+$base_dir->mkpath($verbose);
+my $mod_since_file = $base_dir->file('parallel-last-modified');
+my $cmd            = "$^X $bindir/run-parallel --lock $mod_since_file ";
+$cmd .= "--cmd '$^X $bindir/$script -b $base_dir' ";
+$cmd .= "--verbose " if $verbose;
+
+my %table_col_names = (
+    'sources'   => [qw( source src_id )],
+    'responses' => [qw( src_response_set srs_id )],
+    'projects'  => [qw( project prj_id )],
+    'inquiries' => [qw( inquiry inq_id )],
+);
+
+# alias some
+$table_col_names{'public_responses'} = $table_col_names{'responses'};
+
+# sanity check
+if ( !exists $table_col_names{$idx_type} ) {
+    die "Unknown idx_type $idx_type\n";
+}
+
+# calculate offsets.
+# NOTE we take the total count, not just stale records, into
+# account, so if mod_since or increm modes are in effect,
+# the load will not be even across all hosts (typically the
+# last host bears the bulk of the updates since new records
+# will have highest pk values).
+my $pools = AIR2::SearchUtils::get_pool_offsets(
+    table   => $table_col_names{$idx_type}->[0],
+    column  => $table_col_names{$idx_type}->[1],
+    n_pools => $n_pools,
+    debug   => $debug,
+);
+
+my $i     = 0;
+my $limit = $pools->{limit};
+for my $host (@hosts) {
+    my $offset = $pools->{offsets}->[$i];
+    if ( !$offset ) {
+        die "Fatal error calculating offset for host $i $host: "
+            . dump($pools);
+    }
+    my @opts = ("--offset $offset ");
+
+    # last $host never gets limit, in case any new records
+    # get created sinze get_pool_offsets() did calculation,
+    # and to allow for rounding errors.
+    push @opts, "--limit $limit" unless $#hosts == $i;
+    if ($increm) {
+        push @opts, "-m last_mod ";
+    }
+    elsif ($mod_since) {
+        push @opts, "-m $mod_since ";
+    }
+    $cmd .= "\\\n  --host $host='" . join( ' ', @opts ) . "' ";
+    $i++;
+}
+
+$cmd .= "--debug " if $debug;
+
+$debug and print "$cmd\n";
+
+exec($cmd);
+

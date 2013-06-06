@@ -1,0 +1,106 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* ==========================================================
+ * main panel
+ * ========================================================== */
+.air2-builder-main { color: #222; position: relative; }
+.air2-builder-main .air2-panel-body { padding: 10px 0 20px; }
+.air2-builder-main h1 { font-size: 22px; padding-bottom: 5px; }
+.air2-builder-main .inq-row { padding: 10px 25px; }
+
+.air2-builder-main .divider { width: 100%; padding: 20px 0 0; }
+.air2-builder-main .divider .left,
+.air2-builder-main .divider .right { border-top: 3px solid #eee; }
+.air2-builder-main .divider .left { width: 15px; }
+.air2-builder-main .divider .label {
+    width: 1px;
+    position: relative;
+    top: -.5em;
+    color: #ccc;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 0 5px;
+    white-space: nowrap;
+}
+
+.air2-builder-main .ques-row { padding: 20px 40px; min-height: 45px; position: relative; }
+.air2-builder-main .ques-row h4 { font-size: 18px; }
+.air2-builder-main .ques-row .x-toolbar { border: none; padding: 10px 0 0; }
+
+.air2-builder-main .empty-row { height: 120px; line-height: 120px; text-align: center; }
+.air2-builder-main .empty-row h3 { color: #888; font-size: 24px; }
+
+.air2-builder-main .ques-row .handle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    cursor: move;
+    background: #93FF96 url(img/icons/dragable.png) no-repeat 50% 50%;
+    border-bottom: 1px solid #90F67F;
+    width: 20px;
+    display: none;
+}
+
+.air2-builder-main .ques-row .controls {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 36px;
+    margin-top: 16px;
+    display: none;
+}
+.air2-builder-main .ques-row .controls button { display: block; margin: 4px 0; }
+
+.air2-builder-main .ques-row .delete-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    opacity: .5;
+}
+
+.air2-builder-main .drag-before { border-top: 10px solid #93FF96; }
+.air2-builder-main .drag-after { border-bottom: 10px solid #93FF96; }
+.air2-builder-main .drag-before.generic,
+.air2-builder-main .drag-after.generic { border-color: #39f; }
+.air2-builder-main .drag-before.contact,
+.air2-builder-main .drag-after.contact { border-color: #099; }
+.air2-builder-main .drag-before.demographic,
+.air2-builder-main .drag-after.demographic { border-color: #f63; }
+
+/* Hover styles */
+.air2-builder-main          .ques-row.ques-over { background: #f5f5f5; color: #555; }
+.air2-builder-main.editing  .ques-row.ques-over { background: inherit; color: inherit; }
+.air2-builder-main.dragging .ques-row.ques-over { background: inherit; color: inherit; }
+
+.air2-builder-main          .ques-row.ques-over .handle { display: block; }
+.air2-builder-main.editing  .ques-row.ques-over .handle { display: none; }
+.air2-builder-main.dragging .ques-row.ques-over .handle { display: none; }
+
+.air2-builder-main          .ques-row.ques-over .controls { display: block; }
+.air2-builder-main.editing  .ques-row.ques-over .controls { display: none; }
+.air2-builder-main.dragging .ques-row.ques-over .controls { display: none; }
+

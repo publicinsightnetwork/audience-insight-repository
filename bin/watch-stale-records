@@ -1,0 +1,402 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2012 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Getopt::Long;
+use Dezi::Client;
+use FindBin;
+use Data::Dump qw( dump );
+use lib "$FindBin::Bin/../lib/perl";
+use AIR2::DBManager;
+use AIR2::Source;
+use AIR2::SrcResponseSet;
+use AIR2::PublicSrcResponseSet;
+use AIR2::Project;
+use AIR2::Inquiry;
+use AIR2::Utils;
+use AIR2::SearchUtils;
+use AIR2::Config;
+use AIR2::AuthTkt;
+use AIR2::StaleRecord;
+use JSON;
+
+#
+# this script watches the stale_record table for primary keys to change.
+# if it detects a stale record, it re-generates the corresponding XML
+# and updates the search server.
+#
+
+my $usage = "$0 dir [...dirN]\n";
+
+my $CACHE_TTL = $ENV{AIR2_WATCHER_CACHE_TTL} || 5 * 60;    # 5 minutes
+my $help;
+my $debug;
+my $default_dirs;
+my $sleep_time = 3;
+my $pid_file   = "/tmp/watch-stale-records.pid";
+GetOptions(
+    'help'        => \$help,
+    'debug'       => \$debug,
+    'default'     => \$default_dirs,
+    'pid_file=s'  => \$pid_file,
+    'sleep=i'     => \$sleep_time,
+    'cache_ttl=i' => \$CACHE_TTL,
+) or die $usage;
+die $usage if $help;
+
+# write our pid to a file
+system("echo $$ > $pid_file");
+
+# clean up when we exit
+END {
+    print "Removing pid file for $0 [$$]: $pid_file\n";
+    system("rm -f $pid_file");
+}
+
+my $AUTHTKT_CONF
+    = AIR2::Config::get_app_root->subdir('etc')->file('auth_tkt.conf');
+
+my $air_auth_tkt = AIR2::AuthTkt->new(
+    conf      => $AUTHTKT_CONF,
+    ignore_ip => 1,
+);
+
+my $organizations   = AIR2::SearchUtils::all_organizations_by_id();
+my $facts           = AIR2::SearchUtils::all_facts_by_id();
+my $fact_values     = AIR2::SearchUtils::all_fact_values_by_id();
+my $all_sources     = AIR2::SearchUtils::get_source_id_uuid_matrix();
+my $activity_master = AIR2::SearchUtils::get_activity_master();
+
+##############################################################################
+# main loop
+##############################################################################
+
+my $start_time = time();
+my $search_url = AIR2::Config->get_search_uri();
+
+my %functions = (
+    'S' => { idx => [ 'sources', 'fuzzy-sources' ], maker => \&do_source },
+    'R' =>
+        { idx => [ 'responses', 'fuzzy-responses' ], maker => \&do_response },
+    'P' => { idx => ['projects'],         maker => \&do_project },
+    'I' => { idx => ['inquiries'],        maker => \&do_inquiry },
+    'A' => { idx => ['public_responses'], maker => \&do_public_response, },
+);
+
+AIR2::Utils::logger "watching for stale records\n";
+
+while (1) {
+
+    #AIR2::Utils::logger "checking stale_record count\n";
+
+    if ( ( time() - $start_time ) > $CACHE_TTL ) {
+        recache_meta_structs();
+        $start_time = time();
+    }
+
+    my %types;
+
+    if ( my $stale_records = get_stale_records() ) {
+
+    STALE: while ( my $stale = $stale_records->next ) {
+
+            # create xml and post to search server.
+            my $pk   = $stale->str_xid;
+            my $type = $stale->str_type;
+
+            AIR2::Utils::logger "type=$type  pk=$pk\n";
+
+            if ( !exists $functions{$type} ) {
+                AIR2::Utils::logger "No function defined for '$type'\n";
+                next STALE;
+            }
+
+            if ( update_index( [ $type, $pk ] ) ) {
+
+                for my $idx ( @{ $functions{$type}->{idx} } ) {
+                    $types{$idx}++;
+                }
+
+            }
+
+            # clean up
+            $stale->delete();
+
+        }
+
+    }
+
+    # kick off the indexer if we have anything new
+    if (%types) {
+        my $cmd = "$^X $FindBin::Bin/build-search --increm --index "
+            . join( ' ', sort keys %types );
+        AIR2::Utils::logger("$cmd\n");
+        my @buf = `$cmd`;
+        AIR2::Utils::logger($_) for @buf;
+    }
+
+    sleep($sleep_time);
+
+}
+
+#############################################################################
+# functions
+#############################################################################
+
+sub get_stale_records {
+    my $count = AIR2::StaleRecord->fetch_count();
+    if ( !$count ) {
+        return 0;
+    }
+    return AIR2::StaleRecord->fetch_all_iterator();
+}
+
+sub recache_meta_structs {
+    AIR2::Utils::logger("re-caching search metadata\n");
+    AIR2::Source->clear_authz_caches();
+    $organizations   = AIR2::SearchUtils::all_organizations_by_id();
+    $facts           = AIR2::SearchUtils::all_facts_by_id();
+    $fact_values     = AIR2::SearchUtils::all_fact_values_by_id();
+    $all_sources     = AIR2::SearchUtils::get_source_id_uuid_matrix();
+    $activity_master = AIR2::SearchUtils::get_activity_master();
+}
+
+sub get_tkt {
+    my $tkt_data = encode_json(
+        {   user => {
+                type     => "S",
+                username => 'search-indexer',
+                status   => "A",
+            },
+        }
+    );
+    my $tkt = $air_auth_tkt->ticket(
+        uid     => 'search-indexer',
+        ip_addr => '0.0.0.0',
+        data    => $tkt_data,
+    );
+    return $tkt;
+}
+
+sub do_source {
+    my ($pk) = @_;
+
+    my $base_dir = AIR2::Config->get_search_xml->subdir('sources');
+    $base_dir->mkpath(1);
+
+    my $field = 'src_id';
+    if ( length $pk == 12 ) {
+        $field = 'src_uuid';
+    }
+    my $source = AIR2::Source->new( $field => $pk )->load_speculative();
+    if ( !$source or $source->not_found ) {
+        warn "No Source found where $field=$pk. Skipping.\n";
+        return;
+    }
+
+    my $xml = $source->as_xml(
+        {   base_dir        => $base_dir,
+            fact_values     => $fact_values,
+            facts           => $facts,
+            organizations   => $organizations,
+            activity_master => $activity_master,
+            debug           => $debug,
+        }
+    );
+
+    AIR2::SearchUtils::write_xml_file(
+        pk       => $source->src_uuid,
+        base     => $base_dir,
+        xml      => $xml,
+        pretty   => 0,
+        compress => 0,
+        debug    => $debug,
+    );
+
+    return ( \$xml, $source->src_uuid );
+}
+
+sub do_response {
+    my ($pk) = @_;
+
+    my $base_dir = AIR2::Config->get_search_xml->subdir('responses');
+    $base_dir->mkpath(1);
+
+    my $field = 'srs_id';
+    if ( length $pk == 12 ) {
+        $field = 'srs_uuid';
+    }
+    my $srs = AIR2::SrcResponseSet->new( $field => $pk )->load_speculative();
+    if ( !$srs or $srs->not_found ) {
+        warn "No SrcResponseSet found where $field=$pk. Skipping.\n";
+        return;
+    }
+
+    my $xml = $srs->as_xml( { base_dir => $base_dir, debug => $debug } );
+
+    AIR2::SearchUtils::write_xml_file(
+        pk       => $srs->srs_uuid,
+        base     => $base_dir,
+        xml      => $xml,
+        pretty   => 0,
+        compress => 0,
+        debug    => $debug,
+    );
+
+    return ( \$xml, $srs->srs_uuid );
+}
+
+sub do_public_response {
+    my ($pk) = @_;
+
+    my $base_dir = AIR2::Config->get_search_xml->subdir('public_responses');
+    $base_dir->mkpath(1);
+
+    my $field = 'srs_id';
+    if ( length $pk == 12 ) {
+        $field = 'srs_uuid';
+    }
+    my $srs = AIR2::PublicSrcResponseSet->new( $field => $pk )
+        ->load_speculative();
+    if ( !$srs or $srs->not_found ) {
+        warn "No SrcResponseSet found where $field=$pk. Skipping.\n";
+        return;
+    }
+    if ( !$srs->is_public() ) {
+        warn "SrcResponseSet is not public for $field=$pk. Skipping.\n";
+        return;
+    }
+
+    my $xml = $srs->as_xml( { base_dir => $base_dir, debug => $debug } );
+
+    AIR2::SearchUtils::write_xml_file(
+        pk       => $srs->srs_uuid,
+        base     => $base_dir,
+        xml      => $xml,
+        pretty   => 0,
+        compress => 0,
+        debug    => $debug,
+    );
+
+    return ( \$xml, $srs->srs_uuid );
+}
+
+sub do_inquiry {
+    my ($pk) = @_;
+
+    my $base_dir = AIR2::Config->get_search_xml->subdir('inquiries');
+    $base_dir->mkpath(1);
+
+    my $field = 'inq_id';
+    if ( length $pk == 12 ) {
+        $field = 'inq_uuid';
+    }
+
+    my $inq = AIR2::Inquiry->new( $field => $pk )->load_speculative();
+    if ( !$inq or $inq->not_found ) {
+        warn "No Inquiry found where $field=$pk. Skipping.\n";
+        return;
+    }
+
+    my $xml = $inq->as_xml(
+        {   base_dir => $base_dir,
+            debug    => $debug,
+            sources  => $all_sources,
+        }
+    );
+
+    AIR2::SearchUtils::write_xml_file(
+        pk     => $inq->inq_uuid,
+        base   => $base_dir,
+        xml    => $xml,
+        pretty => 1,
+        debug  => $debug,
+    );
+
+    return ( \$xml, $inq->inq_uuid );
+}
+
+sub do_project {
+    my ($pk) = @_;
+
+    my $base_dir = AIR2::Config->get_search_xml->subdir('projects');
+    $base_dir->mkpath(1);
+
+    my $field = 'prj_id';
+    if ( length $pk == 12 ) {
+        $field = 'prj_uuid';
+    }
+    my $proj = AIR2::Project->new( $field => $pk )->load_speculative();
+    if ( !$proj or $proj->not_found ) {
+        warn "No Project found where $field=$pk. Skipping.\n";
+        return;
+    }
+
+    my $xml = $proj->as_xml(
+        {   base_dir => $base_dir,
+            debug    => $debug,
+        }
+    );
+
+    AIR2::SearchUtils::write_xml_file(
+        pk     => $proj->prj_uuid,
+        base   => $base_dir,
+        xml    => $xml,
+        pretty => 1,
+        debug  => $debug,
+    );
+
+    return ( \$xml, $proj->prj_uuid );
+}
+
+sub update_index {
+    my ( $type, $pk ) = @{ pop(@_) };
+
+    my $function = $functions{$type}->{maker};
+    my ( $xml_ref, $uuid ) = $function->($pk);
+    if ( !$xml_ref or !$uuid ) {
+        AIR2::Utils::logger "No xml or uuid defined for $type $pk\n";
+        return;
+    }
+
+    # this is the biggest bottleneck. each request can take ~3sec.
+    # so just return here and let the update script
+    # find all the new records
+    return $xml_ref;
+
+    my $tkt         = get_tkt();
+    my $dezi_client = Dezi::Client->new(
+        server        => $search_url . '/' . $type,
+        server_params => { 'air2_tkt' => $tkt }
+    );
+    my $http_resp
+        = $dezi_client->index( $xml_ref, $uuid, 'application/xml', );
+
+    AIR2::Utils::logger(
+        sprintf( "Dezi response for $pk => $type/$uuid is %s\n",
+            $http_resp->status_line, )
+    );
+
+    return sprintf( "%s/%s -> %s", $type, $uuid, $http_resp->status_line );
+}
+

@@ -1,0 +1,121 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+use Text::CSV_XS;
+use Term::ANSIColor;
+use AIR2::DBManager;
+use Data::Dump qw( dump );
+
+umask(0007);
+
+my $help       = 0;
+my $write_mode = 0;
+my $csv_sql    = 0;
+GetOptions(
+    'help'  => \$help,
+    'write' => \$write_mode,
+    'csv=s' => \$csv_sql,
+) or pod2usage(2);
+pod2usage(1) if $help;
+
+=pod
+
+=head1 NAME
+
+dbclient - connect to AIR2 database via mysql client
+
+=head1 SYNOPSIS
+
+ dbclient [opts] [sql]
+    -h --help
+    -w --write
+    -csv="select foo from bar"
+
+=cut
+
+if ($csv_sql and $write_mode) {
+    pod2usage("Sorry: cannot use both csv and write modes");
+}
+
+# get parameters
+my $air2_dbh = AIR2::DBManager->new();
+$air2_dbh = $air2_dbh->get_write_handle() if ($write_mode);
+
+# in csv mode, just execute and print
+if ($csv_sql) {
+    my $csv = Text::CSV_XS->new( { binary => 1, eol => $/ } );
+    my $dbh = $air2_dbh->retain_dbh;
+    my $sth = $dbh->prepare( $csv_sql );
+    $sth->execute();
+
+    # print column headers
+    my $headers = $sth->{NAME};
+    $csv->print("STDOUT", $headers);
+
+    # print data
+    while (my $row = $sth->fetchrow_arrayref) {
+        $csv->print("STDOUT", $row);
+    }
+    exit;
+}
+
+my $db   = $air2_dbh->database();
+my $dom  = $air2_dbh->domain();
+my $drv  = $air2_dbh->driver();
+my $host = $air2_dbh->host();
+my $pwd  = $air2_dbh->password();
+my $port = $air2_dbh->port();
+my $typ  = $air2_dbh->type();
+my $usr  = $air2_dbh->username();
+
+# banner
+my $COLOR = color("green");
+my $WARN  = color("red");
+
+my $msg = "   CONNECTED TO $db AS $usr\@$host";
+$msg = sprintf( "%-64s", $msg );
+
+print "$COLOR\n";
+print "##################################################################\n";
+print "#                                                                #\n";
+print "#$msg#\n";
+print "#                                                                #\n";
+print
+    "#  $WARN WARNING: WRITE MODE ENABLED!  Please set: 'autocommit=0' $COLOR    #\n"
+    if ($write_mode);
+print "#                                                                #\n"
+    if ($write_mode);
+print "##################################################################\n";
+print "\n" . color("reset");
+
+# run the command
+my $cmd = "mysql --user=$usr --password=$pwd --database=$db --host=$host "
+        . "--auto-rehash --default-character-set=utf8";
+$cmd .= " --port=$port" if $port;
+$cmd .= " --prompt='$dom> '";
+
+system($cmd) and die "$cmd failed with [$!]";

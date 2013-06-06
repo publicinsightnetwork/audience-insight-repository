@@ -1,0 +1,99 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful, 
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License 
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* air2 modal window style */
+.air2-editwin {
+    opacity: 1.00;
+    background: #fff;
+    border-top: 1px solid #dde;
+     border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+.air2-editwin .x-tool-close {
+    background: url(img/icons/fancy-close.png) no-repeat;
+    height: 28px;
+    width: 28px;
+    position: absolute;
+    right: -12px;
+    top: -12px;
+    z-index: 10;
+}
+.air2-editwin .header-tools * {
+    moz-user-select: all;
+    -khtml-user-select: auto;
+    -webkit-user-select: auto;
+}
+.air2-editwin .header-tools .x-toolbar {
+    padding-right: 14px;
+}
+.air2-editwin-body {
+    position: relative;
+}
+.air2-editwin-body .x-plain-bbar .x-toolbar {
+    background: none;
+    border: 0;
+}
+.air2-editwin .air2-panel-empty {
+    text-align: center;
+    position: relative;
+    top: 40px;
+    color: #999;
+}
+
+/* auto-height adjusting window */
+.air2-editwin.air2-auto-height .air2-editwin-body {
+    height: auto !important;
+}
+.air2-editwin.air2-auto-height .air2-editwin-body .x-form {
+    height: auto !important;
+}
+
+/* override the proxy colors for window animations */
+.x-window-proxy {
+    background-color: #666;
+    border-color: #444;
+}
+.x-panel-ghost {
+    background-color: #666;
+}
+.x-panel-ghost ul {
+    border-color: #444;
+}
+
+/* tabbed modal window */
+.air2-editwin.tabbed-modal .air2-editwin-bwrap {
+    z-index: 10;
+    position: relative;
+    margin-top: -25px;
+}
+.air2-editwin.tabbed-modal .x-tab-panel-body {
+    border: 0 none;
+}
+
+/* transitioning window */
+.air2-editwin.win-transition {
+    z-index: 30001 !important;
+}
+.air2-editwin.win-transition .air2-editwin-bwrap {
+    background: #eee url(../lib/extjs/resources/images/default/grid/wait.gif) no-repeat 50%;
+}

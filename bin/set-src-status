@@ -1,0 +1,100 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+# update the src_status value for one or more sources
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Data::Dump qw( dump );
+use AIR2::Source;
+use Getopt::Long;
+
+# make sure utf-8 chars in names print correctly
+binmode STDOUT, ":utf8";
+
+my $report;
+my $show_all;
+GetOptions( 'report' => \$report, 'all' => \$show_all )
+    or die "$0 [--report] uuid [...uuid]\n";
+
+my %stats;
+
+if (@ARGV) {
+    for my $arg (@ARGV) {
+        my $key = ( $arg =~ m/[a-z]/i ) ? 'src_uuid' : 'src_id';
+        if ( $arg =~ m/\@/ ) {
+            $key = 'src_username';
+        }
+        my $source = AIR2::Source->new( $key => $arg );
+        $source->load;
+        my $current = $source->src_status();
+        my $after   = $source->set_src_status();
+        $stats{"$current.$after"}++;
+        if ( $report and ( $current ne $after or $show_all ) ) {
+            print_csv( $source, $current, $after );
+            next;
+        }
+        $source->set_and_save_src_status();
+        printf "Updated $arg => %s\n", $source->src_status;
+    }
+}
+else {
+
+    # update all
+    my $count   = 0;
+    my $sources = AIR2::Source->fetch_all_iterator();
+    while ( my $s = $sources->next ) {
+        my $current = $s->src_status();
+        my $after   = $s->set_src_status();
+        $stats{"$current.$after"}++;
+        if ( $report and ( $current ne $after or $show_all ) ) {
+            print_csv( $s, $current, $after );
+            next;
+        }
+        $s->set_and_save_src_status();
+        print "Updated $count\n" if !( ++$count % 10000 );
+    }
+}
+
+dump \%stats;
+
+sub print_csv {
+    my ( $source, $current, $after ) = @_;
+    my @row;
+    my $name = $source->get_name;
+    $name =~ s/"/'/g;
+    push @row, $name;
+    if ( $source->get_primary_email ) {
+        push @row, $source->get_primary_email->sem_email;
+        push @row, $source->get_primary_email->sem_status;
+    }
+    else {
+        push @row, "[no email]", "[no sem_status]";
+    }
+    push @row, $source->src_uuid, $current, $after;
+
+    printf( qq/"%s","%s","%s","%s","%s","%s"\n/, @row );
+
+}

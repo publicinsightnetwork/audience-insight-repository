@@ -1,0 +1,169 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2012 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+use AIR2::Config;
+use Data::Dump qw( dump );
+
+=pod
+
+=head1 NAME
+
+build-search - create and/or update AIR2 search indexes
+
+=head1 SYNOPSIS
+
+ build-search --xml --index --prune [--increm] [--debug] [--quiet] [--help] [idxname ... idxnameN]
+
+=head1 DESCRIPTION
+
+B<build-search> can be run via cron or interactively. 
+
+In incremental mode, with the --increm flag, B<build-search> will find all db
+records that are newer than the last time the search indexes were updated
+and create/update XML and indexes only for those records.
+
+With no arguments, will update all indexes. If one or more index types
+are passed as arguments, only those types will be updated. Example:
+
+ % build-search --increm sources fuzzy_sources
+
+will only update the C<sources> and C<fuzzy_sources> indexes.
+
+=cut
+
+my $help  = 0;
+my $quiet = 0;
+my $debug = 0;
+my $do_xml;
+my $do_index;
+my $do_prune;
+my $increm;
+GetOptions(
+    'help'   => \$help,
+    'debug'  => \$debug,
+    'quiet'  => \$quiet,
+    'index'  => \$do_index,
+    'xml'    => \$do_xml,
+    'prune'  => \$do_prune,
+    'increm' => \$increm,
+) or pod2usage(2);
+pod2usage(1) if $help;
+
+if ( !$do_xml and !$do_index and !$do_prune ) {
+    pod2usage(2);
+}
+
+my @types = qw(
+    responses
+    sources
+    inquiries
+    projects
+    fuzzy_responses
+    fuzzy_sources
+    public_responses
+
+);
+
+if (@ARGV) {
+    @types = @ARGV;
+
+    # allow for common typos
+    for my $t (@types) {
+        $t =~ s/-/_/g;
+        $t =~ s/^strict_//g;    # default is 'strict'
+    }
+}
+
+my %convert = (
+    responses =>
+        'db2xml-parallel --pools 3 --script resp2xml.pl --idx responses pij01 pij02 pij03 ',
+    sources =>
+        'db2xml-parallel --pools 3 --script sources2xml.pl --idx sources pij01 pij02 pij03 ',
+    inquiries        => 'inq2xml.pl',
+    projects         => 'projects2xml.pl',
+    public_responses => 'publicresp2xml.pl',
+);
+
+$convert{sources}   .= ' --verbose ' unless $quiet;
+$convert{responses} .= ' --verbose ' unless $quiet;
+
+my $perl = $^X;
+
+# use parallel build in prod only for now
+if ( AIR2::Config::get_profile_name() ne 'prod' ) {
+    $convert{sources}   = 'sources2xml.pl';
+    $convert{responses} = 'resp2xml.pl';
+}
+
+if ($do_xml) {
+
+    # create XML
+    for my $name (@types) {
+        next if $name =~ m/^fuzzy/;
+        if ( !exists $convert{$name} ) {
+            die "No such index type: $name\n";
+        }
+        my $script
+            = AIR2::Config::get_app_root->file( 'bin', $convert{$name} );
+        my $xml = AIR2::Config::get_search_xml->subdir($name);
+        my $cmd = "$perl $script";
+        $cmd .= " --mod last_mod" if $increm;
+        $cmd .= " --debug"        if $debug;
+        $cmd .= " --quiet"        if $quiet;
+        system($cmd) and die "$cmd failed with [$?]: $!";
+    }
+}
+
+if ( $do_index or $do_prune ) {
+
+    # index any modified files
+    my $indexer = AIR2::Config->get_app_root->file( 'bin', 'indexer' );
+    my $pruner  = AIR2::Config->get_app_root->file( 'bin', 'prune-deleted' );
+    $debug and print "do_index=$do_index for types " . dump( \@types ) . "\n";
+    for my $name (@types) {
+
+        if ($do_index) {
+            my $idx = AIR2::Config->get_search_index_path($name);
+            my $cmd = "$perl $indexer --type $name";
+            $cmd .= " --mod $idx/swish_last_start" if $increm;
+            $cmd .= " --debug"                     if $debug;
+            $cmd .= " --quiet"                     if $quiet;
+            system($cmd) and die "$cmd failed with [$?]: $!";
+        }
+
+        if ($do_prune) {
+            next if $name =~ m/^fuzzy_/;
+
+            # prune any deleted files
+            my $cmd = "$perl $pruner --type $name";
+            $cmd .= " --debug" if $debug;
+            $cmd .= " --quiet" if $quiet;
+            system($cmd) and die "$cmd failed with [$?]: $!";
+        }
+    }
+}

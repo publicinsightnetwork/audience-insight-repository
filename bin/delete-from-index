@@ -1,0 +1,139 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Data::Dump qw( dump );
+use File::Find;
+use AIR2::DBManager;
+use AIR2::Config;
+use AIR2::Utils;
+use Path::Class;
+use Path::Class::File::Lockable;
+use Unix::PID::Tiny;
+use Getopt::Long;
+use Pod::Usage;
+use Lucy::Index::Indexer;
+use Search::Query;
+
+=pod
+
+=head1 NAME
+
+delete-from-index - delete a record from a search index
+
+=head1 SYNOPSIS
+
+ delete-from-index --type=[inquiries|sources|projects|responses] [opts] URL
+    --help
+    --debug
+    --quiet
+    --dry_run
+    
+=cut
+
+my $help    = 0;
+my $quiet   = 0;
+my $debug   = 0;
+my $dry_run = 0;
+my $query;
+my $type;
+GetOptions(
+    'help'    => \$help,
+    'debug'   => \$debug,
+    'quiet'   => \$quiet,
+    'type=s'  => \$type,
+    'dry_run' => \$dry_run,
+    'query=s' => \$query,
+) or pod2usage(2);
+pod2usage(1) if $help;
+warn "missing --type\n" and pod2usage(2) unless $type;
+
+# set up paths
+my $base_dir = AIR2::Config::get_search_root();
+chdir $base_dir or die "can't chdir $base_dir: $!";
+my $no_fuzzy_type = $type;
+$no_fuzzy_type =~ s/^fuzzy_//;
+my $xml_dir   = AIR2::Config::get_search_xml->subdir($no_fuzzy_type);
+my $index_dir = AIR2::Config::get_search_index->subdir($type);
+my $lock_file = Path::Class::File::Lockable->new( $xml_dir, 'indexer' );
+if ( $lock_file->locked ) {
+
+    # if the lock is old but no process is running
+    my $pidnum = $lock_file->lock_pid;
+    my $pid    = Unix::PID::Tiny->new;
+    if ( !$pid->is_pid_running($pidnum) ) {
+        AIR2::Utils::logger(
+            "Found old lock file but no PID running for $pidnum\n");
+        AIR2::Utils::logger("Removing lock file...\n");
+        $lock_file->unlock;
+    }
+    else {
+        AIR2::Utils::logger("$lock_file is currently locked\n");
+        exit(0);
+    }
+}
+
+$lock_file->lock;
+
+my $lucy = Lucy::Index::Indexer->new( index => $index_dir );
+
+AIR2::Utils::logger("opening $index_dir\n");
+
+for my $url (@ARGV) {
+    $quiet or AIR2::Utils::logger("deleting $url\n");
+
+    unless ($dry_run) {
+        $lucy->delete_by_term(
+            field => 'swishdocpath',
+            term  => $url,
+        );
+    }
+
+}
+
+# NOTE this does not work.
+if ($query) {
+    $quiet or AIR2::Utils::logger("deleting all for $query\n");
+
+    if ($dry_run) {
+
+    }
+    else {
+        my $lucy_query = Search::Query->parser(
+            dialect       => 'Lucy',
+            default_field => ['swishdefault'],
+        )->parse($query)->as_lucy_query;
+        AIR2::Utils::logger( $lucy_query->to_string . "\n" );
+        $lucy->delete_by_query($lucy_query);
+    }
+}
+
+unless ($dry_run) {
+    $lucy->commit();
+    $index_dir->file('swish.xml')->touch;    # to trigger searcher re-open
+}
+
+$lock_file->unlock;

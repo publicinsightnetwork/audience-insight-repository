@@ -1,0 +1,63 @@
+#!/bin/env php
+<?php
+require_once dirname(dirname(__FILE__)) . '/app/init.php';
+
+AIR2_DBManager::init();
+
+if (count($argv) < 2) {
+    die("Must specify a CSV file to read from.\n");
+}
+
+$uuids = @file_get_contents($argv[1]);
+if (!$uuids) {
+    die("Invalid or unworkable CSV file specified.\n");
+}
+$uuids = explode("\n", $uuids);
+
+$global_pin = AIR2_Record::find('Organization', 'ADKLm8Okenaa');
+
+if (!$global_pin) {
+    die("Fatal: Can't find the Global PIN Organization.\n");
+}
+
+$opted_in = 0;
+foreach ($uuids as $uuid) {
+    // Exploding might give us a blank line.
+    if (trim($uuid) == '') {
+        continue;
+    }
+
+    $src = AIR2_Record::find('Source', $uuid);
+
+    if (!$src) {
+        echo "Couldn't find source for $uuid; skipping.\n";
+        continue;
+    }
+
+    $skip = false;
+    foreach ($src->SrcOrg as $so) {
+        if ($so->so_org_id == 44) {
+            echo "$uuid already has a relationship with the Global PIN. Skipping.\n";
+            $skip = true;
+            break;
+        }
+    }
+    if ($skip === true) {
+        continue;
+    }
+
+    // Made it past all error checking; opt this source into the Global PIN.
+    try {
+        $src->add_orgs(array($global_pin));
+        $src->save();
+
+        $opted_in++;
+        echo "Opted $uuid into the Global PIN.\n";
+    }
+    catch (Exception $ex) {
+        echo "Error: " . (string)$ex . ". Stopping.\n";
+        die();
+    }
+}
+
+echo "Done. $opted_in opted in.\n";

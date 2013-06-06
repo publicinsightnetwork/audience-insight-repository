@@ -1,0 +1,821 @@
+Locale:
+  Locale_1:
+    loc_id: 1
+    loc_key: 'aa_DJ'
+    loc_lang: Afar
+    loc_region: Djibouti
+  Locale_2:
+    loc_id: 2
+    loc_key: 'aa_ER'
+    loc_lang: Afar
+    loc_region: Eritrea
+  Locale_3:
+    loc_id: 3
+    loc_key: 'aa_ET'
+    loc_lang: Afar
+    loc_region: Ethiopia
+  Locale_4:
+    loc_id: 4
+    loc_key: 'af_ZA'
+    loc_lang: Afrikaans
+    loc_region: South Africa
+  Locale_5:
+    loc_id: 5
+    loc_key: 'am_ET'
+    loc_lang: Amharic
+    loc_region: Ethiopia
+  Locale_6:
+    loc_id: 6
+    loc_key: 'an_ES'
+    loc_lang: Aragonese
+    loc_region: Spain
+  Locale_7:
+    loc_id: 7
+    loc_key: 'ar_AE'
+    loc_lang: Arabic
+    loc_region: United Arab Emirates
+  Locale_8:
+    loc_id: 8
+    loc_key: 'ar_BH'
+    loc_lang: Arabic
+    loc_region: Bahrain
+  Locale_9:
+    loc_id: 9
+    loc_key: 'ar_DZ'
+    loc_lang: Arabic
+    loc_region: Algeria
+  Locale_10:
+    loc_id: 10
+    loc_key: 'ar_EG'
+    loc_lang: Arabic
+    loc_region: Egypt
+  Locale_11:
+    loc_id: 11
+    loc_key: 'ar_IN'
+    loc_lang: Arabic
+    loc_region: India
+  Locale_12:
+    loc_id: 12
+    loc_key: 'ar_IQ'
+    loc_lang: Arabic
+    loc_region: Iraq
+  Locale_13:
+    loc_id: 13
+    loc_key: 'ar_JO'
+    loc_lang: Arabic
+    loc_region: Jordan
+  Locale_14:
+    loc_id: 14
+    loc_key: 'ar_KW'
+    loc_lang: Arabic
+    loc_region: Kuwait
+  Locale_15:
+    loc_id: 15
+    loc_key: 'ar_LB'
+    loc_lang: Arabic
+    loc_region: Lebanon
+  Locale_16:
+    loc_id: 16
+    loc_key: 'ar_LY'
+    loc_lang: Arabic
+    loc_region: Libya
+  Locale_17:
+    loc_id: 17
+    loc_key: 'ar_MA'
+    loc_lang: Arabic
+    loc_region: Morocco
+  Locale_18:
+    loc_id: 18
+    loc_key: 'ar_OM'
+    loc_lang: Arabic
+    loc_region: Oman
+  Locale_19:
+    loc_id: 19
+    loc_key: 'ar_QA'
+    loc_lang: Arabic
+    loc_region: Qatar
+  Locale_20:
+    loc_id: 20
+    loc_key: 'ar_SA'
+    loc_lang: Arabic
+    loc_region: Saudi Arabia
+  Locale_21:
+    loc_id: 21
+    loc_key: 'ar_SD'
+    loc_lang: Arabic
+    loc_region: Sudan
+  Locale_22:
+    loc_id: 22
+    loc_key: 'ar_SY'
+    loc_lang: Arabic
+    loc_region: Syria
+  Locale_23:
+    loc_id: 23
+    loc_key: 'ar_TN'
+    loc_lang: Arabic
+    loc_region: Tunisia
+  Locale_24:
+    loc_id: 24
+    loc_key: 'ar_YE'
+    loc_lang: Arabic
+    loc_region: Yemen
+  Locale_25:
+    loc_id: 25
+    loc_key: 'be_BY'
+    loc_lang: Belarusian
+    loc_region: Belarus
+  Locale_26:
+    loc_id: 26
+    loc_key: 'bg_BG'
+    loc_lang: Bulgarian
+    loc_region: Bulgaria
+  Locale_27:
+    loc_id: 27
+    loc_key: 'bn_BD'
+    loc_lang: Bengali
+    loc_region: Bangladesh
+  Locale_28:
+    loc_id: 28
+    loc_key: 'bn_IN'
+    loc_lang: Bengali
+    loc_region: India
+  Locale_29:
+    loc_id: 29
+    loc_key: 'br_FR'
+    loc_lang: Breton
+    loc_region: France
+  Locale_30:
+    loc_id: 30
+    loc_key: 'bs_BA'
+    loc_lang: Bosnian
+    loc_region: Bosnia and Herzegovina
+  Locale_31:
+    loc_id: 31
+    loc_key: 'ca_ES'
+    loc_lang: Catalan
+    loc_region: Spain
+  Locale_32:
+    loc_id: 32
+    loc_key: 'cs_CZ'
+    loc_lang: Czech
+    loc_region: Czech Republic
+  Locale_33:
+    loc_id: 33
+    loc_key: 'cy_GB'
+    loc_lang: Welsh
+    loc_region: United Kingdom
+  Locale_34:
+    loc_id: 34
+    loc_key: 'da_DK'
+    loc_lang: Danish
+    loc_region: Denmark
+  Locale_35:
+    loc_id: 35
+    loc_key: 'de_AT'
+    loc_lang: German
+    loc_region: Austria
+  Locale_36:
+    loc_id: 36
+    loc_key: 'de_BE'
+    loc_lang: German
+    loc_region: Belgium
+  Locale_37:
+    loc_id: 37
+    loc_key: 'de_CH'
+    loc_lang: German
+    loc_region: Switzerland
+  Locale_38:
+    loc_id: 38
+    loc_key: 'de_DE'
+    loc_lang: German
+    loc_region: Germany
+  Locale_39:
+    loc_id: 39
+    loc_key: 'de_LU'
+    loc_lang: German
+    loc_region: Luxembourg
+  Locale_40:
+    loc_id: 40
+    loc_key: 'el_GR'
+    loc_lang: Greek
+    loc_region: Greece
+  Locale_41:
+    loc_id: 41
+    loc_key: 'en_AU'
+    loc_lang: English
+    loc_region: Australia
+  Locale_42:
+    loc_id: 42
+    loc_key: 'en_BW'
+    loc_lang: English
+    loc_region: Botswana
+  Locale_43:
+    loc_id: 43
+    loc_key: 'en_CA'
+    loc_lang: English
+    loc_region: Canada
+  Locale_44:
+    loc_id: 44
+    loc_key: 'en_DK'
+    loc_lang: English
+    loc_region: Denmark
+  Locale_45:
+    loc_id: 45
+    loc_key: 'en_GB'
+    loc_lang: English
+    loc_region: United Kingdom
+  Locale_46:
+    loc_id: 46
+    loc_key: 'en_HK'
+    loc_lang: English
+    loc_region: Hong Kong
+  Locale_47:
+    loc_id: 47
+    loc_key: 'en_IE'
+    loc_lang: English
+    loc_region: Ireland
+  Locale_48:
+    loc_id: 48
+    loc_key: 'en_IN'
+    loc_lang: English
+    loc_region: India
+  Locale_49:
+    loc_id: 49
+    loc_key: 'en_NZ'
+    loc_lang: English
+    loc_region: New Zealand
+  Locale_50:
+    loc_id: 50
+    loc_key: 'en_PH'
+    loc_lang: English
+    loc_region: Philippines
+  Locale_51:
+    loc_id: 51
+    loc_key: 'en_SG'
+    loc_lang: English
+    loc_region: Singapore
+  Locale_52:
+    loc_id: 52
+    loc_key: 'en_US'
+    loc_lang: English
+    loc_region: United States
+  Locale_53:
+    loc_id: 53
+    loc_key: 'en_ZA'
+    loc_lang: English
+    loc_region: South Africa
+  Locale_54:
+    loc_id: 54
+    loc_key: 'en_ZW'
+    loc_lang: English
+    loc_region: Zimbabwe
+  Locale_55:
+    loc_id: 55
+    loc_key: 'es_AR'
+    loc_lang: Spanish
+    loc_region: Argentina
+  Locale_56:
+    loc_id: 56
+    loc_key: 'es_BO'
+    loc_lang: Spanish
+    loc_region: Bolivia
+  Locale_57:
+    loc_id: 57
+    loc_key: 'es_CL'
+    loc_lang: Spanish
+    loc_region: Chile
+  Locale_58:
+    loc_id: 58
+    loc_key: 'es_CO'
+    loc_lang: Spanish
+    loc_region: Colombia
+  Locale_59:
+    loc_id: 59
+    loc_key: 'es_CR'
+    loc_lang: Spanish
+    loc_region: Costa Rica
+  Locale_60:
+    loc_id: 60
+    loc_key: 'es_DO'
+    loc_lang: Spanish
+    loc_region: Dominican Republic
+  Locale_61:
+    loc_id: 61
+    loc_key: 'es_EC'
+    loc_lang: Spanish
+    loc_region: Ecuador
+  Locale_62:
+    loc_id: 62
+    loc_key: 'es_ES'
+    loc_lang: Spanish
+    loc_region: Spain
+  Locale_63:
+    loc_id: 63
+    loc_key: 'es_GT'
+    loc_lang: Spanish
+    loc_region: Guatemala
+  Locale_64:
+    loc_id: 64
+    loc_key: 'es_HN'
+    loc_lang: Spanish
+    loc_region: Honduras
+  Locale_65:
+    loc_id: 65
+    loc_key: 'es_MX'
+    loc_lang: Spanish
+    loc_region: Mexico
+  Locale_66:
+    loc_id: 66
+    loc_key: 'es_NI'
+    loc_lang: Spanish
+    loc_region: Nicaragua
+  Locale_67:
+    loc_id: 67
+    loc_key: 'es_PA'
+    loc_lang: Spanish
+    loc_region: Panama
+  Locale_68:
+    loc_id: 68
+    loc_key: 'es_PE'
+    loc_lang: Spanish
+    loc_region: Peru
+  Locale_69:
+    loc_id: 69
+    loc_key: 'es_PR'
+    loc_lang: Spanish
+    loc_region: Puerto Rico
+  Locale_70:
+    loc_id: 70
+    loc_key: 'es_PY'
+    loc_lang: Spanish
+    loc_region: Paraguay
+  Locale_71:
+    loc_id: 71
+    loc_key: 'es_SV'
+    loc_lang: Spanish
+    loc_region: El Salvador
+  Locale_72:
+    loc_id: 72
+    loc_key: 'es_US'
+    loc_lang: Spanish
+    loc_region: United States
+  Locale_73:
+    loc_id: 73
+    loc_key: 'es_UY'
+    loc_lang: Spanish
+    loc_region: Uruguay
+  Locale_74:
+    loc_id: 74
+    loc_key: 'es_VE'
+    loc_lang: Spanish
+    loc_region: Venezuela
+  Locale_75:
+    loc_id: 75
+    loc_key: 'et_EE'
+    loc_lang: Estonian
+    loc_region: Estonia
+  Locale_76:
+    loc_id: 76
+    loc_key: 'eu_ES'
+    loc_lang: Basque
+    loc_region: Spain
+  Locale_77:
+    loc_id: 77
+    loc_key: 'fa_IR'
+    loc_lang: Persian
+    loc_region: Iran
+  Locale_78:
+    loc_id: 78
+    loc_key: 'fi_FI'
+    loc_lang: Finnish
+    loc_region: Finland
+  Locale_79:
+    loc_id: 79
+    loc_key: 'fo_FO'
+    loc_lang: Faroese
+    loc_region: Faroe Islands
+  Locale_80:
+    loc_id: 80
+    loc_key: 'fr_BE'
+    loc_lang: French
+    loc_region: Belgium
+  Locale_81:
+    loc_id: 81
+    loc_key: 'fr_CA'
+    loc_lang: French
+    loc_region: Canada
+  Locale_82:
+    loc_id: 82
+    loc_key: 'fr_CH'
+    loc_lang: French
+    loc_region: Switzerland
+  Locale_83:
+    loc_id: 83
+    loc_key: 'fr_FR'
+    loc_lang: French
+    loc_region: France
+  Locale_84:
+    loc_id: 84
+    loc_key: 'fr_LU'
+    loc_lang: French
+    loc_region: Luxembourg
+  Locale_85:
+    loc_id: 85
+    loc_key: 'ga_IE'
+    loc_lang: Irish
+    loc_region: Ireland
+  Locale_86:
+    loc_id: 86
+    loc_key: 'gd_GB'
+    loc_lang: Scots Gaelic
+    loc_region: United Kingdom
+  Locale_87:
+    loc_id: 87
+    loc_key: 'gl_ES'
+    loc_lang: Gallegan
+    loc_region: Spain
+  Locale_88:
+    loc_id: 88
+    loc_key: 'gu_IN'
+    loc_lang: Gujarati
+    loc_region: India
+  Locale_89:
+    loc_id: 89
+    loc_key: 'gv_GB'
+    loc_lang: Manx
+    loc_region: United Kingdom
+  Locale_90:
+    loc_id: 90
+    loc_key: 'he_IL'
+    loc_lang: Hebrew
+    loc_region: Israel
+  Locale_91:
+    loc_id: 91
+    loc_key: 'hi_IN'
+    loc_lang: Hindi
+    loc_region: India
+  Locale_92:
+    loc_id: 92
+    loc_key: 'hr_HR'
+    loc_lang: Croatian
+    loc_region: Croatia
+  Locale_93:
+    loc_id: 93
+    loc_key: 'hu_HU'
+    loc_lang: Hungarian
+    loc_region: Hungary
+  Locale_94:
+    loc_id: 94
+    loc_key: 'id_ID'
+    loc_lang: Indonesian
+    loc_region: Indonesia
+  Locale_95:
+    loc_id: 95
+    loc_key: 'is_IS'
+    loc_lang: Icelandic
+    loc_region: Iceland
+  Locale_96:
+    loc_id: 96
+    loc_key: 'it_CH'
+    loc_lang: Italian
+    loc_region: Switzerland
+  Locale_97:
+    loc_id: 97
+    loc_key: 'it_IT'
+    loc_lang: Italian
+    loc_region: Italy
+  Locale_98:
+    loc_id: 98
+    loc_key: 'iw_IL'
+    loc_lang: Hebrew
+    loc_region: Israel
+  Locale_99:
+    loc_id: 99
+    loc_key: 'ja_JP'
+    loc_lang: Japanese
+    loc_region: Japan
+  Locale_100:
+    loc_id: 100
+    loc_key: 'ka_GE'
+    loc_lang: Georgian
+    loc_region: Georgia
+  Locale_101:
+    loc_id: 101
+    loc_key: 'kk_KZ'
+    loc_lang: Kazakh
+    loc_region: Kazakhstan
+  Locale_102:
+    loc_id: 102
+    loc_key: 'kl_GL'
+    loc_lang: Kalaallisut
+    loc_region: Greenland
+  Locale_103:
+    loc_id: 103
+    loc_key: 'kn_IN'
+    loc_lang: Kannada
+    loc_region: India
+  Locale_104:
+    loc_id: 104
+    loc_key: 'ko_KR'
+    loc_lang: Korean
+    loc_region: South Korea
+  Locale_105:
+    loc_id: 105
+    loc_key: 'kw_GB'
+    loc_lang: Cornish
+    loc_region: United Kingdom
+  Locale_106:
+    loc_id: 106
+    loc_key: 'lg_UG'
+    loc_lang: Luganda
+    loc_region: Uganda
+  Locale_107:
+    loc_id: 107
+    loc_key: 'lo_LA'
+    loc_lang: Lao
+    loc_region: Laos
+  Locale_108:
+    loc_id: 108
+    loc_key: 'lt_LT'
+    loc_lang: Lithuanian
+    loc_region: Lithuania
+  Locale_109:
+    loc_id: 109
+    loc_key: 'lv_LV'
+    loc_lang: Latvian
+    loc_region: Latvia
+  Locale_110:
+    loc_id: 110
+    loc_key: 'mi_NZ'
+    loc_lang: Maori
+    loc_region: New Zealand
+  Locale_111:
+    loc_id: 111
+    loc_key: 'mk_MK'
+    loc_lang: Macedonian
+    loc_region: Macedonia
+  Locale_112:
+    loc_id: 112
+    loc_key: 'ml_IN'
+    loc_lang: Malayalam
+    loc_region: India
+  Locale_113:
+    loc_id: 113
+    loc_key: 'mn_MN'
+    loc_lang: Mongolian
+    loc_region: Mongolia
+  Locale_114:
+    loc_id: 114
+    loc_key: 'mr_IN'
+    loc_lang: Marathi
+    loc_region: India
+  Locale_115:
+    loc_id: 115
+    loc_key: 'ms_MY'
+    loc_lang: Burmese
+    loc_region: Myanmar
+  Locale_116:
+    loc_id: 116
+    loc_key: 'mt_MT'
+    loc_lang: Maltese
+    loc_region: Malta
+  Locale_117:
+    loc_id: 117
+    loc_key: 'nb_NO'
+    loc_lang: Norwegian Bokmal
+    loc_region: Norway
+  Locale_118:
+    loc_id: 118
+    loc_key: 'ne_NP'
+    loc_lang: Nepali
+    loc_region: Nepal
+  Locale_119:
+    loc_id: 119
+    loc_key: 'nl_BE'
+    loc_lang: Dutch
+    loc_region: Belgium
+  Locale_120:
+    loc_id: 120
+    loc_key: 'nl_NL'
+    loc_lang: Dutch
+    loc_region: Netherlands
+  Locale_121:
+    loc_id: 121
+    loc_key: 'nn_NO'
+    loc_lang: Norwegian Nynorsknn
+    loc_region: Norway
+  Locale_122:
+    loc_id: 122
+    loc_key: 'no_NO'
+    loc_lang: Norwegian
+    loc_region: Norway
+  Locale_123:
+    loc_id: 123
+    loc_key: 'oc_FR'
+    loc_lang: Occitan
+    loc_region: France
+  Locale_124:
+    loc_id: 124
+    loc_key: 'om_ET'
+    loc_lang: Oromo
+    loc_region: Ethiopia
+  Locale_125:
+    loc_id: 125
+    loc_key: 'om_KE'
+    loc_lang: Oromo
+    loc_region: Kenya
+  Locale_126:
+    loc_id: 126
+    loc_key: 'pa_IN'
+    loc_lang: Punjabi
+    loc_region: India
+  Locale_127:
+    loc_id: 127
+    loc_key: 'pl_PL'
+    loc_lang: Polish
+    loc_region: Poland
+  Locale_128:
+    loc_id: 128
+    loc_key: 'pt_BR'
+    loc_lang: Portuguese
+    loc_region: Brazil
+  Locale_129:
+    loc_id: 129
+    loc_key: 'pt_PT'
+    loc_lang: Portuguese
+    loc_region: Portugal
+  Locale_130:
+    loc_id: 130
+    loc_key: 'ro_RO'
+    loc_lang: Romanian
+    loc_region: Romania
+  Locale_131:
+    loc_id: 131
+    loc_key: 'ru_RU'
+    loc_lang: Russian
+    loc_region: Russia
+  Locale_132:
+    loc_id: 132
+    loc_key: 'ru_UA'
+    loc_lang: Russian
+    loc_region: Ukraine
+  Locale_133:
+    loc_id: 133
+    loc_key: 'se_NO'
+    loc_lang: Northern Sami
+    loc_region: Norway
+  Locale_134:
+    loc_id: 134
+    loc_key: 'sk_SK'
+    loc_lang: Slovak
+    loc_region: Slovakia
+  Locale_135:
+    loc_id: 135
+    loc_key: 'sl_SI'
+    loc_lang: Slovenian
+    loc_region: Slovenia
+  Locale_136:
+    loc_id: 136
+    loc_key: 'so_DJ'
+    loc_lang: Somali
+    loc_region: Djibouti
+  Locale_137:
+    loc_id: 137
+    loc_key: 'so_ET'
+    loc_lang: Somali
+    loc_region: Ethiopia
+  Locale_138:
+    loc_id: 138
+    loc_key: 'so_KE'
+    loc_lang: Somali
+    loc_region: Kenya
+  Locale_139:
+    loc_id: 139
+    loc_key: 'so_SO'
+    loc_lang: Somali
+    loc_region: Somalia
+  Locale_140:
+    loc_id: 140
+    loc_key: 'sq_AL'
+    loc_lang: Albanian
+    loc_region: Albania
+  Locale_141:
+    loc_id: 141
+    loc_key: 'sr_CS'
+    loc_lang: Serbian
+    loc_region: Serbia and Montenegro
+  Locale_142:
+    loc_id: 142
+    loc_key: 'st_ZA'
+    loc_lang: Southern Sotho
+    loc_region: South Africa
+  Locale_143:
+    loc_id: 143
+    loc_key: 'sv_FI'
+    loc_lang: Swedish
+    loc_region: Finland
+  Locale_144:
+    loc_id: 144
+    loc_key: 'sv_SE'
+    loc_lang: Swedish
+    loc_region: Sweden
+  Locale_145:
+    loc_id: 145
+    loc_key: 'ta_IN'
+    loc_lang: Tamil
+    loc_region: India
+  Locale_146:
+    loc_id: 146
+    loc_key: 'te_IN'
+    loc_lang: Telugu
+    loc_region: India
+  Locale_147:
+    loc_id: 147
+    loc_key: 'tg_TJ'
+    loc_lang: Tajik
+    loc_region: Tajikistan
+  Locale_148:
+    loc_id: 148
+    loc_key: 'th_TH'
+    loc_lang: Thai
+    loc_region: Thailand
+  Locale_149:
+    loc_id: 149
+    loc_key: 'ti_ER'
+    loc_lang: Tigrinya
+    loc_region: Eritrea
+  Locale_150:
+    loc_id: 150
+    loc_key: 'ti_ET'
+    loc_lang: Tigrinya
+    loc_region: Ethiopia
+  Locale_151:
+    loc_id: 151
+    loc_key: 'tl_PH'
+    loc_lang: Tagalog
+    loc_region: Philippines
+  Locale_152:
+    loc_id: 152
+    loc_key: 'tr_TR'
+    loc_lang: Turkish
+    loc_region: Turkey
+  Locale_153:
+    loc_id: 153
+    loc_key: 'uk_UA'
+    loc_lang: Ukrainian
+    loc_region: Ukraine
+  Locale_154:
+    loc_id: 154
+    loc_key: 'ur_PK'
+    loc_lang: Urdu
+    loc_region: Pakistan
+  Locale_155:
+    loc_id: 155
+    loc_key: 'uz_UZ'
+    loc_lang: Uzbek
+    loc_region: Uzbekistan
+  Locale_156:
+    loc_id: 156
+    loc_key: 'vi_VN'
+    loc_lang: Vietnamese
+    loc_region: Vietnam
+  Locale_157:
+    loc_id: 157
+    loc_key: 'wa_BE'
+    loc_lang: Walloon
+    loc_region: Belgium
+  Locale_158:
+    loc_id: 158
+    loc_key: 'xh_ZA'
+    loc_lang: Xhosa
+    loc_region: South Africa
+  Locale_159:
+    loc_id: 159
+    loc_key: 'yi_US'
+    loc_lang: Yiddish
+    loc_region: United States
+  Locale_160:
+    loc_id: 160
+    loc_key: 'zh_CN'
+    loc_lang: Chinese
+    loc_region: China
+  Locale_161:
+    loc_id: 161
+    loc_key: 'zh_HK'
+    loc_lang: Chinese
+    loc_region: Hong Kong
+  Locale_162:
+    loc_id: 162
+    loc_key: 'zh_SG'
+    loc_lang: Chinese
+    loc_region: Singapore
+  Locale_163:
+    loc_id: 163
+    loc_key: 'zh_TW'
+    loc_lang: Chinese
+    loc_region: Taiwan
+  Locale_164:
+    loc_id: 164
+    loc_key: 'zu_ZA'
+    loc_lang: Zulu
+    loc_region: South Africa

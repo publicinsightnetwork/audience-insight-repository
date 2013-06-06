@@ -1,0 +1,88 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+use Data::Dump qw( dump );
+use AIR2::Config;
+use AIR2::Tank;
+
+my $help    = 0;
+my $quiet   = 0;
+my $debug   = 0;
+my $dry_run = 0;
+my $all;
+GetOptions(
+    'help'    => \$help,
+    'debug'   => \$debug,
+    'quiet'   => \$quiet,
+    'all'     => \$all,
+    'dry_run' => \$dry_run,
+) or pod2usage(2);
+pod2usage(1) if $help;
+
+=pod
+
+=head1 NAME
+
+flush-tanks - run tank on all indicated Tank records
+
+=head1 SYNOPSIS
+
+ flush-tanks
+
+=cut
+
+if ($all) {
+    my $tanks
+        = AIR2::Tank->fetch_all_iterator( query => [ tank_status => 'R' ] );
+    while ( my $t = $tanks->next ) {
+        my $report = $t->discriminate();
+        my $tankid = $t->tank_id;
+        my $status = $t->tank_status;
+        if ($report) {
+            print "TANK_ID($tankid) - STATUS($status) - "
+                . dump($report) . "\n";
+        }
+        else {
+            print "TANK_ID($tankid) - STATUS($status) - FAILED TO RUN!\n";
+        }
+    }
+
+}
+else {
+    for my $tid (@ARGV) {
+        my $t      = AIR2::Tank->new( tank_id => $tid )->load;
+        my $report = $t->discriminate();
+        my $status = $t->tank_status;
+        if ($report) {
+            print "TANK_ID($tid) - STATUS($status) - " . dump($report) . "\n";
+        }
+        else {
+            print "TANK_ID($tid) - STATUS($status) - FAILED TO RUN!\n";
+        }
+    }
+}

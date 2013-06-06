@@ -1,0 +1,53 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use Carp;
+use Search::Tools;
+use Search::Tools::XML;
+use SWISH::3;
+use Lingua::Stem::Snowball;
+
+my $q = shift(@ARGV) or die "$0 'query' file [...fileN]\n";
+my $snowball = Lingua::Stem::Snowball->new(
+    lang     => 'en',
+    encoding => 'UTF-8',
+);
+my $stemmer = sub {
+    my ( $qp, $term ) = @_;
+    return $snowball->stem($term);
+};
+my $snipper = Search::Tools->snipper(
+    #type            => 'token',
+    term_re         => qr/\w+(?:[\']\w+)*/,    # do not include - as term char
+    word_characters => q/\w/
+        . quotemeta(q/'/),                     # do not include - as term char
+    query         => $q,
+    stemmer       => $stemmer,
+    occur         => 2,          # number of snips
+    context       => 200,        # number of words in each snip
+                                 #as_sentences => 1,
+    ignore_length => 1,          # ignore max_chars, return entire snippet.
+    show          => 0,          # only show if match, no dumb substr
+    treat_phrases_as_singles => 0,    # keep phrases together
+    #debug         => 1,
+);
+my $hiliter = Search::Tools->hiliter( query => $snipper->query, tty => 1, );
+
+for my $file (@ARGV) {
+    my $buf   = SWISH::3->slurp($file);
+    my $plain = Search::Tools::XML->strip_markup($buf);
+    #warn "buf: $buf";
+    #warn "plain: $plain";
+    if ( $snipper->query->matches_html($buf) ) {
+        print "Match for " . $snipper->query . "\n";
+        my $snipped = $snipper->snip($buf);
+        print "Snipped: $snipped\n";
+        my $hilited = $hiliter->light($snipped) . "\n";
+        print "HiLited: $hilited\n";
+
+        #print $hiliter->hilite($buf) . "\n";
+    }
+
+    #print "$plain\n";
+}
+

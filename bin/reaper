@@ -1,0 +1,154 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2013 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+#
+# The 'reaper' periodically finds new submissions and inserts them
+# into the tank.
+#
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Getopt::Long;
+use Pod::Usage;
+use Email::Stuff;
+use AIR2::Config;
+use AIR2::Reader::FS;
+use AIR2::Importer::FS;
+use Data::Dump qw( dump );
+
+my $username = 'Query Importer';
+
+# cron frequency for build-search
+my $search_interval = 10;
+
+my ( $help, $debug, $dry_run, $email_notify, $force, $tank_only, $since,
+    $send_confirm_email, );
+GetOptions(
+    'username=s'        => \$username,
+    help                => \$help,
+    debug               => \$debug,
+    dry_run             => \$dry_run,
+    force               => \$force,
+    'email_notify=s'    => \$email_notify,
+    tank_only           => \$tank_only,
+    send_confirm_email  => \$send_confirm_email,
+    'search_interval=i' => \$search_interval,
+) or pod2usage(2);
+
+if ($help) {
+    pod2usage(2);
+}
+
+my $user = AIR2::User->new( user_username => $username )->load;
+if ( !$email_notify && !$user->get_primary_email() ) {
+    $email_notify = 'pijdev@mpr.org';
+}
+$email_notify = $user->get_primary_email()->uem_address()
+    unless defined $email_notify;
+$debug = 0 unless defined $debug;
+
+my $reader = AIR2::Reader::FS->new(
+    root  => AIR2::Config->get_submission_pen(),
+    debug => $debug,
+);
+
+my $importer = AIR2::Importer::FS->new(
+    reader             => $reader,
+    debug              => $debug,
+    user               => $user,
+    email_notify       => $email_notify,
+    send_confirm_email => $send_confirm_email,
+);
+
+$importer->run();
+
+if ( $debug or $importer->has_errors() ) {
+    print $importer->report() . "\n";
+}
+
+# attempt to run the discriminator for each generated tank
+my $tanks = $importer->get_tanks();
+TANK: for my $t ( sort { $a->tank_id <=> $b->tank_id } @$tanks ) {
+    if ($tank_only) {
+        printf( "Tank created: %s\n", $t->tank_id );
+        next;
+    }
+
+    my $id = $t->tank_id;
+    print "TANK($id)->discriminate()\n" if $debug;
+    my $report = $t->discriminate();
+    unless ($report) {
+        my $stat = $t->tank_status;
+        my $errs = $t->tank_errors;
+        AIR2::Utils::logger(
+            "FAIL: tank($id) - status($stat) - errors($errs)");
+        next TANK;
+    }
+
+    $debug and dump($report);
+
+    email_report( $t, $report );
+}
+
+# NOTE ->errored is currently a no-op in Importer::FS
+if ( $importer->errored ) {
+    Email::Stuff->to($email_notify)->from('support@publicinsightnetwork.org')
+        ->subject("Submission import results")
+        ->text_body( $importer->report )->send;
+}
+
+sub email_report {
+    my ( $tank, $report ) = @_;
+
+    my $inq_uuid  = $tank->tank_xuuid;
+    my $tank_uuid = $tank->tank_uuid;
+    if ( $report->{conflict} ) {
+        AIR2::JobQueue->add_job(
+            "PERL AIR2_ROOT/bin/send-watcher-email --inq_uuid $inq_uuid --confict $report->{conflict} --tank_uuid $tank_uuid",
+        );
+    }
+    if ( $report->{done_cre} or $report->{done_upd} ) {
+
+        # touch all the completed submissions
+        # so search index updates as quickly as possible
+        for my $srs_uuid ( @{ $report->{submissions} } ) {
+            my $srs = AIR2::SrcResponseSet->new( srs_uuid => $srs_uuid )
+                ->load_speculative;
+            if ($srs) {
+                AIR2::SearchUtils::touch_stale($srs);
+            }
+        }
+
+        # queue emails for $search_interval minutes from now
+        # to allow search indexer time to catch up
+        my $n_complete = $report->{done_cre} + $report->{done_upd};
+        AIR2::JobQueue->add_job(
+            "PERL AIR2_ROOT/bin/send-watcher-email --inq_uuid $inq_uuid --complete $n_complete",
+            time() + ( $search_interval * 60 )
+        );
+    }
+
+}
+

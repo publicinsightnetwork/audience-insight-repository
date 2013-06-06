@@ -1,0 +1,58 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful, 
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License 
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* Import panel formatting */
+.air2-import .air2-panel-body {
+    min-height: 300px;
+}
+.air2-import .air2-panel-empty {
+    top: 0px;
+}
+.air2-import .air2-panel-empty h3 {
+    margin-top: 40px;
+}
+
+/* row styling */
+.air2-import .tsrc-row.row-error td {
+    background-color: #ffffc6;
+    color: #333;
+}
+
+/* import summary panel */
+.air2-import-summary .title {
+    font-size: 14px;
+    padding: 6px 2px 4px 10px;
+}
+.air2-import-summary .notes {
+    padding: 4px 2px 4px 10px;
+}
+
+/* import activity panel */
+.air2-import-activity .air2-panel-body {
+    min-height: 150px;
+}
+.air2-import-activity .activity .label {
+    vertical-align: top;
+}
+.air2-import-activity .activity p {
+    padding-top: 3px;
+}

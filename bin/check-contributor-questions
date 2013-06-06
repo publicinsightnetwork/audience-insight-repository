@@ -1,0 +1,48 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use Data::Dump qw( dump );
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+
+use AIR2::Inquiry;
+use AIR2::Question;
+
+my $autoadd;
+GetOptions( 'autoadd' => \$autoadd, ) or pod2usage(2);
+my $REQUIRED_NUM_CONTRIB_QUESTIONS = 4;
+my $queries                        = AIR2::Inquiry->fetch_all_iterator;
+
+while ( my $inquiry = $queries->next ) {
+
+    my $contrib_questions = $inquiry->get_contributor_questions;
+
+    if ( scalar @$contrib_questions < $REQUIRED_NUM_CONTRIB_QUESTIONS ) {
+
+        my %has = ();
+        printf(
+            "Inquiry '%s' has fewer than %d contributor questions (%s) and %s submissions:\n",
+            $inquiry->inq_uuid,
+            $REQUIRED_NUM_CONTRIB_QUESTIONS,
+            scalar @$contrib_questions,
+            $inquiry->has_related('src_response_sets'),
+        );
+        for my $q (@$contrib_questions) {
+            printf( " q: %s [%s] [%s]\n",
+                $q->ques_value, $q->ques_type, $q->ques_template );
+            $has{ $q->ques_template }++;
+        }
+
+        if ($autoadd) {
+            for my $template (qw( email firstname lastname zip )) {
+                next if $has{$template};
+                my $newq = AIR2::Question->new_from_template($template);
+                $newq->ques_inq_id( $inquiry->inq_id );
+                $newq->save();
+            }
+        }
+    }
+
+}

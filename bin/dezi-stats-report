@@ -1,0 +1,110 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2012 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+#
+# CSV summary of dezi stats
+#
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use AIR2::DBManager;
+use Email::Stuff;
+use Text::CSV_XS;
+use Getopt::Long;
+use Pod::Usage;
+use Rose::DateTime::Parser;
+
+=pod
+
+=head1 NAME
+
+dezi-stats-report
+
+=head1 SYNOPSIS
+
+ dezi-stats-report [options]
+    --help
+    --debug
+    --start=s
+    --end=s
+    --mailto=s
+
+=head1 DESCRIPTION
+
+Summarize Dezi search stats for a given time period.
+
+=cut
+
+my ( $help, $debug, $start, $end, $mailto, );
+my $now = time();
+$start = $now - 86400;
+$end   = $now;
+
+GetOptions(
+    'help'    => \$help,
+    'debug'   => \$debug,
+    'start=s' => \$start,
+    'end=s'   => \$end,
+) or pod2usage(2);
+
+if ($help) {
+    pod2usage(2);
+}
+
+# allow for utf8 (wide) chars in print()
+binmode(STDOUT, ":utf8");
+
+# validate dates
+
+my $date_parser = Rose::DateTime::Parser->new();
+my $start_dt    = $date_parser->parse_date($start) or die "Bad date: $start";
+my $end_dt      = $date_parser->parse_date($end) or die "Bad date: $end";
+die "Bad date range: $start to $end" unless ( $start_dt < $end_dt );
+
+my $start_epoch = $start_dt->epoch;
+my $end_epoch   = $end_dt->epoch;
+
+my $sql = <<SQL;
+select path, FROM_UNIXTIME(tstamp) as `when`, q, build_time, search_time, remote_user, total
+from dezi_stats
+where c is NULL and f is NULL and tstamp >= $start_epoch and tstamp <= $end_epoch
+SQL
+
+#warn "sql:$sql";
+
+# execute
+my $dbh = AIR2::DBManager->new->retain_dbh();
+my $sth = $dbh->prepare($sql);
+$sth->execute();
+
+# csv printer
+my $csv = Text::CSV_XS->new( { binary => 1, eol => $/ } )
+    or die "Cannot use CSV: " . Text::CSV_XS->error_diag();
+
+my $headers = $sth->{NAME};
+$csv->print( \*STDOUT, $headers );
+while ( my $row = $sth->fetchrow_arrayref ) {
+    $csv->print( \*STDOUT, $row );
+}
+

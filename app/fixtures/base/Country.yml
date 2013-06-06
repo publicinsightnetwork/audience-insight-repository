@@ -1,0 +1,1432 @@
+Country:
+  Country_1:
+    cntry_id: 1
+    cntry_name: Azores
+    cntry_code: AB
+    cntry_disp_seq: 200
+  Country_2:
+    cntry_id: 2
+    cntry_name: Ascension
+    cntry_code: AC
+    cntry_disp_seq: 160
+  Country_3:
+    cntry_id: 3
+    cntry_name: Andorra
+    cntry_code: AD
+    cntry_disp_seq: 80
+  Country_4:
+    cntry_id: 4
+    cntry_name: United Arab Emirates
+    cntry_code: AE
+    cntry_disp_seq: 2660
+  Country_5:
+    cntry_id: 5
+    cntry_id: 5
+    cntry_name: Afghanistan
+    cntry_code: AF
+    cntry_disp_seq: 40
+  Country_6:
+    cntry_id: 6
+    cntry_name: Antigua
+    cntry_code: AG
+    cntry_disp_seq: 120
+  Country_7:
+    cntry_id: 7
+    cntry_name: Anguilla Islands
+    cntry_code: AI
+    cntry_disp_seq: 100
+  Country_8:
+    cntry_id: 8
+    cntry_name: Albania
+    cntry_code: AL
+    cntry_disp_seq: 50
+  Country_9:
+    cntry_id: 9
+    cntry_name: Armenia
+    cntry_code: AM
+    cntry_disp_seq: 140
+  Country_10:
+    cntry_id: 10
+    cntry_name: Curacao
+    cntry_code: AN
+    cntry_disp_seq: 660
+  Country_11:
+    cntry_id: 11
+    cntry_name: Angola
+    cntry_code: AO
+    cntry_disp_seq: 90
+  Country_12:
+    cntry_id: 12
+    cntry_name: Antarctica
+    cntry_code: AQ
+    cntry_disp_seq: 110
+  Country_13:
+    cntry_id: 13
+    cntry_name: Argentina
+    cntry_code: AR
+    cntry_disp_seq: 130
+  Country_14:
+    cntry_id: 14
+    cntry_name: American Samoa
+    cntry_code: AS
+    cntry_disp_seq: 70
+  Country_15:
+    cntry_id: 15
+    cntry_name: Austria
+    cntry_code: AT
+    cntry_disp_seq: 180
+  Country_16:
+    cntry_id: 16
+    cntry_name: Australia
+    cntry_code: AU
+    cntry_disp_seq: 170
+  Country_17:
+    cntry_id: 17
+    cntry_name: Aruba
+    cntry_code: AW
+    cntry_disp_seq: 150
+  Country_18:
+    cntry_id: 18
+    cntry_name: Azerbaijan
+    cntry_code: AZ
+    cntry_disp_seq: 190
+  Country_19:
+    cntry_id: 19
+    cntry_name: Bosnia Hercegovina
+    cntry_code: BA
+    cntry_disp_seq: 340
+  Country_20:
+    cntry_id: 20
+    cntry_name: Barbados
+    cntry_code: BB
+    cntry_disp_seq: 240
+  Country_21:
+    cntry_id: 21
+    cntry_name: Bonaire
+    cntry_code: BC
+    cntry_disp_seq: 330
+  Country_22:
+    cntry_id: 22
+    cntry_name: Bangladesh
+    cntry_code: BD
+    cntry_disp_seq: 230
+  Country_23:
+    cntry_id: 23
+    cntry_name: Belgium
+    cntry_code: BE
+    cntry_disp_seq: 270
+  Country_24:
+    cntry_id: 24
+    cntry_name: Burkina (Upper Volta)
+    cntry_code: BF
+    cntry_disp_seq: 420
+  Country_25:
+    cntry_id: 25
+    cntry_name: Bulgaria
+    cntry_code: BG
+    cntry_disp_seq: 410
+  Country_26:
+    cntry_id: 26
+    cntry_name: Bahrain
+    cntry_code: BH
+    cntry_disp_seq: 220
+  Country_27:
+    cntry_id: 27
+    cntry_name: Burundi
+    cntry_code: BI
+    cntry_disp_seq: 440
+  Country_28:
+    cntry_id: 28
+    cntry_name: Benin
+    cntry_code: BJ
+    cntry_disp_seq: 290
+  Country_29:
+    cntry_id: 29
+    cntry_name: Barbuda
+    cntry_code: BK
+    cntry_disp_seq: 250
+  Country_30:
+    cntry_id: 30
+    cntry_name: Belarus
+    cntry_code: BL
+    cntry_disp_seq: 260
+  Country_31:
+    cntry_id: 31
+    cntry_name: Bermuda
+    cntry_code: BM
+    cntry_disp_seq: 300
+  Country_32:
+    cntry_id: 32
+    cntry_name: Brunei
+    cntry_code: BN
+    cntry_disp_seq: 400
+  Country_33:
+    cntry_id: 33
+    cntry_name: Bolivia
+    cntry_code: BO
+    cntry_disp_seq: 320
+  Country_34:
+    cntry_id: 34
+    cntry_name: Brazil
+    cntry_code: BR
+    cntry_disp_seq: 370
+  Country_35:
+    cntry_id: 35
+    cntry_name: Bahamas
+    cntry_code: BS
+    cntry_disp_seq: 210
+  Country_36:
+    cntry_id: 36
+    cntry_name: Bhutan
+    cntry_code: BT
+    cntry_disp_seq: 310
+  Country_37:
+    cntry_id: 37
+    cntry_name: Burma (Myanmar)
+    cntry_code: BU
+    cntry_disp_seq: 430
+  Country_38:
+    cntry_id: 38
+    cntry_name: Bouvet Island
+    cntry_code: BV
+    cntry_disp_seq: 360
+  Country_39:
+    cntry_id: 39
+    cntry_name: Botswana
+    cntry_code: BW
+    cntry_disp_seq: 350
+  Country_40:
+    cntry_id: 40
+    cntry_name: Belize
+    cntry_code: BZ
+    cntry_disp_seq: 280
+  Country_41:
+    cntry_id: 41
+    cntry_name: Canada
+    cntry_code: CA
+    cntry_disp_seq: 30
+  Country_42:
+    cntry_id: 42
+    cntry_name: Cocos (Keeling) Islands
+    cntry_code: CC
+    cntry_disp_seq: 560
+  Country_43:
+    cntry_id: 43
+    cntry_name: Canary Islands
+    cntry_code: CD
+    cntry_disp_seq: 470
+  Country_44:
+    cntry_id: 44
+    cntry_name: Channel Islands
+    cntry_code: CE
+    cntry_disp_seq: 520
+  Country_45:
+    cntry_id: 45
+    cntry_name: Central African Republic
+    cntry_code: CF
+    cntry_disp_seq: 500
+  Country_46:
+    cntry_id: 46
+    cntry_name: Congo
+    cntry_code: CG
+    cntry_disp_seq: 590
+  Country_47:
+    cntry_id: 47
+    cntry_name: Switzerland
+    cntry_code: CH
+    cntry_disp_seq: 2400
+  Country_48:
+    cntry_id: 48
+    cntry_name: Ivory Coast
+    cntry_code: CI
+    cntry_disp_seq: 1210
+  Country_49:
+    cntry_id: 49
+    cntry_name: Cook Islands
+    cntry_code: CK
+    cntry_disp_seq: 610
+  Country_50:
+    cntry_id: 50
+    cntry_name: Chile
+    cntry_code: CL
+    cntry_disp_seq: 530
+  Country_51:
+    cntry_id: 51
+    cntry_name: Cameroon
+    cntry_code: CM
+    cntry_disp_seq: 460
+  Country_52:
+    cntry_id: 52
+    cntry_name: China, People's Republic Of
+    cntry_code: CN
+    cntry_disp_seq: 540
+  Country_53:
+    cntry_id: 53
+    cntry_name: Colombia
+    cntry_code: CO
+    cntry_disp_seq: 570
+  Country_54:
+    cntry_id: 54
+    cntry_name: Congo, Democratic Republic Of
+    cntry_code: CP
+    cntry_disp_seq: 600
+  Country_55:
+    cntry_id: 55
+    cntry_name: Costa Rica
+    cntry_code: CR
+    cntry_disp_seq: 630
+  Country_56:
+    cntry_id: 56
+    cntry_name: Corsica
+    cntry_code: CS
+    cntry_disp_seq: 620
+  Country_57:
+    cntry_id: 57
+    cntry_name: Cuba
+    cntry_code: CU
+    cntry_disp_seq: 650
+  Country_58:
+    cntry_id: 58
+    cntry_name: Cape Verde
+    cntry_code: CV
+    cntry_disp_seq: 480
+  Country_59:
+    cntry_id: 59
+    cntry_name: Christmas Islands
+    cntry_code: CX
+    cntry_disp_seq: 550
+  Country_60:
+    cntry_id: 60
+    cntry_name: Cyprus
+    cntry_code: CY
+    cntry_disp_seq: 670
+  Country_61:
+    cntry_id: 61
+    cntry_name: Czech Republic
+    cntry_code: CZ
+    cntry_disp_seq: 680
+  Country_62:
+    cntry_id: 62
+    cntry_name: Dubai
+    cntry_code: DB
+    cntry_disp_seq: 730
+  Country_63:
+    cntry_id: 63
+    cntry_name: Germany
+    cntry_code: DE
+    cntry_disp_seq: 950
+  Country_64:
+    cntry_id: 64
+    cntry_name: Djibouti
+    cntry_code: DJ
+    cntry_disp_seq: 700
+  Country_65:
+    cntry_id: 65
+    cntry_name: Denmark
+    cntry_code: DK
+    cntry_disp_seq: 690
+  Country_66:
+    cntry_id: 66
+    cntry_name: Dominica
+    cntry_code: DM
+    cntry_disp_seq: 710
+  Country_67:
+    cntry_id: 67
+    cntry_name: Dominican Republic
+    cntry_code: DO
+    cntry_disp_seq: 720
+  Country_68:
+    cntry_id: 68
+    cntry_name: Sudan
+    cntry_code: DS
+    cntry_disp_seq: 2350
+  Country_69:
+    cntry_id: 69
+    cntry_name: Algeria
+    cntry_code: DZ
+    cntry_disp_seq: 60
+  Country_70:
+    cntry_id: 70
+    cntry_name: East Timor
+    cntry_code: EA
+    cntry_disp_seq: 740
+  Country_71:
+    cntry_id: 71
+    cntry_name: Ecuador
+    cntry_code: EC
+    cntry_disp_seq: 750
+  Country_72:
+    cntry_id: 72
+    cntry_name: Estonia
+    cntry_code: EE
+    cntry_disp_seq: 800
+  Country_73:
+    cntry_id: 73
+    cntry_name: Egypt
+    cntry_code: EG
+    cntry_disp_seq: 760
+  Country_74:
+    cntry_id: 74
+    cntry_name: Western Sahara
+    cntry_code: EH
+    cntry_disp_seq: 2790
+  Country_75:
+    cntry_id: 75
+    cntry_name: Eritea
+    cntry_code: ER
+    cntry_disp_seq: 790
+  Country_76:
+    cntry_id: 76
+    cntry_name: Spain
+    cntry_code: ES
+    cntry_disp_seq: 2200
+  Country_77:
+    cntry_id: 77
+    cntry_name: Ethiopia
+    cntry_code: ET
+    cntry_disp_seq: 810
+  Country_78:
+    cntry_id: 78
+    cntry_name: St. Eustatius
+    cntry_code: EU
+    cntry_disp_seq: 2250
+  Country_79:
+    cntry_id: 79
+    cntry_name: Fiji
+    cntry_code: FG
+    cntry_disp_seq: 850
+  Country_80:
+    cntry_id: 80
+    cntry_name: Finland
+    cntry_code: FI
+    cntry_disp_seq: 860
+  Country_81:
+    cntry_id: 81
+    cntry_name: Falkland Islands
+    cntry_code: FK
+    cntry_disp_seq: 820
+  Country_82:
+    cntry_id: 82
+    cntry_name: Micronesia Federated States
+    cntry_code: FM
+    cntry_disp_seq: 1580
+  Country_83:
+    cntry_id: 83
+    cntry_name: Faroe Islands
+    cntry_code: FO
+    cntry_disp_seq: 840
+  Country_84:
+    cntry_id: 84
+    cntry_name: France
+    cntry_code: FR
+    cntry_disp_seq: 870
+  Country_85:
+    cntry_id: 85
+    cntry_name: Farkistan
+    cntry_code: FS
+    cntry_disp_seq: 830
+  Country_86:
+    cntry_id: 86
+    cntry_name: France, Metropolitan
+    cntry_code: FX
+    cntry_disp_seq: 880
+  Country_87:
+    cntry_id: 87
+    cntry_name: Gabon
+    cntry_code: GA
+    cntry_disp_seq: 920
+  Country_88:
+    cntry_id: 88
+    cntry_name: Wales
+    cntry_code: GB
+    cntry_disp_seq: 2760
+  Country_89:
+    cntry_id: 89
+    cntry_name: Grenada
+    cntry_code: GC
+    cntry_disp_seq: 1000
+  Country_90:
+    cntry_id: 90
+    cntry_name: Georgia
+    cntry_code: GE
+    cntry_disp_seq: 940
+  Country_91:
+    cntry_id: 91
+    cntry_name: French Guiana
+    cntry_code: GF
+    cntry_disp_seq: 890
+  Country_92:
+    cntry_id: 92
+    cntry_name: Ghana
+    cntry_code: GH
+    cntry_disp_seq: 960
+  Country_93:
+    cntry_id: 93
+    cntry_name: Gilbraltar
+    cntry_code: GI
+    cntry_disp_seq: 970
+  Country_94:
+    cntry_id: 94
+    cntry_name: Guadeloupe
+    cntry_code: GL
+    cntry_disp_seq: 1010
+  Country_95:
+    cntry_id: 95
+    cntry_name: Gambia
+    cntry_code: GM
+    cntry_disp_seq: 930
+  Country_96:
+    cntry_id: 96
+    cntry_name: Guinea
+    cntry_code: GN
+    cntry_disp_seq: 1050
+  Country_97:
+    cntry_id: 97
+    cntry_name: St. Barthelemy
+    cntry_code: GP
+    cntry_disp_seq: 2220
+  Country_98:
+    cntry_id: 98
+    cntry_name: Equatorial Guinea
+    cntry_code: GQ
+    cntry_disp_seq: 780
+  Country_99:
+    cntry_id: 99
+    cntry_name: Greece
+    cntry_code: GR
+    cntry_disp_seq: 980
+  Country_100:
+    cntry_id: 100
+    cntry_name: Guernsey
+    cntry_code: GS
+    cntry_disp_seq: 1040
+  Country_101:
+    cntry_id: 101
+    cntry_name: Guatemala
+    cntry_code: GT
+    cntry_disp_seq: 1030
+  Country_102:
+    cntry_id: 102
+    cntry_name: Guam
+    cntry_code: GU
+    cntry_disp_seq: 1020
+  Country_103:
+    cntry_id: 103
+    cntry_name: Guinea Bissau
+    cntry_code: GW
+    cntry_disp_seq: 1060
+  Country_104:
+    cntry_id: 104
+    cntry_name: Guyana
+    cntry_code: GY
+    cntry_disp_seq: 1070
+  Country_105:
+    cntry_id: 105
+    cntry_name: Hong Kong
+    cntry_code: HK
+    cntry_disp_seq: 1110
+  Country_106:
+    cntry_id: 106
+    cntry_name: Heard &amp; McDonald Islands
+    cntry_code: HM
+    cntry_disp_seq: 1090
+  Country_107:
+    cntry_id: 107
+    cntry_name: Honduras
+    cntry_code: HN
+    cntry_disp_seq: 1100
+  Country_108:
+    cntry_id: 108
+    cntry_name: St. Thomas
+    cntry_code: HO
+    cntry_disp_seq: 2330
+  Country_109:
+    cntry_id: 109
+    cntry_name: Croatia
+    cntry_code: HR
+    cntry_disp_seq: 640
+  Country_110:
+    cntry_id: 110
+    cntry_name: Haiti
+    cntry_code: HT
+    cntry_disp_seq: 1080
+  Country_111:
+    cntry_id: 111
+    cntry_name: Hungary
+    cntry_code: HU
+    cntry_disp_seq: 1120
+  Country_112:
+    cntry_id: 112
+    cntry_name: Indonesia
+    cntry_code: ID
+    cntry_disp_seq: 1150
+  Country_113:
+    cntry_id: 113
+    cntry_name: Ireland
+    cntry_code: IE
+    cntry_disp_seq: 1180
+  Country_114:
+    cntry_id: 114
+    cntry_name: Israel
+    cntry_code: IL
+    cntry_disp_seq: 1190
+  Country_115:
+    cntry_id: 115
+    cntry_name: India
+    cntry_code: IN
+    cntry_disp_seq: 1140
+  Country_116:
+    cntry_id: 116
+    cntry_name: British Indian Ocean Territory
+    cntry_code: IO
+    cntry_disp_seq: 380
+  Country_117:
+    cntry_id: 117
+    cntry_name: Iraq
+    cntry_code: IQ
+    cntry_disp_seq: 1170
+  Country_118:
+    cntry_id: 118
+    cntry_name: Iran
+    cntry_code: IR
+    cntry_disp_seq: 1160
+  Country_119:
+    cntry_id: 119
+    cntry_name: Iceland
+    cntry_code: IS
+    cntry_disp_seq: 1130
+  Country_120:
+    cntry_id: 120
+    cntry_name: Italy
+    cntry_code: IT
+    cntry_disp_seq: 1200
+  Country_121:
+    cntry_id: 121
+    cntry_name: Jersey
+    cntry_code: JE
+    cntry_disp_seq: 1240
+  Country_122:
+    cntry_id: 122
+    cntry_name: St. John
+    cntry_code: JH
+    cntry_disp_seq: 2270
+  Country_123:
+    cntry_id: 123
+    cntry_name: Svalbard &amp; Jan Mayen Islands
+    cntry_code: JI
+    cntry_disp_seq: 2370
+  Country_124:
+    cntry_id: 124
+    cntry_name: Jamaica
+    cntry_code: JM
+    cntry_disp_seq: 1220
+  Country_125:
+    cntry_id: 125
+    cntry_name: Jordan
+    cntry_code: JO
+    cntry_disp_seq: 1250
+  Country_126:
+    cntry_id: 126
+    cntry_name: Japan
+    cntry_code: JP
+    cntry_disp_seq: 1230
+  Country_127:
+    cntry_id: 127
+    cntry_name: Kampuchea
+    cntry_code: KA
+    cntry_disp_seq: 1260
+  Country_128:
+    cntry_id: 128
+    cntry_name: Kenya
+    cntry_code: KE
+    cntry_disp_seq: 1280
+  Country_129:
+    cntry_id: 129
+    cntry_name: Kyrgystan
+    cntry_code: KG
+    cntry_disp_seq: 1340
+  Country_130:
+    cntry_id: 130
+    cntry_name: Cambodia
+    cntry_code: KH
+    cntry_disp_seq: 450
+  Country_131:
+    cntry_id: 131
+    cntry_name: Kiribati
+    cntry_code: KI
+    cntry_disp_seq: 1290
+  Country_132:
+    cntry_id: 132
+    cntry_name: Comoros
+    cntry_code: KM
+    cntry_disp_seq: 580
+  Country_133:
+    cntry_id: 133
+    cntry_name: St. Kitts
+    cntry_code: KN
+    cntry_disp_seq: 2280
+  Country_134:
+    cntry_id: 134
+    cntry_name: Korea, North
+    cntry_code: KP
+    cntry_disp_seq: 1300
+  Country_135:
+    cntry_id: 135
+    cntry_name: Korea, South
+    cntry_code: KR
+    cntry_disp_seq: 1310
+  Country_136:
+    cntry_id: 136
+    cntry_name: Kosrae
+    cntry_code: KS
+    cntry_disp_seq: 1320
+  Country_137:
+    cntry_id: 137
+    cntry_name: Kuwait
+    cntry_code: KW
+    cntry_disp_seq: 1330
+  Country_138:
+    cntry_id: 138
+    cntry_name: Cayman Islands
+    cntry_code: KY
+    cntry_disp_seq: 490
+  Country_139:
+    cntry_id: 139
+    cntry_name: Kazakhstan
+    cntry_code: KZ
+    cntry_disp_seq: 1270
+  Country_140:
+    cntry_id: 140
+    cntry_name: Laos
+    cntry_code: LA
+    cntry_disp_seq: 1350
+  Country_141:
+    cntry_id: 141
+    cntry_name: Lebanon
+    cntry_code: LB
+    cntry_disp_seq: 1370
+  Country_142:
+    cntry_id: 142
+    cntry_name: St. Lucia
+    cntry_code: LC
+    cntry_disp_seq: 2290
+  Country_143:
+    cntry_id: 143
+    cntry_name: Liechtenstein
+    cntry_code: LI
+    cntry_disp_seq: 1410
+  Country_144:
+    cntry_id: 144
+    cntry_name: Sri Lanka
+    cntry_code: LK
+    cntry_disp_seq: 2210
+  Country_145:
+    cntry_id: 145
+    cntry_name: Liberia
+    cntry_code: LR
+    cntry_disp_seq: 1390
+  Country_146:
+    cntry_id: 146
+    cntry_name: Lesotho
+    cntry_code: LS
+    cntry_disp_seq: 1380
+  Country_147:
+    cntry_id: 147
+    cntry_name: Lithuania
+    cntry_code: LT
+    cntry_disp_seq: 1420
+  Country_148:
+    cntry_id: 148
+    cntry_name: Luxembourg
+    cntry_code: LU
+    cntry_disp_seq: 1430
+  Country_149:
+    cntry_id: 149
+    cntry_name: Libya
+    cntry_code: LY
+    cntry_disp_seq: 1400
+  Country_150:
+    cntry_id: 150
+    cntry_name: Mauritius
+    cntry_code: MB
+    cntry_disp_seq: 1560
+  Country_151:
+    cntry_id: 151
+    cntry_name: Monaco
+    cntry_code: MC
+    cntry_disp_seq: 1600
+  Country_152:
+    cntry_id: 152
+    cntry_name: Moldavia
+    cntry_code: MD
+    cntry_disp_seq: 1590
+  Country_153:
+    cntry_id: 153
+    cntry_name: Montenegro
+    cntry_code: ME
+    cntry_disp_seq: 1620
+  Country_154:
+    cntry_id: 154
+    cntry_name: Montserrat
+    cntry_code: MF
+    cntry_disp_seq: 1630
+  Country_155:
+    cntry_id: 155
+    cntry_name: Madagascar
+    cntry_code: MG
+    cntry_disp_seq: 1460
+  Country_156:
+    cntry_id: 156
+    cntry_name: Marshall Islands
+    cntry_code: MH
+    cntry_disp_seq: 1530
+  Country_157:
+    cntry_id: 157
+    cntry_name: Madeira Islands
+    cntry_code: MI
+    cntry_disp_seq: 1470
+  Country_158:
+    cntry_id: 158
+    cntry_name: Morocco
+    cntry_code: MJ
+    cntry_disp_seq: 1640
+  Country_159:
+    cntry_id: 159
+    cntry_name: Macedonia
+    cntry_code: MK
+    cntry_disp_seq: 1450
+  Country_160:
+    cntry_id: 160
+    cntry_name: Mali
+    cntry_code: ML
+    cntry_disp_seq: 1510
+  Country_161:
+    cntry_id: 161
+    cntry_name: St. Maarten
+    cntry_code: MN
+    cntry_disp_seq: 2300
+  Country_162:
+    cntry_id: 162
+    cntry_name: Macau
+    cntry_code: MO
+    cntry_disp_seq: 1440
+  Country_163:
+    cntry_id: 163
+    cntry_name: Saipan
+    cntry_code: MP
+    cntry_disp_seq: 2020
+  Country_164:
+    cntry_id: 164
+    cntry_name: Martinique
+    cntry_code: MQ
+    cntry_disp_seq: 1540
+  Country_165:
+    cntry_id: 165
+    cntry_name: Mauritania
+    cntry_code: MR
+    cntry_disp_seq: 1550
+  Country_166:
+    cntry_id: 166
+    cntry_name: Malta
+    cntry_code: MT
+    cntry_disp_seq: 1520
+  Country_167:
+    cntry_id: 167
+    cntry_name: Maldives
+    cntry_code: MV
+    cntry_disp_seq: 1500
+  Country_168:
+    cntry_id: 168
+    cntry_name: Malawi
+    cntry_code: MW
+    cntry_disp_seq: 1480
+  Country_169:
+    cntry_id: 169
+    cntry_name: Mexico
+    cntry_code: MX
+    cntry_disp_seq: 20
+  Country_170:
+    cntry_id: 170
+    cntry_name: Malaysia
+    cntry_code: MY
+    cntry_disp_seq: 1490
+  Country_171:
+    cntry_id: 171
+    cntry_name: Mozambique
+    cntry_code: MZ
+    cntry_disp_seq: 1650
+  Country_172:
+    cntry_id: 172
+    cntry_name: Nevis
+    cntry_code: N1
+    cntry_disp_seq: 1710
+  Country_173:
+    cntry_id: 173
+    cntry_name: Netherlands Antilles
+    cntry_code: NA
+    cntry_disp_seq: 1700
+  Country_174:
+    cntry_id: 174
+    cntry_name: Namibia
+    cntry_code: NB
+    cntry_disp_seq: 1660
+  Country_175:
+    cntry_id: 175
+    cntry_name: New Caledonia
+    cntry_code: NC
+    cntry_disp_seq: 1720
+  Country_176:
+    cntry_id: 176
+    cntry_name: Niue
+    cntry_code: ND
+    cntry_disp_seq: 1770
+  Country_177:
+    cntry_id: 177
+    cntry_name: Niger
+    cntry_code: NE
+    cntry_disp_seq: 1750
+  Country_178:
+    cntry_id: 178
+    cntry_name: Norfolk Islands
+    cntry_code: NF
+    cntry_disp_seq: 1780
+  Country_179:
+    cntry_id: 179
+    cntry_name: Nigeria
+    cntry_code: NG
+    cntry_disp_seq: 1760
+  Country_180:
+    cntry_id: 180
+    cntry_name: Nicaragua
+    cntry_code: NI
+    cntry_disp_seq: 1740
+  Country_181:
+    cntry_id: 181
+    cntry_name: Northern Mariana Islands
+    cntry_code: NM
+    cntry_disp_seq: 1790
+  Country_182:
+    cntry_id: 182
+    cntry_name: Norway
+    cntry_code: NO
+    cntry_disp_seq: 1800
+  Country_183:
+    cntry_id: 183
+    cntry_name: Nepal
+    cntry_code: NP
+    cntry_disp_seq: 1680
+  Country_184:
+    cntry_id: 184
+    cntry_name: Netherlands
+    cntry_code: NL
+    cntry_disp_seq: 1690
+  Country_185:
+    cntry_id: 185
+    cntry_name: Nauru
+    cntry_code: NU
+    cntry_disp_seq: 1670
+  Country_186:
+    cntry_id: 186
+    cntry_name: New Zealand
+    cntry_code: NZ
+    cntry_disp_seq: 1730
+  Country_187:
+    cntry_id: 187
+    cntry_name: Oman
+    cntry_code: OM
+    cntry_disp_seq: 1810
+  Country_188:
+    cntry_id: 188
+    cntry_name: Mongolian People's Republic
+    cntry_code: ON
+    cntry_disp_seq: 1610
+  Country_189:
+    cntry_id: 189
+    cntry_name: Somalia
+    cntry_code: OS
+    cntry_disp_seq: 2160
+  Country_190:
+    cntry_id: 190
+    cntry_name: Panama
+    cntry_code: PA
+    cntry_disp_seq: 1840
+  Country_191:
+    cntry_id: 191
+    cntry_name: Peru
+    cntry_code: PE
+    cntry_disp_seq: 1870
+  Country_192:
+    cntry_id: 192
+    cntry_name: French Polynesia
+    cntry_code: PF
+    cntry_disp_seq: 900
+  Country_193:
+    cntry_id: 193
+    cntry_name: Papua New Guinea
+    cntry_code: PG
+    cntry_disp_seq: 1850
+  Country_194:
+    cntry_id: 194
+    cntry_name: Philippines
+    cntry_code: PH
+    cntry_disp_seq: 1880
+  Country_195:
+    cntry_id: 195
+    cntry_name: Pakistan
+    cntry_code: PK
+    cntry_disp_seq: 1820
+  Country_196:
+    cntry_id: 196
+    cntry_name: Poland
+    cntry_code: PL
+    cntry_disp_seq: 1910
+  Country_197:
+    cntry_id: 197
+    cntry_name: St. Pierre &amp; Miquelon
+    cntry_code: PM
+    cntry_disp_seq: 2320
+  Country_198:
+    cntry_id: 198
+    cntry_name: Pitcairn Islands
+    cntry_code: PN
+    cntry_disp_seq: 1890
+  Country_199:
+    cntry_id: 199
+    cntry_name: Pohnpei
+    cntry_code: PO
+    cntry_disp_seq: 1900
+  Country_200:
+    cntry_id: 200
+    cntry_name: Ponape
+    cntry_code: PP
+    cntry_disp_seq: 1920
+  Country_201:
+    cntry_id: 201
+    cntry_name: Puerto Rico
+    cntry_code: PR
+    cntry_disp_seq: 1940
+  Country_202:
+    cntry_id: 202
+    cntry_name: Portugal
+    cntry_code: PT
+    cntry_disp_seq: 1930
+  Country_203:
+    cntry_id: 203
+    cntry_name: Palau
+    cntry_code: PW
+    cntry_disp_seq: 1830
+  Country_204:
+    cntry_id: 204
+    cntry_name: Paraguay
+    cntry_code: PY
+    cntry_disp_seq: 1860
+  Country_205:
+    cntry_id: 205
+    cntry_name: Qatar
+    cntry_code: QA
+    cntry_disp_seq: 1950
+  Country_206:
+    cntry_id: 206
+    cntry_name: Reunion
+    cntry_code: RE
+    cntry_disp_seq: 1960
+  Country_207:
+    cntry_id: 207
+    cntry_name: Greenland
+    cntry_code: RG
+    cntry_disp_seq: 990
+  Country_208:
+    cntry_id: 208
+    cntry_name: Romania
+    cntry_code: RO
+    cntry_disp_seq: 1970
+  Country_209:
+    cntry_id: 209
+    cntry_name: Rota
+    cntry_code: RT
+    cntry_disp_seq: 1980
+  Country_210:
+    cntry_id: 210
+    cntry_name: Russia
+    cntry_code: RU
+    cntry_disp_seq: 1990
+  Country_211:
+    cntry_id: 211
+    cntry_name: Rwanda
+    cntry_code: RW
+    cntry_disp_seq: 2000
+  Country_212:
+    cntry_id: 212
+    cntry_name: Sao Tome &amp; Principe
+    cntry_code: S1
+    cntry_disp_seq: 2050
+  Country_213:
+    cntry_id: 213
+    cntry_name: Saudi Arabia
+    cntry_code: SA
+    cntry_disp_seq: 2060
+  Country_214:
+    cntry_id: 214
+    cntry_name: Solomon Islands
+    cntry_code: SB
+    cntry_disp_seq: 2150
+  Country_215:
+    cntry_id: 215
+    cntry_name: Seychelles
+    cntry_code: SC
+    cntry_disp_seq: 2100
+  Country_216:
+    cntry_id: 216
+    cntry_name: Saba
+    cntry_code: SD
+    cntry_disp_seq: 2010
+  Country_217:
+    cntry_id: 217
+    cntry_name: Sweden
+    cntry_code: SE
+    cntry_disp_seq: 2390
+  Country_218:
+    cntry_id: 218
+    cntry_name: South Africa
+    cntry_code: SF
+    cntry_disp_seq: 2170
+  Country_219:
+    cntry_id: 219
+    cntry_name: Singapore
+    cntry_code: SG
+    cntry_disp_seq: 2120
+  Country_220:
+    cntry_id: 220
+    cntry_name: St. Helena
+    cntry_code: SH
+    cntry_disp_seq: 2260
+  Country_221:
+    cntry_id: 221
+    cntry_name: Slovenia
+    cntry_code: SI
+    cntry_disp_seq: 2140
+  Country_222:
+    cntry_id: 222
+    cntry_name: Serbia
+    cntry_code: SJ
+    cntry_disp_seq: 2090
+  Country_223:
+    cntry_id: 223
+    cntry_name: Slovak Republic
+    cntry_code: SK
+    cntry_disp_seq: 2130
+  Country_224:
+    cntry_id: 224
+    cntry_name: Sierra Leone
+    cntry_code: SL
+    cntry_disp_seq: 2110
+  Country_225:
+    cntry_id: 225
+    cntry_name: Samoa Usa
+    cntry_code: SM
+    cntry_disp_seq: 2030
+  Country_226:
+    cntry_id: 226
+    cntry_name: Senegal
+    cntry_code: SN
+    cntry_disp_seq: 2080
+  Country_227:
+    cntry_id: 227
+    cntry_name: San Marino
+    cntry_code: SO
+    cntry_disp_seq: 2040
+  Country_228:
+    cntry_id: 228
+    cntry_name: South Georgia &amp; South Sandwich Islan
+    cntry_code: SP
+    cntry_disp_seq: 2180
+  Country_229:
+    cntry_id: 229
+    cntry_name: Soviet Union
+    cntry_code: SQ
+    cntry_disp_seq: 2190
+  Country_230:
+    cntry_id: 230
+    cntry_name: Suriname
+    cntry_code: SR
+    cntry_disp_seq: 2360
+  Country_231:
+    cntry_id: 231
+    cntry_name: St. Christopher
+    cntry_code: SS
+    cntry_disp_seq: 2230
+  Country_232:
+    cntry_id: 232
+    cntry_name: Scotland
+    cntry_code: ST
+    cntry_disp_seq: 2070
+  Country_233:
+    cntry_id: 233
+    cntry_name: Latvia
+    cntry_code: SU
+    cntry_disp_seq: 1360
+  Country_234:
+    cntry_id: 234
+    cntry_name: El Salvador
+    cntry_code: SV
+    cntry_disp_seq: 770
+  Country_235:
+    cntry_id: 235
+    cntry_name: St. Martin
+    cntry_code: SW
+    cntry_disp_seq: 2310
+  Country_236:
+    cntry_id: 236
+    cntry_name: St. Croix
+    cntry_code: SX
+    cntry_disp_seq: 2240
+  Country_237:
+    cntry_id: 237
+    cntry_name: Syria
+    cntry_code: SY
+    cntry_disp_seq: 2410
+  Country_238:
+    cntry_id: 238
+    cntry_name: Swaziland
+    cntry_code: SZ
+    cntry_disp_seq: 2380
+  Country_239:
+    cntry_id: 239
+    cntry_name: Tahiti
+    cntry_code: TA
+    cntry_disp_seq: 2420
+  Country_240:
+    cntry_id: 240
+    cntry_name: Turks &amp; Caicos Islands
+    cntry_code: TC
+    cntry_disp_seq: 2580
+  Country_241:
+    cntry_id: 241
+    cntry_name: Chad
+    cntry_code: TD
+    cntry_disp_seq: 510
+  Country_242:
+    cntry_id: 242
+    cntry_name: French Southern Territories
+    cntry_code: TF
+    cntry_disp_seq: 910
+  Country_243:
+    cntry_id: 243
+    cntry_name: Togo
+    cntry_code: TG
+    cntry_disp_seq: 2480
+  Country_244:
+    cntry_id: 244
+    cntry_name: Thailand
+    cntry_code: TH
+    cntry_disp_seq: 2460
+  Country_245:
+    cntry_id: 245
+    cntry_name: Tinian
+    cntry_code: TI
+    cntry_disp_seq: 2470
+  Country_246:
+    cntry_id: 246
+    cntry_name: Tajikistan
+    cntry_code: TJ
+    cntry_disp_seq: 2440
+  Country_247:
+    cntry_id: 247
+    cntry_name: Tokelau
+    cntry_code: TK
+    cntry_disp_seq: 2490
+  Country_248:
+    cntry_id: 248
+    cntry_name: Tortola
+    cntry_code: TL
+    cntry_disp_seq: 2510
+  Country_249:
+    cntry_id: 249
+    cntry_name: Turkmenistan
+    cntry_code: TM
+    cntry_disp_seq: 2570
+  Country_250:
+    cntry_id: 250
+    cntry_name: Tunisia
+    cntry_code: TN
+    cntry_disp_seq: 2550
+  Country_251:
+    cntry_id: 251
+    cntry_name: Tonga
+    cntry_code: TO
+    cntry_disp_seq: 2500
+  Country_252:
+    cntry_id: 252
+    cntry_name: Turkey
+    cntry_code: TR
+    cntry_disp_seq: 2560
+  Country_253:
+    cntry_id: 253
+    cntry_name: Tristan Da Cunha
+    cntry_code: TS
+    cntry_disp_seq: 2530
+  Country_254:
+    cntry_id: 254
+    cntry_name: Trinidad &amp; Tobago
+    cntry_code: TT
+    cntry_disp_seq: 2520
+  Country_255:
+    cntry_id: 255
+    cntry_name: Truk
+    cntry_code: TU
+    cntry_disp_seq: 2540
+  Country_256:
+    cntry_id: 256
+    cntry_name: Tuvala
+    cntry_code: TV
+    cntry_disp_seq: 2590
+  Country_257:
+    cntry_id: 257
+    cntry_name: Taiwan
+    cntry_code: TW
+    cntry_disp_seq: 2430
+  Country_258:
+    cntry_id: 258
+    cntry_name: Tanzania
+    cntry_code: TZ
+    cntry_disp_seq: 2450
+  Country_259:
+    cntry_id: 259
+    cntry_name: Uganda
+    cntry_code: UG
+    cntry_disp_seq: 2630
+  Country_260:
+    cntry_id: 260
+    cntry_name: Union Island
+    cntry_code: UI
+    cntry_disp_seq: 2650
+  Country_261:
+    cntry_id: 261
+    cntry_name: United Kingdom
+    cntry_code: UK
+    cntry_disp_seq: 2670
+  Country_262:
+    cntry_id: 262
+    cntry_name: U.S. Minor Outlying Islands
+    cntry_code: UM
+    cntry_disp_seq: 2610
+  Country_263:
+    cntry_id: 263
+    cntry_name: Ukraine
+    cntry_code: UR
+    cntry_disp_seq: 2640
+  Country_264:
+    cntry_id: 264
+    cntry_name: United States
+    cntry_code: US
+    cntry_disp_seq: 10
+  Country_265:
+    cntry_id: 265
+    cntry_name: Tuvalu
+    cntry_code: UV
+    cntry_disp_seq: 2600
+  Country_266:
+    cntry_id: 266
+    cntry_name: Uruguay
+    cntry_code: UY
+    cntry_disp_seq: 2680
+  Country_267:
+    cntry_id: 267
+    cntry_name: Uzbekistan
+    cntry_code: UZ
+    cntry_disp_seq: 2690
+  Country_268:
+    cntry_id: 268
+    cntry_name: Vatican City State
+    cntry_code: VA
+    cntry_disp_seq: 2710
+  Country_269:
+    cntry_id: 269
+    cntry_name: St. Vincent &amp; Grenadines
+    cntry_code: VC
+    cntry_disp_seq: 2340
+  Country_270:
+    cntry_id: 270
+    cntry_name: Venezuela
+    cntry_code: VE
+    cntry_disp_seq: 2720
+  Country_271:
+    cntry_id: 271
+    cntry_name: British Virgin Islands
+    cntry_code: VG
+    cntry_disp_seq: 390
+  Country_272:
+    cntry_id: 272
+    cntry_name: U.S. Virgin Islands
+    cntry_code: VI
+    cntry_disp_seq: 2620
+  Country_273:
+    cntry_id: 273
+    cntry_name: Virgin Gorda
+    cntry_code: VR
+    cntry_disp_seq: 2740
+  Country_274:
+    cntry_id: 274
+    cntry_name: Vietnam
+    cntry_code: VT
+    cntry_disp_seq: 2730
+  Country_275:
+    cntry_id: 275
+    cntry_name: Vanuatu (New Hebrides)
+    cntry_code: VU
+    cntry_disp_seq: 2700
+  Country_276:
+    cntry_id: 276
+    cntry_name: Wake Island
+    cntry_code: WA
+    cntry_disp_seq: 2750
+  Country_277:
+    cntry_id: 277
+    cntry_name: Wallis &amp; Futuna Islands
+    cntry_code: WF
+    cntry_disp_seq: 2770
+  Country_278:
+    cntry_id: 278
+    cntry_name: West Indies
+    cntry_code: WI
+    cntry_disp_seq: 2780
+  Country_279:
+    cntry_id: 279
+    cntry_name: Western Samoa
+    cntry_code: WS
+    cntry_disp_seq: 2800
+  Country_280:
+    cntry_id: 280
+    cntry_name: Yap
+    cntry_code: YA
+    cntry_disp_seq: 2810
+  Country_281:
+    cntry_id: 281
+    cntry_name: Yemen
+    cntry_code: YE
+    cntry_disp_seq: 2820
+  Country_282:
+    cntry_id: 282
+    cntry_name: Mayotte
+    cntry_code: YT
+    cntry_disp_seq: 1570
+  Country_283:
+    cntry_id: 283
+    cntry_name: Yugoslavia
+    cntry_code: YU
+    cntry_disp_seq: 2830
+  Country_284:
+    cntry_id: 284
+    cntry_name: Zambia
+    cntry_code: ZM
+    cntry_disp_seq: 2850
+  Country_285:
+    cntry_id: 285
+    cntry_name: Zaire
+    cntry_code: ZR
+    cntry_disp_seq: 2840
+  Country_286:
+    cntry_id: 286
+    cntry_name: Zimbabwe (Rhodesia)
+    cntry_code: ZW
+    cntry_disp_seq: 2860

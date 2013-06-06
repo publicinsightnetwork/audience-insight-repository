@@ -1,0 +1,244 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Data::Dump qw( dump );
+use File::Find;
+use AIR2::DBManager;
+use AIR2::Config;
+use AIR2::Utils;
+use AIR2::PublicSrcResponseSet;
+use Path::Class;
+use Path::Class::File::Lockable;
+use Unix::PID::Tiny;
+use Getopt::Long;
+use Pod::Usage;
+use Lucy::Index::Indexer;
+
+=pod
+
+=head1 NAME
+
+prune-deleted - unlink old XML files, delete from index
+
+=head1 SYNOPSIS
+
+ prune-deleted --type=[typename] [opts]
+    --help
+    --debug
+    --quiet
+    --dry_run
+    --noindex
+
+ typename may be one of:
+   sources
+   responses
+   public_responses
+   projects
+   inquiries
+    
+=cut
+
+my $help    = 0;
+my $quiet   = 0;
+my $debug   = 0;
+my $dry_run = 0;
+my $noindex = 0;
+my $type;
+GetOptions(
+    'help'    => \$help,
+    'debug'   => \$debug,
+    'quiet'   => \$quiet,
+    'type=s'  => \$type,
+    'dry_run' => \$dry_run,
+    'noindex' => \$noindex,
+) or pod2usage(2);
+pod2usage(1) if $help;
+warn "missing --type\n" and pod2usage(2) unless $type;
+
+my %type_indexes = (
+    'sources'          => [ 'fuzzy_sources',   'sources' ],
+    'responses'        => [ 'fuzzy_responses', 'responses' ],
+    'projects'         => ['projects'],
+    'inquiries'        => ['inquiries'],
+    'public_responses' => ['public_responses'],
+);
+
+# set up paths
+my $base_dir = AIR2::Config::get_search_root();
+chdir $base_dir or die "can't chdir $base_dir: $!";
+my $xml_dir = AIR2::Config::get_search_xml->subdir($type);
+my @index_dirs;
+for my $t ( @{ $type_indexes{$type} } ) {
+    push @index_dirs, AIR2::Config::get_search_index->subdir($t);
+}
+
+logger("Starting $type prune check in $xml_dir\n");
+
+my $lock_file = Path::Class::File::Lockable->new( $xml_dir, 'indexer' );
+if ( $lock_file->locked ) {
+
+    # if the lock is old but no process is running
+    my $pidnum = $lock_file->lock_pid;
+    my $pid    = Unix::PID::Tiny->new;
+    if ( !$pid->is_pid_running($pidnum) ) {
+        logger("Found old lock file but no PID running for $pidnum\n");
+        logger("Removing lock file...\n");
+        $lock_file->unlock;
+    }
+    else {
+        logger("$lock_file is currently locked\n");
+        exit(0);
+    }
+}
+
+$lock_file->lock;
+
+my %sql_counts = (
+    'sources'   => 'select count(src_id) from source  where src_uuid=?',
+    'inquiries' => 'select count(inq_id) from inquiry where inq_uuid=?',
+    'projects'  => 'select count(prj_id) from project where prj_uuid=?',
+    'responses' =>
+        'select count(srs_id) from src_response_set where srs_uuid=?',
+    'public_responses' =>
+        'select count(srs_id) from src_response_set where srs_uuid=?',
+);
+
+my $db  = AIR2::DBManager->new();
+my $dbh = $db->retain_dbh();
+my $sql = $sql_counts{$type};
+my $sth = $dbh->prepare($sql);
+
+my $total_files = 0;
+my %to_delete;
+my %ok_to_keep;
+
+# public_responses are oddball because their presence
+# in search index is based on complex series of gates,
+# not simply existing in the db.
+# so we create lookup hash of all valid srs_uuid values
+# and use that whitelist to determine whether a file
+# should be pruned.
+if ( $type eq 'public_responses' ) {
+
+    my $sql = AIR2::PublicSrcResponseSet->get_sql_all();
+    $sql =~ s/select distinct\(srs_id\)/select distinct(srs_uuid)/;
+    my $sth = $dbh->prepare($sql);
+    $sth->execute;
+    while ( my $row = $sth->fetch ) {
+        $ok_to_keep{ $row->[0] }++;
+    }
+    $debug and dump \%ok_to_keep;
+}
+
+find( { wanted => \&wanted }, $xml_dir );
+
+if ($dry_run) {
+    for my $url ( keys %to_delete ) {
+        print "delete: $url\n";
+    }
+    printf( "Evaluated %d total files\n", $total_files );
+    printf( "Should delete %d files\n",   scalar( keys %to_delete ) );
+    printf( "ok_to_keep size = %d\n",     scalar( keys %ok_to_keep ) );
+    exit(0);
+}
+
+my @lucy;
+if ( !$noindex ) {
+    for my $index_dir (@index_dirs) {
+        push @lucy, Lucy::Index::Indexer->new( index => $index_dir );
+    }
+}
+for my $url ( keys %to_delete ) {
+    $quiet or logger("deleting $url\n");
+    if ( !$noindex ) {
+        for my $lucy (@lucy) {
+            $lucy->delete_by_term(
+                field => 'swishdocpath',
+                term  => $url,
+            );
+        }
+    }
+    my $file = $to_delete{$url};
+    if ( !-s $file and -s "$file.gz" ) {
+        $file = "$file.gz";
+    }
+    system("rm -f $file") and die "can't unlink $file: $!";
+}
+
+if ( !$noindex ) {
+    for my $lucy (@lucy) {
+        $lucy->commit();
+    }
+    for my $index_dir (@index_dirs) {
+        $index_dir->file('swish.xml')->touch;    # to trigger searcher re-open
+    }
+}
+$lock_file->unlock;
+
+logger("Finished $type prune check\n");
+
+############ local functions ############
+
+sub id_exists {
+    my $id = shift;
+    if ( %ok_to_keep and !exists $ok_to_keep{$id} ) {
+        return 0;
+    }
+    $sth->execute($id);
+    return $sth->fetch->[0];
+}
+
+sub wanted {
+    my $file = $File::Find::name;
+    if ( $file !~ m/\.xml/ ) {
+        return;
+    }
+
+    $debug and logger("check $file ...");
+
+    $total_files++;
+
+    my $id = $file;
+    $id =~ s/.*\///;
+    $id =~ s/\.xml(\.gz)?$//;
+
+    $debug and logger("id=$id\n");
+
+    if ( !id_exists($id) ) {
+        $file =~ s/\.gz$//;    # indexer strips this
+        $debug and logger("delete $id\n");
+        $to_delete{$id} = $file;
+    }
+    else {
+        $debug and logger("$id exists in db\n");
+    }
+
+}
+
+sub logger {
+    AIR2::Utils::logger(@_);
+}

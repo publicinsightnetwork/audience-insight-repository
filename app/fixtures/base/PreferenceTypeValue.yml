@@ -1,0 +1,73 @@
+PreferenceTypeValue:
+  PreferenceTypeValue_11:
+    ptv_id: 1
+    ptv_pt_id: 1
+    ptv_seq: 1
+    ptv_value: As often as you want
+    ptv_status: A
+  PreferenceTypeValue_12:
+    ptv_id: 2
+    ptv_pt_id: 1
+    ptv_seq: 2
+    ptv_value: No more than every 30 days
+    ptv_status: A
+  PreferenceTypeValue_13:
+    ptv_id: 3
+    ptv_pt_id: 1
+    ptv_seq: 3
+    ptv_value: No more than every 60 days
+    ptv_status: A
+  PreferenceTypeValue_14:
+    ptv_id: 4
+    ptv_pt_id: 1
+    ptv_seq: 4
+    ptv_value: No more than every 90 days
+    ptv_status: A
+  PreferenceTypeValue_21:
+    ptv_id: 5
+    ptv_pt_id: 2
+    ptv_seq: 1
+    ptv_value: Any topic
+    ptv_status: A
+  PreferenceTypeValue_22:
+    ptv_id: 6
+    ptv_pt_id: 2
+    ptv_seq: 2
+    ptv_value: Just about the areas mentioned in my profile
+    ptv_status: A
+  PreferenceTypeValue_23:
+    ptv_id: 7
+    ptv_pt_id: 2
+    ptv_seq: 3
+    ptv_value: Just about the story areas I selected
+    ptv_status: A
+  PreferenceTypeValue_31:
+    ptv_id: 8
+    ptv_pt_id: 3
+    ptv_seq: 1
+    ptv_value: Email
+    ptv_status: A
+  PreferenceTypeValue_32:
+    ptv_id: 9
+    ptv_pt_id: 3
+    ptv_seq: 2
+    ptv_value: Phone
+    ptv_status: A
+  PreferenceTypeValue_41:
+    ptv_id: 10
+    ptv_pt_id: 4
+    ptv_seq: 1
+    ptv_value: None
+    ptv_status: A
+  PreferenceTypeValue_42:
+    ptv_id: 11
+    ptv_pt_id: 4
+    ptv_seq: 2
+    ptv_value: en_US
+    ptv_status: A
+  PreferenceTypeValue_43:
+    ptv_id: 12
+    ptv_pt_id: 4
+    ptv_seq: 4
+    ptv_value: es_US
+    ptv_status: A

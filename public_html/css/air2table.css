@@ -1,0 +1,88 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+table.air2-tbl {
+    border-spacing: 0px;
+}
+table.air2-tbl td.header, table.air2-tbl th {
+    border-bottom: 5px solid #eee;
+    padding: 7px 10px;
+}
+table.air2-tbl td {
+    border-bottom: 1px solid #eee;
+    border-right: 1px solid #eee;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #fff;
+    padding: 7px 10px;
+}
+table.air2-tbl td:last-child {
+    border-right: 0px none;
+}
+table.air2-tbl .header, table.air2-tbl th {
+    color: #999;
+    font-size: 11px;
+}
+table.air2-tbl tr.row-alternate > td,
+table.air2-tbl tbody.row-alternate > tr > td {
+    background-color: #f5f5f5;
+}
+table.air2-tbl tbody.row-over > tr > td {
+    background-color: inherit;
+}
+table.air2-tbl td.fixw, table.air2-tbl th.fixw {
+    width: 1px; /* compress */
+}
+table.air2-tbl td.left, table.air2-tbl th.left {
+    text-align: left;
+}
+table.air2-tbl td.center, table.air2-tbl th.center {
+    text-align: center;
+}
+table.air2-tbl td.right, table.air2-tbl th.right {
+    text-align: right;
+}
+table.air2-tbl td.date, table.air2-tbl td.small {
+    color: #999;
+    font-size: 11px;
+}
+table.air2-tbl td.forcewrap {
+    max-width: 1px; /* doesn't actually compress */
+    word-wrap: break-word;
+}
+
+/* unset styles on inner tables */
+table.air2-tbl th th, table.air2-tbl td td {
+    border-bottom: inherit;
+    border-right: inherit;
+    border-top: inherit;
+    border-left: inherit;
+    padding: inherit;
+}
+
+table.air2-tbl td.air2-icon {
+    padding: 7px 5px;
+    padding-left: 25px;
+    vertical-align: top;
+    list-style: none outside none;
+    background-position: 5px;
+}
+

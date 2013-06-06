@@ -1,0 +1,52 @@
+User:
+  User_1:
+    user_id: '1'
+    user_username: AIR2SYSTEM
+    user_first_name: AIR2SYSTEM
+    user_last_name: AIR2SYSTEM
+    user_type: S
+    user_status: A
+  User_2:
+    user_id: '2'
+    user_username: Administrator
+    user_password: sCJnjs1hVH5E
+    user_first_name: Administrator
+    user_last_name: Administrator
+    user_type: S
+    user_status: A
+  User_3:
+    user_id: '3'
+    user_username: SYSADMIN
+    user_first_name: SYSADMIN
+    user_last_name: SYSADMIN
+    user_type: S
+    user_status: A
+  User_4:
+    user_id: '4'
+    user_username: 'Air1 Import Process'
+    user_first_name: 'Air1 Import Process'
+    user_last_name: 'Air1 Import Process'
+    user_type: S
+    user_status: A
+  User_5:
+    user_id: '5'
+    user_username: 'Air1 Expired User'
+    user_first_name: 'Air1 Expired User'
+    user_last_name: 'Air1 Expired User'
+    user_type: S
+    user_status: A
+  User_6:
+    user_id: '6'
+    user_username: 'Source2 Application'
+    user_first_name: 'Source2'
+    user_last_name: 'Application'
+    user_type: S
+    user_status: A
+  User_7:
+    user_id: '7'
+    user_username: 'Query Importer'
+    user_first_name: 'Query'
+    user_last_name: 'Importer'
+    user_type: S
+    user_status: A
+

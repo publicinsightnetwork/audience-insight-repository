@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book SYSTEM "http://docbook.org/xml/4.3/docbookx.dtd" [
+
+ <!ENTITY intro SYSTEM "intro.xml">
+ <!ENTITY search SYSTEM "search.xml">
+ <!ENTITY security SYSTEM "security.xml">
+ <!ENTITY crud SYSTEM "crud.xml">
+
+
+]>
+<book>
+ <bookinfo>
+  <releaseinfo>Draft version 0.1</releaseinfo>
+  <title>AIR2: Audience Insight Repository</title>
+  <author><firstname>Peter</firstname> <surname>Karman</surname> <email>pkarman at americanpublicmedia dot org</email></author>
+  <author><firstname>Ryan</firstname> <surname>Cavis</surname> <email>rcavis at americanpublicmedia dot org</email></author>
+ </bookinfo>
+  &intro;
+  &security;
+  &search;
+  &crud;
+  <glossary><title>Glossary</title></glossary>
+  <index><title>Index</title></index>
+</book>

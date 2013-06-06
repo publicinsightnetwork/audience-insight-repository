@@ -1,0 +1,8 @@
+Project:
+  Project_DEFAULT:
+    prj_id: 1
+    prj_name: sysdefault
+    prj_display_name: AIR2 System Default
+    prj_desc: AIR2 System Default Project
+    prj_status: A
+    prj_type: S

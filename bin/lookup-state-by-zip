@@ -1,0 +1,80 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Data::Dump qw( dump );
+use Getopt::Long;
+use Pod::Usage;
+use Rose::DateTime::Parser;
+use AIR2::SrcMailAddress;
+use AIR2::GeoLookup;
+use AIR2::State;
+
+# cache states for lookup ease
+my %states
+    = map { $_->state_name => $_->state_code } @{ AIR2::State->fetch_all };
+
+# find records that have ZIP but do not have state
+my $smadds = AIR2::SrcMailAddress->fetch_all_iterator(
+    query => [
+        '!smadd_zip'  => undef,
+        'smadd_state' => undef,
+    ]
+);
+
+my %zip_cache;
+my %skip;
+
+while ( my $smadd = $smadds->next ) {
+
+    my $zip = $smadd->smadd_zip;
+
+    next unless $zip =~ m/^(\d\d\d\d\d)(-\d\d\d\d)?$/;
+    my $zip5 = $1;
+
+    next if exists $skip{$zip5};
+
+    if ( !exists $zip_cache{$zip5} ) {
+
+        # look it up
+        my $geo = AIR2::GeoLookup->new( zip_code => $zip5, );
+        if ( !$geo->load_speculative ) {
+            warn "No geo_lookup for $zip5\n";
+            $skip{$zip5}++;
+            next;
+        }
+
+        $zip_cache{$zip5} = $geo;
+
+    }
+
+    # do not touch upd_dtim
+    $smadd->set_admin_update(1);
+    $smadd->smadd_state( $states{ $zip_cache{$zip5}->state } );
+    $smadd->save();
+
+}
+

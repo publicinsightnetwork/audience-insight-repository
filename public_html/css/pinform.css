@@ -1,0 +1,278 @@
+/*
+ *  PIN Form CSS
+ *  (c) 2013 American Public Media Group
+ *
+ */
+
+.pin-form {
+    max-width: 100%;
+}
+
+.pin-deadline {
+    margin: 2em 1em 1em;
+    font-style: italic;
+}
+
+.pin-the-fold {
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.pin-form fieldset {
+    border: 0;
+    margin: 0.75em 0;
+    padding: 0;
+    max-width: 520px;
+    width: 100%;
+}
+
+.pin-form fieldset legend {
+    display: none;
+}
+
+.pin-form label:first-child {
+    font-weight: bold;
+}
+
+.pin-form label {
+    display: block;
+    padding: 0 0 2px 6px;
+}
+
+.pin-question {
+    float: left;
+    margin: 10px 15px;
+}
+
+.pin-display {
+    float: left;
+    margin: 30px 15px 15px;
+}
+
+.pin-form input[type=text], .pin-form textarea {
+    color: #777;
+
+    border: 1px solid #ccc;
+    padding: 5px 7px;
+    width: 200px;
+
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;    
+
+    -moz-box-shadow:    inset 0 2px 3px rgba(0,0,0,.08);
+    -webkit-box-shadow: inset 0 2px 3px rgba(0,0,0,.08);
+    box-shadow:         inset 0 2px 3px rgba(0,0,0,.08);
+}
+
+.pin-form textarea {
+    min-height: 5.5em;
+    width: 100%;
+    max-width: 100%;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.pin-query-textarea {
+    width: 90%;
+    max-width: 480px;
+}
+
+.pin-query-menu {
+    min-height: 69px;
+}
+
+.pin-menu-multiple {
+    font-size: 14px;
+    height: auto;
+}
+
+.pin-query-menu select { 
+    font-size: 16px;
+
+    margin-left: 6px;
+    margin-top: 10px;
+}
+
+.pin-query-textarea, .pin-query-radio {
+    clear: both;
+}
+
+/* Option to place checkboxes and radio buttons inline */
+.pin-query-radio.pin-query-horizontal label.radio, 
+.pin-query-checkbox.pin-query-horizontal label {
+    display: inline;
+}
+
+.pin-query-radio input {
+    margin: -5px 6px 0 0;
+    vertical-align: middle;
+}
+
+.pin-query-checkbox input { 
+    margin: -4px 0 0; 
+    vertical-align: middle;
+}
+
+.pin-field-border {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    display: inline-block;
+    margin-top: 0.25em;
+    padding: 4px;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px; 
+}
+
+.pin-query-textarea .pin-field-border {
+    display: block;
+    width: 100%;
+}
+
+.pin-form .required {
+    color: #a51100;
+}
+
+.pin-query.street-address input {
+    width: 330px;
+}
+
+.pin-form .instructions {
+    color: #999;
+    font-weight: normal;
+}
+
+.pin-query-file input {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    margin-top: 10px;
+    padding: 10px;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px; 
+}
+
+.pin-submit {
+    color: #fff;
+    font-size: 18px;
+
+    background: #0099CC;
+    border: 0;
+    clear: left;
+    display: block;
+    margin: 1em 0 1em 1em;
+    padding: 5px 10px;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    text-shadow: 0 1px 1px rgba(25, 25, 50, 0.33);
+}
+
+.pin-submit:hover {
+    color: #fff;
+    cursor: pointer;
+
+    background: #0088BB;
+    border: 0;
+    padding: 5px 10px;
+}
+
+.pin-submit:active {
+    background: #2244EE;
+}
+
+#pin-legal-wrapper {
+    font-size: 12px;
+    line-height: 1.25;
+
+    padding: 1em;
+}
+
+#pin-legal-left {
+    float: left;
+    margin-right: 4%;
+    width: 48%;
+}
+
+#pin-legal-right {
+    float: left;
+    width: 48%;
+}
+
+.pin-error {
+    color: red;
+    font-weight: bold;
+    padding: 2px;
+    border: 1px solid red;
+}
+
+.pin-error-msg {
+    color: red;
+    border: 1px solid #eee;
+    padding: 2px;
+}
+
+.pin-warning {
+    border: 1px solid #aaa;
+    background-color: yellow;
+    padding: 10px;
+    margin: 10px;
+    font-weight: bold;
+}
+
+#pin-submit-errors {
+    padding: 1em;
+}
+
+/* Form constrained clearfix */
+.pin-form .clearfix:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Put questions into a single stack */
+.pin-form fieldset.public .pin-question,
+.pin-form fieldset.private .pin-question,
+.pin-form fieldset.public .pin-display,
+.pin-form fieldset.private .pin-display {
+    clear: left;
+}
+
+/* Responsive single stack */
+@media (max-width: 624px) {
+
+    .pin-query-textarea .pin-field-border {
+        max-width: 100%;
+    }
+    
+    #pin-legal-left, 
+    #pin-legal-right {
+        width: 100%; 
+        clear: left;
+        margin: 0;
+    }
+        
+}
+@media (max-width: 479px) {
+
+    .pin-question {
+        float: left;
+        clear: left;
+    }
+
+    #pin-legal-right {
+        margin-top: 1em;
+    }
+    
+    .pin-submit {
+        margin: 1em auto;
+    }
+
+}

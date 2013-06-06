@@ -1,0 +1,487 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* drawer style */
+#air2-drawer-wrap {
+    position: fixed;
+    bottom: 0;
+    visibility: hidden;
+    z-index: 1010;
+}
+#air2-drawer {
+    float: right;
+    color: #fff;
+    opacity: .95;
+}
+#air2-drawer .tab {
+    visibility: visible;
+    float: right;
+    height: 30px;
+    min-width: 130px;
+    background: #222;
+    margin-right: 20px;
+    opacity: 1;
+}
+#air2-drawer.collapsed .tab {
+    opacity: .8;
+    cursor: pointer;
+}
+#air2-drawer .tab .title {
+    background: url(img/icons/bin-metal.png) no-repeat;
+    padding-left: 16px;
+    margin: 7px 0 0 6px;
+    cursor: pointer;
+}
+#air2-drawer .tab .controls {
+    width: 60px;
+    float: right;
+    margin-top: 3px;
+}
+#air2-drawer .tab .controls .air2-btn button {
+    opacity: .5;
+    width: 16px;
+    padding: 2px 0;
+}
+#air2-drawer .tab .controls .air2-btn button.air2-icon-bin-small {
+    background-position: center bottom;
+    margin-top: 3px;
+}
+#air2-drawer .tab .controls .air2-btn button.air2-icon-bin-large {
+    width: 19px;
+}
+#air2-drawer .tab .controls .air2-btn.x-btn-pressed button {
+    opacity: 1;
+    background-color: transparent;
+    border-color: transparent;
+}
+#air2-drawer .tab .controls .air2-btn.x-btn-over button {
+    opacity: 1;
+    background-color: transparent;
+    border-color: transparent;
+}
+#air2-drawer.collapsed .tab .controls {
+    visibility: hidden;
+}
+#air2-drawer .body {
+    visibility: visible;
+    position: relative;
+    min-width: 280px;
+    background: #3d3d3d;
+    clear: both;
+    -moz-box-shadow: 0px 1px 10px rgba(0,0,0,0.3);
+	-webkit-box-shadow: 0px 1px 10px rgba(0,0,0,0.3);
+	box-shadow: 0px 1px 10px rgba(0,0,0,0.3);
+    margin-bottom: -9000px; /*initially off the page*/
+}
+#air2-drawer .body .info {
+    margin: 0 auto;
+    height: 0px;
+    overflow: hidden;
+}
+#air2-drawer .body .tbar {
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 5px 8px 2px 8px;
+}
+#air2-drawer .body .view {
+    margin: 0 auto;
+    overflow: hidden;
+}
+#air2-drawer .body .fbar {
+    margin: 0 auto;
+    overflow: hidden;  
+    padding: 5px 10px 10px;      
+}
+#air2-drawer .body .fbar .x-toolbar {
+    height: 28px;
+    padding-top: 4px;
+    margin-right: 2px;
+}
+#air2-drawer .body .fbar.x-toolbar .air2-btn {
+    margin-left: 4px;
+}
+#air2-drawer .air2-drawer-create.hover button {
+    background-color: #dddd00;
+    border-color: #999900;
+    color: #333;
+}
+#air2-drawer .fbar .x-tbar-loading {
+    background-image: url(img/icons/refresh-green.png) !important;
+}
+#air2-drawer .fbar .x-item-disabled .x-tbar-loading {
+    background-image: url(../lib/extjs/resources/images/default/grid/loading.gif) !important;
+}
+
+/* new bin form */
+#air2-drawer .air2-create-new {
+    padding: 0 8px;
+}
+#air2-drawer .air2-create-new label {
+    color: #fff;
+}
+#air2-drawer .air2-create-new .x-form-item {
+    padding: 5px 0;
+}
+#air2-drawer .air2-create-new h1 {
+    font-size: 18px;
+    padding: 8px 0;
+}
+
+/* edit bin form */
+#air2-drawer .air2-bin-edit {
+    padding: 6px 8px 0;
+}
+#air2-drawer .air2-bin-edit label {
+    color: #fff;
+}
+#air2-drawer .air2-bin-edit .x-form-item {
+    padding: 5px 0 0;
+}
+#air2-drawer .air2-bin-edit .x-plain-footer {
+    padding: 0px;
+}
+
+/* infobar style (single bin view) */
+#air2-drawer .air2-bin-infobar {
+    visibility: hidden;
+    padding: 5px 10px 0 10px;
+}
+#air2-drawer .air2-bin-infobar .top {
+    padding: 5px 0 5px 10px;
+    color: #fff;
+}
+#air2-drawer .air2-bin-infobar .top .title {
+    font-size: 16px;
+    font-weight: bold;
+}
+#air2-drawer .air2-bin-infobar .top .buttons {
+    float: right;
+    margin-top: -3px;
+}
+#air2-drawer .air2-bin-infobar .top .buttons .air2-btn {
+    display: inline-block;
+    padding-left: 3px;
+}
+#air2-drawer .air2-bin-infobar .delete-confirm {
+    background: #efefef;
+    border: 1px solid #666;
+    color: #444;
+    font-weight: bold;
+    padding: 4px;
+    position: absolute;
+    visibility: hidden;
+}
+#air2-drawer .air2-bin-infobar .delete-confirm a {
+    padding: 3px 0;
+    margin-right: 10px;
+}
+#air2-drawer .air2-bin-infobar .delete-confirm a.no {
+    color: #666;
+}
+
+
+/*#air2-drawer .air2-bin-infobar .editbin {
+    float: right;
+    margin: 2px;
+}
+#air2-drawer .air2-bin-infobar .title {
+    font-size: 15px;
+    font-weight: bold;
+    padding: 2px 0 5px;
+}*/
+#air2-drawer .air2-bin-infobar .sharing {
+    float: right;
+    padding: 2px 3px;
+    background: #E21E26;
+    color: #fff;
+    opacity: .8;
+}
+#air2-drawer .air2-bin-infobar .sharing.public {
+    background: #339900;
+}
+#air2-drawer .air2-bin-infobar .about {
+    background: #333;
+    color: #999;
+    font-size: 11px;
+    padding: 5px 10px;
+}
+#air2-drawer .air2-bin-infobar .about .meta {
+    padding-bottom: 5px;
+    font-weight: bold;
+}
+#air2-drawer .air2-bin-infobar .about .meta a {
+    color: #fff;
+}
+
+/* delete prompt */
+#air2-drawer .delete-prompt {
+    position: absolute;
+    background: #686868;
+    width: 220px;
+    top: 38px;
+    left: 136px;
+    visibility: hidden;
+    z-index: 200;
+}
+#air2-drawer .delete-prompt .dbody {
+    padding: 8px;
+}
+#air2-drawer .delete-prompt .dbody .msg {
+    padding: 6px 0 2px;
+    color: #f3f3f3;
+    font-weight: bold;
+}
+#air2-drawer .delete-prompt .buttons {
+    line-height: 36px;
+}
+
+/* styling for small binlist / all binlists */
+.air2-binlist .air2-drawer-bin {
+    border-bottom: 1px solid #555;
+    padding: 4px 8px 8px;
+    font-size: 12px;
+}
+.air2-binlist .air2-drawer-bin .name {
+    font-size: 13px;
+    font-weight: bold;
+    padding: 3px 5px;
+    margin-left: -5px;
+    color: #eee;
+    display: inline-block;
+}
+.air2-binlist .air2-drawer-bin .count {
+    color: #ccff99;
+    text-transform: uppercase;
+}
+.air2-binlist .air2-drawer-bin .last {
+    color: #999;
+}
+.air2-binlist .air2-drawer-bin .owner {
+    font-size: 13px;
+}
+.air2-binlist .bin-expand:hover {
+    background-color: #232323;
+    cursor: pointer;
+}
+.air2-binlist-small .air2-drawer-bin {
+    margin: 0 4px;
+}
+.air2-binlist-small .air2-empty {
+    top: 80px;
+}
+
+/* hovering */
+.air2-binlist .hover {
+    background-color: #666;
+}
+.air2-binlist .hover .name {
+    color: yellow;
+}
+.air2-binlist .hover .bin-expand:hover {
+    background-color: inherit;
+    cursor: inherit;
+}
+
+/* add-counts display */
+.air2-binlist .add-counts {
+    font-size: 10px;
+    border-bottom: 1px solid #222;
+    background-color: #333;
+    padding: 3px;
+    position: absolute;
+    visibility: hidden;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+
+/* large binlist */
+.air2-binlist-large .row-over {
+    cursor: pointer;
+    background-color: #555;
+}
+.air2-binlist-large .row-selected {
+    background-color: #666;
+}
+.air2-binlist-large .air2-empty {
+    top: 140px;
+}
+
+/* single binlist */
+.air2-binlist-single {
+    height: 100%;
+}
+.air2-binlist-single .air2-empty {
+    top: 60px;
+}
+.air2-binlist-single .row-over {
+    background-color: #555;
+}
+.air2-binlist-single .row-selected {
+    background-color: #666;
+}
+.air2-binlist-single > div {
+    padding: 0 10px;
+}
+.air2-binlist-single .source-item {
+    width: 100%;
+    border-spacing: 0px;
+}
+.air2-binlist-single .source-item td {
+    border-bottom: 1px solid #555;
+    line-height: 23px; /* 24px - 1 (for border) */
+    color: #999;
+    white-space: nowrap;
+}
+.air2-binlist-single .source-item a {
+    color: #fff;
+}
+.air2-binlist-single .source-item .index {
+    width: 25px;
+    padding-left: 4px;
+}
+.air2-binlist-single .source-item .name {
+    width: 154px;
+}
+.air2-binlist-single .source-item .email {
+    width: auto;
+}
+.air2-binlist-single .source-item .location {
+    width: 120px;
+}
+.air2-binlist-single .header th {
+    background: #333;
+    line-height: 24px;
+    font-weight: bold;
+    color: #ccc;
+}
+.air2-binlist-single .header th.asc span {
+    padding-right: 20px;
+    background: url(img/icons/arrow-090-medium.png) no-repeat right center;
+}
+.air2-binlist-single .header th.desc span {
+    padding-right: 20px;
+    background: url(img/icons/arrow-270-medium.png) no-repeat right center;
+}
+.air2-binlist-single .header .index {
+    width: 20px;
+}
+.air2-binlist-single .header .name,
+.air2-binlist-single .header .email,
+.air2-binlist-single .header .location {
+    cursor: pointer;
+}
+.air2-binlist-single .header .name:hover,
+.air2-binlist-single .header .email:hover,
+.air2-binlist-single .header .location:hover {
+    background-color: #222;
+    color: #fff;
+}
+
+
+.air2-drawer .status {
+    position: relative;
+}
+.air2-drawer .status {
+    position: absolute;
+    font-size: 12px;
+    bottom: 38px;
+    padding: 2px 7px;
+    right: 40px;
+    z-index: 99999;
+    background-color: #929292;
+    visibility: hidden;
+}
+
+.air2-drawer-notes .air2-editwin-body {
+    padding: 5px 10px 0px 10px;
+}
+.air2-drawer-notes .air2-editwin-body .x-box-item {
+    padding-bottom: 3px;
+}
+.air2-drawer-notes .air2-editwin-footer {
+    padding: 0 5px 2px 7px;
+}
+
+/*********************************************************/
+
+
+/* toolbars */
+#air2-drawer .x-toolbar {
+    background: transparent none;
+    border: none;
+}
+#air2-drawer .x-toolbar .xtb-sep {
+    opacity: .3;
+}
+#air2-drawer .x-toolbar .x-form-text {
+    background-image: url(img/icons/magnifier.png);
+    background-repeat: no-repeat;
+    background-position: right center;
+}
+
+/* toolbar button */
+.air2-drawer-btn {
+    margin-left: 6px;
+}
+.air2-drawer-btn td {
+    display: none;
+}
+.air2-drawer-btn td.x-btn-mc {
+    display: inherit;
+    background: none;
+}
+.air2-drawer-btn td.x-btn-mc em.x-btn-arrow {
+    background-color: #333;
+    background-image: url(img/icons/control-270-small.png);
+    padding: 2px 15px 2px 5px;
+    border-bottom: 1px solid #292929;
+    border-top: 1px solid #444;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.air2-drawer-btn td.x-btn-mc button.x-btn-text {
+    color: #999;
+    font-size: 10px;
+}
+.air2-drawer-btn.x-btn-over td.x-btn-mc button.x-btn-text {
+    color: #fff;
+}
+.air2-drawer-btn.x-btn-menu-active td.x-btn-mc button.x-btn-text {
+    color: #fff;
+}
+.air2-drawer-btn.x-btn-menu-active td.x-btn-mc em.x-btn-arrow {
+    background-image: url(img/icons/arrow-270-small.png);
+    background-color: #292929;
+}
+.air2-drawer-btn.x-item-disabled {
+    opacity: 0.2;
+    -moz-opacity: .2;
+    filter: alpha(opacity=20);
+}
+
+/* toolbar menu style */
+.air2-drawer-filters a.x-menu-item {
+    padding: 3px 10px 3px 22px;
+}
+

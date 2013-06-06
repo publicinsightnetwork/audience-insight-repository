@@ -1,0 +1,137 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful, 
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License 
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* csv upload modal window */
+.air2-upload-modal .nav-header {
+    background: none;
+    border: none;
+    padding: 10px;
+}
+.air2-upload-modal .nav-header .steps {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    color: #999;
+    padding: 5px 10px;
+    text-shadow: 0 1px 0 #fff;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+.air2-upload-modal .nav-header .steps span {
+    font-size: 14px;
+    padding: 0 3px;
+}
+.air2-upload-modal .nav-header .steps span.current {
+    font-weight: bold;
+    color: #333;
+}
+.air2-upload-modal .nav-buttons {
+    background: none;
+    border: none;
+    padding: 10px;
+}
+.air2-upload-modal .nav-buttons .air2-btn {
+    padding-right: 7px;
+}
+
+/* upload status widget */
+.air2-upload-modal .upload-status {
+    color: #777;
+    font-size: 13px;
+    padding: 5px 7px;
+}
+.air2-upload-modal .upload-status.warning {
+    background: #ffffc6 url(img/icons/exclamation-button.png) no-repeat 5px 50%;
+    border: 1px solid #e6E676;
+    color: #333;
+    padding: 5px 7px 5px 26px;
+}
+.air2-upload-modal .upload-status.working {
+    background: url('../lib/extjs/resources/images/default/tree/loading.gif') no-repeat 5px 50%;
+    border: 1px solid #e6E676;
+    color: #333;
+    padding: 5px 7px 5px 26px;
+}
+.air2-upload-modal .upload-status.success {
+    background: url(img/icons/tick.png) no-repeat 5px 50%;
+    color: #333;
+    padding: 5px 7px 5px 26px;
+}
+
+/* file upload form */
+.air2-upload-modal .upload-form {
+    padding: 0 10px;
+}
+.air2-upload-modal .upload-form .upload-wrap {
+    background: #f9f9f9;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    margin: 10px 0;
+    padding: 10px;
+    color: #777;
+}
+.air2-upload-modal .upload-form .upload-status {
+    margin-left: 10px;
+}
+.air2-upload-modal .upload-form .upload-progress {
+    width: 140px;
+    margin: 0 10px;
+}
+.air2-upload-modal .upload-form .upload-wrap.help {
+    background-image: url(img/icons/table-share.png);
+    background-repeat: no-repeat;
+    background-position: 5px 50%;
+    padding-left: 26px;
+}
+
+/* upload previewer */
+.air2-upload-modal .upload-preview {
+    padding: 0 10px;
+}
+.air2-upload-modal .upload-preview .upload-status.warning {
+    height: 20px;
+}
+.air2-upload-modal .upload-preview .file-info {
+    padding: 7px 2px;
+    color: #777;
+    font-size: 13px;
+    height: 18px;
+}
+
+/* upload importer/submitter */
+.air2-upload-modal .upload-import {
+    padding: 0 10px;
+}
+.air2-upload-modal .upload-import .upload-status {
+    margin-bottom: 10px;
+}
+.air2-upload-modal .upload-import .x-table-layout-cell {
+    vertical-align: top;
+    padding: 0 10px;
+}
+.air2-upload-modal .upload-import .x-form-invalid {
+    background-color: transparent;
+    /*border-color: #e6E676;*/
+}
+.air2-upload-modal .upload-import .x-form-invalid-icon {
+    display: none !important;
+}

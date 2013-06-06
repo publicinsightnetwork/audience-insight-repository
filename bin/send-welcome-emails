@@ -1,0 +1,305 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2013 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Carp;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+use Email::Stuff;
+use Template;
+use HTML::FormatText::Elinks;
+use Path::Class;
+use JSON;
+use Rose::DateTime::Parser;
+use Data::Dump qw( dump );
+use AIR2::Config;
+use AIR2::Source;
+use AIR2::SrcOrg;
+use AIR2::SearchUtils;
+
+=pod
+
+=head1 NAME
+
+send-welcome-emails - send welcome email to Sources who have been opted-in to an Organization
+
+=head1 SYNOPSIS
+
+ send-welcome-emails [opts] [--since 'yyyy-mm-dd hh:mm:ss']
+
+=head1 DESCRIPTION
+
+Checks the database for which new Sources need a welcome email and sends it. 
+
+=head1 OPTIONS
+
+=head2 since I<date>
+
+Limit the search to Sources created since I<date>. 
+
+=head2 log_activity
+
+Create a sact_activity record for each email sent.
+
+=head2 test I<newsroom>
+
+Will send the welcome email for I<newsroom> to every email address supplied
+as argument to the script. Example:
+
+ % perl bin/send-welcome-emails --test mpr you@mpr.org
+
+=cut
+
+my $WELCOME_SENT_ACTM_ID = 18;
+my ($help, $debug,  $dry_run,      $since,
+    $test, $LOCALE, $log_activity, $FROM,
+    $TO,   $last_run_file,
+);
+$last_run_file
+    = AIR2::Config->get_app_root->file('var/send-welcome-email-last-run');
+GetOptions(
+    help            => \$help,
+    debug           => \$debug,
+    'dry_run=i',    => \$dry_run,
+    'since=s'       => \$since,
+    'test=s'        => \$test,
+    'locale=s'      => \$LOCALE,
+    'log_activity'  => \$log_activity,
+    'from=s'        => \$FROM,
+    'to=s'          => \$TO,
+    'last_run_file' => \$last_run_file,
+) or pod2usage(2);
+
+if ($help) {
+    pod2usage(2);
+}
+
+# default variables
+$debug  = 0    unless defined $debug;
+$LOCALE = 'en' unless defined $LOCALE;
+
+$Rose::DB::Object::Manager::Debug = $debug;
+$Rose::DB::Object::Debug          = $debug;
+
+if ($test) {
+
+    # just send mail for $test newsroom to any email in @ARGV
+    for my $addr (@ARGV) {
+        my $org = AIR2::Organization->new( org_name => $test )->load;
+        my $source = AIR2::Source->new( src_username => $addr )->load;
+        send_welcome( $source, $org );
+    }
+
+    exit();
+}
+
+# parse any supplied timeframe
+my $updated_since;
+my $this_tz = AIR2::Config->get_tz();
+my $date_parser = Rose::DateTime::Parser->new( time_zone => $this_tz );
+if ($since) {
+    $updated_since = $date_parser->parse_date($since)
+        or die "invalid date $since";
+}
+elsif ( -s $last_run_file ) {
+    $debug and warn "last run: " . $last_run_file->slurp() . "\n";
+    $updated_since = $date_parser->parse_date( $last_run_file->stat->mtime );
+}
+else {
+    my $now = DateTime->now()->set_time_zone($this_tz);
+    $updated_since = $now->subtract( seconds => 15 * 60 );    # 15 minutes
+}
+
+$debug and warn "Considering sources with activity since $updated_since\n";
+
+# mark our start time, for next time
+$last_run_file->spew( scalar localtime() );
+
+# cache all orgs
+my $org_cache = AIR2::SearchUtils::all_organizations_by_id();
+
+# find affected sources and which orgs
+my $sos = AIR2::SrcOrg->fetch_all_iterator(
+    query => [
+        so_cre_dtim  => { ge => $updated_since },
+        so_status    => 'A',
+        so_home_flag => 1,
+    ],
+    require_objects => [qw( source )],
+    sort_by         => 'so_cre_dtim ASC',
+);
+
+my %seen_sources = ();
+SRCORG: while ( my $so = $sos->next ) {
+
+    my $source = $so->source;
+    my $org    = $org_cache->{ $so->so_org_id };
+
+    # skip any sources we've already seen in this run (could this happen?)
+    next SRCORG if $seen_sources{ $source->src_id }++;
+
+    # skip any who have somehow already gotten a welcome email to this org
+    my $welcome_sacts = $source->find_activities(
+        query => [
+            sact_actm_id => $WELCOME_SENT_ACTM_ID,
+            sact_xid     => $org->org_id,
+        ]
+    );
+
+    if (@$welcome_sacts) {
+        $debug
+            and warn
+            sprintf( "Found welcome sact already for source %s in org %s\n",
+            $source->src_username, $org->org_name );
+        next SRCORG;
+    }
+
+    send_welcome( $source, $org );
+}
+
+exit(0);
+
+##################################################################################
+
+sub log_activity {
+    my ( $source, $org ) = @_;
+    my $welcome_activity = AIR2::SrcActivity->new(
+        sact_actm_id  => $WELCOME_SENT_ACTM_ID,
+        sact_src_id   => $source->src_id,
+        sact_dtim     => time(),
+        sact_desc     => "Welcome email sent to {SRC}",
+        sact_ref_type => 'O',
+        sact_xid      => $org->org_id,
+    );
+
+    $welcome_activity->save();
+}
+
+sub send_email {
+    my %args = @_;
+    if ( $dry_run and $debug ) {
+        dump \%args;
+        return;
+    }
+    my $stuff = Email::Stuff->to( $args{to} )->from( $args{from} )
+        ->subject( $args{subject} );
+    if ( $args{text} ) {
+        $stuff->text_body( $args{text} );
+    }
+    if ( $args{html} ) {
+        $stuff->html_body( $args{html} );
+    }
+    my $result
+        = $stuff->using( 'SMTP', Host => AIR2::Config->get_smtp_host )->send;
+
+    $debug and warn $result;
+
+    return $result;
+}
+
+sub get_template_vars {
+
+    my ( $source, $org ) = @_;
+    my $newsroom = {
+        name     => $org->org_display_name,
+        email    => $org->org_email || 'support@publicinsightnetwork.org',
+        msg      => $org->org_welcome_msg,
+        uri      => ( $org->org_site_uri || $org->get_uri() ),
+        logo_uri => ( $org->org_logo_uri || $org->get_logo_uri() ),
+        location => $org->get_location(),
+    };
+
+    my @related;
+    my $rss = $org->get_rss_feed(5);
+INQ: for my $inq (@$rss) {
+
+        # skip any the source has already responded to
+        for my $srs ( @{ $source->response_sets } ) {
+            if ( $srs->srs_inq_id == $inq->inq_id ) {
+                $debug
+                    and warn "skipping already-responded to "
+                    . $inq->inq_uuid . "\n";
+                next INQ;
+            }
+        }
+
+        push @related, { title => $inq->get_title(), uri => $inq->get_uri() };
+    }
+
+    my $base_url = AIR2::Config::get_constant('AIR2_BASE_URL');
+    $base_url =~ s,/$,,;
+
+    my $vars = {
+        newsroom        => $newsroom,
+        related_queries => \@related,
+        pin             => {
+            asset_uri   => $base_url,
+            uri         => 'http://pinsight.org/',
+            terms_uri   => 'http://pinsight.org/terms',
+            privacy_uri => 'http://pinsight.org/privacy',
+        },
+        source => {
+            name  => $source->get_first_last_name,
+            email => $source->get_primary_email->sem_email,
+        },
+    };
+    $debug and dump $vars;
+    return $vars;
+}
+
+sub send_welcome {
+    my ( $source, $org ) = @_;
+    my $template_vars = get_template_vars( $source, $org );
+    my $html = '';
+    my $template_dir
+        = AIR2::Config::get_app_root()->subdir('templates')->resolve;
+    my $template = Template->new( { INCLUDE_PATH => "$template_dir", } );
+
+    $template->process( 'email/welcome.html.tt', $template_vars, \$html )
+        or die $template->error();
+
+    my $text = HTML::FormatText::Elinks->format_string($html);
+    my $to   = sprintf( "%s <%s>",
+        $template_vars->{source}->{name},
+        $template_vars->{source}->{email} );
+    my $from = sprintf( "%s <%s>",
+        $template_vars->{newsroom}->{name},
+        $template_vars->{newsroom}->{email} );
+    my $subject = sprintf( "Welcome to %s's Public Insight Network",
+        $template_vars->{newsroom}->{name} );
+    my $sent = send_email(
+        html    => $html,
+        text    => $text,
+        from    => ( $FROM || $from ),
+        to      => ( $TO || $to ),
+        subject => $subject,
+    );
+
+    if ( $sent && $log_activity ) {
+        log_activity( $source, $org );
+    }
+
+}
+

@@ -1,0 +1,63 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful, 
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License 
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* exporter form style */
+.air2-bin-exporter .air2-editwin-body {
+    padding: 8px 12px 8px 8px;
+}
+
+.air2-bin-exporter .x-form-item {
+    margin-bottom: 9px;
+}
+
+.air2-bin-exporter .x-form-item .bborder {
+    padding-bottom: 9px;
+    border-bottom: 1px solid #ddd;
+}
+
+.air2-bin-exporter .x-form-item .nospace {
+    margin-top: -9px;
+}
+
+.air2-bin-exporter .x-form-item .tborder {
+    padding-top: 9px;
+    border-top: 3px solid #eee;
+}
+
+.air2-bin-exporter .x-form-display-field.bin-display {
+    padding-top: 3px;
+}
+
+.air2-bin-exporter .x-form-item .working {
+    background-image: url(../lib/extjs/resources/images/default/grid/loading.gif);
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+    padding-left: 18px;
+    font-size: 14px;
+    color: #35f;
+}
+
+.air2-bin-exporter .x-plain-bbar {
+    padding-left: 100px;
+    padding-top: 10px;
+    border-top: 3px solid #eee;
+}

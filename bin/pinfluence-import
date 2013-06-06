@@ -1,0 +1,336 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Carp;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use lib "$FindBin::Bin/../lib/formbuilder";
+use Getopt::Long;
+use Pod::Usage;
+use AIR2::Config;
+use AIR2::User;
+use AIR2::Utils;
+use Formbuilder::CtbAskResponse;
+use JSON;
+use Email::Valid;
+use Data::Dump qw( dump );
+
+=pod
+
+=head1 NAME
+
+pinfluence-import - import PINfluence submissions as activities and annotations
+
+=head1 SYNOPSIS
+
+ pinfluence-import [opts]
+
+=head1 DESCRIPTION
+
+Port of the AIR1 tool.
+
+=head1 OPTIONS
+
+=head2 debug
+
+=head2 dry_run
+
+=head2 help
+
+=cut
+
+use constant 'PINFLUENCE_NEWSROOM_ID' => 59991;
+use constant 'PINFLUENCE_TITLE_ID'    => 59993;
+use constant 'PINFLUENCE_URL_ID'      => 59992;
+use constant 'PINFLUENCE_SHOW_ID'     => 60936;
+use constant 'PINFLUENCE_DESC_ID'     => 64040;
+use constant 'PINFLUENCE_DATE_ID'     => 59995;
+use constant 'PINFLUENCE_EMAILS_ID'   => 60937;
+use constant 'PINFLUENCE_ACTM_ID'     => 41;
+
+my $username = 'Query Importer';
+my ( $help, $debug, $dry_run, );
+GetOptions(
+    'username=s' => \$username,
+    help         => \$help,
+    debug        => \$debug,
+    dry_run      => \$dry_run,
+) or pod2usage(2);
+
+if ($help) {
+    pod2usage(2);
+}
+
+# explicitly map some that are not worded this way in AIR2
+# TODO change wording in FB or even better figure out how to load .json
+my %project_map = (
+    'Marketplace'                        => 'marketplace',
+    'Marketplace|Other'                  => 'marketplace',
+    'St. Louis Beacon/The Nine Network'  => 'beacon_nine',
+    'Center for Public Integrity'        => 'iwatchnews',
+    'American Public Media'              => 'apm',
+    'Center for Investigative Reporting' => 'cir',
+    'WNYC'                               => 'wnyc',
+    'MotherJones'                        => 'mother-jones',
+    'KQED'                               => 'KQED',
+    'MsMagazine'                         => 'ms-magazine',
+    'WDET'                               => 'wdet',
+    'Fronteras: The Changing America Desk' => 'Fronteras',
+    'New York Times'                     => 'the-new-york-times',
+);
+
+my $user = AIR2::User->new( user_username => $username )->load;
+$debug = 0 unless defined $debug;
+
+my $car_reader = Formbuilder::CtbAskResponse->fetch_all_iterator(
+    require_objects => ['ask'],
+    query           => [
+        'ask.ask_code' => '52445a850cb7',
+        car_air_export_status =>
+            $Formbuilder::CtbAskResponse::CAR_AIR_EXPORT_NO,
+    ]
+);
+
+if ($dry_run) {
+    print "dry_run mode on\n";
+    while ( my $car = $car_reader->next ) {
+        printf(
+            "Import submission %s from %s for query '%s' [%s]\n",
+            $car->car_id,
+            $car->contributor->ctb_email,
+            $car->ask->ask_external_title,
+            $car->ask->ask_code
+        );
+    }
+    exit(0);
+}
+
+CAR: while ( my $car = $car_reader->next ) {
+    my $analyst_email = $car->contributor->ctb_email;
+    my %story         = (
+        "url"      => "",
+        "date"     => "",
+        "title"    => "",
+        "desc"     => "",
+        "show"     => "",
+        "newsroom" => "",
+    );
+    my @emails;
+
+DTL: for my $dtl ( @{ $car->ctb_ask_response_dtls } ) {
+
+        #$debug and warn( dump( $dtl->column_value_pairs ) );
+
+        if ( $dtl->card_askq_id == PINFLUENCE_EMAILS_ID ) {
+            next CAR if !$dtl->card_value;
+            @emails = split( /[;,\s]+/, $dtl->card_value );
+        }
+        if ( $dtl->card_askq_id == PINFLUENCE_TITLE_ID ) {
+            $story{'title'} = $dtl->card_value;
+        }
+        if ( $dtl->card_askq_id == PINFLUENCE_URL_ID ) {
+            $story{'url'} = $dtl->card_value;
+        }
+        if ( $dtl->card_askq_id == PINFLUENCE_SHOW_ID ) {
+            $story{'show'} = $dtl->card_value || "";
+        }
+        if ( $dtl->card_askq_id == PINFLUENCE_DATE_ID ) {
+            $story{'date'} = $dtl->card_value;
+        }
+        if ( $dtl->card_askq_id == PINFLUENCE_DESC_ID ) {
+            $story{'desc'} = $dtl->card_value;
+        }
+        if ( $dtl->card_askq_id == PINFLUENCE_NEWSROOM_ID ) {
+            $story{'newsroom'} = $dtl->card_value;
+        }
+    }
+
+    $debug and dump( \%story );
+    $debug and dump( \@emails );
+
+    # do our best to find the project.
+    my $project;
+    if ( exists $project_map{ $story{newsroom} } ) {
+        $project = AIR2::Project->new(
+            prj_name => $project_map{ $story{newsroom} } )->load;
+    }
+    else {
+        my $projects = AIR2::Project->fetch_all(
+            logic => 'OR',
+            query => [
+                'prj_display_name' => $story{'newsroom'},
+                'prj_name'         => $story{'newsroom'},
+            ]
+        );
+        if ( @$projects != 1 ) {
+            $projects = AIR2::Project->fetch_all(
+                logic => 'OR',
+                query => [
+                    'prj_display_name' =>
+                        { like => '%' . $story{'newsroom'} . '%' },
+                    'prj_name' => { like => '%' . $story{'newsroom'} . '%' },
+                ]
+            );
+            if ( @$projects != 1 ) {
+                warn "No Project found for newsroom $story{newsroom}\n";
+                next CAR;
+            }
+            $project = $projects->[0];
+        }
+        else {
+            $project = $projects->[0];
+        }
+    }
+
+    $debug and warn "project==" . $project->prj_name . "\n";
+
+    # if we can't find the user with the email they provided,
+    # what todo?
+    my $user = AIR2::User->new( user_username => $analyst_email );
+    $user->load_speculative();
+    if ( !$user->user_id ) {
+
+        # try again with just mailbox name
+        my $mbox = $analyst_email;
+        $mbox =~ s/\@.+//;
+        $user = AIR2::User->fetch_all_iterator(
+            query => [ user_username => { like => "$mbox\%" } ] )->next;
+        if ($user) {
+            warn "Using user account "
+                . $user->user_username
+                . " instead of $analyst_email\n";
+        }
+        else {
+            warn "No User account for $analyst_email\n";
+            $user = AIR2::User->new( user_id => 4 )->load;
+
+            #next CAR;
+        }
+    }
+
+    my @to_save         = ();
+    my $eligible_emails = 0;
+    my %seen_src;
+EMAIL: foreach my $email (@emails) {
+        $email = lc($email);
+        if ( !defined $email or !length $email or $email =~ m/n.a/i ) {
+            next EMAIL;
+        }
+        $eligible_emails++;
+        if ( !Email::Valid->address($email) ) {
+            warn(
+                sprintf(
+                    "Invalid email address '%s' for PINfluence story '%s' (%s)\n",
+                    $email, $story{'title'}, $analyst_email
+                )
+            );
+            next EMAIL;
+        }
+        my $sem
+            = AIR2::SrcEmail->new( sem_email => $email )->load_speculative;
+        if ( !$sem or !$sem->sem_id ) {
+            warn(
+                sprintf(
+                    "No src_email record found for '%s' for PINfluence story '%s' (%s)\n",
+                    $email, $story{'title'}, $analyst_email
+                )
+            );
+            next EMAIL;
+        }
+        elsif ( $seen_src{ $sem->sem_src_id }++ ) {
+            warn "Duplicate PINfluence for source "
+                . $sem->source->src_username
+                . " ($email)";
+            next EMAIL;
+        }
+        my $sact = AIR2::SrcActivity->new();
+        my $sec  = $car->car_id;
+        $sact->sact_actm_id(PINFLUENCE_ACTM_ID);
+        $sact->sact_prj_id( $project->prj_id );
+        $sact->sact_desc( sprintf( "PINfluenced '%s'", $story{'title'} ) );
+        $sact->sact_notes( encode_json( \%story ) );
+        $sact->sact_xid( $car->car_id );
+        $sact->sact_dtim(
+            $story{'date'}
+                . sprintf( ' %02d:%02d:%02d',
+                ( $sec / ( 60 * 60 ) ) % 24,
+                ( $sec / 60 ) % 60,
+                $sec % 60 )
+        );
+        $sact->sact_src_id( $sem->sem_src_id );
+        $sact->sact_cre_user( $user->user_id );
+        $sact->sact_upd_user( $user->user_id );
+        $sact->sact_cre_dtim( time() );
+        $sact->sact_upd_dtim( time() );
+        $sact->set_admin_update(1);
+        push @to_save, $sact;
+
+        my $anno = AIR2::SrcAnnotation->new(
+            srcan_src_id   => $sem->sem_src_id,
+            srcan_cre_user => $user->user_id,
+            srcan_upd_user => $user->user_id,
+            srcan_cre_dtim => $sact->sact_dtim,
+            srcan_upd_dtim => $sact->sact_dtim,
+        );
+        $anno->srcan_value(
+            sprintf(
+                "PINfluence for:\nTitle: %s\nURL: %s\nDate: %s\nShow: %s\nDesc: %s\n",
+                $story{'title'}, $story{'url'}, $story{'date'},
+                $story{'show'},  $story{'desc'}
+            )
+        );
+        $anno->set_admin_update(1);
+        push @to_save, $anno;
+    }
+
+    # abort unless we can save activity for all emails
+    if ( scalar(@to_save) != ( $eligible_emails * 2 ) ) {
+        warn(
+            sprintf(
+                "CAR %s: Skipping activities for '%s' (%s) until email problems resolved.\n",
+                $car->car_id, $story{'title'}, $analyst_email
+            )
+        );
+        warn( dump( \@emails ) );
+        $car->car_air_export_status(
+            $Formbuilder::CtbAskResponse::CAR_AIR_EXPORT_ERROR);
+        $car->save();
+        next CAR;
+    }
+
+    for my $o (@to_save) {
+        eval { $o->save(); };
+        if ($@) {
+            die "Save failed: " . dump( $o->column_value_pairs );
+        }
+    }
+
+    # change flag on response to indicate success
+    $car->car_air_export_status(
+        $Formbuilder::CtbAskResponse::CAR_AIR_EXPORT_YES);
+
+    $car->save();
+
+}
+

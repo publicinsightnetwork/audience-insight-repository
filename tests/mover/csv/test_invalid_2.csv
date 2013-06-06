@@ -1,0 +1,9 @@
+MYUUID0020;   "this line is fine";   "2020-02-20 20:20:20"
+MYUUID0021;   "this line is fine";   "2020-02-20 20:20:20"
+"MYUUID_IS_TOO_LONG";   "this line not fine";   "2020-02-20 20:20:20"
+MYUUID0022;   "this
+line
+is
+fine";   "2020-02-20 20:20:20"
+MYUUID0023;   "this line is fine";   "WRONG TYPE"
+MYUUID0024;   "this line is fine";   "2020-02-20 20:20:20"

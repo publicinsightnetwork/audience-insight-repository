@@ -1,0 +1,162 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+# run the discriminator on a tank
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Data::Dump qw( dump );
+use Getopt::Long;
+use Pod::Usage;
+use AIR2::Tank;
+
+# ALWAYS use the master connection!
+$ENV{AIR2_USE_MASTER} = 1;
+
+=pod
+
+=head1 NAME
+
+run-discriminator
+
+=head1 SYNOPSIS
+
+ run-discriminator [TANK_ID|opts]
+ run-discriminator 1234
+ run-discriminator --tank_id=1234
+ run-discriminator --cleanup
+
+=head1 DESCRIPTION
+
+Can be called either to run on a single tank (just pass the tank_id), or
+called with the --cleanup option to search for tanks with NEW tank_sources.
+
+=head1 OPTIONS
+
+=head2 tank_id I<int>
+
+=head2 cleanup
+
+=head2 help
+
+=cut
+
+# get options
+my ( $help, $cleanup, $tryerrors, $tank_id );
+GetOptions(
+    'help'      => \$help,
+    'cleanup'   => \$cleanup,
+    'tryerrors' => \$tryerrors,
+    'tank_id=i' => \$tank_id,
+) or pod2usage(2);
+if ($help) {
+    pod2usage(2);
+}
+
+# if no tank_id or cleanup/tryerrors, check for a 'bare' tank_id
+unless ($tank_id || $cleanup || $tryerrors) {
+    my $num_args = $#ARGV + 1;
+    if ($num_args != 1 || !($ARGV[0] =~ m/^[0-9]+$/)) {
+        pod2usage("tank_id required");
+    }
+    $tank_id = $ARGV[0];
+}
+if ($tank_id && ($cleanup || $tryerrors)) {
+    pod2usage("Cannot run with BOTH tank_id and usage");
+}
+
+# get an array of tanks to run
+my @tanks_to_run;
+
+if ($tank_id) {
+    my $tank = AIR2::Tank->new( tank_id => $tank_id )->load_speculative;
+    unless ($tank && $tank->tank_name) {
+        pod2usage("Invalid tank_id($tank_id)");
+    }
+    push @tanks_to_run, $tank;
+}
+elsif ($cleanup) {
+    my @all_tids;
+    my $air2_dbh  = AIR2::DBManager->new()->get_write_handle->retain_dbh;
+
+    my $has_news = "select distinct tsrc_tank_id from tank_source where tsrc_status='N'";
+    my $all = $air2_dbh->selectall_arrayref( $has_news );
+    for my $row ( @{$all} ) { push @all_tids, $row->[0] };
+
+    # fetch actual tank objects
+    if (scalar @all_tids) {
+        my $tank_it = AIR2::Tank->fetch_all_iterator(
+            query        => [ tank_id => \@all_tids ],
+            sort_by      => 'tank_id asc',
+        );
+        while ( my $t = $tank_it->next ) { push @tanks_to_run, $t };
+    }
+}
+else {
+    my @all_tids;
+    my @all_tsrcids;
+    my $air2_dbh  = AIR2::DBManager->new()->get_write_handle->retain_dbh;
+    my $wh = "where tsrc_status='E'";
+
+    my $has_errs = "select distinct tsrc_tank_id, tsrc_id from tank_source $wh";
+    my $all = $air2_dbh->selectall_arrayref( $has_errs );
+    for my $row ( @{$all} ) {
+        push @all_tids, $row->[0];
+        push @all_tsrcids, $row->[1];
+    }
+
+    print "Retrying errors on tsrc_ids(".join(', ', @all_tsrcids).")\n";
+    my $upd_errs = "update tank_source set src_id=NULL,tsrc_status='N' $wh";
+    my $n = $air2_dbh->do( $upd_errs );
+
+    # fetch actual tank objects
+    if (scalar @all_tids) {
+        my $tank_it = AIR2::Tank->fetch_all_iterator(
+            query        => [ tank_id => \@all_tids ],
+            sort_by      => 'tank_id asc',
+        );
+        while ( my $t = $tank_it->next ) { push @tanks_to_run, $t };
+    }
+}
+
+
+# run it!
+for my $tank (@tanks_to_run) {
+    print "TANK(".$tank->tank_id.")->discriminate()\n";
+    my $report = $tank->discriminate();
+
+    unless ($report) {
+        my $stat = $tank->tank_status;
+        my $errs = $tank->tank_errors;
+        die "discriminate failed: tank_status - $stat, tank_errors - $errs";
+    }
+
+    dump($report);
+}
+
+# nothing to do
+unless (scalar @tanks_to_run) {
+    print "<No tanks found>\n";
+}

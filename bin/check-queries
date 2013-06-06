@@ -1,0 +1,202 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2013 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+use AIR2::Config;
+use AIR2::Inquiry;
+use AIR2::InquiryPublisher;
+
+# sanity checks to ensure query .html and .json artifact files
+# are in sync with the published status in the database.
+
+# some use cases:
+
+# 1) the files are older than inq_publish_dtim
+# 2) the files do not exist and inq_publish_dtim <= now
+# 3) the files are older than inq_expire_dtim
+# 4) the files do not exist
+#    and inq_expire_dtim <= now
+#    and inq_publish_dtim <= inq_expire_dtim
+#  i.e. published in the past, expired in the future
+
+my $query_file_root
+    = AIR2::Config::get_app_root()->subdir('public_html/querys');
+
+my %inquiry_cache;
+
+#################################################################
+# first, check all files
+#################################################################
+#print '=' x 70, "\nChecking published query files...\n";
+
+FILE: while ( my $file = $query_file_root->next ) {
+    next unless -f $file;
+
+    my ( $uuid, $format ) = ( $file->basename =~ m/^(.+?)\.(json|html)$/ );
+
+    # check both formats present
+    # if either is missing, nuke both
+    # and let the query get re-published below in db check
+    if ( $format eq 'html' ) {
+        if ( !-s $query_file_root->file("$uuid.json") ) {
+            warn "Missing matching .json for $uuid.$format\n";
+            $file->remove();
+            next FILE;
+        }
+    }
+    elsif ( $format eq 'json' ) {
+        if ( !-s $query_file_root->file("$uuid.html") ) {
+            warn "Missing matching .html for $uuid.$format\n";
+            $file->remove();
+            next FILE;
+        }
+    }
+
+    # only load the inquiry once
+    next if $inquiry_cache{$uuid}++;
+
+    my $inquiry = AIR2::Inquiry->new( inq_uuid => $uuid );
+    if ( !$inquiry->load_speculative ) {
+
+        # delete file
+        warn "Found artifact $file for $uuid but not in database";
+        $file->remove();
+        next FILE;
+    }
+
+    # if the query is not published, delete the file
+    if ( $inquiry->inq_status !~ m/^[AEL]/ ) {
+        warn sprintf( "%s is not published [%s], but $format exists\n",
+            $uuid, $inquiry->inq_status );
+        $file->remove();
+        next FILE;
+    }
+
+    my $file_mtime = $file->stat->mtime;
+    my $inq_publish_time
+        = $inquiry->inq_publish_dtim
+        ? $inquiry->inq_publish_dtim->epoch
+        : 0;
+    my $inq_expire_time
+        = $inquiry->inq_expire_dtim
+        ? $inquiry->inq_expire_dtim->epoch
+        : 0;
+
+    my $need_to_publish = 0;
+
+    # use case (1)
+    if ( $file_mtime < $inq_publish_time and $inq_publish_time <= time() ) {
+        warn sprintf(
+            "Need to publish $uuid: [%s] vs [%s]\n",
+            scalar localtime($file_mtime),
+            scalar localtime($inq_publish_time)
+        );
+        $need_to_publish = 1;
+        $inquiry->inq_status('A') if $inquiry->inq_status eq 'S';
+    }
+
+    # use case (3)
+    if ( $file_mtime < $inq_expire_time and $inq_expire_time <= time() ) {
+        warn sprintf(
+            "Need to expire $uuid: file mtime=[%s] vs expire_dtim=[%s]\n",
+            scalar localtime($file_mtime),
+            scalar localtime($inq_expire_time)
+        );
+        $need_to_publish = 1;
+        $inquiry->inq_status('E') if $inquiry->inq_status eq 'A';
+    }
+
+    if ($need_to_publish) {
+        AIR2::InquiryPublisher->publish($inquiry);
+        $inquiry->save();
+    }
+
+    # cache for next time
+    $inquiry_cache{$uuid} = $inquiry;
+}
+
+###########################################################
+# second, check all queries
+###########################################################
+#print '=' x 70, "\nChecking queries in database...\n";
+
+my $inquiries = AIR2::Inquiry->fetch_all_iterator(
+    query => [
+        inq_status => [qw( A L E S )],
+        inq_type   => [qw( F Q )],
+    ],
+);
+INQ: while ( my $inquiry = $inquiries->next ) {
+
+    my $uuid      = $inquiry->inq_uuid;
+    my $json_file = $query_file_root->file("$uuid.json");
+    my $html_file = $query_file_root->file("$uuid.html");
+
+    my $need_to_publish = 0;
+
+    # use case (2)
+    if (    $inquiry->inq_status =~ m/^[AS]$/
+        and $inquiry->inq_publish_dtim
+        and $inquiry->inq_publish_dtim->epoch <= time() )
+    {
+        if ( !-s $json_file ) {
+            warn "Missing .json for published $uuid\n";
+            $need_to_publish = 1;
+            $inquiry->inq_status('A') if $inquiry->inq_status eq 'S';
+        }
+        if ( !-s $html_file ) {
+            warn "Missing .html for published $uuid\n";
+            $need_to_publish = 1;
+            $inquiry->inq_status('A') if $inquiry->inq_status eq 'S';
+        }
+    }
+
+    # use case (4)
+    if (    $inquiry->inq_expire_dtim
+        and $inquiry->inq_expire_dtim->epoch <= time()
+        and $inquiry->inq_publish_dtim
+        and $inquiry->inq_publish_dtim->epoch
+        <= $inquiry->inq_expire_dtim->epoch )
+    {
+        if ( !-s $json_file ) {
+            warn "Need to expire .json for $uuid\n";
+            $need_to_publish = 1;
+            $inquiry->inq_status('A') if $inquiry->inq_status eq 'S';
+        }
+        if ( !-s $html_file ) {
+            warn "Need to expire .html for $uuid\n";
+            $need_to_publish = 1;
+            $inquiry->inq_status('A') if $inquiry->inq_status eq 'S';
+        }
+    }
+
+    if ($need_to_publish) {
+        AIR2::InquiryPublisher->publish($inquiry);
+        $inquiry->save();
+    }
+
+}

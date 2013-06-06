@@ -1,0 +1,464 @@
+FactValue:
+  FactValue_64:
+    fv_id: 1
+    fv_fact_id: 1
+    fv_parent_fv_id: null
+    fv_seq: '4'
+    fv_value: Male
+    fv_status: A
+  FactValue_65:
+    fv_id: 2
+    fv_fact_id: 1
+    fv_parent_fv_id: null
+    fv_seq: '8'
+    fv_value: Female
+    fv_status: A
+  FactValue_66:
+    fv_id: 3
+    fv_fact_id: 1
+    fv_parent_fv_id: null
+    fv_seq: '12'
+    fv_value: Transgender
+    fv_status: A
+  FactValue_67:
+    fv_id: 4
+    fv_fact_id: 1
+    fv_parent_fv_id: null
+    fv_seq: '1000'
+    fv_value: 'Non-mapped identity'
+    fv_status: A
+  FactValue_68:
+    fv_id: 5
+    fv_fact_id: 2
+    fv_parent_fv_id: null
+    fv_seq: '4'
+    fv_value: 'Less than $15000'
+    fv_status: A
+  FactValue_69:
+    fv_id: 6
+    fv_fact_id: 2
+    fv_parent_fv_id: null
+    fv_seq: '8'
+    fv_value: '$15000-$50000'
+    fv_status: A
+  FactValue_70:
+    fv_id: 7
+    fv_fact_id: 2
+    fv_parent_fv_id: null
+    fv_seq: '12'
+    fv_value: '$50001-$100000'
+    fv_status: A
+  FactValue_71:
+    fv_id: 8
+    fv_fact_id: 2
+    fv_parent_fv_id: null
+    fv_seq: '16'
+    fv_value: '$100001-$200000'
+    fv_status: A
+  FactValue_72:
+    fv_id: 9
+    fv_fact_id: 2
+    fv_parent_fv_id: null
+    fv_seq: '20'
+    fv_value: 'more than $200000'
+    fv_status: A
+  FactValue_73:
+    fv_id: 10
+    fv_fact_id: 3
+    fv_parent_fv_id: null
+    fv_seq: '5'
+    fv_value: 'High school degree / GED'
+    fv_status: A
+  FactValue_74:
+    fv_id: 11
+    fv_fact_id: 3
+    fv_parent_fv_id: null
+    fv_seq: '10'
+    fv_value: 'Associate degree'
+    fv_status: A
+  FactValue_75:
+    fv_id: 12
+    fv_fact_id: 3
+    fv_parent_fv_id: null
+    fv_seq: '15'
+    fv_value: 'Bachelor''s degree'
+    fv_status: A
+  FactValue_76:
+    fv_id: 13
+    fv_fact_id: 3
+    fv_parent_fv_id: null
+    fv_seq: '20'
+    fv_value: 'Master''s degree'
+    fv_status: A
+  FactValue_77:
+    fv_id: 14
+    fv_fact_id: 3
+    fv_parent_fv_id: null
+    fv_seq: '25'
+    fv_value: 'Doctoral degree'
+    fv_status: A
+  FactValue_78:
+    fv_id: 15
+    fv_fact_id: 3
+    fv_parent_fv_id: null
+    fv_seq: '30'
+    fv_value: 'Professional degree'
+    fv_status: A
+  FactValue_79:
+    fv_id: 16
+    fv_fact_id: 3
+    fv_parent_fv_id: null
+    fv_seq: '0'
+    fv_value: 'No high school degree'
+    fv_status: A
+  FactValue_79a:
+    fv_id: 17
+    fv_fact_id: 3
+    fv_parent_fv_id: null
+    fv_seq: '7'
+    fv_value: 'Some college'
+    fv_status: A
+  FactValue_80:
+    fv_id: 18
+    fv_fact_id: 4
+    fv_parent_fv_id: null
+    fv_seq: '0'
+    fv_value: Democratic
+    fv_status: A
+  FactValue_81:
+    fv_id: 19
+    fv_fact_id: 4
+    fv_parent_fv_id: null
+    fv_seq: '5'
+    fv_value: Green
+    fv_status: A
+  FactValue_82:
+    fv_id: 20
+    fv_fact_id: 4
+    fv_parent_fv_id: null
+    fv_seq: '10'
+    fv_value: Independent
+    fv_status: A
+  FactValue_83:
+    fv_id: 21
+    fv_fact_id: 4
+    fv_parent_fv_id: null
+    fv_seq: '15'
+    fv_value: Libertarian
+    fv_status: A
+  FactValue_84:
+    fv_id: 22
+    fv_fact_id: 4
+    fv_parent_fv_id: null
+    fv_seq: '20'
+    fv_value: Republican
+    fv_status: A
+  FactValue_84b:
+    fv_id: 23
+    fv_fact_id: 4
+    fv_parent_fv_id: null
+    fv_seq: '25'
+    fv_value: 'Unaffiliated'
+    fv_status: A
+  FactValue_85:
+    fv_id: 24
+    fv_fact_id: 4
+    fv_parent_fv_id: null
+    fv_seq: '100'
+    fv_value: Other
+    fv_status: A
+  FactValue_86:
+    fv_id: 25
+    fv_fact_id: 5
+    fv_parent_fv_id: null
+    fv_seq: '45'
+    fv_value: 'Middle Eastern'
+    fv_status: A
+  FactValue_87:
+    fv_id: 26
+    fv_fact_id: 5
+    fv_parent_fv_id: null
+    fv_seq: '10'
+    fv_value: Asian
+    fv_status: A
+  FactValue_88:
+    fv_id: 27
+    fv_fact_id: 5
+    fv_parent_fv_id: null
+    fv_seq: '20'
+    fv_value: Biracial/Multiracial
+    fv_status: A
+  FactValue_89:
+    fv_id: 28
+    fv_fact_id: 5
+    fv_parent_fv_id: null
+    fv_seq: '30'
+    fv_value: Black
+    fv_status: A
+  FactValue_90:
+    fv_id: 29
+    fv_fact_id: 5
+    fv_parent_fv_id: null
+    fv_seq: '40'
+    fv_value: Hispanic/Latino
+    fv_status: A
+  FactValue_91:
+    fv_id: 30
+    fv_fact_id: 5
+    fv_parent_fv_id: null
+    fv_seq: '50'
+    fv_value: 'Native American'
+    fv_status: A
+  FactValue_92:
+    fv_id: 31
+    fv_fact_id: 5
+    fv_parent_fv_id: null
+    fv_seq: '60'
+    fv_value: White
+    fv_status: A
+  FactValue_93:
+    fv_id: 32
+    fv_fact_id: 5
+    fv_parent_fv_id: null
+    fv_seq: '1000'
+    fv_value: 'Decline to state'
+    fv_status: A
+  FactValue_94:
+    fv_id: 33
+    fv_fact_id: 5
+    fv_parent_fv_id: null
+    fv_seq: '1010'
+    fv_value: 'Non mapped identity'
+    fv_status: A
+  FactValue_95:
+    fv_id: 34
+    fv_fact_id: 5
+    fv_parent_fv_id: null
+    fv_seq: '55'
+    fv_value: 'South Asian'
+    fv_status: A
+  FactValue_96:
+    fv_id: 35
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '10'
+    fv_value: 'African diasporic'
+    fv_status: A
+  FactValue_97:
+    fv_id: 36
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '20'
+    fv_value: Agnostic
+    fv_status: A
+  FactValue_98:
+    fv_id: 37
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '30'
+    fv_value: Atheist
+    fv_status: A
+  FactValue_99:
+    fv_id: 38
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '40'
+    fv_value: 'Baha''i'
+    fv_status: A
+  FactValue_100:
+    fv_id: 39
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '50'
+    fv_value: Buddhist
+    fv_status: A
+  FactValue_101:
+    fv_id: 40
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '60'
+    fv_value: 'Christian (Catholic)'
+    fv_status: A
+  FactValue_102:
+    fv_id: 41
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '70'
+    fv_value: 'Christian (Eastern Orthodox)'
+    fv_status: A
+  FactValue_103:
+    fv_id: 42
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '80'
+    fv_value: 'Christian (Protestant Evangelical)'
+    fv_status: A
+  FactValue_104:
+    fv_id: 43
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '90'
+    fv_value: 'Christian (Protestant)'
+    fv_status: A
+  FactValue_105:
+    fv_id: 44
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '100'
+    fv_value: Confucian
+    fv_status: A
+  FactValue_106:
+    fv_id: 45
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '110'
+    fv_value: Hindu
+    fv_status: A
+  FactValue_107:
+    fv_id: 46
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '120'
+    fv_value: Humanist
+    fv_status: A
+  FactValue_108:
+    fv_id: 47
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '130'
+    fv_value: Islam
+    fv_status: A
+  FactValue_109:
+    fv_id: 48
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '140'
+    fv_value: Jain
+    fv_status: A
+  FactValue_110:
+    fv_id: 49
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '150'
+    fv_value: Jewish
+    fv_status: A
+  FactValue_111:
+    fv_id: 50
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '160'
+    fv_value: Pagan
+    fv_status: A
+  FactValue_112:
+    fv_id: 51
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '170'
+    fv_value: Shinto
+    fv_status: A
+  FactValue_113:
+    fv_id: 52
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '180'
+    fv_value: Sikh
+    fv_status: A
+  FactValue_114:
+    fv_id: 53
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '200'
+    fv_value: Taoist
+    fv_status: A
+  FactValue_115:
+    fv_id: 54
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '210'
+    fv_value: Zoroastrian
+    fv_status: A
+  FactValue_116:
+    fv_id: 55
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '1000'
+    fv_value: 'Decline to state'
+    fv_status: A
+  FactValue_117:
+    fv_id: 56
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '1010'
+    fv_value: 'Non-mapped identity'
+    fv_status: A
+  FactValue_118:
+    fv_id: 57
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '75'
+    fv_value: 'Christian (non-specified)'
+    fv_status: A
+  FactValue_119:
+    fv_id: 58
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '900'
+    fv_value: Unaffiliated
+    fv_status: A
+  FactValue_120:
+    fv_id: 59
+    fv_fact_id: 9
+    fv_parent_fv_id: null
+    fv_seq: '10'
+    fv_value: Student
+    fv_status: A
+  FactValue_121:
+    fv_id: 60
+    fv_fact_id: 9
+    fv_parent_fv_id: null
+    fv_seq: '20'
+    fv_value: Employed
+    fv_status: A
+  FactValue_122:
+    fv_id: 61
+    fv_fact_id: 9
+    fv_parent_fv_id: null
+    fv_seq: '30'
+    fv_value: Unemployed
+    fv_status: A
+  FactValue_123:
+    fv_id: 62
+    fv_fact_id: 9
+    fv_parent_fv_id: null
+    fv_seq: '40'
+    fv_value: 'At Home Parent/Caregiver'
+    fv_status: A
+  FactValue_124:
+    fv_id: 63
+    fv_fact_id: 9
+    fv_parent_fv_id: null
+    fv_seq: '50'
+    fv_value: Retired
+    fv_status: A
+  FactValue_125:
+    fv_id: 64
+    fv_fact_id: 9
+    fv_parent_fv_id: null
+    fv_seq: '60'
+    fv_value: Volunteer
+    fv_status: A
+  FactValue_126:
+    fv_id: 65
+    fv_fact_id: 9
+    fv_parent_fv_id: null
+    fv_seq: '70'
+    fv_value: Disabled
+    fv_status: A
+  FactValue_127:
+    fv_id: 66
+    fv_fact_id: 6
+    fv_parent_fv_id: null
+    fv_seq: '910'
+    fv_value: Spiritual
+    fv_status: A
+

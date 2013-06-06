@@ -1,0 +1,131 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* Summary widget */
+.air2-bin-summary {
+    padding-bottom: 5px;
+}
+.air2-bin-summary ul {
+    display: inline-block;
+    background: #eee;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    padding: 5px 0;
+    margin: 7px 10px 0 0;
+}
+.air2-bin-summary ul li {
+    font-size: 10px;
+    text-transform: uppercase;
+    display: inline;
+    border: none !important;
+    padding: 5px 7px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}
+.air2-bin-summary li.green {
+    background: #339900;
+    color: #fff;
+}
+.air2-bin-summary li.red {
+    background: #E21E26;
+    color: #fff;
+}
+.air2-bin-summary .meta {
+    display: inline-block;
+    color: #999;
+    font-size: 12px;
+    background: #F1F1F1;
+    margin: 7px 0 0;
+    padding: 5px 7px;
+    text-shadow: 0 1px 0 #fff;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+/* Contents panel */
+.air2-bin-contents .r-excerpt > div {
+    padding-bottom: 7px;
+}
+.air2-bin-contents .r-excerpt > p {
+    margin-top: -2px;
+    padding: 0 0 7px 21px;
+    color: #999;
+}
+.air2-bin-contents .r-excerpt .notes b {
+    vertical-align: top;
+}
+.air2-bin-contents .air2-bin-notes.remote {
+    background: url(../lib/extjs/resources/images/default/grid/wait.gif) no-repeat;
+    padding: 9px;
+    display: inline-block;
+}
+.air2-bin-contents .x-form-text {
+    height: 20px;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+.air2-bin-contents .air2-btn .air2-icon-gear {
+    padding-left: 20px !important;
+}
+
+/* annotator/tagger dialogs */
+.air2-bin-tagger .air2-editwin-body,
+.air2-bin-annotator .air2-editwin-body {
+    padding: 8px 12px 8px 8px;
+}
+.air2-bin-tagger .x-form-item,
+.air2-bin-annotator .x-form-item {
+    margin-bottom: 9px;
+}
+.air2-bin-tagger .x-form-item .bborder,
+.air2-bin-annotator .x-form-item .bborder {
+    padding-bottom: 9px;
+    border-bottom: 1px solid #ddd;
+}
+.air2-bin-tagger .x-form-item .tborder,
+.air2-bin-annotator .x-form-item .tborder {
+    padding-top: 9px;
+    border-top: 3px solid #eee;
+}
+.air2-bin-tagger .x-form-display-field.bin-display,
+.air2-bin-annotator .x-form-display-field.bin-display {
+    padding-top: 3px;
+}
+.air2-bin-tagger .x-form-item .working,
+.air2-bin-annotator .x-form-item .working {
+    background-image: url(../lib/extjs/resources/images/default/grid/loading.gif);
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+    padding-left: 18px;
+    font-size: 14px;
+    color: #35f;
+}
+.air2-bin-tagger .x-plain-bbar,
+.air2-bin-annotator .x-plain-bbar {
+    padding-left: 78px;
+    padding-top: 10px;
+    border-top: 3px solid #eee;
+}

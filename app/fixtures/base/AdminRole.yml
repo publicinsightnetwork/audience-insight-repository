@@ -1,0 +1,36 @@
+AdminRole:
+  Role_1:
+    ar_id: 1
+    ar_code: 'X'
+    ar_name: 'Reporter'
+    ar_status: 'I'
+  Role_2:
+    ar_id: 2
+    ar_code: 'R'
+    ar_name: 'Reader'
+    ar_status: 'A'
+  Role_3:
+    ar_id: 3
+    ar_code: 'W'
+    ar_name: 'Writer'
+    ar_status: 'A'
+  Role_4:
+    ar_id: 4
+    ar_code: 'M'
+    ar_name: 'Manager'
+    ar_status: 'A'
+  Role_5:
+    ar_id: 5
+    ar_code: 'N'
+    ar_name: 'NoAccess'
+    ar_status: 'A'
+  Role_6:
+    ar_id: 6
+    ar_code: 'P'
+    ar_name: 'ReaderPlus'
+    ar_status: 'A'
+  Role_7:
+    ar_id: 7
+    ar_code: 'F'
+    ar_name: 'Basic PIN'
+    ar_status: 'A'

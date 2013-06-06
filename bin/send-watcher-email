@@ -1,0 +1,198 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2013 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Carp;
+use Data::Dump qw( dump );
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+use Email::Stuff;
+use AIR2::Config;
+use AIR2::Tank;
+use AIR2::Inquiry;
+use AIR2::SrcResponseSet;
+
+=pod
+
+=head1 NAME
+
+send-watcher-email - send email notifying Query watchers of new submissions
+
+=head1 SYNOPSIS
+
+ send-watcher-email --inq_uuid abcdef12345 --complete 3
+ send-watcher-email --inq_uuid abcdef12345 --complete 1 --srs_uuid abasdf123456
+ send-watcher-email --inq_uuid abcdef12345 --tank_uuid abc3456yui --conflict 2
+
+=head1 OPTIONS
+
+=over
+
+=item debug
+
+Turn on debug mode
+
+=item help
+
+Print this usage statement.
+
+=item from I<address>
+
+Use alternate From address.
+
+=item to I<address>
+
+Send to I<address> instead of watchers on I<inq_uuid>.
+
+=item conflict I<n>
+
+Number of conflicts to report.
+
+=item complete I<n>
+
+Number of complete submissions to report.
+
+=item tank_uuid I<uuid>
+
+Required if B<conflict> passed.
+
+=item inq_uuid I<uuid>
+
+Required Inquiry identifier.
+
+=back
+
+=cut
+
+my ($help,     $debug,    $dry_run,   $FROM,     $TO,
+    $conflict, $complete, $tank_uuid, $inq_uuid, $srs_uuid,
+);
+GetOptions(
+    help          => \$help,
+    debug         => \$debug,
+    'dry_run',    => \$dry_run,
+    'from=s'      => \$FROM,
+    'to=s'        => \$TO,
+    'confict=i'   => \$conflict,
+    'complete=i'  => \$complete,
+    'tank_uuid=s' => \$tank_uuid,
+    'inq_uuid=s'  => \$inq_uuid,
+    'srs_uuid=s'  => \$srs_uuid,
+) or pod2usage(2);
+
+if ($help) {
+    pod2usage(2);
+}
+
+if ( !$inq_uuid ) {
+    pod2usage(2);
+}
+if ( !$conflict and !$complete ) {
+    pod2usage(2);
+}
+if ( $conflict and !$tank_uuid ) {
+    pod2usage(2);
+}
+
+my $inquiry = AIR2::Inquiry->new( inq_uuid => $inq_uuid )->load;
+my $msg = '';
+my @users;
+my $subject = '';
+my $from    = sprintf( "%s <%s>",
+    'PIN Submissions',
+    'support@publicinsightnetwork.org' );
+
+if ($conflict) {
+
+    my $tank_url
+        = sprintf( "%simport/%s", AIR2::Config::get_base_url, $tank_uuid );
+
+    $subject = sprintf( "New conflicts for %s", $inquiry->inq_ext_title );
+    $msg
+        = sprintf(
+        "You have %d conflict(s) to resolve for query %s (%s) at:\n\n%s",
+        $conflict, $inq_uuid, $inquiry->inq_ext_title, $tank_url );
+
+    for my $author ( @{ $inquiry->authors } ) {
+        next unless $author->user->is_active();
+        push @users, $author->user;
+    }
+
+}
+elsif ($complete) {
+    my $url = '';
+    $subject = sprintf( "New Submissions for %s", $inquiry->inq_ext_title );
+
+    if ( !$srs_uuid ) {
+        $url = sprintf( "%sreader/query/%s",
+            AIR2::Config::get_base_url, $inq_uuid );
+    }
+    else {
+        $url = sprintf( "%ssubmission/%s",
+            AIR2::Config::get_base_url, $srs_uuid );
+    }
+    $msg
+        = sprintf(
+        "You have %d new submission(s) to read for query %s (%s) at:\n\n%s",
+        $complete, $inq_uuid, $inquiry->inq_ext_title, $url );
+
+    my %seen = ();
+    for my $u ( @{ $inquiry->watchers }, @{ $inquiry->authors } ) {
+        next unless $u->user->is_active();
+        next if $seen{ $u->user->user_id }++;
+        push @users, $u->user;
+    }
+
+}
+
+for my $user (@users) {
+    my $to = sprintf( qq/"%s" <%s>/,
+        $user->get_name_first_last,
+        $user->get_primary_email->uem_address );
+    my $sent = send_email(
+        msg     => $msg,
+        from    => ( $FROM || $from ),
+        to      => ( $TO || $to ),
+        subject => $subject,
+    );
+}
+
+sub send_email {
+    my %args = @_;
+    if ( $dry_run and $debug ) {
+        dump \%args;
+        return;
+    }
+    my $stuff = Email::Stuff->to( $args{to} )->from( $args{from} )
+        ->subject( $args{subject} )->text_body($msg);
+
+    my $result
+        = $stuff->using( 'SMTP', Host => AIR2::Config->get_smtp_host )->send;
+
+    $debug and warn $result;
+
+    return $result;
+}
+

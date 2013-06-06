@@ -1,0 +1,38 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use AIR2::Searcher::Sources;
+use DateTime;
+
+my $searcher = AIR2::Searcher::Sources->new();
+my $now      = DateTime->now;
+
+my $total        = 0;
+my $active_total = 0;
+printf( "%6s : %12s %12s\n", 'Date', 'Total', 'Active Total' );
+print '=' x 60, $/;
+for my $year ( 2003 .. $now->year ) {
+    for my $month ( 1 .. 12 ) {
+        my $created_month = sprintf( "%s%02d", $year, $month );
+        my $res = $searcher->do_search(
+            {   q        => "created_month=$created_month",
+                r        => 0,
+                auth_tkt => '{}'
+            }
+        );
+        my $n = $res->{total};
+        $total += $n;
+        $res = $searcher->do_search(
+            {   q => "created_month=$created_month and src_status=(a or e)",
+                r => 0,
+                auth_tkt => '{}'
+            }
+        );
+        $n = $res->{total};
+        $active_total += $n;
+        printf "%s : %12s %12s\n", $created_month, $total, $active_total;
+    }
+}
+

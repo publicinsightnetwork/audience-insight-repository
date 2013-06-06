@@ -1,0 +1,289 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Data::Dump qw( dump );
+use Getopt::Long;
+use Pod::Usage;
+use Rose::DateTime::Parser;
+use AIR2::Source;
+use AIR2::SrcStat;
+use File::Slurp;
+
+=pod
+
+=head1 NAME
+
+fact-stats - generate text report about AIR demographics (facts)
+
+=head1 SYNOPSIS
+
+ fact-stats [--start yyyy-mm-dd] [--end yyyy-mm-dd] [--help] [--debug] [--cached]
+
+=head1 OPTIONS
+
+=over
+
+=item start I<yyyy-mm-dd>
+
+Set the start date for the report. Default is PIN epoch (2003-01-01).
+
+=item end I<yyyy-mm-dd>
+
+Set the end date for the report. Default is 2011-04-01.
+
+=item help
+
+Print the usage statement.
+
+=item debug
+
+Oodles of stuff on stderr.
+
+=item cached
+
+Read the report data from a previous run. Useful in development when you are
+just trying to alter the output of the report and do not want to wait for the
+data to be collected.
+
+=cut
+
+my ( $help, $debug, $start, $end, $cached );
+
+# default date ranges
+$start = '2003-01-01';
+$end   = '2011-04-01';
+
+GetOptions(
+    help      => \$help,
+    debug     => \$debug,
+    'start=s' => \$start,
+    'end=s'   => \$end,
+    'cached'  => \$cached,
+) or pod2usage(2);
+
+if ($help) {
+    pod2usage(1);
+}
+
+my %fact_types = (
+    gender                => 'get_gender',
+    ethnicity             => 'get_ethnicity',
+    political_affiliation => 'get_pol_affiliation',
+    household_income      => 'get_income',
+    religion              => 'get_religion',
+    education_level       => 'get_edu_level',
+);
+my @types     = sort keys %fact_types;
+my @cats      = sort ( @types, 'dob', 'state', 'hasAcct', 'played_budget_hero', 'joined_from_budget_hero' );
+my $this_year = (localtime)[5] + 1900;
+
+sub get_year_range {
+    my $y = shift;
+    if ( $y =~ m/^\d\d\d\d$/ and $y < $this_year and $y > 1890 ) {
+        my $base = $y;
+        $base =~ s/\d$//;
+        return "${base}0-${base}9";
+    }
+}
+
+sub build_reports {
+
+    my $date_parser = Rose::DateTime::Parser->new();
+    my $start_dt = $date_parser->parse_date($start) or die "Bad date: $start";
+    my $end_dt = $date_parser->parse_date($end) or die "Bad date: $end";
+
+    # get all sources in the range
+    my $sources = AIR2::Source->fetch_all_iterator(
+        query => [
+            src_cre_dtim => { ge => $start_dt, },
+            src_cre_dtim => { le => $end_dt, },
+        ],
+    );
+
+    my %report;
+    my %org_report;
+
+    while ( my $source = $sources->next ) {
+        my $src_id = $source->src_id;
+        my $stats = AIR2::SrcStat->fetch_all_iterator(
+            query=> [
+                sstat_src_id => { eq => $src_id, },
+            ],    
+        );
+        my $played_budget_hero = 'No';
+        my $joined_from_budget_hero = 'No';
+        while (my $stat = $stats->next){
+            $played_budget_hero = $stat->sstat_bh_play_dtim ? 'Yes' : 'No';
+            $joined_from_budget_hero = $stat->sstat_bh_signup_dtim ? 'Yes' : 'No';
+        }
+        my $status
+            = $source->src_status =~ m/^(A|E|T)/
+            ? 'active'
+            : 'inactive';
+        my $addr       = $source->get_primary_address;
+        my $state      = defined $addr ? ( $addr->smadd_state || "" ) : "";
+        my $dob        = $source->get_dob;
+        my $year_range = get_year_range($dob) || "";
+        my $hasAcct    = $source->src_has_acct =~ m/^(Y)/ ? 'Yes' : 'No';
+
+        my $home_org = $source->get_primary_newsroom;
+        if ( !$home_org ) {
+            $debug and warn "No home org for " . $source->src_username;
+        }
+        else {
+            $org_report{ $home_org->org_display_name }->{$status}->{total}++;
+            $org_report{ $home_org->org_display_name }->{$status}->{dob}
+                ->{$year_range}++;
+            $org_report{ $home_org->org_display_name }->{$status}->{state}
+                ->{$state}++;
+            $org_report{ $home_org->org_display_name }->{$status}->{hasAcct}
+                ->{$hasAcct}++;
+            $org_report{ $home_org->org_display_name }->{$status}->{played_budget_hero}
+                ->{$played_budget_hero}++;
+            $org_report{ $home_org->org_display_name }->{$status}->{joined_from_budget_hero}
+                ->{$joined_from_budget_hero}++;
+        }
+
+        $report{$status}->{dob}->{$year_range}++;
+        $report{$status}->{state}->{$state}++;
+        $report{$status}->{hasAcct}->{$hasAcct}++;
+        $report{$status}->{played_budget_hero}->{$played_budget_hero}++;
+        $report{$status}->{joined_from_budget_hero}->{$joined_from_budget_hero}++;
+
+        for my $ft (@types) {
+            my $method = $fact_types{$ft} . '_mapped';
+            my $fact   = $source->$method;
+            if ($home_org) {
+                $org_report{ $home_org->org_display_name }->{$status}->{$ft}
+                    ->{$fact}++;
+
+            }
+            $report{$status}->{$ft}->{$fact}++;
+        }
+        $report{$status}->{total}++;
+
+    }
+
+    return ( \%report, \%org_report );
+}
+
+my ( $report, $org_report );
+
+if ($cached) {
+    $report     = do 'fact-stats-report.dmp';
+    $org_report = do 'fact-stats-orgreport.dmp';
+}
+else {
+    ( $report, $org_report ) = build_reports();
+    write_file( 'fact-stats-report.dmp',    dump $report );
+    write_file( 'fact-stats-orgreport.dmp', dump $org_report );
+}
+
+#dump $report;
+#dump $org_report;
+
+print '=' x 75, $/;
+print "AIR Fact Stats\n";
+print "$start - $end\n";
+print '=' x 75, $/;
+printf "%s (%s total)\n", "Active Sources", $report->{active}->{total};
+for my $ft (@cats) {
+    printf( " %s\n", $ft );
+    for my $v ( sort keys %{ $report->{active}->{$ft} } ) {
+        my $n    = $report->{active}->{$ft}->{$v};
+        my $perc = ( $n / $report->{active}->{total} ) * 100;
+        printf(
+            "  %40s : %6s%% (%s)\n",
+            ( $v || 'Unreported' ),
+            sprintf( "%.2f", $perc ), $n
+        );
+    }
+}
+
+print '=' x 75, $/;
+printf "%s (%s total)\n", "Inactive Sources", $report->{inactive}->{total};
+for my $ft (@cats) {
+    printf( " %s\n", $ft );
+    for my $v ( sort keys %{ $report->{inactive}->{$ft} } ) {
+        my $n    = $report->{inactive}->{$ft}->{$v};
+        my $perc = ( $n / $report->{inactive}->{total} ) * 100;
+        printf(
+            "  %40s : %6s%% (%s)\n",
+            ( $v || 'Unreported' ),
+            sprintf( "%.2f", $perc ), $n
+        );
+    }
+}
+
+print '=' x 75, $/;
+print "Active By Organization\n";
+for my $org_name ( sort keys %$org_report ) {
+    my $total = $org_report->{$org_name}->{active}->{total};
+    next if !$total;
+
+    print '-' x 75, $/;
+    printf " %s (%s total)\n", $org_name, $total;
+
+    for my $ft (@cats) {
+        printf( "  %s\n", $ft );
+        for my $v ( sort keys %{ $org_report->{$org_name}->{active}->{$ft} } )
+        {
+            my $n    = $org_report->{$org_name}->{active}->{$ft}->{$v};
+            my $perc = ( $n / $total ) * 100;
+            printf(
+                "   %40s : %6s%% (%s)\n",
+                ( $v || 'Unreported' ),
+                sprintf( "%.2f", $perc ), $n
+            );
+        }
+    }
+}
+
+print '=' x 75, $/;
+print "Inactive By Organization\n";
+print $org_report . "\n";
+for my $org_name ( sort keys %$org_report ) {
+    my $total = $org_report->{$org_name}->{inactive}->{total};
+    next if !$total;
+    print '-' x 75, $/;
+    printf " %s (%s total)\n", $org_name, $total;
+
+    for my $ft (@cats) {
+        printf( "  %s\n", $ft );
+        for my $v (
+            sort keys %{ $org_report->{$org_name}->{inactive}->{$ft} } )
+        {
+            my $n    = $org_report->{$org_name}->{inactive}->{$ft}->{$v};
+            my $perc = ( $n / $total ) * 100;
+            printf(
+                "   %40s : %6s%% (%s)\n",
+                ( $v || 'Unreported' ),
+                sprintf( "%.2f", $perc ), $n
+            );
+        }
+    }
+}

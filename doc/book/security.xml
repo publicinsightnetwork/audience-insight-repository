@@ -1,0 +1,213 @@
+<chapter id="air2-security">
+ <title>Security</title>
+ <para>
+ This chapter covers the two primary components of AIR2 security:
+ authentication and authorization. For the purposes of this chapter,
+ <glossterm>authentication</glossterm> addresses how AIR2 verifies
+ the current User's identity, and <glossterm>authorization</glossterm> 
+ addresses how AIR2 knows
+ whether to allow the current User to perform the actions s/he is
+ requesting.
+ </para>
+ <section id="air2-authentication">
+  <title>Authentication</title>
+  <para>
+  AIR2 uses an authentication system based on 
+  <ulink url="http://www.openfusion.com.au/labs/mod_auth_tkt/">mod_auth_tkt</ulink>.
+  AIR2 does not use the Apache C module by default, but nothing should prevent its use
+  in the future.
+  </para>
+  <para>
+  AIR2 stores usernames and encrypted passwords in the <literal>users</literal> table.
+  Upon successful match of the username/password credentials, an auth_tkt is
+  created and set as a cookie value for the HTTP response. The auth_tkt contains
+  the username, a timestamp, and an opaque data blob, which is an encrypted,
+  JSON-encoded string of relevant authorization data for the User.
+  </para>
+ </section>
+ <section id="air2-authorization">
+  <title>Authorization</title>
+  <para>
+  AIR2 follows a traditional web application model of <glossterm>Users</glossterm>,
+  <glossterm>Organizations</glossterm> (groups), and <glossterm>Roles</glossterm>.
+  A User may belong to multiple Organizations, but has only one Role per Organization.
+  The triplet of <literallayout>User + Organization + Role</literallayout> 
+  is used to determine the authorization level for any given HTTP request.
+  </para>
+  <para>
+  The following basic rules guide authorization for the application. For the purposes
+  of these rules, a <glossterm>data entity</glossterm> represents 
+  a <glossterm>User</glossterm>, 
+  <glossterm>Organization</glossterm>,
+  <glossterm>Source</glossterm>,
+  <glossterm>Inquiry</glossterm>,
+  <glossterm>Submission</glossterm>,
+  <glossterm>Project</glossterm>,
+  or any other object in the data model.
+  <orderedlist>
+   <listitem>
+    <para>
+    A User may not access a data entity unless the entity shares a relationship,
+    either directly or via inheritance from a parent entity,
+    with one or more of the same Organizations as the User.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+    Each Role has a unique numeric value that indicates its privilege relative to
+    every other Role.
+    Any given Role assumes all the privileges assigned to Roles with a lesser numeric value.
+    For example, a Reader with value 2 has less privilege than a Writer with value 3,
+    and the Writer can do anything that a Reader can do.
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+    A User may not act on a data entity unless the Role assigned to the relationship
+    between the User and the shared Organization is of sufficient privilege.
+    </para>
+   </listitem>
+  </orderedlist>
+
+  </para>
+  <section id="air2-authz-examples">
+   <title>Authorization Examples</title>
+   <para>
+   The examples in this section demonstrate how the authorization rules affect day-to-day use
+   of AIR2. Where relevant the appropriate HTTP code is shown in <literal>literal</literal>
+   text.
+   </para>
+   
+   <example>
+    <title>Viewing a Source profile</title>
+    <para>
+    Given that:
+     <orderedlist>
+      <listitem>
+       <para>Joe Smith is a Source in the APMG organization</para>
+      </listitem>
+      <listitem>
+       <para>Anne Jones is a User with Role <literal>Reader</literal>
+       in the APMG organization</para>
+      </listitem>
+     </orderedlist>
+     then Anne Jones may view (<literal>GET</literal>) the Joe Smith profile.
+    </para>
+   </example>
+   
+   <example>
+    <title>Editing a Source profile</title>
+    <para>
+    Given that:
+     <orderedlist>
+      <listitem>
+       <para>Mo Howard is a Source in the APMG organization</para>
+      </listitem>
+      <listitem>
+       <para>Larry Fine is a User with Role <literal>Writer</literal>
+       in the APMG organization</para>
+      </listitem>
+      <listitem>
+       <para>Curly Howard is a User with Role <literal>Reader</literal>
+       in the APMG organization</para>
+      </listitem>
+     </orderedlist>
+     then Larry Fine may modify (<literal>POST</literal> or <literal>PUT</literal>) 
+     the Mo Howard profile. Curly may not modify the Mo Howard profile.
+    </para>
+   </example>
+   
+   <example>
+    <title>Deleting a Source profile</title>
+    <para>
+    Given that:
+     <orderedlist>
+      <listitem>
+       <para>Mickey Mouse is a Source in the APMG organization</para>
+      </listitem>
+      <listitem>
+       <para>Donald Duck is a User with Role <literal>Writer</literal>
+       in the APMG organization</para>
+      </listitem>
+      <listitem>
+       <para>Minnie Mouse is a User with Role <literal>Administrator</literal>
+       in the APMG organization</para>
+      </listitem>
+     </orderedlist>
+     then Donald Duck may not delete (<literal>DELETE</literal>) the Mickey Mouse
+     profile. Minnie Mouse may delete (<literal>DELETE</literal>) the Mickey Mouse
+     profile.
+    </para>
+   </example>
+   
+   <example>
+    <title>Searching for Sources</title>
+    <para>
+    Given that:
+     <orderedlist>
+      <listitem>
+       <para>Spiderman is a Source in the OPB organization</para>
+      </listitem>
+      <listitem>
+       <para>Wonder Woman is a User with Role <literal>Reader</literal>
+       in the APMG organization</para>
+      </listitem>
+     </orderedlist>
+     then if Wonder Woman searches Sources for the term <literal>spiderman</literal>,
+     the results would not include Spiderman's record.
+    </para>
+   </example>
+   
+   <example>
+    <title>Searching for Submissions</title>
+    <para>
+    Given that:
+     <orderedlist>
+      <listitem>
+       <para>Larry Wall is a Source in the OPB organization</para>
+      </listitem>
+      <listitem>
+       <para>Dennis Ritchie is a Source in the APMG organization</para>
+      </listitem>
+      <listitem>
+       <para>Guido van Rossum is a User with Role <literal>Reader</literal>
+       in the APMG organization</para>
+      </listitem>
+     </orderedlist>
+     then if Guido searches Submissions for the terms <literal>larry or dennis</literal>,
+     the results would include Dennis Ritchie's submissions, but 
+     not include Larry Wall's submissions.
+    </para>
+   </example>
+   
+   <example>
+    <title>Exporting a Bin of Sources to Lyris</title>
+    <caution>
+     <para>This example needs review for policy consistency.</para>
+    </caution>
+    <para>
+    Given that:
+     <orderedlist>
+      <listitem>
+       <para>Anna is a Source in the OPB organization</para>
+      </listitem>
+      <listitem>
+       <para>Molly is a User with Role <literal>Reader</literal>
+       in the APMG organization and Role <literal>Writer</literal>
+       in the OPB organization
+       </para>
+      </listitem>
+      <listitem>
+       <para>Molly creates a Bin with Anna in it</para>
+      </listitem>
+     </orderedlist>
+     then if Molly attempts to export the Bin to the APMG mailing list
+     at Lyris, Anna's email address
+     will be excluded (filtered out) from the resulting segment.
+    </para>
+   </example>
+  
+  </section>
+ </section>
+ 
+</chapter>

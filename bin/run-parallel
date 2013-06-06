@@ -1,0 +1,158 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Parallel::ForkManager;
+use Getopt::Long;
+use Pod::Usage;
+use IPC::Cmd ();
+use Path::Class::File::Lockable;
+use Path::Class;
+use Data::Dump qw( dump );
+use Unix::PID::Tiny;
+use AIR2::Utils;
+
+=pod
+
+=head1 NAME
+
+run-parallel - run command in parallel across multiple hosts
+
+=head1 SUMMARY
+
+ run-parallel --cmd "echo" --host pijdev01='i am dev01' --host pijdev02='i am dev02'
+ 
+=head1 OPTIONS
+
+=cut
+
+my $MASTER_PID  = $$;
+my $help        = 0;
+my $debug       = 0;
+my $CMD         = "";
+my $lock        = 0;
+my $verbose     = 0;
+my $remote_user = 'pijuser';
+my %hosts;
+GetOptions(
+    'help'          => \$help,
+    'debug'         => \$debug,
+    'cmd=s'         => \$CMD,
+    'host=s'        => \%hosts,
+    'lock=s'        => \$lock,
+    'verbose'       => \$verbose,
+    'remote_user=s' => \$remote_user,
+) or pod2usage(2);
+pod2usage(1) if $help;
+pod2usage(1) if !%hosts;
+pod2usage(1) if !$CMD;
+
+my %kids;
+for my $h ( keys %hosts ) {
+    my $opt = $hosts{$h};
+    $debug and print "$h => $opt\n";
+    $kids{$h} = sprintf( "%s %s", $CMD, $opt );
+}
+
+my @args = @ARGV;
+
+# get lock on entire process on master host, since that
+# is the definitive modified_since time
+my $lock_file;
+if ($lock) {
+    $lock_file = Path::Class::File::Lockable->new($lock);
+    if ( $lock_file->locked ) {
+        my $pidnum = $lock_file->lock_pid;
+        my $pid    = Unix::PID::Tiny->new;
+        if ( !$pid->is_pid_running($pidnum) ) {
+            AIR2::Utils::logger(
+                "Found old lock file but no PID running for $pidnum\n");
+            AIR2::Utils::logger("Removing lock file...\n");
+            $lock_file->unlock;
+        }
+        else {
+            AIR2::Utils::logger("$0 is currently locked\n");
+            exit 0;    # TODO is this an error or not?
+        }
+    }
+    $lock_file->lock;
+}
+
+my $pm = Parallel::ForkManager->new( scalar keys %kids );
+my %PIDS;
+
+$pm->run_on_finish(
+    sub {
+        my ( $pid, $exit_code, $ident, $exit_signal, $core_dump, $buf ) = @_;
+        $debug and print "$ident $pid exited with $exit_code\n";
+        if ( defined($buf) ) {
+            for (@$buf) {
+                $debug and print "$ident: $_";
+            }
+        }
+        else
+        { # problems occuring during storage or retrieval will throw a warning
+            print qq|No message received from child process $pid!\n|;
+        }
+    }
+);
+
+$pm->run_on_start(
+    sub {
+        my ( $pid, $ident ) = @_;
+        $debug and print "** $ident started, pid: $pid\n";
+        $PIDS{$pid} = $ident;
+    }
+);
+
+my @running;
+for my $host ( sort keys %kids ) {
+    my $cmd = $kids{$host};
+    $pm->start($host) and next;
+
+    # this code runs in each child
+    my $buf = run_cmd(
+        sprintf(
+            qq(ssh  $remote_user@%s "%s"),
+            $host, $cmd . join( " ", @args )
+        )
+    );
+
+    $pm->finish( 0, $buf );
+}
+$pm->wait_all_children;
+$lock_file->unlock if $lock_file;
+
+sub run_cmd {
+    my $cmd = shift;
+    my ( $success, $error_code, $full_buf, $stdout_buf, $stderr_buf )
+        = IPC::Cmd::run( command => $cmd, verbose => $verbose );
+
+    if ( !$success ) {
+        warn "$cmd failed with [$error_code]: " . join( "\n", @$stderr_buf );
+    }
+    return $full_buf;
+}
+

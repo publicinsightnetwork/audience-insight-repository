@@ -1,0 +1,118 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* create modal */
+.air2-outcome-create form.x-form {
+    overflow-y: scroll;
+}
+.air2-outcome-create form.x-form > .x-form-item {
+    margin-left: 11px;
+}
+.air2-outcome form.x-form > .x-form-item {
+    margin-left: 11px;
+}
+.air2-outcome-create .x-plain-bbar {
+    padding-top: 2px;
+    border-top: 1px solid #eee;
+}
+
+/* pinfluence page table */
+.air2-outcome table.outcome-row td.label {
+    font-weight: bold;
+    vertical-align: top;
+    width: 90px;
+    padding: 5px 10px;
+}
+.air2-outcome table.outcome-row td.value {
+    padding: 5px 10px;
+}
+.air2-outcome table.outcome-row tr.break > td {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 9px;
+    margin-bottom: 9px;
+}
+.air2-outcome table.outcome-row .status {
+    padding: 3px 4px;
+}
+.air2-outcome table.outcome-row ul.survey li {
+    padding: 2px 0 2px 17px;
+}
+.air2-outcome table.outcome-row ul.survey li.checked {
+    background: url(img/icons/ui-check-box.png) no-repeat 0 50%;
+}
+
+
+/* read-only panels */
+.air2-outcome.air2-editwin .outcome-row {
+    border-bottom: 1px dotted #ddd;
+    padding: 10px 10px 10px 20px;
+}
+.air2-outcome .outcome-row .title {
+    font-size: 14px;
+    font-weight: normal;
+    padding: 0 0 10px;
+}
+.air2-outcome .outcome-row .link {
+    padding: 3px 0;
+}
+.air2-outcome .outcome-row .date {
+    float: none;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+.air2-outcome .outcome-row .teaser {
+    color: #666;
+    font-style: normal;
+}
+.air2-outcome .outcome-row .meta {
+    color: #999;
+    font-size: 11px;
+    margin: 14px 0 7px;
+}
+.air2-outcome .outcome-row .datewho {
+    background: #F1F1F1;
+    margin-right: 10px;
+    padding: 5px 7px;
+    text-shadow: 0 1px 0 #fff;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}
+.air2-outcome .outcome-row .status-label {
+    background: #F1F1F1;
+    padding: 5px 7px;
+}
+.air2-outcome .outcome-row .status {
+    background: #E21E26;
+    padding: 5px 7px;
+    color: #fff;
+}
+.air2-outcome .outcome-row .status.feedyes {
+    background: #339900;
+}
+.air2-outcome .outcome-row .status.feedno {
+    background: #339900;
+}
+
+.air2-src-outcome .source-row tr.empty {
+    display: none;
+}
