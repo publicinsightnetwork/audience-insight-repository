@@ -1,4 +1,3 @@
-
 AIR2
 ====
 
@@ -36,7 +35,7 @@ AIR2 runs on a standard LAMP stack, with a little bit of Perl to spice things up
 Installation
 ------------
 
-To install AIR2, place the code somewhere in your Unix filesystem.  Then create a symlink from your webserver's DocuementRoot directory to `public_html`.
+To install AIR2, place the code somewhere in your Unix filesystem.  Then create a symlink from your webserver's DocumentRoot directory to `public_html`.
 
     ln -s ~/code/AIR2/public_html /var/www/air2
 
