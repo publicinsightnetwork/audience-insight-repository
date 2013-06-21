@@ -402,7 +402,7 @@ AIR2.Bin.Exporter = function (cfg) {
         emptyText: 'Search Queries',
         listEmptyText: '<div style="padding:4px 8px">No Queries Found</div>',
         formatComboListItem: function (v) {
-            return v.inq_title;
+            return v.inq_ext_title;
         },
         listeners: {
             beforequery: function (opts) {

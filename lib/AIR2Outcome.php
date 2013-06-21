@@ -48,9 +48,6 @@ abstract class AIR2Outcome {
         $q = "select count(*) from src_outcome where sout_out_id=? and sout_src_id in ($s)";
         $stats['duplicate'] += $conn->fetchOne($q, array($outcome->out_id), 0);
 
-        Carper::carp($type);
-        Carper::carp($where);
-
         // insert
         $user_id = $outcome->UpdUser->user_id;
         $s = "select ?, src_id, ?, ?, ?, ?, ? from source $where";
@@ -59,6 +56,40 @@ abstract class AIR2Outcome {
         $stats['invalid'] += ($stats['total'] - $stats['insert'] - $stats['duplicate']);
         return $stats;
     }
+
+ 	/**
+     * Add sources to a PINfluence
+     *
+     * @param  Outcome  $outcome
+     * @param  Bin      $bin
+     * @param  string   $type
+     */
+    public static function add_sources_from_bin($outcome, $bin, $type) {
+        $stats = array('total' => 0, 'insert' => 0, 'duplicate' => 0, 'invalid' => 0);
+        $bin_id = $bin->bin_id;
+        $b_where = "where bsrc_bin_id=$bin_id"; //hardcode so i don't get mixed up
+
+        // totals
+        $conn = AIR2_DBManager::get_master_connection();
+        $stats['total'] = $conn->fetchOne("select count(*) from bin_source $b_where", array(), 0);
+
+        // duplicates
+        $b_s = "select bsrc_src_id from bin_source $b_where";
+        $b_q = "select count(*) from src_outcome where sout_out_id=? and sout_src_id in ($b_s)";
+
+        $stats['duplicate'] += $conn->fetchOne($b_q, array($outcome->out_id), 0);
+
+        // insert
+        $user_id = $outcome->UpdUser->user_id;
+        $s_where = "where src_id in ($b_s)";
+        $s_s = "select ?, src_id, ?, ?, ?, ?, ? from source $s_where";
+
+        $s_q = "insert ignore into src_outcome (sout_out_id,sout_src_id, sout_type, sout_cre_user, sout_cre_dtim, sout_upd_user, sout_upd_dtim) $s_s";
+        $stats['insert'] += $conn->exec($s_q, array($outcome->out_id, $type, $user_id, air2_date(), $user_id, air2_date()));
+        $stats['invalid'] += ($stats['total'] - $stats['insert'] - $stats['duplicate']);
+        return $stats;
+    }
+
 
 	/**
      * Helper to get a where condition for input data, and setup the

@@ -152,9 +152,16 @@ class Question extends AIR2_Record {
             ));
         $this->hasColumn('ques_value', 'string', null, array(
                 'notnull' => true,
+                'airvalidhtml' => array(
+                    'display' => 'Question Value',
+                    'message' => 'Not well formed html',
+                ),
             ));
         $this->hasColumn('ques_choices', 'string', null, array(
-
+                'airvalidhtml' => array(
+                    'display' => 'Question Choices',
+                    'message' => 'One of the options for this question contains html that is not well formed.',
+                ),
             ));
         $this->hasColumn('ques_locks', 'string', 255, array(
 
@@ -267,5 +274,26 @@ class Question extends AIR2_Record {
         return array(self::$STATUS_ACTIVE);
     }
 
+
+    /**
+     * Override basic exception string handling to make it friendlier for browser.
+     *
+     * @return string $message
+     */
+    public function getErrorStackAsString()
+    {
+        $errorStack = $this->getErrorStack();
+
+        $message = '';
+
+        if (count($errorStack)) {
+            foreach ($errorStack as $field => $errors) {
+                $message .= count($errors) . " validator" . (count($errors) > 1 ?  's' : null) . " failed on $field of Question: {$this->ques_value}<br /><br />(" . implode(", ", $errors) . ")<br /><br />";
+            }
+            return $message;
+        } else {
+            return false;
+        }
+    }
 
 }

@@ -17,10 +17,18 @@ js-clean: bin/compress-js.pl
 js-qb-templates: bin/write-qb-templates-json
 	bin/write-qb-templates-json
 
+### .css fixture files ###
+css-compress: bin/compress-css.pl
+	bin/compress-css.pl
+
+css: css-compress
+
 ### perl dependencies ###
 # (this just identifies which deps need install via CPAN)
 perl-deps: lib/perl/Makefile.PL
 	cd lib/perl && perl Makefile.PL
+
+deploy: js css
 
 ### Smoketest ###
 smoketest: assets schema js budgethero search-server-restart check html

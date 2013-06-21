@@ -555,6 +555,24 @@ b.h {
     margin: 8px 5px 0 3px;
 }
 
+.air2-search-excerpt {
+    clear: both;
+    margin: 0 0 8px 0;
+    padding: 6px 0 0 0;
+}
+
+table.air2-search-inq {
+    padding: 0 0 0 6px;
+}
+
+table.air2-search-inq th {
+    font-weight: bold;
+}
+
+table.air2-search-inq td {
+    padding-left: 4px;
+}
+
 .air2-search-child-count,
 .air2-search-child-count:visited
 {

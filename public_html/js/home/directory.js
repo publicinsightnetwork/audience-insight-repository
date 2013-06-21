@@ -53,6 +53,7 @@ AIR2.Home.Directory = function () {
     // build panel
     return new AIR2.UI.Panel({
         colspan: 1,
+        collapsed: true, // title only
         title: 'Directory',
         iconCls: 'air2-icon-directory',
         showTotal: false,

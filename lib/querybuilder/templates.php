@@ -72,24 +72,6 @@ $qb_templates = array(
         ),
         'single_instance'   => false,
     ),
-    'hidden' => array(
-        'display'           =>  array(
-            'en_US' => 'Hidden input',
-        ),
-        'display_group'     => 'generic',
-        'ques_value'        =>  array(
-            'en_US' => 'Hidden input',
-        ),
-        'ques_type'         => Question::$TYPE_TEXT_HIDDEN,
-        'ques_resp_type'    => Question::$DTYPE_STRING,
-        'ques_resp_opts'    => array(
-            'require'       => false,
-            'minlen'        => null,
-            'maxlen'        => MYSQL_TEXT_SIZE,
-        ),
-        'ques_locks'        => array('require'),
-        'single_instance'   => false,
-    ),
     'textarea' => array(
         'display'           =>  array(
             'en_US' => 'Paragraph text',
@@ -230,28 +212,16 @@ $qb_templates = array(
         ),
         'single_instance'   => false,
     ),
-    'time' => array(
-        'display'           =>  array(
-            'en_US' => 'Time',
-        ),
-        'display_group'     => 'generic',
-        'ques_value'        =>  array(
-            'en_US' => 'Time',
-        ),
-        'ques_type'         => Question::$TYPE_DTIM,
-        'ques_resp_type'    => Question::$DTYPE_DTIM,
-        'ques_resp_opts'    => array(
-            'require'       => false,
-        ),
-        'single_instance'   => false,
-    ),
     'fileupload' => array(
         'display'           =>  array(
             'en_US' => 'File upload',
         ),
         'display_group'     => 'generic',
+        'display_tip'       => array(
+            'en_US' => 'Acceptable file types are jpg, jpeg, gif, png, and pdf',
+        ),
         'ques_value'        =>  array(
-            'en_US' => 'File upload',
+            'en_US' => 'File upload (accepted types: jpg, jpeg, gif, png, and pdf)',
         ),
         'ques_type'         => Question::$TYPE_FILE,
         'ques_resp_type'    => Question::$DTYPE_FILE,
@@ -295,6 +265,24 @@ $qb_templates = array(
             'en_US' => 'Display Text',
         ),
         'ques_type'         => Question::$TYPE_DISPLAY,
+        'single_instance'   => false,
+    ),
+    'hidden' => array(
+        'display'           =>  array(
+            'en_US' => 'Hidden input',
+        ),
+        'display_group'     => 'generic',
+        'ques_value'        =>  array(
+            'en_US' => 'Hidden input',
+        ),
+        'ques_type'         => Question::$TYPE_TEXT_HIDDEN,
+        'ques_resp_type'    => Question::$DTYPE_STRING,
+        'ques_resp_opts'    => array(
+            'require'       => false,
+            'minlen'        => null,
+            'maxlen'        => MYSQL_TEXT_SIZE,
+        ),
+        'ques_locks'        => array('require'),
         'single_instance'   => false,
     ),
     /*
@@ -565,7 +553,7 @@ $qb_templates = array(
         ),
         'display_group'     => 'demographic',
         'display_tip'       => array(
-            'en_US' => 'default language is editable on this question so able to add industry, job title, employer, etc. to question',
+            'en_US' => 'Responses to this question map to Experiences in source profile so this question can be edited to ask for industry, job title, employer, or other work experience related text.',
         ),
         'ques_value'        =>  array(
             'en_US' => 'What do you do for work?',
@@ -797,9 +785,6 @@ $qb_templates = array(
             'es_US' => 'Pregunta de permiso',
         ),
         'display_group'     => 'permission',
-        'display_tip'       => array(
-            'en_US' => 'default language is editable on this question and response options',
-        ),
         'ques_value'        =>  array(
             'en_US' => 'May we publish your insights (and any uploaded files) and attribute them to you? (Your comments may be edited for length or clarity.)',
             'es_US' => '¿Nos da permiso de publicar sus ideas (al igual que archivos subidos) y atribuirlos a usted? (Sus comentarios podrían ser editados para acreditarlos o hacerlos más claros.)',
@@ -819,7 +804,7 @@ $qb_templates = array(
         'ques_type'         => Question::$TYPE_PERMISSION,
         'ques_resp_type'    => Question::$DTYPE_STRING,
         'ques_resp_opts'    => array(
-            'require'       => false,
+            'require'       => true,
         ),
         'ques_locks'        => array(),
         'ques_pmap_id'      => ProfileMap::$SRC_RESP_PUBLIC,

@@ -8,9 +8,8 @@
  * query and preview it inline
  */
 AIR2.Inquiry.PublishPreview = function () {
-    var fullurl, previewPanel;
+    var previewPanel;
 
-    fullurl = AIR2.Inquiry.URL + '/preview.json';
 
     previewPanel = new AIR2.UI.Panel({
         autoHeight: true,
@@ -21,10 +20,8 @@ AIR2.Inquiry.PublishPreview = function () {
         unstyled:   true
     });
 
-                AIR2.Inquiry.inqStore.getAt(0).get('inq_stale_flag')
-
     previewPanel.on('activate', function (panel) {
-        var panelEl, previewEl;
+        var failPreview, getUnpublishedPreview, json_url, panelEl, previewEl;
 
         panelEl = panel.getEl();
 
@@ -58,13 +55,14 @@ AIR2.Inquiry.PublishPreview = function () {
             msg = msg || 'Failed to load preview.';
             panelEl.update('<h2>' + msg + '</h2>');
             panelEl.unmask();
-        }
+        };
 
-        if (AIR2.Inquiry.inqStore.getAt(0).get('inq_stale_flag')) {
-        // we don't have a published version of the latest changes
+        getUnpublishedPreview = function () {
+            var full_url;
 
+            full_url = AIR2.Inquiry.URL + '/preview.json';
             Ext.Ajax.request({
-                url: fullurl,
+                url: full_url,
                 failure: function (response, options) {
                     failPreview();
                 },
@@ -85,17 +83,20 @@ AIR2.Inquiry.PublishPreview = function () {
                 },
                 method: 'GET'
             });
+        };
 
+        if (AIR2.Inquiry.inqStore.getAt(0).get('inq_stale_flag')) {
+        // we don't have a published version of the latest changes
+            getUnpublishedPreview();
         }
         else {
-            fullurl = AIR2.HOMEURL + '/q/' + AIR2.Inquiry.UUID + '.json';
+            json_url = AIR2.HOMEURL + '/q/' + AIR2.Inquiry.UUID + '.json';
             Ext.Ajax.request({
-                url: fullurl,
+                url: json_url,
                 failure: function (response, options) {
-                    failPreview();
+                    getUnpublishedPreview();
                 },
                 success: function (response, options) {
-                    Logger(response, options);
                     var queryJson;
                     if (response.status === 200 && response.responseText) {
                         queryJson = Ext.decode(response.responseText);
@@ -103,7 +104,7 @@ AIR2.Inquiry.PublishPreview = function () {
                         PIN.Form.build(queryJson, PIN_QUERY);
                     }
                     else {
-                        failPreview();
+                        getUnpublishedPreview();
                     }
                 },
                 method: 'GET'

@@ -177,6 +177,10 @@ for my $user (@users) {
         to      => ( $TO || $to ),
         subject => $subject,
     );
+
+    if ( !$sent ) {
+        warn "$sent";
+    }
 }
 
 sub send_email {
@@ -188,8 +192,17 @@ sub send_email {
     my $stuff = Email::Stuff->to( $args{to} )->from( $args{from} )
         ->subject( $args{subject} )->text_body($msg);
 
-    my $result
-        = $stuff->using( 'SMTP', Host => AIR2::Config->get_smtp_host )->send;
+    my %mailer_args = ( Host => AIR2::Config->get_smtp_host, );
+    if ( AIR2::Config->smtp_host_requires_auth ) {
+        $mailer_args{username} = AIR2::Config->get_smtp_username;
+        $mailer_args{password} = AIR2::Config->get_smtp_password;
+    }
+    my $smtp = Email::Send->new(
+        {   mailer      => 'SMTP',
+            mailer_args => [ %mailer_args, ]
+        }
+    ) or die "failed to create Email::Send::SMTP: $@ $!\n";
+    my $result = $stuff->using($smtp)->send();
 
     $debug and warn $result;
 

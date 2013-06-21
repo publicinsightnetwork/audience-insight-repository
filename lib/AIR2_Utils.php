@@ -942,7 +942,7 @@ function air2_uri_for($path, $query=array()) {
 
     // add query variables
     if (count($query)) {
-        $uri .= '?' . http_build_query($query, '', '&amp;');
+        $uri .= '?' . http_build_query($query);
     }
     return $uri;
 }
@@ -1129,19 +1129,31 @@ function air2_sort_responses_for_display($responses) {
         'private'       => array(),
     );
 
+    // cull out permission question since it is public only
+    // if there are other public questions.
+    $perm_question = null;
     foreach ($responses as $sr) {
         $ques_type = strtolower($sr['Question']['ques_type']);
         if ($ques_type == 'z' || $ques_type == 's' || $ques_type == 'y') {
             $grouped['contributor'][] = $sr;
         }
         elseif ($ques_type == 'p') {
-            $grouped['public'][] = $sr;
+            $perm_question = $sr;
         }
         elseif ($sr['Question']['ques_public_flag']) {
             $grouped['public'][] = $sr;
         }
         else {
             $grouped['private'][] = $sr;
+        }
+    }
+
+    if ($perm_question) {
+        if (count($grouped['public'])) {
+            $grouped['public'][] = $perm_question;
+        }
+        else {
+            $grouped['private'][] = $perm_question;
         }
     }
 

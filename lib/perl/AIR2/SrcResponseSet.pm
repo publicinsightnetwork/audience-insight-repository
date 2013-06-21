@@ -329,9 +329,10 @@ sub as_xml {
 
     # src_response_set data
     my $srs_date = $date_parser->parse_date( $dmp->{srs_date} );
-    $dmp->{srs_ts}    = $srs_date->ymd('');
-    $dmp->{srs_year}  = $srs_date->year;
-    $dmp->{srs_month} = $srs_date->year . $srs_date->month;
+    $dmp->{srs_ts}   = $srs_date->ymd('');
+    $dmp->{srs_year} = $srs_date->year;
+    $dmp->{srs_month}
+        = sprintf( "%s%02d", $srs_date->year, $srs_date->month );
     my $creator = AIR2::SearchUtils::get_user( $set->srs_cre_user );
     $dmp->{creator}      = $creator->get_name;
     $dmp->{creator_fl}   = $creator->get_name_first_last;
@@ -347,6 +348,8 @@ sub as_xml {
     $dmp->{src_username}   = $source->src_username;
     $dmp->{src_first_name} = $source->src_first_name;
     $dmp->{src_last_name}  = $source->src_last_name;
+    $dmp->{src_status}
+        = AIR2::CodeMaster::lookup( 'src_status', $source->src_status );
 
     my $sem   = $source->get_primary_email;
     my $sph   = $source->get_primary_phone;

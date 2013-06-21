@@ -72,7 +72,7 @@ if (typeof PIN.Form.LOADED === 'undefined') {
 // load fixtures from AIR, for states, countries, etc.
 if (!PIN.States && PIN.THIS_URL) {
     jQuery.getScript(PIN.THIS_URL+"/cache/fixtures.min.js", function() {
-        //console.log('fixtures.min.js loaded');
+        PIN.Form.DEBUG && console.log('fixtures.min.js loaded');
         PIN.Form.LOADED['fixtures'] = true;
     });
 }
@@ -133,17 +133,17 @@ PIN.Form.setup = function(args) {
             cssIsLoaded = true;
         }
         if (css.href == jQueryUICss) {
-            //console.log('found ' + css.href);
+            PIN.Form.DEBUG && console.log('found ' + css.href);
             jQueryUICssIsLoaded = true;
         }
     }
     if (!cssIsLoaded) {
         jQuery('head').prepend('<link rel="stylesheet" type="text/css" href="'+cssfile+'" />');
-        //console.log("injected css", cssfile);
+        PIN.Form.DEBUG && console.log("injected css", cssfile);
     }
     if (!jQueryUICssIsLoaded) {
         jQuery('head').prepend('<link rel="stylesheet" type="text/css" href="'+jQueryUICss+'" />');
-        //console.log('injected ' + jQueryUICss);
+        PIN.Form.DEBUG && console.log('injected ' + jQueryUICss);
     }
 
     // load form data
@@ -158,7 +158,7 @@ PIN.Form.setup = function(args) {
         jsonfile += '&cachebust=' + args.opts.rendered;
     }
     //console.log(window.location);
-    //console.log('loading json from', jsonfile);
+    PIN.Form.DEBUG && console.log('loading json from', jsonfile);
     jQuery.getJSON(jsonfile, function(resp) {
         PIN.Form.build(resp, args);
     });
@@ -229,21 +229,22 @@ PIN.Form.render = function(args) {
 
     // make sure our dependencies have loaded and defer if not.
     if (!PIN.Form.LOADED['fixtures'] || !PIN.Form.LOADED['ui'] || !PIN.Form.LOADED['form']) {
-        //console.log('dependencies not loaded yet', PIN.Form.LOADED);
+        PIN.Form.DEBUG && console.log('dependencies not loaded yet', PIN.Form.LOADED);
         if (PIN.Form.WAITING) {
             clearTimeout(PIN.Form.WAITING);
         }
-        if (PIN.Form.LOAD_TRIES++ > 10) {
-            //console.log("Too many tries loading dependencies for fixtures");
+        // 40 tries * 250 ms == 10 sec wait time.
+        if (PIN.Form.LOAD_TRIES++ > 40) {
+            PIN.Form.DEBUG && console.log("Too many tries loading dependencies");
             return; // give up TODO message?
         }
         PIN.Form.WAITING = setTimeout(function() {
             PIN.Form.render(args);
-        }, 500);   // try again in half a second
+        }, 250);   // try again in .25 sec
         return;
     }
     else {
-        //console.log('LOADED ok:', PIN.Form.LOADED);
+        PIN.Form.DEBUG && console.log('LOADED ok:', PIN.Form.LOADED);
     }
 
     var params = PIN.Form.getParams(args);
@@ -297,8 +298,8 @@ PIN.Form.sortQuestions = function(queryData) {
 
 // generate the HTML
 PIN.Form.build = function(queryData, renderArgs) {
-    //console.log(renderArgs);
-    //console.log(queryData);
+    PIN.Form.DEBUG && console.log(renderArgs);
+    PIN.Form.DEBUG && console.log(queryData);
 
     if (typeof renderArgs.opts == 'undefined') {
         renderArgs.opts = {
@@ -321,7 +322,7 @@ PIN.Form.build = function(queryData, renderArgs) {
     var previewAttribute, sortedQuestions, wrapper, formEl, contributorFieldset, publicFieldSet, privateFieldSet;
 
     sortedQuestions = PIN.Form.sortQuestions(queryData);
-    //console.log(sortedQuestions);
+    PIN.Form.DEBUG && console.log(sortedQuestions);
 
     wrapper = jQuery('#'+renderArgs.divId);
 
@@ -331,9 +332,21 @@ PIN.Form.build = function(queryData, renderArgs) {
         wrapper = jQuery('#'+renderArgs.divId);
     }
 
-    // deadline msg if defined
-    if (queryData.query.inq_deadline_msg && queryData.query.inq_deadline_msg.length) {
-        wrapper.append('<div class="pin-deadline">'+queryData.query.inq_deadline_msg+'</div>');
+    // clear to start, in case there were any spinning wheels, etc.
+    wrapper.html('<!-- pin.form start -->');
+
+    // deadline msg if defined and deadline has passed
+    if (queryData.query.inq_deadline_dtim 
+        && queryData.query.inq_deadline_msg 
+        && queryData.query.inq_deadline_msg.length
+    ) {
+        var now      = new Date();
+        var deadline = new Date(queryData.query.inq_deadline_dtim);
+        PIN.Form.DEBUG && console.log('now=', now);
+        PIN.Form.DEBUG && console.log('deadline=', deadline);
+        if (now > deadline) {
+            wrapper.append('<div class="pin-deadline">'+queryData.query.inq_deadline_msg+'</div>');
+        }
     }
 
     // intro shown by default
@@ -484,7 +497,7 @@ PIN.Form.build = function(queryData, renderArgs) {
 }
 
 PIN.Form.submit = function(divId) {
-    var formVals, formEl, url, btn, validationErrMsg;
+    var formVals, formEl, formQA, url, btn, validationErrMsg;
     formEl = jQuery('#'+divId+' form');
     
     // clear any existing validation error msg
@@ -496,18 +509,47 @@ PIN.Form.submit = function(divId) {
     btn.text('Checking...');
 
     // extract all data into a single object
-    //console.log(formEl);
+    PIN.Form.DEBUG && console.log('formEl: ', formEl);
     formVals = formEl.serializeArray();
+    
+    // turn array of objects into one object
+    // for easy lookup
+    formQA = {};
+    jQuery.each(formVals, function(idx, pair) {
+        formQA[pair.name] = pair.value;
+    });
+    
+    // fill out our validation array manually.
+    // if we have a file upload, must grab it manually.
+    // jQuery also ignores unchecked radio and checkbox inputs
+    // so we must manually grab those to make sure required
+    // questions are validated.
 
-    // if we have a file upload, must grab it manually 
     jQuery.each(PIN.Form.Registry[divId].data.questions, function(idx,q) {
-        //console.log('q:', q);
-        if (q.ques_resp_type == 'F') {
+        PIN.Form.DEBUG && console.log('q:', q);
+        if (q.ques_resp_type === 'F') {
             var fileQ = jQuery('#pin-q-'+q.ques_uuid);
             //console.log(fileQ.val());
             formVals.push({name:q.ques_uuid, value: fileQ.val()});
         }
+        if ((q.ques_type === 'P' || q.ques_type === 'C' || q.ques_type === 'R')
+            && 
+            !formQA[q.ques_uuid+'[]']
+        ) {
+            var inputs = jQuery('input[name^='+q.ques_uuid+']');
+            PIN.Form.DEBUG && console.log('inputs:', inputs);
+            var inputVal = '';
+            jQuery.each(inputs, function(inputIdx, input) {
+                if (input.checked) {
+                    inputVal = input.val();
+                }
+            });
+            formVals.push({name:q.ques_uuid, value: inputVal});
+            formQA[q.ques_uuid] = inputVal;
+        }
     });
+
+    PIN.Form.DEBUG && console.log('formVals: ', formVals);
 
     // validate object
     if (!PIN.Form.validate(divId, formVals)) {
@@ -527,7 +569,7 @@ PIN.Form.submit = function(divId) {
             jQuery('#pin-submit-errors').remove();  
         }
     }
-    //console.log('validation OK');
+    PIN.Form.DEBUG && console.log('validation OK');
 
     // add some meta
     formEl.append('<input type="hidden" name="X-PIN-referer" value="'+document.referrer+'"/>');
@@ -616,7 +658,7 @@ PIN.Form.submit = function(divId) {
 PIN.Form.renderThankYou = function(divId, response) {
     var div = jQuery('#'+divId);
     var queryMeta = PIN.Form.Registry[divId];
-    //console.log(queryMeta);
+    PIN.Form.DEBUG && console.log(queryMeta);
     var url;
     if (queryMeta.data.orgs.length) {
         url = queryMeta.data.source_url + '/en/newsroom/' + queryMeta.data.orgs[0].name + '/feed.jsonp?limit=10&callback=?';
@@ -657,7 +699,7 @@ PIN.Form.decorate = function(divId, errors) {
         if (!field || !field.length) {
 
             // try with name attribute for radios, checkbox, etc
-            field = jQuery('input[name='+ques_uuid+']');
+            field = jQuery('input[name^='+ques_uuid+']');
 
             if (!field || !field.length) {
                 console.log("Cannot find question for "+elId, errArr);
@@ -708,7 +750,7 @@ PIN.Form.validate = function(divId, submission) {
     });
     var errors = {};    // key should be ques_uuid
 
-    //console.log(questions);
+    PIN.Form.DEBUG && console.log('validation:', questions);
 
     jQuery.each(submission, function(idx, qPair) {
         var qName = qPair.name;
@@ -718,6 +760,7 @@ PIN.Form.validate = function(divId, submission) {
         var question = questions[qName];
         if (!question) {
             // most likely a hidden field inserted on initial (failed) submit
+            PIN.Form.DEBUG && console.log("no question for qName:", qName);
             return;
         }
         var qvalue   = qPair.value;
@@ -748,8 +791,7 @@ PIN.Form.validateQuestion = function(question, qvalue) {
         opts = {};
     }
 
-    //console.log(opts);
-    //console.log(question, qvalue);
+    PIN.Form.DEBUG && console.log('validate:', opts, question, qvalue);
 
     ques_uuid = question.ques_uuid;
     errors = [];
@@ -942,7 +984,7 @@ PIN.Form.doRadio = function(args) {
         t += '<label class="radio option">';
         t += '<input type="radio" class="pin-field" name="'+q.ques_uuid+'[]" id="pin-q-'+idx+'-'+q.ques_uuid+'" ';
         if (choice.isdefault) {
-            t += ' selected="selected" ';
+            t += ' checked="checked" ';
         }
         t += 'value="'+choice.value+'" />&nbsp;'+choice.value+'</label>';
     });
@@ -1114,7 +1156,7 @@ PIN.Form.doCheckbox = function(args) {
         t += '<label class="checkbox option">';
         t += '<input type="checkbox" class="pin-field" name="'+q.ques_uuid+'[]" id="pin-q-'+idx+'-'+q.ques_uuid+'" ';
         if (choice.isdefault) {
-            t += ' selected="selected" ';
+            t += ' checked="checked" ';
         }
         t += 'value="'+choice.value+'" />&nbsp;'+choice.value+'</label>';
     });

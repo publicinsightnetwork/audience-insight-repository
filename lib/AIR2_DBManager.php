@@ -24,6 +24,8 @@ require_once 'AIR2_Exception.php';
 require_once 'DBManager.php';
 require_once DOCPATH.'/Doctrine.php';
 require_once 'AirValid.php'; //custom validator extension
+require_once 'AirValidHtml.php'; //custom validator extension
+require_once 'AirValidNoHtml.php'; //custom validator extension
 
 // this will allow Doctrine to load Model classes automatically
 spl_autoload_register(array('Doctrine', 'autoload'));

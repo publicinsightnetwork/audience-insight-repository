@@ -48,7 +48,12 @@ AIR2.Source.Contact.Email = function () {
                     '</td>' +
                 '</tr>' +
             '</tpl>' +
-        '</table>',
+        '</table>' +
+        '<tpl if="AIR2.Source.hasAcct">' +
+            '<div class="air2-tooltip-inline">' +
+             'Note that updating the primary email address does not update the username.' +
+            '</div>' +
+        '</tpl>',
         {
             compiled: true,
             disableFormats: true

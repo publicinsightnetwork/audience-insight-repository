@@ -25,6 +25,7 @@ AIR2.Reader.MENU = [{
     items: {
         src_first_name_lc:   'First Name',
         src_last_name_lc:    'Last Name',
+        src_status:          'Status',
         primary_email:       'Email',
         primary_phone:       'Phone',
         primary_city_lc:     'City',
@@ -135,6 +136,13 @@ AIR2.Reader.COLUMNS = {
         format:   '{src_last_name}',
         sortable: 'asc',
         uid:      'b'
+    },
+    src_status: {
+        header:   'Status',
+        cls:      'status',
+        format:   '{src_status}',
+        sortable: 'asc',
+        uid:      'S'
     },
     primary_email: {
         header:   'Email',

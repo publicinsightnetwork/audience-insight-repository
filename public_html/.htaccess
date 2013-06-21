@@ -18,9 +18,11 @@ AddType application/rss+xml .rss
     RewriteRule ^q/(\w{12})$            submit.php?query=$1 [L]
 
     RewriteRule ^q/(\w{12})$         querys/$1.html [L]
+    RewriteRule ^q/(en|es)/(\w{12})$         querys/$2.html [L]
     RewriteRule ^q/(\w{12}\.json)$   querys/$1      [L]
     RewriteRule ^q/(\w{12}\.html)$   querys/$1      [L]
     RewriteRule ^q/(\w{12})/(.+)$    querys/$1.html [L]
+    RewriteRule ^q/(en|es)/(\w{12})/(.+)$    querys/$2.html [L]
 
     RewriteCond %{REQUEST_METHOD} =GET
     RewriteCond %{QUERY_STRING} callback=([^&]+)

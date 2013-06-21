@@ -32,6 +32,8 @@ use Encode;
 my $date_parser
     = Rose::DateTime::Parser->new( time_zone => $AIR2::Config::TIMEZONE );
 
+my @EVERGREEN_QUERY_UUIDS = qw( a5e5f19b1c58 b6be40de1385 c729062daffb );
+
 __PACKAGE__->meta->setup(
     table => 'inquiry',
 
@@ -243,6 +245,11 @@ sub add_users_as_watchers {
         push @to_add, { iu_user_id => $watcher->user_id, iu_type => 'W' };
     }
     return $self->add_watchers( \@to_add );
+}
+
+sub add_activity {
+    my $self = shift;
+    $self->add_activities(@_);
 }
 
 sub tag_ref_type {'I'}
@@ -794,6 +801,16 @@ sub get_contributor_questions {
         }
     }
     return \@contrib;
+}
+
+sub get_evergreens {
+    my $self = shift;
+    my $class = ref($self) || $self;
+    my @green;
+    for my $uuid (@EVERGREEN_QUERY_UUIDS) {
+        push @green, $class->new( inq_uuid => $uuid )->load;
+    }
+    return \@green;
 }
 
 1;

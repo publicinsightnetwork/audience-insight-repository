@@ -120,9 +120,11 @@ for my $inq_id ( @{ $pks->{ids} } ) {
     }
 
     if ( $inq->inq_type !~ m/^[FQ]/ ) {
-        warn "Inquiry $inq_id has type "
-            . $inq->inq_type
-            . " not allowed in search index. Skipping.\n";
+        if ($debug) {
+            AIR2::Utils::logger( "Inquiry $inq_id has type "
+                    . $inq->inq_type
+                    . " not allowed in search index. Skipping.\n" );
+        }
         next;
     }
 

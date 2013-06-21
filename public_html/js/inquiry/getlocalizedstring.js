@@ -14,6 +14,8 @@
 AIR2.Inquiry.getLocalizedValue = function (values, valueKey) {
     var locale, localeKey, localizedValue, strings;
 
+    localizedValue = '';
+
     if (values[valueKey]) {
         strings = values[valueKey];
         locale = AIR2.Inquiry.inqStore.getAt(0).get('Locale');

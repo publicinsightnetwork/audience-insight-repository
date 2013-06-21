@@ -22,7 +22,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 61;
+use Test::More tests => 62;
 use lib 'tests/search';
 use Data::Dump qw( dump );
 use AIR2TestUtils;
@@ -395,6 +395,11 @@ like(
 
 like( $xml, qr(<user_read>\w{12}</user_read>), "user_read included" );
 unlike( $xml, qr(<user_star>\w{12}</user_star>), "user_star excluded" );
+like(
+    $xml,
+    qr(<src_status>Enrolled</src_status>),
+    "src_status in submission with full english"
+);
 
 my $authz_org_ids = join( ',', @{ $inquiry->get_project_authz() } );
 my $owner_org_ids = join( ',', @{ $inquiry->get_owner_org_ids() } );

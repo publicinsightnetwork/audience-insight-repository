@@ -458,6 +458,12 @@ pre {
 .air2-tipper:hover {
     background: #66cc33;
 }
+
+.air2-tooltip-inline {
+    font-weight:bold;
+    padding: 8px;
+}
+
 #air2-drawer .air2-tipper {
     border-top: #111;
     margin-left: 7px;

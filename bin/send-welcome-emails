@@ -38,6 +38,7 @@ use AIR2::Config;
 use AIR2::Source;
 use AIR2::SrcOrg;
 use AIR2::SearchUtils;
+use Search::Tools::XML;
 
 =pod
 
@@ -211,8 +212,17 @@ sub send_email {
     if ( $args{html} ) {
         $stuff->html_body( $args{html} );
     }
-    my $result
-        = $stuff->using( 'SMTP', Host => AIR2::Config->get_smtp_host )->send;
+    my %mailer_args = ( Host => AIR2::Config->get_smtp_host, );
+    if ( AIR2::Config->smtp_host_requires_auth ) {
+        $mailer_args{username} = AIR2::Config->get_smtp_username;
+        $mailer_args{password} = AIR2::Config->get_smtp_password;
+    }
+    my $smtp = Email::Send->new(
+        {   mailer      => 'SMTP',
+            mailer_args => [ %mailer_args, ]
+        }
+    ) or die "failed to create Email::Send::SMTP: $@ $!\n";
+    my $result = $stuff->using($smtp)->send();
 
     $debug and warn $result;
 
@@ -232,7 +242,9 @@ sub get_template_vars {
     };
 
     my @related;
-    my $rss = $org->get_rss_feed(5);
+
+    # second true value to get evergreens if none explicit to org
+    my $rss = $org->get_rss_feed( 5, 1 );
 INQ: for my $inq (@$rss) {
 
         # skip any the source has already responded to
@@ -246,6 +258,15 @@ INQ: for my $inq (@$rss) {
         }
 
         push @related, { title => $inq->get_title(), uri => $inq->get_uri() };
+    }
+
+    # if we still have none,
+    # use the evergreens explicitly (ok to answer those more than once)
+    if ( !@related ) {
+        for my $inq ( @{ AIR2::Inquiry->get_evergreens() } ) {
+            push @related,
+                { title => $inq->get_title(), uri => $inq->get_uri() };
+        }
     }
 
     my $base_url = AIR2::Config::get_constant('AIR2_BASE_URL');
@@ -280,8 +301,9 @@ sub send_welcome {
     $template->process( 'email/welcome.html.tt', $template_vars, \$html )
         or die $template->error();
 
-    my $text = HTML::FormatText::Elinks->format_string($html);
-    my $to   = sprintf( "%s <%s>",
+    my $text = HTML::FormatText::Elinks->format_string(
+        Search::Tools::XML->escape_utf8($html) );
+    my $to = sprintf( "%s <%s>",
         $template_vars->{source}->{name},
         $template_vars->{source}->{email} );
     my $from = sprintf( "%s <%s>",
@@ -296,6 +318,10 @@ sub send_welcome {
         to      => ( $TO || $to ),
         subject => $subject,
     );
+
+    if ( !$sent ) {
+        warn sprintf( "Failed to send to %s: %s", ( $TO || $to ), "$sent" );
+    }
 
     if ( $sent && $log_activity ) {
         log_activity( $source, $org );

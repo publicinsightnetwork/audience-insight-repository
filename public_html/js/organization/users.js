@@ -86,7 +86,6 @@ AIR2.Organization.Users = function () {
               '<td>{[this.formatStatus(values)]}</td>' +
               '<td class="row-ops">' +
                 '<button class="air2-rowedit"></button>' +
-                '<button class="air2-rowdelete">' +
               '</button></td>' +
             '</tr>' +
           '</tpl>' +

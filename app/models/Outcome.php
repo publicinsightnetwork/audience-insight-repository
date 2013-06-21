@@ -246,4 +246,39 @@ class Outcome extends AIR2_Record {
     }
 
 
+    /**
+     *
+     *
+     * @return string $uri
+     */
+    public function get_image_uri() {
+
+        // if query has one, use it
+        foreach ($this->InqOutcome as $io) {
+            $logo = $io->Inquiry->Logo;
+            if (!$logo || !$logo->img_uuid) {
+                continue;
+            }
+            return sprintf("%simg/query/%s/logo_medium.png?%s",
+                AIR2_BASE_URL,
+                $logo->img_uuid,
+                date('U', strtotime($logo->img_upd_dtim))
+            );
+        }
+
+        // otherwise use Org
+        $org = $this->Organization;
+        $logo = $org->Logo;
+        if ($logo && $logo->img_uuid) {
+            return sprintf("%simg/org/%s/logo_medium.png?%s",
+                AIR2_BASE_URL,
+                $logo->img_uuid,
+                date('U', strtotime($logo->img_upd_dtim))
+            );
+        }
+
+        return null;
+    }
+
+
 }

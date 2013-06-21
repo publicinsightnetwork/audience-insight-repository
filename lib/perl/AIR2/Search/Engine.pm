@@ -30,6 +30,7 @@ use AIR2::Config;
 use Digest::MD5 qw(md5 md5_hex md5_base64);
 use constant MAX_SUMMARY_LEN => 200;
 use Time::HiRes qw( time );
+use Encode;
 
 sub version { return AIR2::Config::get_version }
 
@@ -54,7 +55,8 @@ Search::OpenSearch::Response::Tiny->add_attribute('unauthz_total');
 # make our cache keys more complex
 sub get_facets_cache_key {
     my ( $self, $query, $args ) = @_;
-    my $k = md5_hex( $self->searcher->invindex->[0]->path . $query );
+    my $query_bytes = encode_utf8($query);
+    my $k = md5_hex( $self->searcher->invindex->[0]->path . $query_bytes );
     return $k;
 }
 

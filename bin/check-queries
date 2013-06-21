@@ -126,12 +126,13 @@ FILE: while ( my $file = $query_file_root->next ) {
             scalar localtime($file_mtime),
             scalar localtime($inq_expire_time)
         );
-        $need_to_publish = 1;
+        $need_to_publish = 2;
         $inquiry->inq_status('E') if $inquiry->inq_status eq 'A';
     }
 
     if ($need_to_publish) {
         AIR2::InquiryPublisher->publish($inquiry);
+        add_activity( $inquiry, $need_to_publish );
         $inquiry->save();
     }
 
@@ -184,19 +185,47 @@ INQ: while ( my $inquiry = $inquiries->next ) {
     {
         if ( !-s $json_file ) {
             warn "Need to expire .json for $uuid\n";
-            $need_to_publish = 1;
+            $need_to_publish = 2;
             $inquiry->inq_status('A') if $inquiry->inq_status eq 'S';
         }
         if ( !-s $html_file ) {
             warn "Need to expire .html for $uuid\n";
-            $need_to_publish = 1;
+            $need_to_publish = 2;
             $inquiry->inq_status('A') if $inquiry->inq_status eq 'S';
         }
     }
 
     if ($need_to_publish) {
         AIR2::InquiryPublisher->publish($inquiry);
+        add_activity( $inquiry, $need_to_publish );
         $inquiry->save();
     }
 
+}
+
+sub add_activity {
+    my ( $inquiry, $need_to_publish ) = @_;
+    my $activity;
+    if ( $need_to_publish == 2 ) {
+        $activity = AIR2::InquiryActivity->new(
+            ia_inq_id  => $inquiry->inq_id,
+            ia_actm_id => 49,
+            ia_dtim    => time(),
+            ia_desc    => 'expired by {USER}',
+        );
+    }
+    else {
+        $activity = AIR2::InquiryActivity->new(
+            ia_inq_id  => $inquiry->inq_id,
+            ia_actm_id => 49,
+            ia_dtim    => time(),
+            ia_desc    => 'published by {USER}',
+        );
+
+        # implicitly set if not published
+        if ( !$inquiry->inq_publish_dtim ) {
+            $inquiry->inq_publish_dtim( time() );
+        }
+    }
+    $inquiry->add_activity($activity);
 }

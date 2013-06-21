@@ -109,8 +109,14 @@ AIR2.Inquiry.Summary = function () {
         '<tpl for=".">' +
             '<table class="inquiry-row">' +
                '<tr>' +
+                 '<td class="label">Status</td>' +
+                 '<td class="value">' +
+                  '<div id="air2-inq-status" class="air2-inq-status-{inq_status}">{[this.getStatus(values)]}</div>' +
+                 '</td> ' +
+                '</tr>' +
+               '<tr>' +
                  '<td class="label">Logo</td>' +
-                 '<td>' +
+                 '<td class="value">' +
                   '<div id="air2-inq-logo">{[AIR2.Format.inqLogo(values)]}</div>' +
                  '</td> ' +
                 '</tr>' +
@@ -215,6 +221,19 @@ AIR2.Inquiry.Summary = function () {
                     return true;
                 }
                 return false;
+            },
+            getStatus: function(values) {
+                var stat, statMap;
+                stat = values.inq_status;
+                statMap = {
+                    'A': 'Published',
+                    'E': 'Expired',
+                    'D': 'Draft',
+                    'F': 'Inactive',
+                    'S': 'Scheduled',
+                    'L': 'Published with Deadline'
+                };
+                return statMap[stat];
             },
             shortPublishedLink: function(values) {
                 var locale = values.Locale.loc_key.replace(/_US$/, '');

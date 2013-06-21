@@ -109,6 +109,58 @@ class AIR2_PublishedQuery {
 
         //Carper::carp(var_export($params, true));
 
+        // validate what we were not given (redmine #8252)
+        foreach ($questions as $ques_uuid => $question) {
+            if ($question->ques_resp_opts) {
+                $opts = null;
+                if (is_string($question->ques_resp_opts)) {
+                    $opts = json_decode($question->ques_resp_opts);
+                }
+                else {
+                    $opts = $question->ques_resp_opts;
+                }
+
+                // if marked required, make sure we have something
+                if ($opts && isset($opts->require) && $opts->require) {
+                    $missing = false;
+                    if (!array_key_exists($ques_uuid, $params)
+                        ||
+                        !isset($params[$ques_uuid])
+                    ) {
+                        $missing = true;
+                    }
+                    else {
+
+                        if (is_array($params[$ques_uuid])
+                            &&
+                            !count($params[$ques_uuid])
+                        ) {
+                            $missing = true;
+                        }
+
+                        if (is_string($params[$ques_uuid])
+                            &&
+                            (   !strlen($params[$ques_uuid])
+                                ||
+                                !preg_match('/\S/', $params[$ques_uuid])
+                            )
+                        ) {
+                            $missing = true;
+                        }
+
+                    }
+
+                    if ($missing) {
+                        $errors[] = array(
+                            'msg'       => "Required",
+                            'question'  => $ques_uuid,
+                        );
+                    }
+                }
+            }
+        }
+
+        // validate what we were given
         foreach ($params as $ques_uuid=>$param_value) {
 
             if (!isset($questions[$ques_uuid])) {
@@ -329,7 +381,7 @@ class AIR2_PublishedQuery {
                         );
                     }
                     elseif (strlen($param_value['file_ext'])
-                         && !in_array(strtolower($param_value['file_ext']), array('jpg', 'jpeg', 'gif', 'png', 'pdf'))
+                        && !in_array(strtolower($param_value['file_ext']), array('jpg', 'jpeg', 'gif', 'png', 'pdf'))
                     ) {
                         $errors[] = array(
                             'msg' => 'Unsupported file type: ' . $param_value['file_ext'],

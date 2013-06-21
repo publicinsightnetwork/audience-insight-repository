@@ -31,6 +31,7 @@ use Pod::Usage;
 use Email::Stuff;
 use Template;
 use HTML::FormatText::Elinks;
+use Search::Tools::XML;
 use AIR2::Config;
 use AIR2::SrcResponseSet;
 use JSON;
@@ -73,8 +74,9 @@ sub send_confirmation {
     $template->process( 'email/confirmation.html.tt', $template_vars, \$html )
         or die $template->error();
 
-    my $text = HTML::FormatText::Elinks->format_string($html);
-    my $to   = sprintf( "%s <%s>",
+    my $text = HTML::FormatText::Elinks->format_string(
+        Search::Tools::XML->escape_utf8($html) );
+    my $to = sprintf( "%s <%s>",
         $template_vars->{source}->{name},
         $template_vars->{source}->{email} );
     my $from = sprintf( "%s <%s>",
@@ -89,6 +91,10 @@ sub send_confirmation {
         to      => ( $TO || $to ),
         subject => $subject,
     );
+
+    if ( !$sent ) {
+        warn "$sent";
+    }
 
     if ( $sent && $log_activity ) {
         log_activity($template_vars);
@@ -110,13 +116,18 @@ sub get_response {
                 $response = $response->{orig_name};
             }
             else {
-                croak "Unknown response type: $response";
+                #croak "Unknown response type: $response";
+                # force whatever-it-is to stringify
+                $response .= "";
             }
         }
 
     }
     else {
-        $response = $srs->response_for_question($question)->sr_orig_value;
+        $response = $srs->response_for_question($question);
+        if ($response) {
+            $response = $response->sr_orig_value;
+        }
 
     }
 
@@ -175,6 +186,7 @@ sub get_template_vars {
     }
     my @newsrooms;
     my @related;
+    my %seen_queries;
     for my $org ( @{ $query->organizations } ) {
         push @newsrooms,
             {
@@ -183,28 +195,48 @@ sub get_template_vars {
             logo_uri => ( $org->org_logo_uri || $org->get_logo_uri() ),
             location => $org->get_location(),
             };
-        my $rss = $org->get_rss_feed(3);
+
+        # second true value == get evergreens if none explicitly tied to org
+        my $rss = $org->get_rss_feed( 3, 1 );
         for my $inq (@$rss) {
             next if $inq->inq_uuid eq $query->inq_uuid;
+            next if $seen_queries{ $inq->inq_uuid }++;
             push @related,
                 { title => $inq->get_title(), uri => $inq->get_uri() };
         }
     }
-    my $from_author;
+
+    # if we have none, get the evergreens explicitly
+    if ( !@related ) {
+        for my $inq ( @{ AIR2::Inquiry->get_evergreens() } ) {
+            push @related,
+                { title => $inq->get_title(), uri => $inq->get_uri() };
+        }
+    }
+
+    my $from;
     for my $author ( @{ $query->authors } ) {
         next unless $author->user->is_active;
-        $from_author = $author->user;
+        $from = {
+            name  => $author->user->get_name_first_last,
+            email => $author->user->get_primary_email->uem_address
+        };
     }
-    if ( !$from_author ) {
+    if ( !$from ) {
 
         if ( $query->cre_user->is_active ) {
-            $from_author = $query->cre_user;
+            $from = {
+                name  => $query->cre_user->get_name_first_last,
+                email => $query->cre_user->get_primary_email->uem_address
+            };
         }
         else {
-
-            # TODO look elsewhere
-            croak "No active User found for From";
-
+            my $org = $query->organizations->[0];
+            $from = {
+                name => $org->org_display_name,
+                email =>
+                    ( $org->org_email || 'support@publicinsightnetwork.org' ),
+            };
         }
     }
 
@@ -219,15 +251,11 @@ sub get_template_vars {
             terms_uri   => 'http://pinsight.org/terms',
             privacy_uri => 'http://pinsight.org/privacy',
         },
-        from => {
-            name       => $from_author->get_name_first_last,
-            email      => $from_author->get_primary_email->uem_address,
-            avatar_uri => $from_author->get_avatar_uri,
-        },
+        from      => $from,
         authors   => [ map { $_->user } @{ $query->authors } ],
         newsrooms => \@newsrooms,
-        query  => { uri => $query->get_uri(), uuid => $query->inq_uuid, },
-        source => {
+        query     => { uri => $query->get_uri(), uuid => $query->inq_uuid, },
+        source    => {
             src_id => ( ref $srs eq 'HASH' ? '' : $srs->srs_src_id ),
             name => join( ' ', $first_name, $last_name ),
             email => ( $email || $TO ),
@@ -269,8 +297,22 @@ sub send_email {
     if ( $args{html} ) {
         $stuff->html_body( $args{html} );
     }
-    my $result
-        = $stuff->using( 'SMTP', Host => AIR2::Config->get_smtp_host )->send;
+    my %mailer_args
+        = ( Host => AIR2::Config->get_smtp_host, Debug => $debug );
+    if ( AIR2::Config->smtp_host_requires_auth ) {
+        $mailer_args{username} = AIR2::Config->get_smtp_username;
+        $mailer_args{password} = AIR2::Config->get_smtp_password;
+    }
+    if ($debug) {
+        dump( \%mailer_args );
+    }
+    my $smtp = Email::Send->new(
+        {   mailer      => 'SMTP',
+            mailer_args => [ %mailer_args, ]
+        }
+    ) or die "failed to create Email::Send::SMTP: $@ $!\n";
+
+    my $result = $stuff->using($smtp)->send();
 
     $debug and warn $result;
 

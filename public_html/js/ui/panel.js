@@ -37,6 +37,8 @@ Ext.ns('AIR2.UI');
  *   Pass 'false' to hide editInPlace button.  Defaults to true.
  * @cfg {Array} editInPlace
  *   Array of form items to configure an Ext.FormPanel for in-place editing
+ * @cfg {Object} editInPlaceUsesModal (default false)
+ *   Places inline editor in a modal view.
  * @cfg {Object} editModal
  *   Configuration options to create an Ext.UI.Window when panel is maximized
  * @cfg {Boolean} nonapistore
@@ -394,6 +396,7 @@ Ext.extend(AIR2.UI.Panel, Ext.Container, {
         }
         this.editModalConfig.url = this.getCurrentUrl();
         this.editModalConfig.items.url = this.getCurrentUrl();
+
         this.editModal = new AIR2.UI.Window(this.editModalConfig);
 
         // When hiding editModal, reload panel, so we pick up any changes.
@@ -412,7 +415,7 @@ Ext.extend(AIR2.UI.Panel, Ext.Container, {
         }
     },
     startEditInPlace: function () {
-        var b, p, r;
+        var body, panel, record;
 
         // if we're already editing, cancel the edit!
         if (this.isediting) {
@@ -450,32 +453,71 @@ Ext.extend(AIR2.UI.Panel, Ext.Container, {
         this.isediting = true;
 
         // get EVERY record in EVERY dataview
-        b = this.getBody();
-        r = [];
-        b.items.each(function (item, index, length) {
+        body = this.getBody();
+        record = [];
+        body.items.each(function (item, index, length) {
             if (item.store) {
                 if (item.store.getCount() === 0) {
                     item.store.add(new item.store.recordType());
                 }
-                r = r.concat(item.store.getRange());
+                record = record.concat(item.store.getRange());
             }
         });
-        this.inPlaceRecs = r;
+        this.inPlaceRecs = record;
 
         // reset the panel
-        p = this.editInPlacePanel;
-        p.getForm().reset();
-        if (r.length === 1) {
-            p.getForm().loadRecord(r[0]);
+        panel = this.editInPlacePanel;
+        panel.getForm().reset();
+        if (record.length === 1) {
+            panel.getForm().loadRecord(record[0]);
         }
 
         // fire beforeedit, and show the form (hiding the dataviews)
-        if (this.fireEvent('beforeedit', p, r)) {
-            b.hide();
-            p.show();
-            p.getForm().isValid();
-            p.getForm().items.get(0).focus(true); //focus first field
+        if (this.fireEvent('beforeedit', panel, record)) {
+            this.showEditInPlace(body, panel);
         }
+    },
+    showEditInPlace: function (body, editPanel) {
+        var firstFld = editPanel.getForm().items.get(0);
+
+        if (this.editInPlaceUsesModal) {
+            editPanel.show();
+
+            // very close to startEditModal
+            if (!this.editModal || !this.editModal.show) {
+                this.editModalConfig = this.editInPlaceUsesModal;
+
+                if (!this.editModalConfig.iconCls) {
+                    this.editModalConfig.iconCls = this.iconCls;
+                }
+                if (!this.editModalConfig.title) {
+                    this.editModalConfig.title = this.title;
+                }
+
+                this.editModal = new AIR2.UI.Window(this.editModalConfig);
+
+                this.editModal.add(editPanel);
+
+                this.editModal.on('hide', function () {
+                    this.isediting = false;
+                }, this);
+
+            }
+
+            editPanel.show();
+            this.editModal.show(this.el);
+        }
+        else {
+            body.hide();
+            editPanel.show();
+            editPanel.getForm().isValid();
+        }
+
+        // get the first REAL field in the form, and focus it
+        if (firstFld.isXType('compositefield')) {
+            firstFld = firstFld.items.get(0);
+        }
+        firstFld.focus(true); //focus first field
     },
     endEditInPlace: function (doSave) {
         var i, n, p, pan, r, reqs, saveCallback, stores;
@@ -560,8 +602,15 @@ Ext.extend(AIR2.UI.Panel, Ext.Container, {
             // process after-edit
             if (this.fireEvent('afteredit', p, r)) {
                 this.isediting = false;
-                p.hide();
-                this.getBody().show();
+
+                if (this.editInPlaceUsesModal) {
+                    p.hide();
+                    this.editModal.hide();
+                }
+                else {
+                    p.hide();
+                    this.getBody().show();
+                }
             }
 
             // prune cancelled new-recs

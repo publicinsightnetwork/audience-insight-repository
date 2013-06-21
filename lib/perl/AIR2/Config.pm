@@ -94,12 +94,28 @@ for my $name ( $roles_ini->Sections ) {
 sub get_php_path {
     return ( $profiles->val( $profile, 'php_path' ) || '/usr/local/bin/php' );
 }
-sub get_profiles  { return $profiles }
-sub get_hostname  { return $hostname }
-sub get_user      { return $user }
-sub get_tz        { return $TIMEZONE }
-sub get_version   { return $version }
-sub get_smtp_host { return $air2_constants->{AIR2_SMTP_HOST} }
+sub get_profiles { return $profiles }
+sub get_hostname { return $hostname }
+sub get_user     { return $user }
+sub get_tz       { return $TIMEZONE }
+sub get_version  { return $version }
+
+sub get_smtp_host {
+    return $air2_constants->{AIR2_SMTP_HOST} . ':'
+        . $air2_constants->{AIR2_SMTP_PORT};
+}
+
+sub get_smtp_username {
+    return $air2_constants->{AIR2_SMTP_USERNAME};
+}
+
+sub get_smtp_password {
+    return $air2_constants->{AIR2_SMTP_PASSWORD};
+}
+
+sub smtp_host_requires_auth {
+    return get_smtp_host() =~ m/mandrill/;
+}
 
 sub get_upload_base_dir {
     my $upload_base

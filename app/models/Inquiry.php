@@ -150,10 +150,37 @@ class Inquiry extends AIR2_Record {
 
         // text
         $this->hasColumn('inq_desc', 'string', 255, array());
-        $this->hasColumn('inq_intro_para', 'string', null, array());
-        $this->hasColumn('inq_rss_intro', 'string', null, array());
+        $this->hasColumn(
+            'inq_intro_para',
+            'string',
+            null,
+            array(
+                'airvalidhtml' => array(
+                    'display' => 'Full Description',
+                    'message' => 'Not well formed html'
+                )
+            )
+        );
+
+        $this->hasColumn('inq_rss_intro', 'string', null, array(
+                'airvalidnohtml' => array(
+                    'display' => 'Short Description',
+                    'message' => 'No HTML (<>&) allowed in short description.'
+                )
+        ));
         $this->hasColumn('inq_ending_para', 'string', null, array());
-        $this->hasColumn('inq_confirm_msg', 'string', null, array());
+        $this->hasColumn(
+            'inq_confirm_msg',
+            'string',
+            null,
+            array(
+                'airvalidhtml' => array(
+                    'display' => 'Thank You Message',
+                    'message' => 'Not well formed html'
+                )
+            )
+        );
+
 
         // meta
         $this->hasColumn('inq_type', 'string', 1, array(
@@ -185,9 +212,31 @@ class Inquiry extends AIR2_Record {
 
         // events
         $this->hasColumn('inq_publish_dtim', 'timestamp', null, array());
-        $this->hasColumn('inq_deadline_msg', 'string', null, array());
+        $this->hasColumn(
+            'inq_deadline_msg',
+            'string',
+            null,
+            array(
+                'airvalidhtml' => array(
+                    'display' => 'Deadline Message',
+                    'message' => 'Not well formed html'
+                )
+            )
+        );
+
         $this->hasColumn('inq_deadline_dtim', 'timestamp', null, array());
-        $this->hasColumn('inq_expire_msg', 'string', null, array());
+        $this->hasColumn(
+            'inq_expire_msg',
+            'string',
+            null,
+            array(
+                'airvalidhtml' => array(
+                    'display' => 'Expire Message',
+                    'message' => 'Not well formed html'
+                )
+            )
+        );
+
         $this->hasColumn('inq_expire_dtim', 'timestamp', null, array());
 
         // user/timestamps
@@ -328,23 +377,6 @@ class Inquiry extends AIR2_Record {
         }
         return parent::preDelete($event);
     }
-
-
-    /**
-     *
-     */
-    public function validate() {
-        parent::validate();
-
-        // check for invalid characters
-        if (preg_match('/[<>&]/', $this->inq_rss_intro)) {
-            $this->getErrorStack()->add(
-                'inq_rss_intro',
-                'Invalid character(s)! No HTML markup allowed in Short Description.'
-            );
-        }
-    }
-
 
 
     /**
@@ -738,21 +770,18 @@ class Inquiry extends AIR2_Record {
         $activity->ia_inq_id = $this->inq_id;
         $activity->ia_actm_id = 49;
         $activity->ia_dtim = $now;
+        $activity->ia_desc = 'published by {USER}';
 
         // implicitly set if not published
         if (!$this->inq_publish_dtim) {
             $this->inq_publish_dtim = $now;
-            $activity->ia_desc = 'published by {USER}';
-        }
-        else {
-            $activity->ia_desc = 'republished by {USER}';
         }
 
         $this->InquiryActivity[] = $activity;
 
-        // check to see if we've previously expired this and republish
-        if ($this->inq_expire_dtim <= $now) {
-            //$this->inq_expire_dtim = null;    // TODO why null this?
+        // check to see if we've previously expired this and reset expire time
+        if (strtotime($this->inq_expire_dtim) < time()) {
+            $this->inq_expire_dtim = null;
         }
 
         // calculate status from event timestamps
@@ -1231,17 +1260,27 @@ class Inquiry extends AIR2_Record {
         $errorStack = $this->getErrorStack();
 
         if (count($errorStack)) {
-            $message = sprintf("Validation failed in class %s\n\n", get_class($this));
+            $message = sprintf("Validation failed for Inquiry {$this->inq_ext_title}<br /><br /><br />", get_class($this));
 
-            $message .= "  " . count($errorStack) . " field" . (count($errorStack) > 1 ?  's' : null) . " had validation error" . (count($errorStack) > 1 ?  's' : null) . ":\n\n";
+            $message .= "  " . count($errorStack) . " field" . (count($errorStack) > 1 ?  's' : null) . " had validation error" . (count($errorStack) > 1 ?  's' : null) . ":<br /><br /><ul>";
             foreach ($errorStack as $field => $errors) {
-                $message .= "    * " . count($errors) . " validator" . (count($errors) > 1 ?  's' : null) . " failed on $field (" . implode(", ", $errors) . ")\n";
+                $message .= "    <li> " . count($errors) . " validator" . (count($errors) > 1 ?  's' : null) . " failed on $field (" . implode(", ", $errors) . ")<br /><br /></li>";
                 if (count($errorStack) == 1) {
-                    if ($field == 'inq_rss_intro') {
-                        $message = implode(", ", $errors);
+                    $known_fields = array(
+                        'Deadline Message',
+                        'Expire Message',
+                        'Full Description',
+                        'Question Value',
+                        'Short Description',
+                        'Thank You Message',
+                    );
+                    if (in_array($field, $known_fields)) {
+                        $message = $field . ': ' . implode(", ", $errors);
                     }
+                    return $message;
                 }
             }
+            $message .= "</ul>";
             return $message;
         } else {
             return false;

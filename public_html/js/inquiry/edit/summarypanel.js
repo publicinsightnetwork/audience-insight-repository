@@ -19,8 +19,21 @@ AIR2.Inquiry.SummaryPanel = function () {
             '<button class="air2-rowedit">Edit</button>' +
         '</div>';
 
+
     stripTags = function (field, newValue, oldValue) {
-        field.setRawValue(Ext.util.Format.stripTags(newValue));
+        var strippedValue = Ext.util.Format.stripTags(newValue);
+        field.setRawValue(strippedValue);
+
+        return strippedValue;
+    };
+
+    stripTitleTags = function (field, newValue, oldValue) {
+        strippedValue = stripTags(field, newValue, oldValue);
+
+        AIR2.APP.setLocation({
+            title: strippedValue
+        });
+
     };
 
     inqRadix = AIR2.Inquiry.BASE.radix;
@@ -46,8 +59,9 @@ AIR2.Inquiry.SummaryPanel = function () {
         cls:            'inquiry-row',
         editInPlace:    [
             {
+                allowBlank: false,
                 listeners: {
-                    change: stripTags
+                    change: stripTitleTags
                 },
                 name: 'inq_ext_title',
                 style: AIR2.Inquiry.QuestionCSS,
@@ -72,12 +86,15 @@ AIR2.Inquiry.SummaryPanel = function () {
         });
 
         titlePanel.el.on('dblclick', function () {
-            titlePanel.startEditInPlace();
+            if (!titlePanel.isediting) {
+                titlePanel.startEditInPlace();
+            }
         });
     });
 
     shortDescriptionTemplate = new Ext.XTemplate(
-        '<strong>Short Description</strong> (Used for RSS Feeds, Facebook, Source, etc.)<br />' +
+        '<strong>Short Description</strong> ' +
+        '(Used for RSS Feeds, Facebook, Source, etc.)<br />' +
         '<tpl for=".">' +
             '<div class="inquiry-row">' +
                 '<p>{inq_rss_intro}</p>' +
@@ -123,7 +140,9 @@ AIR2.Inquiry.SummaryPanel = function () {
                 });
 
                 panel.el.on('dblclick', function () {
-                    panel.startEditInPlace();
+                    if (!panel.isediting) {
+                        panel.startEditInPlace();
+                    }
                 });
             }
         },
@@ -159,6 +178,7 @@ AIR2.Inquiry.SummaryPanel = function () {
                 xtype: 'box'
             },
             {
+                id: 'inq_intro_para_editor',
                 name: 'inq_intro_para',
                 xtype: 'air2ckeditor'
             }
@@ -176,7 +196,9 @@ AIR2.Inquiry.SummaryPanel = function () {
                 });
 
                 panel.el.on('dblclick', function () {
-                    panel.startEditInPlace();
+                    if (!panel.isediting) {
+                        panel.startEditInPlace();
+                    }
                 });
             }
         },

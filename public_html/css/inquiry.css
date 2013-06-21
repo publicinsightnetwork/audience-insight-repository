@@ -427,3 +427,33 @@
 .air2-tpl-proxy { padding: 0 22px; }
 .air2-tpl-proxy.go { background: #99ff99; }
 .air2-tpl-proxy.nogo { background: red; }
+
+/* ==========================================================
+ * preview
+ * ========================================================== */
+
+#pin-query-preview strong {
+    font-weight: bold;
+}
+
+/* status */
+
+#air2-inq-status {
+    font-weight: bold;
+}
+
+.air2-inq-status-E {
+    color: #aaa;
+}
+
+.air2-inq-status-A {
+    color: green;
+}
+
+.air2-inq-status-L {
+    color: #ff9900;
+}
+
+.air2-inq-status-D {
+    color: #ddd;
+}

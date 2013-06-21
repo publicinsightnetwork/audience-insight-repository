@@ -138,6 +138,8 @@ sub air_property_names {
             owner_org_uuid
             response_sets_count
             srs_ts
+            status
+            inq_status
             )
     ];
 }

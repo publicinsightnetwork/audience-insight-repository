@@ -40,6 +40,7 @@ use Unix::PID::Tiny;
 use File::Copy;
 use Compress::Zlib;
 use MIME::Base64;
+use Module::Load ();
 
 =head1 NAME
 
@@ -626,23 +627,43 @@ sub all_projects_as_hashes_by_id {
 }
 
 my %stale_types = (
-    'source'           => 'S',
-    'inquiry'          => 'I',
-    'src_response_set' => 'R',
-    'project'          => 'P',
+    'source'           => [ 'S', 'AIR2::Source' ],
+    'sources'          => [ 'S', 'AIR2::Source' ],
+    'inquiry'          => [ 'I', 'AIR2::Inquiry' ],
+    'inquiries'        => [ 'I', 'AIR2::Inquiry' ],
+    'src_response_set' => [ 'R', 'AIR2::SrcResponseSet' ],
+    'responses'        => [ 'R', 'AIR2::SrcResponseSet' ],
+    'project'          => [ 'P', 'AIR2::Project' ],
+    'projects'         => [ 'P', 'AIR2::Project' ],
+    'public_response'  => [ 'A', 'AIR2::PublicSrcResponseSet' ],
+    'public_responses' => [ 'A', 'AIR2::PublicSrcResponseSet' ],
 );
+
+sub get_stale_type_map {
+    return \%stale_types;
+}
 
 sub touch_stale {
     my $obj = shift or croak "RDBO object required";
-    my $table = $obj->meta->table;
-    if ( !exists $stale_types{$table} ) {
-        croak "No stale type for $table";
+
+    # look up by class since some classes share a table
+    my $class = $obj->meta->class;
+    my $stale_record;
+
+    for my $nick ( keys %stale_types ) {
+        my ( $type, $class_name ) = @{ $stale_types{$nick} };
+        if ( $class eq $class_name ) {
+            $stale_record = AIR2::StaleRecord->new(
+                str_type => $type,
+                str_xid  => $obj->primary_key_value,
+            );
+            last;
+        }
     }
-    my $type         = $stale_types{$table};
-    my $stale_record = AIR2::StaleRecord->new(
-        str_type => $type,
-        str_xid  => $obj->primary_key_value,
-    );
+
+    if ( !$stale_record ) {
+        croak "Failed to find stale type for $obj ($class)";
+    }
 
     # if update, assume small race condition ok.
     return $stale_record->insert_or_update_on_duplicate_key();

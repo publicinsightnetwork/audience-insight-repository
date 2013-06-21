@@ -72,10 +72,16 @@ sub check_file {
         and $perm !~ m/^....rwx... $/ )
     {
         warn "$dir : $pijuser owns but not group write-able\n";
+        chmod 0775, $dir;
     }
 
     if ( $uid == $apache_uid and $perm !~ m/^.rwx...... $/ ) {
         warn "$dir : $apache owns but not owner write-able\n";
+    }
+
+    if ( $uid == $apache_uid and $perm !~ m/^....rwx... $/ ) {
+
+        #warn "$dir : $apache owns but not group write-able\n";
     }
 
 }

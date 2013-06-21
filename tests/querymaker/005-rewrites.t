@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use Test::More tests => 10;
+use Test::More tests => 14;
 use LWP::UserAgent;
 use FindBin;
 use lib "$FindBin::Bin/../../lib/perl";
@@ -39,6 +39,16 @@ is( $resp->decoded_content, 'i am html', "got html" );
 
 # /q/<uuid>/some-title => /querys/<uuid>.html
 ok( $resp = $browser->get("$url/$uuid/some-title-here"),
+    "get $url/$uuid/some-title-here" );
+is( $resp->decoded_content, 'i am html', "got html" );
+
+# /q/en/<uuid>/some-title => /querys/<uuid.html
+ok( $resp = $browser->get("$url/en/$uuid/some-title-here"),
+    "get $url/en/$uuid/some-title-here" );
+is( $resp->decoded_content, 'i am html', "got html" );
+
+# /q/es/<uuid> => /querys/<uuid.html
+ok( $resp = $browser->get("$url/es/$uuid"),
     "get $url/$uuid/some-title-here" );
 is( $resp->decoded_content, 'i am html', "got html" );
 

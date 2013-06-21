@@ -112,7 +112,14 @@ $profile_defs = array(
     array('AIR2_SUPPORT_EMAIL',       'you@your.org'),
 
     // SMTP host (override for @pinsight.org testing)
-    array('AIR2_SMTP_HOST',           'localhost'),
+    array('AIR2_SMTP_HOST',           'smtp.mandrillapp.com'),
+
+    // SMTP port (override (e.g. 25) for @pinsight.org testing)
+    array('AIR2_SMTP_PORT',           '587'),
+
+    // transactional email credentials
+    array('AIR2_SMTP_USERNAME',       'pijdev@mpr.org'),
+    array('AIR2_SMTP_PASSWORD',       'jr5A-9x6hIr7ksMa03ufzA'),
 
     // insight button
     array('AIR2_INSIGHT_BUTTON_URL',  'http://your.org/insightbutton'),

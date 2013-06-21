@@ -22,6 +22,7 @@ AIR2.Source = function () {
     // constant for lock-icon
     AIR2.Source.LOCK = false;
     if (AIR2.Source.BASE.radix.src_has_acct === 'Y') {
+        AIR2.Source.hasAcct = true;
         AIR2.Source.LOCK =
            '<span class="air2-source-locked" ext:qtip="Account Locked"></span>';
     }

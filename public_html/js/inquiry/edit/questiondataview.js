@@ -245,7 +245,7 @@ AIR2.Inquiry.QuestionDataView = function (displayMode) {
 
                         val = item.value;
                         def = item.isdefault;
-                        fmt = AIR2.Format.quesChoice(val, type, false, def);
+                        fmt = AIR2.Format.quesChoice(val, type, item.isselected, def);
                         str += '<li>' + fmt + '</li>';
                     });
 

@@ -141,7 +141,7 @@ AIR2.Import.Resolve = function (cfg) {
                     if (row.lastop === ch) {
                         s += ' selected="selected"';
                     }
-                    
+
                     s += '>' + allops[ch] + '</option>';
                 }
             }
@@ -299,8 +299,9 @@ AIR2.Import.Resolve = function (cfg) {
         }
     });
     dv.store.on('load', function () {
-        loading = true;
         var rec = dv.store.getAt(0);
+
+        loading = true;
         w.body.mask('refreshing');
         rec.forceSet('redo', 1);
         dv.store.save();
@@ -312,7 +313,8 @@ AIR2.Import.Resolve = function (cfg) {
         var rec = dv.store.getAt(0);
 
         // handle return values
-        if (rec.data.tsrc_status === 'C') {
+        switch (rec.data.tsrc_status) {
+        case 'C':
             w.body.unmask();
             refreshBtn.enable();
             closeBtn.enable();
@@ -320,15 +322,19 @@ AIR2.Import.Resolve = function (cfg) {
             if(!loading) {
                 statusFld.showFailure('Still unresolved conflicts!');
             }
-        }
-        else if (rec.data.tsrc_status === 'E') {
+            break;
+        case 'E':
             w.body.unmask();
             if(!loading) {
                 statusFld.showFailure('Fatal error!');
             }
             refreshBtn.enable();
-        }
-        else {
+            break;
+        case 'D':
+            w.body.mask('success - no conflicts!');
+            w.close.defer(500, w);
+            break;
+        default:
             if (resolveNext === true) {
                 w.body.mask('success!');
                 w.close.defer(500, w);
@@ -343,6 +349,7 @@ AIR2.Import.Resolve = function (cfg) {
                 w.close.defer(500, w);
             }
         }
+
         loading = false;
     });
     if (dv.store.getCount() > 0) {

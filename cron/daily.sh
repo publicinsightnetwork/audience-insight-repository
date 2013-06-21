@@ -40,12 +40,7 @@ $PERL $AIR2_ROOT/bin/mk-budgethero-ini > $AIR2_ROOT/etc/budgethero.ini
 
 # send dezi-stats-report
 if [ $IS_PRODUCTION ]; then
-    $PERL $AIR2_ROOT/bin/mail-output --to pijdev@mpr.org \
-          --subject 'Dezi Stats Report' \
-          --attachment dezi-stats-report-`date +'%F'`.csv -- \
-          $PERL $AIR2_ROOT/bin/dezi-stats-report
-
-    $PERL $AIR2_ROOT/bin/check-file-upload-perms.pl
+    $PERL $AIR2_ROOT/bin/check-file-upload-perms.pl '' apache
     $PERL $AIR2_ROOT/bin/make-timeline-tsv $SHARED/downloadable/secure/stats/air-sources.tsv $SHARED/downloadable/secure/stats/air-source-growth.tsv
 fi
 

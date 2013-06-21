@@ -719,7 +719,7 @@ sub _check_inquiry_for_contributor_questions {
         # already has some? cache them.
         for my $ques (@$inq_questions) {
             my $template = $ques->ques_template or next;
-            my $ctb_field = $ques_types_rev{$template};
+            my $ctb_field = $ques_types_rev{$template} or next;
             $cached_questions{$ctb_field} = $ques;
         }
 

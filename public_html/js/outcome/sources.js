@@ -12,7 +12,7 @@ AIR2.Outcome.Sources = function () {
     upload = new AIR2.UI.Button({
         air2type: 'CLEAR',
         iconCls: 'air2-icon-upload',
-        tooltip: 'Upload Bin',
+        tooltip: 'Add Sources via Bin',
         handler: function () {
             var w = AIR2.Outcome.Modal();
             w.on('close', function () {
@@ -147,8 +147,7 @@ AIR2.Outcome.Sources = function () {
         url: AIR2.Outcome.URL + '/source',
         itemSelector: '.source-row',
         tpl: sourceTemplate,
-//      TODO: #4348 Fix up bulk uploads
-//         tools: ['->', upload],
+        tools: maywrite ? ['->', upload] : false,
         modalAdd: 'Add Source',
         editModal: {
             title: 'PINfluence Sources',

@@ -168,6 +168,9 @@ AIR2.User.Organizations = function () {
                 },
                 allowDelete: function (rec) {
                     var uuid = rec.data.org_uuid;
+                    if (rec.store.getCount() < 2) {
+                        return false;
+                    }
                     return managerEdit(uuid);
                 },
                 itemSelector: '.org-row',

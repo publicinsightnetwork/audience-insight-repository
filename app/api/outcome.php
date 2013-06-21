@@ -253,6 +253,13 @@ class AAPI_Outcome extends AIRAPI_Resource {
      * @param array $data
      */
     protected function air_update($rec, $data) {
+
+        // check perms
+        if (!$rec->user_may_write($this->user)) {
+            throw new Rframe_Exception(Rframe::BAD_DATA, "You do not have permission to update this PINfluence.");
+            return;
+        }
+
         // unset bulk_op vars
         $this->bulk_op = null;
         $this->bulk_rs = null;
@@ -366,7 +373,12 @@ class AAPI_Outcome extends AIRAPI_Resource {
         // rethrow any exceptions as 'data' exceptions
         try {
             if ($bulk_op == 'sources') {
-                $this->bulk_rs = AIR2Outcome::add_sources($rec, $data['sources'], $data['sout_type']);
+                $bin = AIR2_Record::find('Bin', $data['bin_uuid']);
+                if (!$bin) {
+                    throw new Rframe_Exception(Rframe::BAD_DATA, 'Unable to get the Bin specified.');
+                    return;
+                }
+                $this->bulk_rs = AIR2Outcome::add_sources_from_bin($rec, $bin, $data['sout_type']);
             }
         }
         catch (Rframe_Exception $e) {

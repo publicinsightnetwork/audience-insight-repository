@@ -4,6 +4,7 @@
 AIR2.Inquiry.Settings = function () {
     var dv,
         editItems,
+        editWindowConfig,
         expireButton,
         fbarButtons,
         inqRec,
@@ -15,7 +16,36 @@ AIR2.Inquiry.Settings = function () {
         scheduleButton,
         switchButtonState,
         unscheduleButton,
-        template;
+        deleteButton,
+        template,
+        viewport;
+
+    deleteButton = new AIR2.UI.Button({
+        air2size: 'SMALL',
+        air2type: 'FRIENDLY',
+        hidden: true,
+        hideParent: false,
+        iconCls: 'air2-icon-delete',
+        id: 'air2-inquiry-delete-button',
+        title: 'Delete the draft query',
+        text: 'Delete',
+        handler: function (button, event) {
+            var inquiryRecord;
+            inquiryRecord = AIR2.Inquiry.inqStore.getAt(0);
+            Logger(inquiryRecord);
+            AIR2.Inquiry.inqStore.remove(inquiryRecord);
+            AIR2.Inquiry.inqStore.on('save', function() {
+                Ext.getCmp('air2-inquiry-publish-settings').el.mask('Deleting...');
+                if (window.history.length > 1) {
+                    window.history.back(-1);
+                }   
+                else {
+                    location.href = AIR2.HOMEURL;
+                }            
+            });
+            AIR2.Inquiry.inqStore.save();
+        }
+    });
 
     publishButton = new AIR2.UI.Button({
         air2size: 'SMALL',
@@ -34,6 +64,7 @@ AIR2.Inquiry.Settings = function () {
             AIR2.Inquiry.inqStore.save();
             Ext.getCmp('air2-inquiry-expire-button').show();
             this.setText('Update');
+            deleteButton.hide();
         }
     });
 
@@ -55,6 +86,7 @@ AIR2.Inquiry.Settings = function () {
             Ext.getCmp('air2-inquiry-publish-button').hide();
             Ext.getCmp('air2-inquiry-unschedule-button').show();
             this.hide();
+            deleteButton.hide();
         }
     });
 
@@ -76,6 +108,7 @@ AIR2.Inquiry.Settings = function () {
             Ext.getCmp('air2-inquiry-publish-button').hide();
             Ext.getCmp('air2-inquiry-schedule-button').show();
             this.hide();
+            deleteButton.show();
         }
     });
 
@@ -97,11 +130,14 @@ AIR2.Inquiry.Settings = function () {
             AIR2.Inquiry.inqStore.save();
             Ext.getCmp('air2-inquiry-publish-button').show();
             this.hide();
+            deleteButton.hide();
         }
     });
-
+    
     fbarButtons = [
         '->',
+        deleteButton,
+        ' ',
         expireButton,
         ' ',
         publishButton,
@@ -110,7 +146,7 @@ AIR2.Inquiry.Settings = function () {
         ' ',
         scheduleButton
     ];
-
+    
     inqRec = AIR2.Inquiry.inqStore.getAt(0);
 
     okToSchedule = function (inqRec) {
@@ -129,6 +165,7 @@ AIR2.Inquiry.Settings = function () {
         switch (inqRec.get('inq_status')) {
         case AIR2.Inquiry.STATUS_ACTIVE:
         case AIR2.Inquiry.STATUS_DEADLINE:
+            deleteButton.hide();
             expireButton.show();
             publishButton.setText('Update');
             publishButton.show();
@@ -136,11 +173,13 @@ AIR2.Inquiry.Settings = function () {
             unscheduleButton.hide();
             break;
         case AIR2.Inquiry.STATUS_EXPIRED:
+            deleteButton.hide();
             expireButton.hide();
             publishButton.show();
             scheduleButton.hide();
             break;
         case AIR2.Inquiry.STATUS_DRAFT:
+            deleteButton.show();
             expireButton.hide();
             if (okToSchedule(inqRec)) {
                 publishButton.hide();
@@ -154,11 +193,13 @@ AIR2.Inquiry.Settings = function () {
             }
             break;
         case AIR2.Inquiry.STATUS_INACTIVE:
+            deleteButton.hide();
             expireButton.hide();
             publishButton.show();
             scheduleButton.hide();
             break;
         case AIR2.Inquiry.STATUS_SCHEDULED:
+            deleteButton.hide();
             expireButton.hide();
             publishButton.hide();
             scheduleButton.hide();
@@ -166,7 +207,7 @@ AIR2.Inquiry.Settings = function () {
             break;
         default:
         }
-    }
+    };
 
     switchButtonState(inqRec);
 
@@ -197,14 +238,18 @@ AIR2.Inquiry.Settings = function () {
                 '<tr>' +
                     '<td class="label right">Image:</td>' +
                     '<td class="">' +
-                     '<div id="air2-inq-logo">{[AIR2.Format.inqLogo(values)]}</div>' +
+                        '<div id="air2-inq-logo">' +
+                            '{[AIR2.Format.inqLogo(values)]}' +
+                        '</div>' +
                     '</td> ' +
                 '</tr>' +
                 '<tpl if="values.inq_publish_dtim">' +
                     '<tr>' +
                         '<td class="label right">Publish date:</td>' +
                         '<td class="date left">' +
-                            '{[AIR2.Format.dateLong(values.inq_publish_dtim)]}' +
+                            '{[AIR2.Format.dateLong(' +
+                                'values.inq_publish_dtim' +
+                            ')]}' +
                         '</td>' +
                     '</tr>' +
                 '</tpl>' +
@@ -220,7 +265,10 @@ AIR2.Inquiry.Settings = function () {
                     '<tr>' +
                         '<td class="label right">Deadline Message:</td>' +
                         '<td class="left">' +
-                            '{[this.previewLink("Preview Deadline Message", "inq_deadline_msg")]}' +
+                            '{[this.previewLink(' +
+                                '"Preview Deadline Message",' +
+                                '"inq_deadline_msg"' +
+                            ')]}' +
                         '</td>' +
                     '</tr>' +
                 '</tpl>' +
@@ -236,7 +284,10 @@ AIR2.Inquiry.Settings = function () {
                     '<tr>' +
                         '<td class="label right">Expire Message:</td>' +
                         '<td class="left">' +
-                            '{[this.previewLink("Preview Expire Message", "inq_expire_msg")]}' +
+                            '{[this.previewLink(' +
+                                '"Preview Expire Message",' +
+                                '"inq_expire_msg"' +
+                            ')]}' +
                         '</td>' +
                     '</tr>' +
                 '</tpl>' +
@@ -244,7 +295,10 @@ AIR2.Inquiry.Settings = function () {
                     '<tr>' +
                         '<td class="label right">Thank You Message:</td>' +
                         '<td class="left">' +
-                            '{[this.previewLink("Preview Thank You Message", "inq_confirm_msg")]}' +
+                            '{[this.previewLink(' +
+                                '"Preview Thank You Message",' +
+                                '"inq_confirm_msg"' +
+                            ')]}' +
                         '</td>' +
                     '</tr>' +
                 '</tpl>' +
@@ -268,6 +322,16 @@ AIR2.Inquiry.Settings = function () {
                         '</td>' +
                     '</tr>' +
                 '</tpl>' +
+                '<tpl if="values.inq_url">' +
+                    '<tr>' +
+                        '<td class="label right">Query URL:</td>' +
+                        '<td class="left">' +
+                            '<a href="{values.inq_url}" target="_blank">' +
+                                '{[Ext.util.Format.ellipsis(values.inq_url, 20)]}' +
+                            '</a>' +
+                        '</td>' +
+                    '</tr>' +
+                '</tpl>' +
             '</table>' +
         '</tpl>',
         {
@@ -286,6 +350,7 @@ AIR2.Inquiry.Settings = function () {
                 isPublished = (pubFlags.indexOf(values.inq_status) > -1);
 
                 if (values.inq_stale_flag && isPublished) {
+                    publishButton.enable();
                     return '<tr class="notify notify-page">' +
                         '<td colspan="99">' +
                             '<span class="notify-message">' +
@@ -293,6 +358,9 @@ AIR2.Inquiry.Settings = function () {
                             '</span>' +
                         '</td>' +
                     '</tr>';
+                }
+                else if (isPublished) {
+                    publishButton.disable();
                 }
 
                 return '';
@@ -310,7 +378,7 @@ AIR2.Inquiry.Settings = function () {
                     '</span>';
                 }
             },
-            previewLink: function(display, key) {
+            previewLink: function (display, key) {
                 return '<a onclick="AIR2.Inquiry.inquiryPreviewModal(\'' +
                 display + '\',\'' + key + '\')"' + '>' + display + '</a>';
             },
@@ -368,12 +436,16 @@ AIR2.Inquiry.Settings = function () {
                 allowBlank: true
             }, {
                 xtype: 'box',
-                html: 'Please upload a square .jpg or .png file at least 400px by 400px. We will display this image on this query and in RSS feeds.',
+                html: 'Please upload a square .jpg or .png file at least ' +
+                    '400px by 400px. We will display this image on this ' +
+                    'query and in RSS feeds.',
                 id: 'logo-instructions'
             }]
         },
         {
             fieldLabel: 'Publish Date',
+            invalidText: 'Please enter a date and time, or use the picker.',
+            msgTarget: 'under',
             name: 'inq_publish_dtim',
             picker: {
                 timePicker: {
@@ -386,6 +458,8 @@ AIR2.Inquiry.Settings = function () {
         },
         {
             fieldLabel: 'Deadline Date',
+            invalidText: 'Please enter a date and time, or use the picker.',
+            msgTarget: 'under',
             name: 'inq_deadline_dtim',
             picker: {
                 timePicker: {
@@ -403,6 +477,8 @@ AIR2.Inquiry.Settings = function () {
         },
         {
             fieldLabel: 'Expire Date',
+            invalidText: 'Please enter a date and time, or use the picker.',
+            msgTarget: 'under',
             name: 'inq_expire_dtim',
             picker: {
                 timePicker: {
@@ -457,8 +533,40 @@ AIR2.Inquiry.Settings = function () {
             ],
             triggerAction: 'all',
             value: AIR2.Inquiry.inqStore.getAt(0).get('Locale').loc_key
+        },
+        {
+            xtype: 'textfield',
+            fieldLabel: 'Query URL',
+            msgTarget: 'under',
+            name: 'inq_url',
+            vtype: 'url'
         }
     ];
+
+    viewport = Ext.getBody().getViewSize();
+
+    editWindowConfig = {
+        allowAdd: false,
+        height: viewport.height - 60,
+        iconCls: 'air2-icon-inquiry',
+        id: 'air2-inquiry-edit-publish-settings',
+        layout: 'fit',
+        layoutConfig: {deferredRender: true},
+        listeners: {
+            afterrender: function (window) {
+                viewport = Ext.getBody().getViewSize();
+                window.setHeight(viewport.height - 60);
+                window.setWidth(viewport.width - 60);
+            },
+            show: function (window) {
+                viewport = Ext.getBody().getViewSize();
+                window.setHeight(viewport.height - 60);
+                window.setWidth(viewport.width - 60);
+            }
+        },
+        title: 'Edit Settings',
+        width: viewport.width - 60
+    };
 
     // panel
     panel = new AIR2.UI.Panel({
@@ -466,6 +574,7 @@ AIR2.Inquiry.Settings = function () {
         autoHeight: true,
         colspan: 3,
         editInPlace: editItems,
+        editInPlaceUsesModal: editWindowConfig,
         emptyText: '<div class="air2-panel-empty"><h3>Loading...</h3></div>',
         fbar: fbarButtons,
         loaded: true,
@@ -533,7 +642,7 @@ AIR2.Inquiry.Settings = function () {
                         },
                         success: function (form, action) {
                             //Logger('success, logo=', logo);
-                        
+
                             logo.reset();
                             form.el.set({
                                 enctype: 'application/x-www-form-urlencoded'
@@ -558,9 +667,9 @@ AIR2.Inquiry.Settings = function () {
                             panel.endEditInPlace(true);
                         },
                         failure: function (form, action) {
-                        
+
                             //Logger('failure, rec=', rec);
-                        
+
                             var msg = "Unknown error";
                             if (action.result && action.result.message) {
                                 msg = action.result.message;
@@ -576,7 +685,7 @@ AIR2.Inquiry.Settings = function () {
                             form.el.set({
                                 enctype: 'application/x-www-form-urlencoded'
                             });
-                            
+
                             inqpanel.el.unmask();
                         }
                     });
@@ -596,13 +705,14 @@ AIR2.Inquiry.Settings = function () {
     dv.addListener('afterrender', function () {
         this.store.addListener({
             beforesave: function () {
-                panel.body.el.mask('Updating...');
+                if (!panel.isediting) {
+                    panel.body.el.mask('Updating...');
+                }
             },
             update: function () {
                 panel.body.el.unmask();
             }
         });
-
     });
 
     return panel;

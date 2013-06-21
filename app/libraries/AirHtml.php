@@ -67,6 +67,12 @@ class AirHtml {
      * @return array $css
      */
     public function css_includes() {
+
+        // only need compressed file, if it exists
+        if (file_exists(AIR2_DOCROOT.'/css/air2-compressed.css')) {
+            return array(air2_uri_for('css/air2-compressed.css'));
+        }
+
         // recursively scan css directory
         $css = air2_dirscan(AIR2_DOCROOT.'/css/', '/.css$/');
         $rmv = array('docbook.css', 'login.css', 'ie.css', 'print.css', 'ext-theme-air2.css', 'query.css', 'pinform.css');

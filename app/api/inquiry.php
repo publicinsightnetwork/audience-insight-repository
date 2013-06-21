@@ -127,7 +127,7 @@ class AAPI_Inquiry extends AIRAPI_Resource {
 
         // default to url-ified title
         if (!isset($data['inq_title'])) {
-            $i->inq_title = substr(air2_urlify($data['inq_ext_title']), 0, 128);
+            $i->inq_title = ' ';
         }
 
         if ($data['loc_key']) {
@@ -231,6 +231,7 @@ class AAPI_Inquiry extends AIRAPI_Resource {
      * @param array   $data
      */
     protected function rec_update(Inquiry $rec, $data) {
+
         $rec->inq_stale_flag = true; //mark as stale
 
         // validate actions
@@ -286,7 +287,6 @@ class AAPI_Inquiry extends AIRAPI_Resource {
                 $rec->clearRelated('Logo');
             }
         }
-
         // update columns
         foreach ($data as $key => $val) {
             if ($rec->getTable()->hasColumn($key)) {
@@ -351,6 +351,7 @@ class AAPI_Inquiry extends AIRAPI_Resource {
             'InqOrg',
             'Locale',
             'ProjectInquiry',
+            'inq_type',
             'inq_status',
             'inq_upd_dtim',
             'inq_expire_dtim',
@@ -362,6 +363,8 @@ class AAPI_Inquiry extends AIRAPI_Resource {
             'inq_cache_user',
             'inq_cre_dtim',
             'inq_org_id',
+            'inq_title',
+            'inq_url',
         );
 
         foreach ($reset_keys as $reset_key) {
@@ -375,7 +378,47 @@ class AAPI_Inquiry extends AIRAPI_Resource {
             $new_data['inq_rss_intro'] = 'PLEASE ENTER A SHORT DESCRIPTION';
         }
 
-        $new_inquiry_uuid = $this->rec_create($new_data);
+        // make the new query. catch exceptions and still try to duplicate the
+        // questions to validate those as well. (no "suprise" errors after the
+        // query is cleaned up)
+        try {
+            $new_inquiry_uuid = $this->rec_create($new_data);
+        } catch(exception $outer_e) {
+            $feaux_intro = 'This query was created to validate question ' .
+            ' copying after an query failed to duplicate. It should have been '.
+            ' cleaned up automatically. Please report this to support.';
+
+            $feaux_data = array(
+                'inq_ext_title' => 'air2-question-duping-temp-inquiry',
+                'loc_key' => $new_data['loc_key'],
+                'org_uuid' => $home_org->org_uuid,
+                'prj_uuid' => $home_org->DefaultProject->prj_uuid,
+                'inq_rss_intro' => $feaux_intro,
+            );
+
+            $feaux_inquiry_uuid = $this->rec_create($feaux_data);
+            $feaux_inquiry = $this->air_fetch($feaux_inquiry_uuid);
+
+            try {
+                $this->duplicate_questions($rec, $feaux_inquiry);
+            } catch(exception $e) {
+
+                // if we can't dupe the questions
+                // delete the duplicate query and
+                // show the errror
+                $feaux_inquiry->delete();
+
+                throw new Rframe_Exception(
+                    Rframe::BAD_DATA,
+                    'Query Errors:<br /><br />' .
+                    $outer_e->getMessage() .
+                    '<br /><br /><br /><br />Question Errors:<br /><br />' .
+                    $e->getMessage()
+                );
+            }
+            $feaux_inquiry->delete();
+            throw new Rframe_Exception(Rframe::BAD_DATA, $outer_e->getMessage());
+        }
 
         if (!$new_inquiry_uuid) {
             $msg = 'Could not create duplicate query.';
@@ -389,7 +432,17 @@ class AAPI_Inquiry extends AIRAPI_Resource {
             throw new Rframe_Exception(Rframe::BAD_DATA, $msg);
         }
 
-        $this->duplicate_questions($rec, $new_inquiry);
+        try {
+            $this->duplicate_questions($rec, $new_inquiry);
+        } catch(exception $e) {
+
+            // if we can't dupe the questions
+            // delete the duplicate query and
+            // show the errror
+            $new_inquiry->delete();
+
+            throw new Rframe_Exception(Rframe::BAD_DATA, $e->getMessage());
+        }
 
         return $new_inquiry;
     }

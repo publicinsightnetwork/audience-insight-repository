@@ -93,7 +93,7 @@ if (!isset($search_idx)) {
   <script type="text/javascript">
     PIN_QUERY = {
       uuid:       '<?php echo $data["UUID"]; ?>',
-      baseUrl:    '<?php echo $c->uri_for('') ?>',
+      baseUrl:    '<?php echo $c->uri_for('') ?>/',
       divId:      'pin-query-preview',
       previewMode: true,
       opts: {}

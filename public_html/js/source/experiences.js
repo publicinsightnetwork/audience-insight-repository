@@ -209,7 +209,7 @@ AIR2.Source.Experiences = function () {
                         '2px 4px'
                     );
                     where = new Ext.form.TextField({
-                        allowBlank: false,
+                        allowBlank: true,
                         value: rec.data.sv_basis,
                         renderTo: whereEl,
                         width: 200

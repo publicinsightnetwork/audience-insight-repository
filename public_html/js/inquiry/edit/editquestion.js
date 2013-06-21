@@ -182,12 +182,13 @@ AIR2.Inquiry.editQuestion = function (dv, index, node, event) {
         if (AIR2.Inquiry.QUESTION.TYPE.CHECKBOX.indexOf(typeNormalized) > -1) {
             fieldsetItems.push({
                 airIndex: index,
-                airKey: 'ischecked',
+                airKey: 'isselected',
                 airOption: true,
+                checked: item.isselected,
                 disabled: item.disableForm,
                 fieldLabel: 'Checked',
-                name: 'option_' + index + '_ischecked',
-                value: item.isselected,
+                name: 'option_' + index + '_isselected',
+                value: true,
                 xtype: 'checkbox'
             });
         }
@@ -196,10 +197,11 @@ AIR2.Inquiry.editQuestion = function (dv, index, node, event) {
             airIndex: index,
             airKey: 'isdefault',
             airOption: true,
+            checked: item.isdefault,
             disabled: item.disableForm,
             fieldLabel: 'Default',
             name: 'isdefault',
-            value: item.isdefault,
+            value: true,
             xtype: 'radio'
         });
 
@@ -351,6 +353,7 @@ AIR2.Inquiry.editQuestion = function (dv, index, node, event) {
             checked: (response_options && response_options.require === true),
             fieldLabel: 'Required',
             name: 'require',
+            style: 'width:auto',
             value: 'true'
         });
     }
@@ -361,6 +364,7 @@ AIR2.Inquiry.editQuestion = function (dv, index, node, event) {
             disabled: true,
             fieldLabel: 'Required',
             name: 'require',
+            style: 'width:auto',
             value: 'true'
         });
     }
@@ -565,15 +569,20 @@ AIR2.Inquiry.editQuestion = function (dv, index, node, event) {
     });
 
     editWindow.on('show', function (window) {
-        var position, viewPortHeight;
+        var position, viewport;
 
-        viewPortHeight = Ext.getBody().getViewSize().height - 80;
+        viewport = Ext.getBody().getViewSize();
 
-        if (window.getHeight() >= viewPortHeight) {
+        if (window.getHeight() >= (viewport.height - 80)) {
             position = window.getPosition();
-
             window.setPosition(position[0], 40);
-            window.setHeight(viewPortHeight);
+            window.setHeight(viewport.height - 80);
+        }
+
+        if (window.getWidth() >= (viewport.width - 80)) {
+            window.setWidth(viewport.width - 80);
+            position = window.getPosition();
+            window.setPosition(40, position[1]);
         }
 
     });

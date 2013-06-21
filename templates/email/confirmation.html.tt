@@ -1,14 +1,14 @@
-[%  # in-line style definitions 
+[%  # in-line style definitions
 
     font_face = 'font-family: Helvetica';
     font_size = '9px';
-    
+
     content = 'max-width: 600px; margin: 0 auto; display: block;';
-    css_newsrooms = 'width: 100%; padding-bottom: 20px; margin-bottom: 20px; color: #999; font-size: 14px; border-bottom: 1px solid #eee;';
-    css_container = 'display:block!important; max-width:600px!important; margin:0 auto!important; clear:both!important;';
+    css_newsrooms = 'width: 100%; padding-bottom: 20px; margin-bottom: 20px; color: #999999; font-size: 14px; border-bottom: 1px solid #eeeeee;';
+    css_container = 'display:block !important; max-width:600px !important; margin:0 auto !important; clear:both!important;';
     css_text = 'margin: 15px 0; font-weight: normal; font-size:14px; line-height:1.5;';
     css_body_links = 'color: #4887ff; text-decoration: none;'
-    css_footer_links = 'color: #666; text-decoration: none;';
+    css_footer_links = 'color: #666666; text-decoration: none;';
 
     all_inline_styles = "$font_face; $font_size;";
 
@@ -33,12 +33,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Submission Confirmation - Public Insight Network</title>
 </head>
- 
-<body style="-webkit-text-size-adjust:none; width: 100% !important; height: 100%; background: #f6f6f6 url([% pin.asset_uri %]/email/img/back-gray-grid.jpg) repeat; color: #444; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; margin: 0; padding: 0;">
 
+<body style="-webkit-text-size-adjust:none; width: 100% !important; height: 100%; background-color: #f6f6f6; background: #f6f6f6 url([% pin.asset_uri %]/css/img/back-gray-grid.jpg) repeat; color: #444444; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0;">
 
 <!-- BACKGROUND COLOR FOR GMAIL -->
-<table bgcolor="#eee" width="100%" cellpadding="0" cellspacing="0" style="background: #f6f6f6 url([% pin.asset_uri %]/email/img/back-gray-grid.jpg) repeat;">
+<table bgcolor="#eeeeee" width="100%" cellpadding="0" cellspacing="0" style="background: #f6f6f6 url([% pin.asset_uri %]/css/img/back-gray-grid.jpg) repeat;">
   <tr>
     <td>
 
@@ -54,7 +53,7 @@
 <!-- /HEADER -->
 
 
-<!-- BODY --> 
+<!-- BODY -->
 <table style="width: 100%;" cellpadding="0" cellspacing="0" border="0">
     <tr>
         <td></td>
@@ -64,7 +63,7 @@
             <table>
                 <tr>
                     <td>
-                    
+
                         <!-- NEWSROOMS -->
                         <table style="[% css_newsrooms %]">
                             <tr>
@@ -74,80 +73,78 @@
                                 </td>
                                 <td valign="top" style="padding-top: 6px; width: 1px; white-space: nowrap; padding-right: 30px; line-height: 18px;">
                                     <strong><a href="[% newsroom.uri %]" style="text-decoration: none;">[% newsroom.name %]</a></strong><br />
-                                    [% newsroom.location %] 
+                                    [% newsroom.location %]
                                 </td>
                             [% END %]
                             </tr>
                         </table>
                         <!-- /NEWSROOMS -->
-                    
-                    
+
+
                         <!-- MESSAGE -->
                         <h3 style="font-weight:500; font-size: 27px; margin-bottom: 20px;">Hi [% source.name %],</h3>
                         <p style="font-size:17px;">Thank you for sharing your insight with <strong><a href="[% newsrooms.0.uri %]" style="[% css_body_links %]">[% newsrooms.0.name %]</a></strong>.</p>
-                        
+
                         <p style="[% css_text %]">A reporter or producer may contact you to find out more about what you've told us. A copy of your responses is included below. Please take a moment to share <strong><a href="[% query.uri %]" style="[% css_body_links %]">this query</a></strong> with others who might have their own stories and insights to share about this topic.</p>
-                        
-                        <p style="[% css_text %]">
-                        <strong>You can also help inform more of our reporting:</strong>
-                        
+
+                        <span style="[% css_text %]">
+                        <p><strong>You can also help inform more of our reporting:</strong></p>
+
                             <ul style="[% css_text %] margin-left: 0; padding-left: 20px;">
                             [% FOREACH q IN related_queries %]
                                 <li><a href="[% q.uri %]" style="[% css_body_links %]">[% q.title %]</a></li>
                             [% END %]
                             </ul>
-                        </p>
+                        </span>
 
                         <p style="[% css_text %]">
                         Thanks again for your time!
                         </p>
                         <!-- MESSAGE -->
-                        
-                        
+
+
                         <!-- SIGNATURE -->
-                        <p style="[% css_text %]">
-                            <table style="margin: 25px 0; font-weight: normal; font-size: 14px; line-height: 1.4;">
-                            [% FOREACH author IN authors %]
-                                <tr>
-                                 [% IF (author.get_avatar_uri) %]
-                                    <td style="width: 62px;">
-                                        <img src="[% author.get_avatar_uri %]" style="height: 55px; width: 55px; border-radius: 50px;">
-                                    </td>
-                                 [% END %]
-                                    <td>[% PROCESS do_signature sig = author.get_signature( query.uuid ) %]</td>
-                                </tr>
-                            [% END %]
-                            </table>
-                        </p>
+                        <table style="margin: 25px 0; font-weight: normal; font-size: 14px; line-height: 1.4;">
+                        [% FOREACH author IN authors %]
+                            <tr>
+                             [% IF (author.get_avatar_uri) %]
+                                <td style="width: 62px;">
+                                    <img src="[% author.get_avatar_uri %]" style="height: 55px; width: 55px; border-radius: 50px;">
+                                </td>
+                             [% END %]
+                                <td><p style="[% css_text %]">[% PROCESS do_signature sig = author.get_signature( query.uuid ) %]</p></td>
+                            </tr>
+                        [% END %]
+                        </table>
                         <!-- /SIGNATURE -->
-                        
-                        
+
+
                         <!-- SUBMISSION -->
-                        <p style="[% css_text %] padding-top: 30px; margin-top: 30px; border-top: 1px solid #eee;">
+                        <div style="[% css_text %] padding-top: 30px; margin-top: 30px; border-top: 1px solid #eee;">
                             <ol style="[% css_text %] margin-left: 0; padding-left: 20px;">
                             [% FOREACH response IN submission %]
                                 <li style="margin-bottom: 15px;">
                                     <strong>[% response.question %]</strong><br />
-                                    [% response.answer %] 
+                                    [% response.answer %]
                                 </li>
                             [% END %]
                             </ol>
-                        </p> 
+                        </div>
                         <!-- /SUBMISSION -->
-                        
+
 
                         <!-- Callout Panel -->
                         <p style="[% css_text %] padding:15px; background-color:#ECF8FF; margin-top: 10px; margin-bottom: 10px;">
                             <strong>What is the Public Insight Network?</strong><br />
                             American Public Media's Public Insight Network (PIN) is a platform for connecting trusted journalists with knowledgeable sources. Through PIN, people around the world share what they know to inform reporting by PIN partner newsrooms, making news coverage more relevant, diverse, transparent and trustworthy.<br />
                             <a href="[% pin.uri %]" style="font-weight:bold; color: #2BA6CB;">Learn more &raquo;</a>
-                        </p><!-- /Callout Panel -->                    
-            
+                        </p><!-- /Callout Panel -->
+
                     </td>
                 </tr>
             </table>
             </div><!-- /content -->
-                                    
+
         </td>
         <td></td>
     </tr>
@@ -158,15 +155,15 @@
     <tr>
         <td></td>
         <td style="[% css_container %]">
-            
+
             <!-- FOOTER CONTENT -->
             <div class="content">
             <table width="100%">
             <tr>
             [% FOREACH newsroom IN newsrooms %]
                 <td width="70%">
-                    <p style="color: #999; padding-left: 20px;">
-                        <strong><a href="[% newsroom.uri %]" style="[% css_footer_links %]">[% newsroom.name %]</a></strong><br /> 
+                    <p style="color: #999999; padding-left: 20px;">
+                        <strong><a href="[% newsroom.uri %]" style="[% css_footer_links %]">[% newsroom.name %]</a></strong><br />
                         [% newsroom.location %]
                     </p>
                 </td>
@@ -181,14 +178,14 @@
             </table>
             </div>
             <!-- /FOOTER CONTENT -->
-            
+
           </td>
         <td></td>
     </tr>
 </table><!-- /FOOTER -->
 
 
-    
+
     </td>
   </tr>
 </table>

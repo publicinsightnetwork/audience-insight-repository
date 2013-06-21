@@ -94,6 +94,8 @@
 
     margin-left: 6px;
     margin-top: 10px;
+    
+    width: 220px;
 }
 
 .pin-query-textarea, .pin-query-radio {

@@ -39,8 +39,26 @@ class Submission_Controller extends AIR2_HTMLController {
      */
     protected function show_html($uuid, $base_rs) {
 
+        $srs = AIR2_Record::find('SrcResponseSet', $uuid);
+
+        // find a reason *not* to redirect
+        $redirect_to_reader = true;
+
         // redmine #7667 redirect all-but-administrators to the reader page
-        if (!$this->user->is_system() && !$this->input->get('profile')) {
+        if ($this->user->is_system() || $this->input->get('profile')) {
+            $redirect_to_reader = false;
+        }
+
+        // except if this is a manual submission and we just created it (redmine #8177)
+        if ($srs->srs_type == SrcResponseSet::$TYPE_MANUAL_ENTRY) {
+            $srs_age = time() - strtotime($srs->srs_cre_dtim);
+            if ($srs_age < 60 * 10) {
+                $redirect_to_reader = false;
+            }
+        }
+
+        if ($redirect_to_reader) {
+
             $redirect_uri = $this->uri_for(
                 'search/responses',
                 array('q' => 'srs_uuid:'.$uuid, 'exp' => 1)
@@ -50,7 +68,6 @@ class Submission_Controller extends AIR2_HTMLController {
         }
 
         // Record a visit by the current user against this SrcResponseSet.
-        $srs = AIR2_Record::find('SrcResponseSet', $uuid);
         $srs->visit(
             array(
                 'ip' => $this->input->ip_address(),

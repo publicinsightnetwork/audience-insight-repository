@@ -19,7 +19,10 @@ sub init {
     if ( !$self->root ) {
         croak "root required";
     }
-    $self->{pci} = Path::Class::Iterator->new( root => $self->root, );
+    $self->{pci} = Path::Class::Iterator->new(
+        root          => $self->root,
+        show_warnings => 1,
+    ) or die $Path::Class::Iterator::Err;
     return $self;
 }
 

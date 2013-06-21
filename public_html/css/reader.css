@@ -298,8 +298,8 @@
 .reader-expand .submission .sub-meta li { padding: 2px 0 2px 0; margin-left: 20px; list-style: none; }
 .reader-expand .submission .sub-meta a { font-weight: bold; text-align: center; }
 
-.sub-meta a.publishStatus { 
-    font-weight: bold; 
+.sub-meta a.publishStatus {
+    font-weight: bold;
     background: #98B56F;
     color: #fff;
     padding: 3px 7px;
@@ -313,14 +313,14 @@
 
 .sub-meta a.publishStatus:active {
     margin: 4px 0 3px;
-}    
+}
 
 .sub-meta a.unpublish {
     background: #ff9900;
 }
 
-.sub-meta a.unpublished { 
-    background: #BC3632; 
+.sub-meta a.unpublished {
+    background: #BC3632;
 }
 
 .sub-meta a.nothing-to-publish {
@@ -333,14 +333,14 @@
 
 .sub-meta a.publish { background: #5C88CA; }
 
-.sub-meta a.published { 
-    background: #98B56F; 
+.sub-meta a.published {
+    background: #98B56F;
 }
 
 .sub-meta a.published:before {
     content: "";
     display: inline-block;
-    background: url(img/icons/drew/check-white.png) no-repeat;
+    background: url(img/icons/check-white.png) no-repeat;
     width: 12px;
     height: 12px;
     padding-right: 4px;
@@ -352,18 +352,18 @@
 .reader-expand .submission div.response-value { margin: .5em 0 .8em; }
 .reader-expand .submission div.last-mod { margin: .5em 0 .8em; }
 
-.reader-expand .submission .response-meta { 
+.reader-expand .submission .response-meta {
     position: relative;
     width: auto;
     display: inline-block;
-    padding: 3px 0 1px 0; 
-    font-size: 12px; 
-    margin: 5px 0 10px 0; 
-    background: rgba(233,233,233,.3); 
+    padding: 3px 0 1px 0;
+    font-size: 12px;
+    margin: 5px 0 10px 0;
+    background: rgba(233,233,233,.3);
     border-top-right-radius: 2px;
-    border-radius: 2px; 
-        -webkit-border-radius: 2px; 
-        -moz-border-radius: 2px; 
+    border-radius: 2px;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
     border: 1px solid #E6E6E6;
 }
 
@@ -397,8 +397,8 @@
 .reader-expand .submission .publishing a.included span { background: #98b56f; text-decoration: none; color:#fff; border-top: 1px solid #7a9654; border-bottom: 1px solid #7a9654; }
 .reader-expand .submission .publishing a.included.tentative span { background: #c1d3a9; text-decoration: none; color:#fff; border-top: 1px solid #7a9654; border-bottom: 1px solid #7a9654; }
 
-.reader-expand .submission .publishing i { 
-  font-size: 14px; 
+.reader-expand .submission .publishing i {
+  font-size: 14px;
   width: 15px;
   text-align: center;
 }
@@ -491,9 +491,9 @@
 
 .reader-expand .submission .anns textarea { width: 473px; border: 1px solid #ddd; min-height: 100px; }
 .reader-expand .submission .anns-row.hide { display: none; }
-.reader-expand .submission .anns button.ann-post, 
-.reader-expand .submission .anns button.resp-save, 
-.reader-expand .submission .anns button.resp-cancel 
+.reader-expand .submission .anns button.ann-post,
+.reader-expand .submission .anns button.resp-save,
+.reader-expand .submission .anns button.resp-cancel
 {
     position: relative;
     z-index: 1;

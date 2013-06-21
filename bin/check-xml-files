@@ -34,6 +34,7 @@ use AIR2::SearchUtils;
 use Getopt::Long;
 use Pod::Usage;
 use Module::Load ();
+use AIR2::PublicSrcResponseSet;
 
 my $help    = 0;
 my $quiet   = 0;
@@ -53,11 +54,15 @@ warn "missing --type\n" and pod2usage(2) unless $type;
 my $xml_dir = AIR2::Config::get_search_xml->subdir($type);
 
 my %sql = (
-    'sources'   => 'select src_uuid from source',
-    'inquiries' => 'select inq_uuid from inquiry',
-    'projects'  => 'select prj_uuid from project',
-    'responses' => 'select srs_uuid from src_response_set',
+    'sources'          => 'select src_uuid from source',
+    'inquiries'        => 'select inq_uuid from inquiry',
+    'projects'         => 'select prj_uuid from project',
+    'responses'        => 'select srs_uuid from src_response_set',
+    'public_responses' => AIR2::PublicSrcResponseSet->get_sql_all(),
 );
+
+$sql{public_responses}
+    =~ s/select distinct\(srs_id\)/select distinct\(srs_uuid\)/;
 
 if ( !exists $sql{$type} ) {
     die "Not a supported --type: $type\n";
@@ -77,7 +82,7 @@ while ( my $row = $sth->fetch ) {
         Module::Load::load($class);
         my $object = $class->new( $class->get_uuid_column => $pk )->load;
         AIR2::SearchUtils::touch_stale($object);
-        print "$type: $pk\n";
+        print "$type: $pk $xml_path\n";
     }
 
 }

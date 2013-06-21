@@ -118,14 +118,14 @@ if ( $lock_file->locked ) {
 $lock_file->lock;
 
 my %sql_counts = (
-    'sources'   => 'select count(src_id) from source  where src_uuid=?',
-    'inquiries' => 'select count(inq_id) from inquiry where inq_uuid=?',
-    'projects'  => 'select count(prj_id) from project where prj_uuid=?',
-    'responses' =>
-        'select count(srs_id) from src_response_set where srs_uuid=?',
-    'public_responses' =>
-        'select count(srs_id) from src_response_set where srs_uuid=?',
+    'sources'          => 'select src_uuid from source',
+    'inquiries'        => 'select inq_uuid from inquiry',
+    'projects'         => 'select prj_uuid from project',
+    'responses'        => 'select srs_uuid from src_response_set',
+    'public_responses' => AIR2::PublicSrcResponseSet->get_sql_all(),
 );
+$sql_counts{public_responses}
+    =~ s/select distinct\(srs_id\)/select distinct\(srs_uuid\)/;
 
 my $db  = AIR2::DBManager->new();
 my $dbh = $db->retain_dbh();
@@ -136,23 +136,11 @@ my $total_files = 0;
 my %to_delete;
 my %ok_to_keep;
 
-# public_responses are oddball because their presence
-# in search index is based on complex series of gates,
-# not simply existing in the db.
-# so we create lookup hash of all valid srs_uuid values
-# and use that whitelist to determine whether a file
-# should be pruned.
-if ( $type eq 'public_responses' ) {
-
-    my $sql = AIR2::PublicSrcResponseSet->get_sql_all();
-    $sql =~ s/select distinct\(srs_id\)/select distinct(srs_uuid)/;
-    my $sth = $dbh->prepare($sql);
-    $sth->execute;
-    while ( my $row = $sth->fetch ) {
-        $ok_to_keep{ $row->[0] }++;
-    }
-    $debug and dump \%ok_to_keep;
+$sth->execute;
+while ( my $row = $sth->fetch ) {
+    $ok_to_keep{ $row->[0] }++;
 }
+$debug and dump \%ok_to_keep;
 
 find( { wanted => \&wanted }, $xml_dir );
 
@@ -205,11 +193,7 @@ logger("Finished $type prune check\n");
 
 sub id_exists {
     my $id = shift;
-    if ( %ok_to_keep and !exists $ok_to_keep{$id} ) {
-        return 0;
-    }
-    $sth->execute($id);
-    return $sth->fetch->[0];
+    return exists $ok_to_keep{$id};
 }
 
 sub wanted {

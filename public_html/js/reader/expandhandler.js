@@ -17,8 +17,8 @@ AIR2.Reader.expandHandler = function (dv) {
                 '<div class="submission">' +
                     '<div class="sub-act clearfix">' +
                         '<a href="{inq_uuid:this.queryLink(values)}" target="_blank" class="view-query">Insights Page <i class="icon-external-link"></i></a>' +
-                        '<a href="{srs_uuid:this.printLink}" target="_blank" class="print-submission"><i class="icon-print"></i> Print Submission</a>' +                         '<a href="{srs_uuid:this.permaLink}" class="submission-permalink"><i class="icon-link"></i> Submission Permalink</a>' +                         
-                    '</div>' +                       
+                        '<a href="{srs_uuid:this.printLink}" target="_blank" class="print-submission"><i class="icon-print"></i> Print Submission</a>' +                         '<a href="{srs_uuid:this.permaLink}" class="submission-permalink"><i class="icon-link"></i> Submission Permalink</a>' +
+                    '</div>' +
                     '<h4 class="sub-inq">{.:air.inquiryTitle(1)}</h4>' +
                     '<div style="clear: left;">' +
                         '{inq_publish_dtim:this.publishedAt} ' +
@@ -330,11 +330,11 @@ AIR2.Reader.expandHandler = function (dv) {
                 if (inq_uuid) {
                     // mock up fake Inquiry object
                     return AIR2.Inquiry.uriForQuery({
-                        inq_uuid:inq_uuid, 
+                        inq_uuid:inq_uuid,
                         inq_ext_title:values.inq_ext_title,
                         Locale: {loc_key: 'en_US'} // TODO include locale in search results
                     });
-                } 
+                }
                 return '#';
             },
             permaLink: function (srs_uuid) {
@@ -390,10 +390,22 @@ AIR2.Reader.expandHandler = function (dv) {
                     )
                 ) {
                     if (sr_public_flag == 1 || sr_public_flag == true) {
-                        return '<span>Included for Publishing</span>';
+                        return '<a href="javascript://" class="included">' +
+                            '<span>' +
+                                '<i class="icon-ok" ext:qtip="' +
+                                    'Included for Publishing. You do not ' +
+                                    'have permission to change this."></i>' +
+                            '</span>' +
+                        '</a>';
                     }
                     else {
-                        return '<span>Excluded from Publishing</span>';
+                        return '<a href="javascript://" class="excluded">' +
+                            '<span>' +
+                                '<i class="icon-ban-circle" ext:qtip="' +
+                                'Excluded from Publishing. You do not have ' +
+                                'permission to change this."></i>' +
+                            '</span>' +
+                        '</a>';
                     }
                 }
 
@@ -409,7 +421,7 @@ AIR2.Reader.expandHandler = function (dv) {
                     return '<a href="' + values.resp_edit_url +
                          '" class="excluded override" data-resp_id="' +
                          values.sr_uuid + '" data-submission_uuid="' +
-                         values.srs_uuid + '">' + 
+                         values.srs_uuid + '">' +
                         '<span><i class="icon-ban-circle" ext:qtip="Click to Include"></i></span>'+
                        '</a>';
                 }
@@ -533,15 +545,15 @@ AIR2.Reader.expandHandler = function (dv) {
 
     // handler to expand a node
     expandNode = function (node, e) {
-        var dom, 
-            expanded, 
-            next, 
-            permHeader, 
-            rec, 
-            rsp, 
-            srids, 
-            srsDv, 
-            top, 
+        var dom,
+            expanded,
+            next,
+            permHeader,
+            rec,
+            rsp,
+            srids,
+            srsDv,
+            top,
             submissionButton,
             overrideButtons,
             publish_state,
@@ -620,12 +632,12 @@ AIR2.Reader.expandHandler = function (dv) {
 
         });
 
-        
+
         // sort responses by question type and dis_seq, similar
         // to how they display in the Form
         magicSorter = function(responses) {
             var sorted, perm_ques, flattened;
-            
+
             // group questions into 3 groups
             sorted = {
                 contributor: [],
@@ -633,8 +645,8 @@ AIR2.Reader.expandHandler = function (dv) {
                 private: []
             };
             Ext.each(responses, function(r, i) {
-                if (r.ques_type.toLowerCase() == 'z' 
-                 || r.ques_type.toLowerCase() == 's' 
+                if (r.ques_type.toLowerCase() == 'z'
+                 || r.ques_type.toLowerCase() == 's'
                  || r.ques_type.toLowerCase() == 'y'
                 ) {
                     r.is_contrib = true;
@@ -676,7 +688,7 @@ AIR2.Reader.expandHandler = function (dv) {
             if (!sorted.public.length && perm_ques) {
                 sorted.private.push(perm_ques);
             }
- 
+
             // now sort by sequence
             sorted.contributor.sort(function(a,b) { return a.ques_dis_seq - b.ques_dis_seq; });
             sorted.public.sort(function(a,b) { return a.ques_dis_seq - b.ques_dis_seq; });
@@ -686,7 +698,7 @@ AIR2.Reader.expandHandler = function (dv) {
             if (sorted.public.length && perm_ques) {
                 sorted.public.push(perm_ques);
             }
-            
+
             // finally flatten the arrays into a single list
             flattened = [];
             Ext.each(sorted.contributor, function(q,i) {
@@ -698,12 +710,12 @@ AIR2.Reader.expandHandler = function (dv) {
             Ext.each(sorted.private, function(q,i) {
                 flattened.push(q);
             });
-            
+
             //Logger(flattened);
-            
+
             return flattened;
         };
- 
+
         rec.data.friendly = magicSorter(rec.data.friendly);
 
         rec.data.srs_url = AIR2.HOMEURL + '/submission/' + rec.data.srs_uuid;
@@ -732,13 +744,13 @@ AIR2.Reader.expandHandler = function (dv) {
         AIR2.Reader.tagRender(dom, rec);
 
         expanded = Ext.select('div.submission');
-                
+
         overrideButtons  = Ext.select('a.override');
         if (overrideButtons) {
             overrideButtons.on('mouseover', AIR2.Reader.exclMouseOver);
             overrideButtons.on('mouseout',  AIR2.Reader.exclMouseOut);
         }
-        
+
         submissionButton = Ext.select('a.publishStatus');
         submissionButton = Ext.get(submissionButton.elements[0]);
         if (submissionButton) {
@@ -749,7 +761,7 @@ AIR2.Reader.expandHandler = function (dv) {
         }
         title = 'This submission cannot be published because there ';
         title += 'are no publishable questions.';
-        
+
 
         if (publish_state == AIR2.Reader.CONSTANTS.PUBLISHED) {
             title = 'Unpublishing this submission will remove it from ';
@@ -875,13 +887,13 @@ AIR2.Reader.expandHandler = function (dv) {
     };
     AIR2.Reader.makeShowOriginalLink = function (sr_mod_value, values) {
         var classes, originalLink, questionType, responseIsPublic, srs_uuid, resp_edit_url;
-        
+
         //Logger('showOriginal link gen:', sr_mod_value, values);
 
         if (sr_mod_value === null) {
             return '';
         }
-        
+
         if (values.srs_uuid) {
             srs_uuid = values.srs_uuid;
         }
@@ -916,7 +928,7 @@ AIR2.Reader.expandHandler = function (dv) {
         else {
             Logger("No ques_type found in values: ", values);
         }
-        
+
         responseIsPublic = false;
 
         //consolidating this logic into a variable to make the class
@@ -928,8 +940,8 @@ AIR2.Reader.expandHandler = function (dv) {
             responseIsPublic = true;
         }
         //Logger("Values", values.sr_public_flag);
-        if (   values.ques_public_flag == 0 
-            && questionType != 'p' 
+        if (   values.ques_public_flag == 0
+            && questionType != 'p'
             && (values.sr_public_flag == 0 || values.sr_public_flag == false)
             && !values.is_contrib
         ) {
