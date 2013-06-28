@@ -70,7 +70,7 @@ $profile_defs = array(
     array('AIR2_PIN_SSO_TKT',         'auth_tkt'),
     array('AIR2_PIN_SSO_URL',         'https://your.org/sso/login.cgi'),
     array('AIR2_PIN_SSO_AUTH',        'https://your.org/sso/auth.cgi'),
-    array('AIR2_PIN_SSO_LOGOUT',      'https://your.org/sso/logout.cgi');
+    array('AIR2_PIN_SSO_LOGOUT',      'https://your.org/sso/logout.cgi'),
 
     // we all need perl
     array('AIR2_PERL_PATH',           '/usr/bin/perl'),
