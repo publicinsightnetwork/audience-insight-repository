@@ -17,14 +17,7 @@ AIR2.Inquiry.EmbedCode = function (el) {
     
     code =  [
         '<script type="text/javascript" src="https://www.publicinsightnetwork.org/source/js/jquery-1.8.1.min.js"></script>',
-        '<script type="text/javascript" src="' + AIR2.HOMEURL + '/js/pinform.js"></script>',
-        '<script type="text/javascript">',
-        '  var PIN_QUERY = {',
-        '      uuid:"' + AIR2.Inquiry.UUID + '",',
-        '      baseUrl:"'+ AIR2.HOMEURL + '",',
-        '  };',
-        '  $(document).ready(function() { PIN.Form.render(PIN_QUERY) });',
-        '</script>',
+        '<script type="text/javascript" src="'+AIR2.HOMEURL+'/js/pinform.js?uuid='+AIR2.Inquiry.UUID+'"></script>',
         '<div id="pin-query-'+AIR2.Inquiry.UUID+'"></div>'
     ];
 

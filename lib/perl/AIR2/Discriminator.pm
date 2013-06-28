@@ -33,8 +33,8 @@ my $OP_REPLACE     = 'R';
 my $OP_ADD         = 'A';
 my $OP_ADD_PRIMARY = 'P';
 
-my $APMPIN_ORG_ID    = 1;
-my $GLOBALPIN_ORG_ID = 44;
+my $APMPIN_ORG_ID    = AIR2::Config::get_apmpin_org_id();
+my $GLOBALPIN_ORG_ID = AIR2::Config::get_global_pin_org_id();
 
 my %case_insensitive = (
     src_username       => 1,

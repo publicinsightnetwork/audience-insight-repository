@@ -452,7 +452,7 @@ $qb_templates = array(
         ),
         'display_group'     => 'demographic',
         'ques_value'        =>  array(
-            'en_US' => 'What your highest level of education?',
+            'en_US' => "What's your highest level of education?",
             'es_US' => '¿Cual describe mejor su nivel de estudios?',
         ),
         'ques_choices'      => array(

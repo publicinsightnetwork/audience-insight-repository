@@ -109,6 +109,12 @@ if ($test) {
     # just send mail for $test newsroom to any email in @ARGV
     for my $addr (@ARGV) {
         my $org = AIR2::Organization->new( org_name => $test )->load;
+
+        # redmine 8249 apmpin disguises global org
+        if ( $org->org_id == AIR2::Config::get_global_pin_org_id() ) {
+            $org = AIR2::Organization->new(
+                org_id => AIR2::Config::get_apmpin_org_id() )->load;
+        }
         my $source = AIR2::Source->new( src_username => $addr )->load;
         send_welcome( $source, $org );
     }
@@ -157,6 +163,11 @@ SRCORG: while ( my $so = $sos->next ) {
 
     my $source = $so->source;
     my $org    = $org_cache->{ $so->so_org_id };
+
+    # redmine 8249 apmpin disguises global org
+    if ( $org->org_id == AIR2::Config::get_global_pin_org_id() ) {
+        $org = $org_cache->{ AIR2::Config::get_apmpin_org_id() };
+    }
 
     # skip any sources we've already seen in this run (could this happen?)
     next SRCORG if $seen_sources{ $source->src_id }++;

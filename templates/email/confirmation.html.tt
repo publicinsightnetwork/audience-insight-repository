@@ -66,8 +66,8 @@
 
                         <!-- NEWSROOMS -->
                         <table style="[% css_newsrooms %]">
-                            <tr>
                             [% FOREACH newsroom IN newsrooms %]
+                            <tr>
                                 <td style="width: 1%;">
                                     <a href="[% newsroom.uri %]" style="[% css_body_links %]"><img src="[% newsroom.logo_uri %]" style="width: 45px; height: 45px; border-radius: 2px; margin-right: 7px;" /></a>
                                 </td>
@@ -75,8 +75,8 @@
                                     <strong><a href="[% newsroom.uri %]" style="text-decoration: none;">[% newsroom.name %]</a></strong><br />
                                     [% newsroom.location %]
                                 </td>
-                            [% END %]
                             </tr>
+                            [% END %]
                         </table>
                         <!-- /NEWSROOMS -->
 
@@ -121,14 +121,17 @@
 
                         <!-- SUBMISSION -->
                         <div style="[% css_text %] padding-top: 30px; margin-top: 30px; border-top: 1px solid #eee;">
-                            <ol style="[% css_text %] margin-left: 0; padding-left: 20px;">
+                            <ul style="[% css_text %] margin-left: 0; padding-left: 20px;">
                             [% FOREACH response IN submission %]
-                                <li style="margin-bottom: 15px;">
-                                    <strong>[% response.question %]</strong><br />
-                                    [% response.answer %]
-                                </li>
+                                [% IF (response.question) %]
+                                  [% NEXT IF (response.ques_type == '2' || response.ques_type == '3') %]
+                                    <li style="margin-bottom: 15px;">
+                                        <strong>[% response.question %]</strong><br />
+                                        [% response.answer %]
+                                    </li>
+                                [% END %]
                             [% END %]
-                            </ol>
+                            </ul>
                         </div>
                         <!-- /SUBMISSION -->
 
@@ -158,24 +161,20 @@
 
             <!-- FOOTER CONTENT -->
             <div class="content">
-            <table width="100%">
-            <tr>
             [% FOREACH newsroom IN newsrooms %]
-                <td width="70%">
+                <div class="newsroom-footer">
                     <p style="color: #999999; padding-left: 20px;">
                         <strong><a href="[% newsroom.uri %]" style="[% css_footer_links %]">[% newsroom.name %]</a></strong><br />
                         [% newsroom.location %]
                     </p>
-                </td>
+                </div>
             [% END %]
-                <td valign="top" style="text-align: right;" width="30%">
-                    <p style="font-weight: bold; padding-right: 20px;">
+                <div>
+                    <p style="font-weight: bold; padding-left: 20px;">
                         <a href="[% pin.terms_uri %]" style="[% css_footer_links %]">Terms</a> <span style="color: #ccc;">|</span>
                         <a href="[% pin.privacy_uri %]" style="[% css_footer_links %]">Privacy</a>
                     </p>
-                </td>
-            </tr>
-            </table>
+                </div>
             </div>
             <!-- /FOOTER CONTENT -->
 

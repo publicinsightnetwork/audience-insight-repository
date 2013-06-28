@@ -160,8 +160,9 @@ sub get_template_vars {
 
         push @submission,
             {
-            question => $question->ques_value,
-            answer   => $response,
+            question  => $question->ques_value,
+            ques_type => $question->ques_type,
+            answer    => $response,
             };
 
         #warn sprintf( "%s : %s\n",
@@ -187,7 +188,15 @@ sub get_template_vars {
     my @newsrooms;
     my @related;
     my %seen_queries;
-    for my $org ( @{ $query->organizations } ) {
+    my @orgs = @{ $query->organizations };
+    for my $org (@orgs) {
+
+        # redmine 8249 apmpin disguises global org
+        if ( $org->org_id == AIR2::Config::get_global_pin_org_id() ) {
+            $org = AIR2::Organization->new(
+                org_id => AIR2::Config::get_apmpin_org_id() )->load;
+        }
+
         push @newsrooms,
             {
             name     => $org->org_display_name,
@@ -231,7 +240,14 @@ sub get_template_vars {
             };
         }
         else {
-            my $org = $query->organizations->[0];
+            my $org = $orgs[0];
+
+            # redmine 8249 apmpin disguises global org
+            if ( $org->org_id == AIR2::Config::get_global_pin_org_id() ) {
+                $org = AIR2::Organization->new(
+                    org_id => AIR2::Config::get_apmpin_org_id() )->load;
+            }
+
             $from = {
                 name => $org->org_display_name,
                 email =>

@@ -192,8 +192,8 @@
 #pin-legal-wrapper {
     font-size: 12px;
     line-height: 1.25;
-
     padding: 1em;
+    margin-bottom: 48px;
 }
 
 #pin-legal-left {
@@ -205,6 +205,11 @@
 #pin-legal-right {
     float: left;
     width: 48%;
+}
+
+#pin-legal-left div,
+#pin-legal-right div {
+    margin-bottom: 1em;
 }
 
 .pin-error {

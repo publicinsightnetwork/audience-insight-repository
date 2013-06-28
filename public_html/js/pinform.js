@@ -4,10 +4,16 @@
  *
  *  Requires jQuery >= 1.4
  *
- *  Example usage:
+ *  Simple example:
+
+ *  <script type="text/javascript" src="https://www.publicinsightnetwork.org/source/js/jquery-1.8.1.min.js"></script>
+ *  <script type="text/javascript" src="https://www.publicinsightnetwork.org/air2/js/pinform.js?uuid=abcd1234"></script>
+ *  <div id="pin-query-abcd1234"></div>
  *
+ * 
+ *  Advanced example:
+ * 
  *  <div id="my-query"></div>
- *
  *  <script type="text/javascript" src="https://www.publicinsightnetwork.org/source/js/jquery-1.8.1.min.js"></script>
  *  <script type="text/javascript" src="https://www.publicinsightnetwork.org/air2/js/pinform.js"></script>
  *  <script type="text/javascript">
@@ -15,6 +21,9 @@
  *      uuid: 'abcd1234',
  *      divId: 'my-query',
  *      opts: {
+ *          includeLegalFooter: true,
+ *          validationErrorMsg: 'Sorry, you have problems!',
+ *          showIntro: false,
  *          thankYou: function(divId, respData) {
  *              var div = jQuery('#'+divId);
  *              var queryMeta = PIN.Form.Registry[divId];
@@ -27,7 +36,7 @@
  */
 
 // jquery dependency
-if (!jQuery) {
+if (typeof jQuery === 'undefined') {
     alert('jQuery required');
 }
 else if (jQuery.jquery < 1.6) {
@@ -38,19 +47,6 @@ else if (jQuery.jquery < 1.6) {
 if (typeof PIN === 'undefined') {
     PIN = {};
 }
-
-// determine where we are served from, in case baseUrl is not defined
-var sc = document.getElementsByTagName("script");
-jQuery.each(sc, function(idx, tag) {
-    if (!tag.src) {
-        return;
-    }
-    var url = tag.src.match(/^(.+)\/pinform\.js$/);
-    if (url) {
-        PIN.THIS_URL = url[1];
-    }
-});
-
 if (typeof PIN.Form === 'undefined') {
     PIN.Form = {};
     PIN.Form.Registry = {};  // possible to have multiple forms on a page
@@ -58,6 +54,19 @@ if (typeof PIN.Form === 'undefined') {
 else {
     alert('PIN.Form namespace is reserved');
 }
+
+// determine where we are served from, in case baseUrl is not defined
+var sc = document.getElementsByTagName("script");
+jQuery.each(sc, function(idx, tag) {
+    if (!tag.src) {
+        return;
+    }
+    var url = tag.src.match(/^(.+)\/pinform\.js\??(.*)/);
+    if (url) {
+        PIN.Form.THIS_URL = url[1];
+        PIN.Form.THIS_URL_PARAMS = url[2];
+    }
+});
 
 // note protocol to workaround some same-origin bugs
 PIN.Form.isHTTPS    = (window.location.protocol === 'https:' ? true : false );
@@ -70,8 +79,8 @@ if (typeof PIN.Form.LOADED === 'undefined') {
 }
 
 // load fixtures from AIR, for states, countries, etc.
-if (!PIN.States && PIN.THIS_URL) {
-    jQuery.getScript(PIN.THIS_URL+"/cache/fixtures.min.js", function() {
+if (!PIN.States && PIN.Form.THIS_URL) {
+    jQuery.getScript(PIN.Form.THIS_URL+"/cache/fixtures.min.js", function() {
         PIN.Form.DEBUG && console.log('fixtures.min.js loaded');
         PIN.Form.LOADED['fixtures'] = true;
     });
@@ -438,32 +447,40 @@ PIN.Form.build = function(queryData, renderArgs) {
         var legalWrapper = jQuery('<div id="pin-legal-wrapper"></div>');
         wrapper.append(legalWrapper);
         
+        var legalMangler = function(legalHtml) {
+            var now = new Date();
+            var filteredLegalHtml = legalHtml.replace(/<!-- YEAR -->/, now.getFullYear());
+            var copyrightText = [];
+            jQuery.each(queryData.orgs, function(idx, org) {
+                var orgName = org.display_name;
+                if (orgName == 'Global PIN Access') {
+                    orgName = 'American Public Media';
+                }
+                var orgUrl = (org.site || 'http://www.publicinsightnetwork.org/source/en/newsroom/'+org.name);
+                copyrightText.push('<a href="'+orgUrl+'">'+orgName+'</a>');
+            });
+            filteredLegalHtml = filteredLegalHtml.replace(/<!-- COPYRIGHT_HOLDER -->/g, copyrightText.join(', '));
+            legalWrapper.append(filteredLegalHtml);
+        };
+        
         // NOTE that same origin policy will prevent ajax injection if this
-        // query is embedded on non-pin site, so in that case use an iframe.
+        // query is embedded on non-pin site, so in that case use a JSON callback
         if (legalUrl.match(PIN.Form.thisDomain)) {
-                    
+            PIN.Form.DEBUG && console.log('legal inject on same domain, using jQuery.get');                
             // we must filter the returned HTML so can't use .load() method
             jQuery.get(legalUrl, function(legalHtml) {
-                var now = new Date();
-                var filteredLegalHtml = legalHtml.replace(/<!-- YEAR -->/, now.getFullYear());
-                var copyrightText = [];
-                jQuery.each(queryData.orgs, function(idx, org) {
-                    var orgName = org.display_name;
-                    if (orgName == 'Global PIN Access') {
-                        orgName = 'American Public Media';
-                    }
-                    var orgUrl = (org.site || 'http://www.publicinsightnetwork.org/source/en/newsroom/'+org.name);
-                    copyrightText.push('<a href="'+orgUrl+'">'+orgName+'</a>');
-                });
-                filteredLegalHtml = filteredLegalHtml.replace(/<!-- COPYRIGHT_HOLDER -->/g, copyrightText.join(', '));
-                legalWrapper.append(filteredLegalHtml);
+                legalMangler(legalHtml);
             });
-            
         }
         else {
-            var iframeUrl = renderArgs.baseUrl + 'legal.php?locale='+(queryData.query.locale||'en_US')+'&query='+queryData.query.inq_uuid;
-            legalWrapper.append('<iframe frameborder="0" height="800" width="400" scrolling="no" src="'+iframeUrl+'" ></iframe>');
-        
+            PIN.Form.DEBUG && console.log('legal inject different doman, using jQuery.getJSON');
+            var legalCallback = renderArgs.baseUrl + 
+                'legal.php?callback=?&locale='+(queryData.query.locale||'en_US')+
+                '&query='+queryData.query.inq_uuid;
+            PIN.Form.DEBUG && console.log(legalCallback);
+            jQuery.getJSON(legalCallback, function(resp) {
+                legalMangler(resp.legal);
+            });        
         }
     }
 
@@ -1269,5 +1286,24 @@ PIN.Form.Formatter = {
     P: PIN.Form.doPermission,
     Z: PIN.Form.doContributor
 };
+
+PIN.Form.parseScriptURIParams = function() {
+    var query = PIN.Form.THIS_URL_PARAMS,
+        map   = {};
+    query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
+        (map[key] = map[key] || []).push(value);
+    });
+    return map;
+}
+
+// if any param was passed to this script, parse it and treat it like the inq_uuid
+if (typeof PIN.Form.THIS_URL_PARAMS !== 'undefined') {
+    var params = PIN.Form.parseScriptURIParams();
+    if (params['uuid']) {
+        jQuery(document).ready(function() {
+            PIN.Form.render({uuid:params['uuid']});
+        });
+    }
+}
 
 /* END PIN.Form */

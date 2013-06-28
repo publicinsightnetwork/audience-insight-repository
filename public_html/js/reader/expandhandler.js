@@ -676,6 +676,10 @@ AIR2.Reader.expandHandler = function (dv) {
                 else if (r.ques_type.toLowerCase() == 'p') {
                     perm_ques = r;
                 }
+                else if (r.ques_type == AIR2.Inquiry.QUESTION.TYPE.BREAK ||
+                         r.ques_type == AIR2.Inquiry.QUESTION.TYPE.DISPLAY ) {
+                    //no-op on breaks and displays
+                }
                 else if (r.ques_public_flag == 1) {
                     sorted.public.push(r);
                 }

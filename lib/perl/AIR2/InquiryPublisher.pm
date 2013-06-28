@@ -253,7 +253,8 @@ sub get_output {
         if ( $inq->inq_expire_dtim && $inq->inq_expire_dtim->epoch <= time() )
         {
             $struct{error} = 'Expired at ' . $inq->inq_expire_dtim;
-            $struct{msg} = $inq->inq_expire_msg || 'This query has expired.';
+            $struct{msg}
+                = $inq->inq_expire_msg || $inq->get_default_expire_msg();
         }
         else {
 

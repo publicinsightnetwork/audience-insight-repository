@@ -38,10 +38,10 @@ AIR2.Inquiry.Settings = function () {
                 Ext.getCmp('air2-inquiry-publish-settings').el.mask('Deleting...');
                 if (window.history.length > 1) {
                     window.history.back(-1);
-                }   
+                }
                 else {
                     location.href = AIR2.HOMEURL;
-                }            
+                }
             });
             AIR2.Inquiry.inqStore.save();
         }
@@ -133,7 +133,7 @@ AIR2.Inquiry.Settings = function () {
             deleteButton.hide();
         }
     });
-    
+
     fbarButtons = [
         '->',
         deleteButton,
@@ -146,7 +146,7 @@ AIR2.Inquiry.Settings = function () {
         ' ',
         scheduleButton
     ];
-    
+
     inqRec = AIR2.Inquiry.inqStore.getAt(0);
 
     okToSchedule = function (inqRec) {
@@ -473,7 +473,8 @@ AIR2.Inquiry.Settings = function () {
         {
             xtype: 'textarea',
             fieldLabel: 'Deadline Message',
-            name: 'inq_deadline_msg'
+            name: 'inq_deadline_msg',
+            style: 'resize:auto;width:96%'
         },
         {
             fieldLabel: 'Expire Date',
@@ -492,12 +493,14 @@ AIR2.Inquiry.Settings = function () {
         {
             xtype: 'textarea',
             fieldLabel: 'Expire Message',
-            name: 'inq_expire_msg'
+            name: 'inq_expire_msg',
+            style: 'resize:auto;width:96%'
         },
         {
             xtype: 'textarea',
             fieldLabel: 'Thank You Message',
-            name: 'inq_confirm_msg'
+            name: 'inq_confirm_msg',
+            style: 'resize:auto;width:96%'
         },
         {
             xtype: 'hidden',

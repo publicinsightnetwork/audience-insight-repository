@@ -747,12 +747,17 @@ sub questions_in_display_order {
     my @sorted  = ();
     my %grouped = ();
     my $permission_question;
-    for my $q ( @{ $self->questions } ) {
+
+    # initial sort to make sure we have no dis_seq collisions
+    my @questions = sort { $a->ques_dis_seq <=> $b->ques_dis_seq }
+        @{ $self->questions };
+    my $dis_seq = 0;
+    for my $q (@questions) {
         if (   lc( $q->ques_type ) eq 'z'
             or lc( $q->ques_type ) eq 's'
             or lc( $q->ques_type ) eq 'y' )
         {
-            $grouped{contributor}->{ $q->ques_dis_seq } = $q;
+            $grouped{contributor}->{$dis_seq} = $q;
         }
 
         # group permission question with public questions,
@@ -764,11 +769,13 @@ sub questions_in_display_order {
             $permission_question = $q;
         }
         elsif ( $q->ques_public_flag ) {
-            $grouped{public}->{ $q->ques_dis_seq } = $q;
+            $grouped{public}->{$dis_seq} = $q;
         }
         else {
-            $grouped{private}->{ $q->ques_dis_seq } = $q;
+            $grouped{private}->{$dis_seq} = $q;
         }
+
+        $dis_seq++;
     }
 
     # now decide where to put the permission question
@@ -811,6 +818,18 @@ sub get_evergreens {
         push @green, $class->new( inq_uuid => $uuid )->load;
     }
     return \@green;
+}
+
+sub get_default_expire_msg {
+    my $self   = shift;
+    my $locale = $self->get_uri_locale();
+    if ( $locale eq 'en' ) {
+        return 'This query has expired';
+    }
+    elsif ( $locale eq 'es' ) {
+        return 'Este tema ha caducado.';
+    }
+    return 'This query has expired';
 }
 
 1;

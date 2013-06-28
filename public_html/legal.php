@@ -21,6 +21,8 @@
  *************************************************************************/
 
 // display legal notice for locale and specific query (copyright holder(s))
+require_once '../app/init.php';
+require_once 'Encoding.php';
 
 $valid_methods = array('GET');
 $request_method = $_SERVER['REQUEST_METHOD'];
@@ -43,18 +45,17 @@ if (!isset($_GET['locale'])) {
 
 $query_uuid = $_GET['query'];
 $locale     = $_GET['locale'];
+$callback   = $_GET['callback'];
 
 //echo "uuid=$query_uuid locale=$locale";
 
-$this_dir = dirname(__FILE__);
-//echo "file=$file dir=$this_dir";
-$query_file_path = realpath("$this_dir/querys/$query_uuid.json");
+$query_file_path = realpath(AIR2_DOCROOT . "/querys/$query_uuid.json");
 if (!file_exists($query_file_path)) {
     header('X-PIN: invalid query uuid: ' . $query_uuid, false, 404);
     print "No such query: $query_uuid";
     exit(0);
 }
-$legal_file_path = realpath("$this_dir/legal-${locale}.html");
+$legal_file_path = realpath(AIR2_DOCROOT . "/legal-${locale}.html");
 if (!file_exists($legal_file_path)) {
     header('X-PIN: invalid locale: ' . $locale, false, 404);
     print "No such locale: $locale";
@@ -85,7 +86,7 @@ $legal_buf = preg_replace(
     $legal_buf
 );
 
-?>
+if (!$callback) { ?>
 <html>
  <head>
   <link rel="stylesheet" href="css/pinform.css"/>
@@ -99,3 +100,12 @@ $legal_buf = preg_replace(
  <?php echo $legal_buf ?>
  </body>
 </html>
+<?php
+}
+else {
+    $legal_json = Encoding::json_encode_utf8(array('legal'=>$legal_buf));
+    header("Content-Type: application/json");
+    echo "${callback}(";
+    echo $legal_json;
+    echo ")";
+}

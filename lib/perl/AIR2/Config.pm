@@ -28,7 +28,9 @@ use Path::Class;
 use Config::IniFiles;
 use Sys::Hostname;
 
-my $hostname = hostname();
+my $GLOBALPIN_ORG_ID = 44;
+my $APM_PIN_ORG_ID   = 1;
+my $hostname         = hostname();
 $hostname =~ s/\..+//;
 my $user = $ENV{AIR2_USER} || $ENV{USER} || $ENV{REMOTE_USER} || 'nobody';
 my $path_to_this_pm = file( $INC{"AIR2/Config.pm"} );
@@ -90,6 +92,9 @@ for my $name ( $roles_ini->Sections ) {
     }
     $AUTHZ{$code} = $mask;
 }
+
+sub get_global_pin_org_id { return $GLOBALPIN_ORG_ID }
+sub get_apmpin_org_id     { return $APM_PIN_ORG_ID }
 
 sub get_php_path {
     return ( $profiles->val( $profile, 'php_path' ) || '/usr/local/bin/php' );
