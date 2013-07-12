@@ -350,7 +350,7 @@ PIN.Form.build = function(queryData, renderArgs) {
         && queryData.query.inq_deadline_msg.length
     ) {
         var now      = new Date();
-        var deadline = new Date(queryData.query.inq_deadline_dtim);
+        var deadline = new Date(Date.parse(queryData.query.inq_deadline_dtim.replace(/ /, 'T')));
         PIN.Form.DEBUG && console.log('now=', now);
         PIN.Form.DEBUG && console.log('deadline=', deadline);
         if (now > deadline) {

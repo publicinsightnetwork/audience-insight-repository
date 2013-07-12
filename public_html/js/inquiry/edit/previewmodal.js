@@ -25,7 +25,6 @@ AIR2.Inquiry.inquiryPreviewModal = function (display, key) {
             air2type: 'UPLOAD',
             air2size: 'LARGE',
             text: 'Close',
-            style: 'margin-left:106px;',
             handler: function () {
                 window.close();
             }
