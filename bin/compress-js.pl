@@ -38,8 +38,10 @@ sub get_js_files {
         "$js_dir/ui/jsondataview.js", "$js_dir/ui/window.js",
         "$js_dir/ui/createwin.js",
     );
-    my %skip = map { $_ => 1 }
-        ( "$js_dir/pinform.js", "$js_dir/cache/fixtures.min.js" );
+    my %skip = map { $_ => 1 } (
+        "$js_dir/pinform.js", "$js_dir/pinform.min.js",
+        "$js_dir/cache/fixtures.min.js"
+    );
     my @ui;
     my @rest;
     my %known = map { $_ => $_ } @js;

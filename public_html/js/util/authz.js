@@ -18,7 +18,7 @@ AIR2.Util.Authz.has = function (action, orguuid) {
         Logger("INVALID ACTION: ", action);
         alert("INVALID ACTION SPECIFIED - " + action);
     }
-    longAction = goog.math.Long.fromInt(AIR2.AUTHZ[action]);
+    longAction = goog.math.Long.fromNumber(AIR2.AUTHZ[action]);
 
     hasAction = (AIR2.USERINFO.type === "S");
     Ext.iterate(AIR2.USERAUTHZ, function (uuid, role, obj) {
@@ -26,7 +26,7 @@ AIR2.Util.Authz.has = function (action, orguuid) {
             return; // skip this one
         }
 
-        var longRole = goog.math.Long.fromInt(role);
+        var longRole = goog.math.Long.fromNumber(role);
 
         // must check explicitly for roles
         if (action.match(/^AIR2_AUTHZ_ROLE/)) {
@@ -60,7 +60,7 @@ AIR2.Util.Authz.hasAnyId = function (action, org_ids) {
         Logger("INVALID ACTION: ", action);
         alert("INVALID ACTION SPECIFIED - " + action);
     }
-    longAction = goog.math.Long.fromInt(AIR2.AUTHZ[action]);
+    longAction = goog.math.Long.fromNumber(AIR2.AUTHZ[action]);
     hasAction = (AIR2.USERINFO.type === "S");
     Ext.iterate(AIR2.USERAUTHZ_IDS, function (oid, role, obj) {
         var i, longRole, org_id;
@@ -71,7 +71,7 @@ AIR2.Util.Authz.hasAnyId = function (action, org_ids) {
                 continue; // skip this one
             }
 
-            longRole = goog.math.Long.fromInt(role);
+            longRole = goog.math.Long.fromNumber(role);
 
             // must check explicitly for roles
             if (action.match(/^AIR2_AUTHZ_ROLE/)) {

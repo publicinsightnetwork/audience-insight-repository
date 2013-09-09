@@ -60,6 +60,7 @@ class AAPI_User_Activity extends AIRAPI_Resource {
             'se_name',
             'se_cre_dtim',
             'se_upd_dtim',
+            'Email' => 'DEF::EMAIL',
         ),
         'Outcome' => array(
             'out_uuid',
@@ -113,6 +114,7 @@ class AAPI_User_Activity extends AIRAPI_Resource {
         // exported bin
         'E' => array(
             'model' => 'SrcExport',
+            'join'  => array('Email'),
             'id'    => 'se_id',
             'dtim'  => 'se_cre_dtim',
             'user'  => 'se_cre_user',

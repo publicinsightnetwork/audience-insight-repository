@@ -54,8 +54,11 @@ class Bin extends AIR2_Record {
     public static $STATUS_ACTIVE_PROMPT_NOTES = 'P';
     public static $STATUS_INACTIVE = 'F';
     public static $TYPE_SOURCE = 'S';
+    public static $TYPE_TEMP_SOURCE = 'T';
 
     // business-rule limits
+    public static $MAX_LYRIS_EXPORT = AIR2_MAX_EMAIL_EXPORT;
+    public static $MAX_MAILCHIMP_EXPORT = AIR2_MAX_EMAIL_EXPORT;
     public static $MAX_CSV_EXPORT = 2500;
 
 
@@ -274,6 +277,143 @@ class Bin extends AIR2_Record {
         self::query_may_write($q, $u, $alias);
     }
 
+
+    /**
+     * Schedule a job_queue to export this bin to lyris.  Valid $extra
+     * parameters are:
+     *    'strict'    => true|false,
+     *    'dry_run'   => true|false,
+     *    'no_export' => true|false,
+     *
+     * @param User    $usr
+     * @param Project $prj
+     * @param Organization $org
+     * @param Inquiry $inq   (optional)
+     * @param array   $extra (optional)
+     * @return JobQueue
+     */
+    public function queue_lyris_export($usr, $prj, $org, $inq=null, $extra=array()) {
+        $cmd = sprintf("PERL AIR2_ROOT/bin/lyris-export --user_id %d --prj_id %d --org_id %d --bin_id %d",
+            $usr->user_id,
+            $prj->prj_id,
+            $org->org_id,
+            $this->bin_id
+        );
+
+        // inquiry optional
+        if ($inq) {
+            $cmd .= ' --inq_id ' . $inq->inq_id;
+        }
+
+        // default value for 'strict'
+        if (!isset($extra['strict'])) {
+            $extra['strict'] = true; //default
+        }
+
+        // extra params
+        foreach ($extra as $param => $bool) {
+            $val = ($bool) ? '1' : '0';
+            $cmd .= " --$param=$val";
+        }
+
+        // see trac #1841
+        if ($this->get_lyris_exportable_count($usr) > self::$MAX_LYRIS_EXPORT) {
+            throw new Exception("exportable count exceeds max of " . self::$MAX_LYRIS_EXPORT);
+        }
+
+        // TODO should reuse_demographic be exposed here?
+        $job = new JobQueue();
+        $job->jq_job = $cmd;
+        $job->save();
+        return $job;
+    }
+
+
+    /**
+     * Schedule a job_queue to export this bin to mailchimp.  Valid $extra
+     * parameters are:
+     *    'strict'    => true|false,
+     *    'dry_run'   => true|false,
+     *    'no_export' => true|false,
+     *
+     * @param User    $usr
+     * @param Email   $email
+     * @param array   $extra (optional)
+     * @return JobQueue
+     */
+    public function queue_mailchimp_export($usr, $email, $extra=array()) {
+        $cmd = sprintf("PERL AIR2_ROOT/bin/mailchimp-export --user_id %d --email_id %d --bin_id %d",
+            $usr->user_id,
+            $email->email_id,
+            $this->bin_id
+        );
+
+        // default value for 'strict'
+        if (!isset($extra['strict'])) {
+            $extra['strict'] = true; //default
+        }
+
+        // extra params
+        foreach ($extra as $param => $bool) {
+            $val = ($bool) ? '1' : '0';
+            $cmd .= " --$param=$val";
+        }
+
+        // see trac #1841
+        if ($this->get_mailchimp_exportable_count($usr, $email) > self::$MAX_MAILCHIMP_EXPORT) {
+            throw new Exception("exportable count exceeds max of " . self::$MAX_MAILCHIMP_EXPORT);
+        }
+
+        $job = new JobQueue();
+        $job->jq_job = $cmd;
+        $job->jq_type = JobQueue::$TYPE_EMAIL;
+        $job->jq_xid  = $email->email_id;
+        if ($email->email_schedule_dtim) {
+            $job->jq_start_after_dtim = $email->email_schedule_dtim;
+        }
+        $job->save();
+        return $job;
+    }
+
+
+    /**
+     * Returns authorized count of sources for $user.
+     *
+     * @param  User    $user
+     * @return integer $count
+     */
+    public function get_lyris_exportable_count($user) {
+        $q = AIR2_Query::create()->from('BinSource');
+        $q->where("bsrc_bin_id = ?", $this->bin_id);
+
+        $exportable_org_ids = $user->get_authz_str(ACTION_EXPORT_LYRIS, 'soc_org_id');
+        $status = "soc_status = '".SrcOrg::$STATUS_OPTED_IN."'";
+        $cache = "select soc_src_id from src_org_cache where $exportable_org_ids and $status";
+        $q->addWhere("bsrc_src_id in ($cache)");
+        // TODO should probably check emails status too
+        return $q->count();
+    }
+
+
+    /**
+     * Returns authorized count of sources for $user + $org.
+     *
+     * @param  User    $user
+     * @param  Email   $email
+     * @return integer $count
+     */
+    public function get_mailchimp_exportable_count($user, $email) {
+        $q = AIR2_Query::create()->from('BinSource');
+        $q->where("bsrc_bin_id = ?", $this->bin_id);
+
+        // src_org status
+        $exportable_org_ids = $user->get_authz_str(ACTION_EXPORT_MAILCHIMP, 'soc_org_id');
+        $status = "soc_status = '".SrcOrg::$STATUS_OPTED_IN."'";
+        $cache = "select soc_src_id from src_org_cache where $exportable_org_ids and $status";
+        $q->addWhere("bsrc_src_id in ($cache)");
+        // TODO should probably check emails status too
+        return $q->count();
+    }
 
 
     /**

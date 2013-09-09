@@ -49,6 +49,7 @@ AIR2.User.Activity = function () {
 
     return new AIR2.UI.Panel({
         colspan: 2,
+        rowspan: 2,
         title: 'Recent Activity',
         showTotal: true,
         iconCls: 'air2-icon-activity',

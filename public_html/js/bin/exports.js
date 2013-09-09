@@ -62,6 +62,16 @@ AIR2.Bin.Exports = function () {
                     if (values.se_type === 'X') {
                         return 'XLSX';
                     }
+                    if (values.se_type === 'M') {
+                        if (values.Email.email_uuid) {
+                            return AIR2.Format.createLink(
+                                'Mailchimp',
+                                '/email/' + values.Email.email_uuid,
+                                true
+                            );
+                        }
+                        return 'Mailchimp';
+                    }
                     return '<span class="lighter">(Unknown)</span>';
                 }
             })

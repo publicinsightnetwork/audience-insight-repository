@@ -220,6 +220,28 @@ class AIRAPI_Fields {
             'loc_lang',
             'loc_region'
         ),
+        'USERSIGNATURE' => array(
+            'usig_uuid',
+            'usig_text',
+            'usig_status',
+            'User' => array(
+                'user_uuid',
+                'user_username',
+                'user_first_name',
+                'user_last_name',
+                'user_type',
+                'user_status',
+            ),
+        ),
+        'EMAIL' => array(
+            'email_uuid',
+            'email_campaign_name',
+            'email_from_name',
+            'email_from_email',
+            'email_subject_line',
+            'email_type',
+            'email_status',
+        ),
     );
 
 

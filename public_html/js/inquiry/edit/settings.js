@@ -471,7 +471,7 @@ AIR2.Inquiry.Settings = function () {
             xtype: 'datetimefield'
         },
         {
-            xtype: 'textarea',
+            xtype: 'air2ckeditor',
             fieldLabel: 'Deadline Message',
             name: 'inq_deadline_msg',
             style: 'resize:auto;width:96%'
@@ -491,13 +491,13 @@ AIR2.Inquiry.Settings = function () {
             xtype: 'datetimefield'
         },
         {
-            xtype: 'textarea',
+            xtype: 'air2ckeditor',
             fieldLabel: 'Expire Message',
             name: 'inq_expire_msg',
             style: 'resize:auto;width:96%'
         },
         {
-            xtype: 'textarea',
+            xtype: 'air2ckeditor',
             fieldLabel: 'Thank You Message',
             name: 'inq_confirm_msg',
             style: 'resize:auto;width:96%'
@@ -550,6 +550,7 @@ AIR2.Inquiry.Settings = function () {
 
     editWindowConfig = {
         allowAdd: false,
+        formAutoHeight: true,
         height: viewport.height - 60,
         iconCls: 'air2-icon-inquiry',
         id: 'air2-inquiry-edit-publish-settings',
@@ -645,7 +646,7 @@ AIR2.Inquiry.Settings = function () {
                         },
                         success: function (form, action) {
                             //Logger('success, logo=', logo);
-
+                        
                             logo.reset();
                             form.el.set({
                                 enctype: 'application/x-www-form-urlencoded'
@@ -670,9 +671,9 @@ AIR2.Inquiry.Settings = function () {
                             panel.endEditInPlace(true);
                         },
                         failure: function (form, action) {
-
+                        
                             //Logger('failure, rec=', rec);
-
+                        
                             var msg = "Unknown error";
                             if (action.result && action.result.message) {
                                 msg = action.result.message;
@@ -688,7 +689,7 @@ AIR2.Inquiry.Settings = function () {
                             form.el.set({
                                 enctype: 'application/x-www-form-urlencoded'
                             });
-
+                            
                             inqpanel.el.unmask();
                         }
                     });

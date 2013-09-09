@@ -713,6 +713,10 @@ sub as_xml {
             $dmp->{primary_org_name} = $org->{org_name};
             $dmp->{primary_org_uuid} = $org->{org_uuid};
         }
+
+        $org->{org_new_date}
+            = join( '_', $org->{org_name}, $org->{so_effective_date} );
+        $org->{org_new_date} =~ s/\-//g;
     }
 
     # "available" authz should apply to all implicit orgs.
@@ -871,7 +875,8 @@ sub as_xml {
             $src_fact->{ 'src_' . $fname } = $src_fact_value->fv_value;
             $src_fact->{ 'src_' . $fname . '_id' } = $src_fact_value->fv_id;
             $src_fact->{'src_fact'} = join( '_',
-                $src_fact_value->fv_fact_id, $src_fact_value->fv_id );
+                $src_fact_value->fv_fact_id,
+                $src_fact_value->fv_id );
             $src_fact->{$fname} ||= "";
             $src_fact->{$fname} .= join(
                 ' ',
@@ -886,8 +891,7 @@ sub as_xml {
             and length $src_fact->{sf_src_value} )
         {
             $src_fact->{ $facts->{ $src_fact->{sf_fact_id} }
-                    ->fact_identifier } .= ' '
-                . $src_fact->{sf_src_value};
+                    ->fact_identifier } .= ' ' . $src_fact->{sf_src_value};
         }
 
         $debug and dump($src_fact);
@@ -964,8 +968,8 @@ SACT: for my $sact ( @{ $dmp->{activities} } ) {
         )
     {
         $dmp->{$f} = $source->$f;
-        ( my $by_year       = $f )         =~ s/_date/_year/;
-        ( my $by_month      = $f )         =~ s/_date/_month/;
+        ( my $by_year       = $f ) =~ s/_date/_year/;
+        ( my $by_month      = $f ) =~ s/_date/_month/;
         ( $dmp->{$by_year}  = $dmp->{$f} ) =~ s/^(\d\d\d\d).+$/$1/;
         ( $dmp->{$by_month} = $dmp->{$f} ) =~ s/^(\d\d\d\d\d\d).+$/$1/;
     }

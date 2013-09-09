@@ -2,7 +2,7 @@
 Ext.ns('AIR2.Drawer');
 AIR2.Drawer.Exporter = {
     // cf Trac #1841
-    MAX_LYRIS_SIZE: 5000,
+    MAX_LYRIS_SIZE: AIR2.MAX_EMAIL_EXPORT,
     /* require authn, with dire warnings, and then prompt for output format */
     show: function (drawer) {
 

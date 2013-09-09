@@ -35,7 +35,7 @@ AIR2.Source.Contact.Email = function () {
                             'values.sem_context' +
                         ')]}' +
                     '</td>' +
-                    '<td>{[AIR2.Format.sourceEmail(values,1)]}</td>' +
+                    '<td>{[this.sourceEmail(values)]}</td>' +
                     '<td>' +
                         '{[AIR2.Format.codeMaster(' +
                             '"sem_status",' +
@@ -56,7 +56,14 @@ AIR2.Source.Contact.Email = function () {
         '</tpl>',
         {
             compiled: true,
-            disableFormats: true
+            disableFormats: true,
+            // only enable primary + good mailto links
+            sourceEmail: function (v) {
+                if (v.sem_status == 'G' && v.sem_primary_flag) {
+                    return AIR2.Format.mailTo(v.sem_email, AIR2.Source.BASE.radix);
+                }
+                return '<span>' + v.sem_email + '</span>';
+            }
         }
     );
 

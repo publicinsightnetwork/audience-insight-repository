@@ -167,6 +167,10 @@ class User extends AIR2_Record {
                 'local' => 'user_id',
                 'foreign' => 'uph_user_id'
             ));
+        $this->hasMany('UserSignature', array(
+                'local' => 'user_id',
+                'foreign' => 'usig_user_id'
+            ));
         $this->hasMany('UserSrs', array(
                 'local' => 'user_id',
                 'foreign' => 'usrs_user_id',
@@ -671,6 +675,23 @@ class User extends AIR2_Record {
             return true;
         }
         return false;
+    }
+
+
+    /**
+     * Returns email From name.
+     *
+     * @return string email-from-name
+     */
+    public function get_email_from_name() {
+        $name = '';
+        if ($this->user_first_name && $this->user_last_name) {
+            $name = sprintf("%s %s", $this->user_first_name, $this->user_last_name);
+        }
+        else {
+            $name = $this->user->user_username;
+        }
+        return $name;
     }
 
 

@@ -76,7 +76,8 @@ AIR2.UI.App = function (config) {
         //org: AIR2.Util.Authz.has('ACTION_ORG_CREATE'),
         org: (AIR2.USERINFO.type === "S"), //TODO: use actual authz
         usr: AIR2.Util.Authz.has('ACTION_ORG_USR_CREATE'),
-        out: AIR2.Util.Authz.has('ACTION_ORG_SRC_UPDATE') //TODO: specific role
+        out: AIR2.Util.Authz.has('ACTION_ORG_SRC_UPDATE'), //TODO: specific role
+        eml: AIR2.Util.Authz.has('ACTION_EMAIL_CREATE')
     };
     showAddMenu = false;
     Ext.iterate(addAuthz, function (key, val) {
@@ -95,35 +96,32 @@ AIR2.UI.App = function (config) {
             cls: 'air2-header-menu use-icons',
             showSeparator: false,
             items: [{
-                text: 'Source',
-                iconCls: 'air2-icon-source',
-                hidden: !addAuthz.src,
+                text: 'Email',
+                iconCls: 'air2-icon-email',
+                hidden: !addAuthz.eml,
                 handler: function () {
-                    AIR2.Source.Create({
-                        originEl: newstuff.el, 
-                        redirect: true,
-                        org_obj: AIR2.HOME_ORG
-                    });
-                }
-            }, {
-                text: 'Submission',
-                iconCls: 'air2-icon-response',
-                hidden: !addAuthz.srs,
-                handler: function () {
-                    AIR2.Submission.Create({
+                    AIR2.Email.Create({
                         originEl: newstuff.el,
                         redirect: true
                     });
                 }
             }, {
-                text: 'Query',
-                iconCls: 'air2-icon-inquiry',
-                hidden: !addAuthz.inq,
+                text: 'Organization',
+                iconCls: 'air2-icon-organization',
+                hidden: !addAuthz.org,
                 handler: function () {
-                    AIR2.Inquiry.Create({
+                    AIR2.Organization.Create({
                         originEl: newstuff.el,
-                        org_obj: AIR2.HOME_ORG,
-                        prj_obj: AIR2.DEFAULT_PROJECT,
+                        redirect: true
+                    });
+                }
+            }, {
+                text: 'PINfluence',
+                iconCls: 'air2-icon-outcome',
+                hidden: !addAuthz.out,
+                handler: function () {
+                    AIR2.Outcome.Create({
+                        originEl: newstuff.el,
                         redirect: true
                     });
                 }
@@ -144,11 +142,34 @@ AIR2.UI.App = function (config) {
                     });
                 }
             }, {
-                text: 'Organization',
-                iconCls: 'air2-icon-organization',
-                hidden: !addAuthz.org,
+                text: 'Query',
+                iconCls: 'air2-icon-inquiry',
+                hidden: !addAuthz.inq,
                 handler: function () {
-                    AIR2.Organization.Create({
+                    AIR2.Inquiry.Create({
+                        originEl: newstuff.el,
+                        org_obj: AIR2.HOME_ORG,
+                        prj_obj: AIR2.DEFAULT_PROJECT,
+                        redirect: true
+                    });
+                }
+            }, {
+                text: 'Source',
+                iconCls: 'air2-icon-source',
+                hidden: !addAuthz.src,
+                handler: function () {
+                    AIR2.Source.Create({
+                        originEl: newstuff.el,
+                        redirect: true,
+                        org_obj: AIR2.HOME_ORG
+                    });
+                }
+            }, {
+                text: 'Submission',
+                iconCls: 'air2-icon-response',
+                hidden: !addAuthz.srs,
+                handler: function () {
+                    AIR2.Submission.Create({
                         originEl: newstuff.el,
                         redirect: true
                     });
@@ -159,16 +180,6 @@ AIR2.UI.App = function (config) {
                 hidden: !addAuthz.usr,
                 handler: function () {
                     AIR2.User.Create({
-                        originEl: newstuff.el,
-                        redirect: true
-                    });
-                }
-            }, {
-                text: 'PINfluence',
-                iconCls: 'air2-icon-outcome',
-                hidden: !addAuthz.out,
-                handler: function () {
-                    AIR2.Outcome.Create({
                         originEl: newstuff.el,
                         redirect: true
                     });

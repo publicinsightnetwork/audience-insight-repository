@@ -37,6 +37,7 @@ use Unix::PID::Tiny;
 use Getopt::Long;
 use Pod::Usage;
 use Lucy::Index::Indexer;
+use SWISH::Prog::InvIndex;
 
 =pod
 
@@ -183,7 +184,8 @@ if ( !$noindex ) {
         $lucy->commit();
     }
     for my $index_dir (@index_dirs) {
-        $index_dir->file('swish.xml')->touch;    # to trigger searcher re-open
+        my $invindex = SWISH::Prog::InvIndex->new( path => $index_dir );
+        $invindex->meta_file->touch;    # to trigger searcher re-open
     }
 }
 $lock_file->unlock;

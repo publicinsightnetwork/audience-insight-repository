@@ -81,7 +81,8 @@
 }
 
 .pin-query-menu {
-    min-height: 69px;
+    min-height: 56px;
+    width: 226px;
 }
 
 .pin-menu-multiple {

@@ -300,6 +300,7 @@ $source->forget_related('response_sets');
 ok( $xml = $source->as_xml( { debug => $debug, } ), "source->as_xml" );
 
 #diag( $stxml->tidy($xml) );
+
 like( $xml, qr(<tag>searchtag1</tag>), "got source tag" );
 like( $xml, qr(<tag>searchtag2</tag>), "got submission tag" );
 

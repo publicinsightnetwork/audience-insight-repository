@@ -21,6 +21,8 @@
  *************************************************************************/
 
 require_once "AIR2Logger.php";
+require_once 'AirValidHtml.php'; //custom validator extension
+require_once 'AirValidNoHtml.php'; //custom validator extension
 
 /**
  * AIR2_Record base class

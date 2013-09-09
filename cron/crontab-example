@@ -36,14 +36,18 @@ PERL=/path/to/bin/perl
 # job queue check every minute
 *   * * * *           $AIR2_ROOT/bin/run-job-queue
 # Formbuilder import
-*/5 * * * *            $PERL $AIR2_ROOT/bin/fb-import --email pijdev@mpr.org 
+*/5 * * * *            $PERL $AIR2_ROOT/bin/fb-import --email pijdev@mpr.org
 
 # Querymaker import
 */3 * * * *            $PERL $AIR2_ROOT/bin/reaper --send_confirm_email
 */15 1-23 * * *        $PERL $AIR2_ROOT/bin/check-queries
 
 # Lyris import
-*/15 * * * *           LYRIS_DOMAIN=prod /opt/pij/bin/perl $AIR2_ROOT/bin/lyris-import 
+*/15 * * * *           LYRIS_DOMAIN=prod /opt/pij/bin/perl $AIR2_ROOT/bin/lyris-import
+# Mailchimp import and status sync
+*/15 * * * *           $PERL $AIR2_ROOT/bin/mailchimp-import
+10,25,40,55 * * * *    $PERL $AIR2_ROOT/bin/mailchimp-status-sync
+5,20,35,50 * * * *     $PERL $AIR2_ROOT/bin/mailchimp-stats-import
 #
 # Welcome emails
 */10 * * * *           $PERL $AIR2_ROOT/bin/send-welcome-emails --log_activity

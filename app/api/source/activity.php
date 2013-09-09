@@ -57,6 +57,7 @@ class AAPI_Source_Activity extends AIRAPI_Resource {
         'Tank' => 'DEF::TANK',
         'Organization' => 'DEF::ORGANIZATION',
         'Inquiry' => 'DEF::INQUIRY',
+        'Email' => 'DEF::EMAIL',
     );
 
 

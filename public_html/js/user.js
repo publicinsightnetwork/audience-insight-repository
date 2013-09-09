@@ -18,7 +18,8 @@ AIR2.User = function () {
                 summary,
                 orgs,
                 AIR2.User.Activity(),
-                AIR2.User.Networks()
+                AIR2.User.Networks(),
+                AIR2.User.Signatures()
             ]
         })
     });

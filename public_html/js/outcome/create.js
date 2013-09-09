@@ -220,12 +220,7 @@ AIR2.Outcome.Create = function (cfg) {
 
                             data = Ext.decode(resp.responseText);
                             e = data.radix.primary_email;
-                            fld.setValue(AIR2.Format.createLink(
-                                e,
-                                'mailto:' + e,
-                                1,
-                                1
-                            ));
+                            fld.setValue(AIR2.Format.mailTo(e, data.radix));
                         }
                     });
                 }
@@ -322,7 +317,7 @@ AIR2.Outcome.Create = function (cfg) {
             sort: 'bin_name asc',
             type: 'S',
             owner: true
-        },  
+        },
         valueField: 'bin_uuid',
         displayField: 'bin_name',
         listEmptyText:
@@ -338,7 +333,7 @@ AIR2.Outcome.Create = function (cfg) {
         formatComboListItem: function (v) {
             return v.bin_name;
         }
-    }); 
+    });
 
     binPicker.on('select', function (box, rec) {
         var inf = Ext.get(Ext.select('.influence').elements[0]);

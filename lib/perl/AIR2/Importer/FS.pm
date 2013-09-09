@@ -22,6 +22,8 @@ package AIR2::Importer::FS;
 
 use strict;
 use warnings;
+use utf8;    # we have literal utf-8 strings in code
+use Scalar::Util qw( blessed );
 
 =pod
 
@@ -278,6 +280,10 @@ sub do_import {
         return;
     }
 
+    if ( !blessed($thing) ) {
+        $thing = Path::Class::File->new($thing);
+    }
+
     my $lockable = Path::Class::File::Lockable->new("$thing");
 
     $self->debug and warn "thing=$thing lockable=$lockable\n";
@@ -309,17 +315,23 @@ sub do_import {
     my $srs_mtime = $thing->stat->mtime;
     $srs->{meta}->{mtime} ||= $srs_mtime;
     my $err_file = $thing . '.errs';
-    my $inq_uuid = $thing->parent->basename;
-    my $srs_uuid = $thing->basename;
-    $srs_uuid =~ s/\.json//;
-    $srs->{meta}->{uuid} ||= $srs_uuid;
-    my $inq_json = $self->get_inq_json($inq_uuid);
+    if ( !$srs->{meta}->{query} ) {
+        my $inq_uuid = $thing->parent->basename;
+        $srs->{meta}->{query} = $inq_uuid;
+    }
+    if ( !$srs->{meta}->{uuid} ) {
+        my $srs_uuid = $thing->basename;
+        $srs_uuid =~ s/\.json//;
+        $srs->{meta}->{uuid} = $srs_uuid;
+    }
+
+    my $inq_json = $self->get_inq_json( $srs->{meta}->{query} );
 
     # stuff it in the tank
     my $tank = $self->import_srs(
         srs      => $srs,
         inq_json => $inq_json,
-        srs_uuid => $srs_uuid,
+        srs_uuid => $srs->{meta}->{uuid},
         err_file => $err_file,
     );
 
@@ -531,6 +543,8 @@ sub import_srs {
             my $phone
                 = AIR2::Utils::parse_phone_number( $contributor{ctb_phone}
                     || '' );
+            my $zip = AIR2::Utils->str_clean( $contributor{zip} || '' );
+            $zip =~ s/\ +//g;
             my $tank_source = AIR2::TankSource->new(
                 src_first_name =>
                     AIR2::Utils->str_clean( $contributor{firstname} ),
@@ -544,7 +558,7 @@ sub import_srs {
                 smadd_state => AIR2::Utils->str_clean( $contributor{state} ),
                 smadd_cntry =>
                     AIR2::Utils->str_clean( $contributor{country} ),
-                smadd_zip  => AIR2::Utils->str_clean( $contributor{zip} ),
+                smadd_zip  => $zip,
                 sph_number => substr( ( $phone->{number} || '' ), 0, 16 ),
                 sph_ext    => $phone->{ext},
             );
@@ -588,7 +602,7 @@ sub import_srs {
                 my $answer_to_permission
                     = $srs->{ $public_question->{ques_uuid} };
                 if ( defined $answer_to_permission
-                    and $answer_to_permission =~ m/^(y|yes|si)$/i )
+                    and AIR2::Utils::looks_like_yes($answer_to_permission) )
                 {
                     $public_permission_given = 1;
                 }

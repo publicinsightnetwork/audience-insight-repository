@@ -141,6 +141,7 @@ if (!isset($search_idx)) {
     AIR2.SEARCHIDX = '<?php echo $search_idx; ?>';
     AIR2.UPLOADSERVER = '<?php echo AIR2_UPLOAD_SERVER_URL; ?>';
     AIR2.PREVIEWSERVER = '<?php echo AIR2_PREVIEW_SERVER_URL; ?>';
+    AIR2.MAX_EMAIL_EXPORT = <?php echo AIR2_MAX_EMAIL_EXPORT ?>;
     <?php } ?>
   </script>
 

@@ -55,6 +55,7 @@ class User_Controller extends AIR2_HTMLController {
             'ORGDATA'  => $this->api->query("user/$uuid/organization", array('limit' => 5, 'sort' => 'uo_home_flag desc')),
             'ACTDATA'  => $this->api->query("user/$uuid/activity", array('limit' => 12)),
             'NETDATA'  => $this->api->query("user/$uuid/network", array('limit' => 6)),
+            'SIGDATA'  => $this->api->query("user/$uuid/signature", array('limit' => 5)),
             // password reset url
             'PWDURL'   => $pwdurl,
         );

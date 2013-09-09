@@ -205,7 +205,7 @@ AIR2.Source.Contact = function () {
                                     item.sph_context
                                 );
                                 str += txt ? ' ' : '';
-                                
+
                             }
                             str += '<span class="lighter';
                             if (item.sph_primary_flag) {
@@ -219,7 +219,7 @@ AIR2.Source.Contact = function () {
                             if(more > 0) {
                                 str += '</br><a class="more_phone"><span>+ '+more+' more</span></a>'
                             }
-                            
+
                         }
                     });
                     return str;
@@ -245,14 +245,14 @@ AIR2.Source.Contact = function () {
                         }
                     });
                     return str;
-                } else { 
+                } else {
                     return '<span class="lighter">(none)</span>';
-                } 
+                }
             },
             emAddress: function (values) {
                 var em = this.getFirst(values, 'SrcEmail');
                 if (em.sem_email) {
-                    return AIR2.Format.sourceEmail(em, true);
+                    return AIR2.Format.mailTo(em.sem_email, values);
                 }
                 return '<span class="none">none</span>';
             },

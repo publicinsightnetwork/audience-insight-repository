@@ -63,7 +63,7 @@ $body .= get_states;
 $body .= get_countries;
 $body .= get_admin_roles;
 
-write_file( "$js_file", "$body" );
+write_file( "$js_file", Encode::encode( "UTF-8", "$body" ) );
 
 # minified states and countries for querymaker
 my $min_js = join( "\n", get_states_min(), get_countries_min() );

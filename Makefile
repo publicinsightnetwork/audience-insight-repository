@@ -12,6 +12,7 @@ js-fixtures: bin/mk_fixtures.pl
 	perl bin/mk-inquiry-json > assets/js_cache/inquiry-titles.js
 js-compress: bin/compress-js.pl
 	bin/compress-js.pl
+	bin/minifyjs public_html/js/pinform.js
 js-clean: bin/compress-js.pl
 	rm -f public_html/js/air2-compressed.js
 js-qb-templates: bin/write-qb-templates-json

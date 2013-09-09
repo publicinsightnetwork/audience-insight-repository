@@ -97,6 +97,9 @@ AIR2.Util.Activity.replaceTags = function (desc, values) {
         else if (values.sact_ref_type === 'I') {
             extLink = AIR2.Format.inquiryTitle(values.Inquiry, true);
         }
+        else if (values.sact_ref_type === 'E') {
+            extLink = AIR2.Format.emailName(values.Email, true, 50);
+        }
         desc = desc.replace(/{XID}/, extLink);
     }
     else if (values.pa_ref_type) {
@@ -249,8 +252,14 @@ AIR2.Util.Activity.formatUser = function (values, cfg) {
         icon = 'air2-icon-user';
         break;
     case 'E': //exported bin
-        desc = 'Exported the bin ' + values.SrcExport.se_name;
-        icon = 'air2-icon-bin-small';
+        if (values.SrcExport.Email) {
+            desc = 'Sent the email ' + AIR2.Format.emailName(values.SrcExport.Email, 1, 30);
+            icon = 'air2-icon-email-small';
+        }
+        else {
+            desc = 'Exported the bin ' + values.SrcExport.se_name;
+            icon = 'air2-icon-bin-small';
+        }
         break;
     case 'P': //created PINfluence
         desc = 'Created PINfluence ' + AIR2.Format.outcome(values.Outcome, true);

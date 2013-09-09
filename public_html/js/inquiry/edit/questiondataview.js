@@ -331,9 +331,16 @@ AIR2.Inquiry.QuestionDataView = function (displayMode) {
 
                     row += '</div>';
 
-                    row += '<div class="question">' +
-                                '<h4>' + values.ques_value + '</h4>' +
-                            '</div>';
+                    row += '<div class="question"><h4>' + values.ques_value;
+
+                    if (
+                        values.ques_resp_opts &&
+                        Ext.decode(values.ques_resp_opts).require
+                    ) {
+                        row += '<a href="#" qtip="Response required">*</a>';
+                    }
+
+                    row += '</h4></div>';
 
                     if (templateData) {
                         row += '<div class="air2-questiontype">(' +

@@ -30,6 +30,16 @@ use AIR2::Config;
 use AIR2::Inquiry;
 use AIR2::InquiryPublisher;
 
+my ( $help, $debug, );
+GetOptions(
+    help  => \$help,
+    debug => \$debug,
+) or pod2usage(2);
+
+if ($help) {
+    pod2usage(2);
+}
+
 # sanity checks to ensure query .html and .json artifact files
 # are in sync with the published status in the database.
 
@@ -63,14 +73,14 @@ FILE: while ( my $file = $query_file_root->next ) {
     # and let the query get re-published below in db check
     if ( $format eq 'html' ) {
         if ( !-s $query_file_root->file("$uuid.json") ) {
-            warn "Missing matching .json for $uuid.$format\n";
+            $debug and warn "Missing matching .json for $uuid.$format\n";
             $file->remove();
             next FILE;
         }
     }
     elsif ( $format eq 'json' ) {
         if ( !-s $query_file_root->file("$uuid.html") ) {
-            warn "Missing matching .html for $uuid.$format\n";
+            $debug and warn "Missing matching .html for $uuid.$format\n";
             $file->remove();
             next FILE;
         }
@@ -83,14 +93,16 @@ FILE: while ( my $file = $query_file_root->next ) {
     if ( !$inquiry->load_speculative ) {
 
         # delete file
-        warn "Found artifact $file for $uuid but not in database";
+        $debug and warn "Found artifact $file for $uuid but not in database";
         $file->remove();
         next FILE;
     }
 
     # if the query is not published, delete the file
     if ( $inquiry->inq_status !~ m/^[AEL]/ ) {
-        warn sprintf( "%s is not published [%s], but $format exists\n",
+        $debug
+            and warn
+            sprintf( "%s is not published [%s], but $format exists\n",
             $uuid, $inquiry->inq_status );
         $file->remove();
         next FILE;
@@ -110,7 +122,7 @@ FILE: while ( my $file = $query_file_root->next ) {
 
     # use case (1)
     if ( $file_mtime < $inq_publish_time and $inq_publish_time <= time() ) {
-        warn sprintf(
+        $debug and warn sprintf(
             "Need to publish $uuid: [%s] vs [%s]\n",
             scalar localtime($file_mtime),
             scalar localtime($inq_publish_time)
@@ -121,7 +133,7 @@ FILE: while ( my $file = $query_file_root->next ) {
 
     # use case (3)
     if ( $file_mtime < $inq_expire_time and $inq_expire_time <= time() ) {
-        warn sprintf(
+        $debug and warn sprintf(
             "Need to expire $uuid: file mtime=[%s] vs expire_dtim=[%s]\n",
             scalar localtime($file_mtime),
             scalar localtime($inq_expire_time)
@@ -165,12 +177,12 @@ INQ: while ( my $inquiry = $inquiries->next ) {
         and $inquiry->inq_publish_dtim->epoch <= time() )
     {
         if ( !-s $json_file ) {
-            warn "Missing .json for published $uuid\n";
+            $debug and warn "Missing .json for published $uuid\n";
             $need_to_publish = 1;
             $inquiry->inq_status('A') if $inquiry->inq_status eq 'S';
         }
         if ( !-s $html_file ) {
-            warn "Missing .html for published $uuid\n";
+            $debug and warn "Missing .html for published $uuid\n";
             $need_to_publish = 1;
             $inquiry->inq_status('A') if $inquiry->inq_status eq 'S';
         }
@@ -184,12 +196,12 @@ INQ: while ( my $inquiry = $inquiries->next ) {
         <= $inquiry->inq_expire_dtim->epoch )
     {
         if ( !-s $json_file ) {
-            warn "Need to expire .json for $uuid\n";
+            $debug and warn "Need to expire .json for $uuid\n";
             $need_to_publish = 2;
             $inquiry->inq_status('A') if $inquiry->inq_status eq 'S';
         }
         if ( !-s $html_file ) {
-            warn "Need to expire .html for $uuid\n";
+            $debug and warn "Need to expire .html for $uuid\n";
             $need_to_publish = 2;
             $inquiry->inq_status('A') if $inquiry->inq_status eq 'S';
         }

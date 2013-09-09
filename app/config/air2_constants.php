@@ -44,7 +44,7 @@ define('DBMGR_DOMAIN',                'AIR2_DOMAIN');
 define('AIR2_DISCRIM_IGNORE',          1);
 define('AIR2_DISCRIM_ADD',             2);
 define('AIR2_DISCRIM_REPLACE',         3);
-
+define('AIR2_MAX_EMAIL_EXPORT',        5000);
 
 /************************
  * Profile defs

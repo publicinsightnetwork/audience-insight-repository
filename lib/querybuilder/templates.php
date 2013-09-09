@@ -511,12 +511,17 @@ $qb_templates = array(
         ),
         'display_group'     => 'demographic',
         'ques_value'        =>  array(
-            'en_US' => 'What is your preferred language?',
+            'en_US' => 'In which language do you prefer to receive queries?',
+            'es_US' => '¿En qué idioma prefiere recibir preguntas e información?',
         ),
         'ques_choices'      => array(
             'en_US' => array(
                 array('value' => 'English'),
                 array('value' => 'Spanish'),
+            ),
+            'es_US' => array(
+                array('value' => 'Inglés'),
+                array('value' => 'Español'),
             ),
         ),
         'ques_type'         => Question::$TYPE_PICK_RADIO,
@@ -527,23 +532,6 @@ $qb_templates = array(
         ),
         'ques_locks'        => array('ques_choices'),
         'ques_pmap_id'      => ProfileMap::$SRC_PREF_LANG,
-        'single_instance'   => true,
-    ),
-    'employer' => array(
-        'display'           =>  array(
-            'en_US' => 'Employer',
-        ),
-        'display_group'     => 'demographic',
-        'ques_value'        =>  array(
-            'en_US' => 'For whom do you work?',
-        ),
-        'ques_type'         => Question::$TYPE_TEXT,
-        'ques_resp_type'    => Question::$DTYPE_STRING,
-        'ques_resp_opts'    => array(
-            'require'       => false,
-            'maxlen'        => 256,
-        ),
-        'ques_pmap_id'      => ProfileMap::$SRC_EMPLOYER,
         'single_instance'   => true,
     ),
     'occupation' => array(
@@ -582,6 +570,40 @@ $qb_templates = array(
         'ques_resp_type'    => Question::$DTYPE_STRING,
         'ques_resp_opts'    => array(
             'require'       => false,
+        ),
+        'single_instance'   => true,
+    ),
+    'latitude' => array(
+        'display'           =>  array(
+            'en_US' => 'Latitude',
+        ),
+        'display_group'     => 'demographic',
+        'ques_value'        =>  array(
+            'en_US' => 'Latitude',
+        ),
+        'ques_type'         => Question::$TYPE_TEXT,
+        'ques_resp_type'    => Question::$DTYPE_GEO,
+        'ques_resp_opts'    => array(
+            'require'       => false,
+            'minlen'        => null,
+            'maxlen'        => 12,
+        ),
+        'single_instance'   => true,
+    ),
+    'longitude' => array(
+        'display'           =>  array(
+            'en_US' => 'Longitude',
+        ),
+        'display_group'     => 'demographic',
+        'ques_value'        =>  array(
+            'en_US' => 'Longitude',
+        ),
+        'ques_type'         => Question::$TYPE_TEXT,
+        'ques_resp_type'    => Question::$DTYPE_GEO,
+        'ques_resp_opts'    => array(
+            'require'       => false,
+            'minlen'        => null,
+            'maxlen'        => 12,
         ),
         'single_instance'   => true,
     ),

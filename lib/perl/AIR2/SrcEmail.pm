@@ -85,6 +85,13 @@ __PACKAGE__->meta->setup(
             type       => 'one to many',
         },
 
+        lyris_src_org_emails => {
+            class      => 'AIR2::SrcOrgEmail',
+            column_map => { sem_id => 'soe_sem_id' },
+            query_args => [ soe_type => 'L' ],
+            type       => 'one to many',
+        },
+
         mailchimp_src_org_emails => {
             class      => 'AIR2::SrcOrgEmail',
             column_map => { sem_id => 'soe_sem_id' },
@@ -100,8 +107,8 @@ sub insert {
     my $self = shift;
 
     my $src_has_primary = $self->sem_primary_flag;
-    for my $sem ($self->source->emails) {
-        if ($sem->sem_id) {
+    for my $sem ( $self->source->emails ) {
+        if ( $sem->sem_id ) {
             if ($src_has_primary) {
                 $sem->sem_primary_flag(0);
                 $sem->save();
@@ -112,6 +119,34 @@ sub insert {
     $self->sem_primary_flag(1) unless $src_has_primary;
 
     return $self->SUPER::insert(@_);
+}
+
+sub unsubscribe {
+    my $self = shift;
+    $self->sem_status('U');
+    $self->save();
+}
+
+sub bounce {
+    my $self = shift;
+    $self->sem_status('B');
+    $self->save();
+}
+
+sub confirm_bad {
+    my $self = shift;
+    $self->sem_status('C');
+    $self->save();
+}
+
+sub confirm_good {
+    my $self = shift;
+    $self->sem_status('G');
+    $self->save();
+}
+
+sub subscribe {
+    shift->confirm_good();
 }
 
 1;

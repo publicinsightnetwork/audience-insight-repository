@@ -187,6 +187,8 @@ while ( my $srs = $srs_it->next ) {
         my $col   = 0;
         my @names = (
             'Source UUID',
+            'Tags',
+            'Annotations',
             'Email Address',
             'First Name',
             'Last Name',
@@ -202,8 +204,10 @@ while ( my $srs = $srs_it->next ) {
             'Religion',
             'Birth Year'
         );
-        my @widths
-            = ( 12, 20, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13 );
+        my @widths = (
+            12, 13, 13, 20, 13, 13, 13, 13, 13, 13,
+            13, 13, 13, 13, 13, 13, 13
+        );
         for my $hdr (@names) {
             $sheet->set_column( $col, $col, $widths[$col] );
             $sheet->write( 0, $col++, $hdr, $hstyle );
@@ -229,8 +233,60 @@ while ( my $srs = $srs_it->next ) {
 
     # write source data
     my $col = 0;
-    my $eml = $srs->source->get_primary_email();
     $sheet->write_string( $row, $col++, $srs->source->src_uuid, $nstyle );
+
+    # set tags
+    my $tag_string = 0;
+
+    for my $tag ( $srs->tags ) {
+
+        # value
+        if ($tag_string) {
+            $tag_string .= ", ";
+        }
+        else {
+            $tag_string = '';
+        }
+
+        $tag_string
+            .= AIR2::Utils->str_clean( $tag->tagmaster->tm_name, 32000 );
+    }
+
+    $sheet->write_string( $row, $col++, $tag_string, $nstyle );
+
+    # set annotations
+    my $annot_string = 0;
+
+    for my $srsa ( $srs->annotations ) {
+        if ($annot_string) {
+            $annot_string .= "\n\n";
+        }
+        else {
+            $annot_string = '';
+        }
+
+        # value
+        $annot_string .= AIR2::Utils->str_clean( $srsa->srsan_value, 32000 );
+
+        #creator stamp
+        $annot_string .= "\nCreated: " . $srsa->srsan_cre_dtim . " by ";
+        $annot_string .= $srsa->cre_user->user_first_name . ' ';
+        $annot_string .= $srsa->cre_user->user_last_name . ' (';
+        $annot_string .= $srsa->cre_user->user_username . ")";
+
+        #updater stamp
+        if ( $srsa->srsan_upd_dtim != $srsa->srsan_cre_dtim ) {
+            $annot_string .= "\n";
+            $annot_string .= "Updated: " . $srsa->srsan_upd_dtim . " by ";
+            $annot_string .= $srsa->upd_user->user_first_name . ' ';
+            $annot_string .= $srsa->upd_user->user_last_name . ' (';
+            $annot_string .= $srsa->upd_user->user_username . ")";
+        }
+    }
+
+    $sheet->write_string( $row, $col++, $annot_string, $nstyle );
+
+    my $eml = $srs->source->get_primary_email();
     $sheet->write_string( $row, $col++, $eml ? $eml->sem_email : '',
         $nstyle );
     $sheet->write_string( $row, $col++, $srs->source->src_first_name || '',
@@ -268,6 +324,35 @@ while ( my $srs = $srs_it->next ) {
         if ($modified) {
             $val = 'Original: ' . $val . ' Modified: ' . $modified;
         }
+
+        # add in question annotations
+        my $annot_string = '';
+
+        for my $sra ( $sr->annotations ) {
+
+            # value
+            $annot_string
+                .= "\n\n" . AIR2::Utils->str_clean( $sra->sran_value, 32000 );
+
+            #creator stamp
+            $annot_string .= "\nCreated: " . $sra->sran_cre_dtim . " by ";
+            $annot_string .= $sra->cre_user->user_first_name . ' ';
+            $annot_string .= $sra->cre_user->user_last_name . ' (';
+            $annot_string .= $sra->cre_user->user_username . ')';
+
+            #updater stamp
+            if ( $sra->sran_upd_dtim != $sra->sran_cre_dtim ) {
+                $annot_string .= "\nUpdated: " . $sra->sran_upd_dtim . " by ";
+                $annot_string .= $sra->upd_user->user_first_name . ' ';
+                $annot_string .= $sra->upd_user->user_last_name . ' (';
+                $annot_string .= $sra->upd_user->user_username . ')';
+            }
+        }
+
+        if ( length($annot_string) ) {
+            $val .= "\n\nAnnotations:" . $annot_string;
+        }
+
         my $col = $ques_id_to_col{ $sr->sr_ques_id };
         $sheet->write_string( $row, $col, $val, $nstyle ) if ( $val && $col );
     }
@@ -359,10 +444,48 @@ elsif ( $format eq 'email' ) {
     $friendly =~ s/[^\w]+/\_/g;
 
     # fire!
-    Email::Stuff->to($eml)->from('support@publicinsightnetwork.org')
-        ->subject("AIR Submission export results - $name")->text_body(
-        $srs_id
-        ? "Exported submission for $name"
-        : "Exported submissions for bin $name"
-        )->attach( $str, filename => "$friendly.xlsx" )->send();
+    send_email(
+        to      => $eml,
+        from    => 'support@publicinsightnetwork.org',
+        subject => "AIR Submission export results - $name",
+        text    => (
+            $srs_id
+            ? "Exported submission for $name"
+            : "Exported submissions for bin $name"
+        ),
+        attach => [ $str, filename => "$friendly.xlsx" ]
+    );
+}
+
+sub send_email {
+    my %args = @_;
+    if ($debug) {
+        dump \%args;
+    }
+    my $stuff = Email::Stuff->to( $args{to} )->from( $args{from} )
+        ->subject( $args{subject} );
+    if ( $args{text} ) {
+        $stuff->text_body( $args{text} );
+    }
+    if ( $args{html} ) {
+        $stuff->html_body( $args{html} );
+    }
+    if ( $args{attach} ) {
+        $stuff->attach( @{ $args{attach} } );
+    }
+    my %mailer_args = ( Host => AIR2::Config->get_smtp_host, );
+    if ( AIR2::Config->smtp_host_requires_auth ) {
+        $mailer_args{username} = AIR2::Config->get_smtp_username;
+        $mailer_args{password} = AIR2::Config->get_smtp_password;
+    }
+    my $smtp = Email::Send->new(
+        {   mailer      => 'SMTP',
+            mailer_args => [ %mailer_args, ]
+        }
+    ) or die "failed to create Email::Send::SMTP: $@ $!\n";
+    my $result = $stuff->using($smtp)->send();
+
+    $debug and warn $result;
+
+    return $result;
 }

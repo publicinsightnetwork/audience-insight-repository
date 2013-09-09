@@ -7,13 +7,22 @@ Ext.ns('AIR2.UI');
  *
  */
 
-AIR2.UI.CKEditor = function (config) {
-    this.config = config;
-    AIR2.UI.CKEditor.superclass.constructor.call(this, config);
-};
+AIR2.UI.CKEditor = Ext.extend(Ext.form.TextArea,  {
+    ckEditorInstance: null,
 
-Ext.extend(AIR2.UI.CKEditor, Ext.form.TextArea,  {
-    onRender : function (ct, position) {
+    constructor: function (config) {
+        config = Ext.apply({ grow: true }, config);
+
+        config.ckEditorConfig = Ext.apply(
+            { autoParagraph: false },
+            config.ckEditorConfig
+        );
+
+
+        AIR2.UI.CKEditor.superclass.constructor.call(this, config);
+    },
+
+    onRender: function (ct, position) {
         if (!this.el) {
             this.defaultAutoCreate = {
                 tag: "textarea",
@@ -21,10 +30,23 @@ Ext.extend(AIR2.UI.CKEditor, Ext.form.TextArea,  {
             };
         }
         Ext.form.TextArea.superclass.onRender.call(this, ct, position);
-        CKEDITOR.replace(this.id, this.config.CKConfig);
+
+        this.initCkEditor();
+        this.initTidyEditor();
 
         // make sure we have a separate instance for tidying
         this.initTidyEditor();
+    },
+
+    initCkEditor : function () {
+        var editor;
+
+        editor = CKEDITOR.replace(
+            this.id,
+            this.initialConfig.ckEditorConfig
+        );
+
+        this.ckEditorInstance = editor;
     },
 
     setValue : function (value) {
@@ -32,7 +54,6 @@ Ext.extend(AIR2.UI.CKEditor, Ext.form.TextArea,  {
     },
 
     getValue : function () {
-        Logger('get');
         var editor, value;
         editor = CKEDITOR.instances[this.id];
         if (editor) {
@@ -52,28 +73,17 @@ Ext.extend(AIR2.UI.CKEditor, Ext.form.TextArea,  {
     },
 
     getRawValue : function () {
-        var editor = CKEDITOR.instances[this.id];
-        if (editor) {
-            editor.updateElement();
-            return editor.getData();
-        }
-        return Ext.form.TextArea.superclass.getRawValue(this);
-    },
-
-    hide : function () {
-        this.itemCt.setDisplayed('none');
-        return Ext.form.TextArea.superclass.hide.call(this);
-    },
-
-    show : function () {
-        this.itemCt.setDisplayed(true);
-        return Ext.form.TextArea.superclass.show.call(this);
+        return this.ckEditorInstance.getData();
     },
 
     onDestroy: function () {
         if (CKEDITOR.instances[this.id]) {
             delete CKEDITOR.instances[this.id];
         }
+    },
+
+    insertHtml: function (html) {
+        this.ckEditorInstance.insertHtml(html);
     },
 
     /**
@@ -102,6 +112,8 @@ Ext.extend(AIR2.UI.CKEditor, Ext.form.TextArea,  {
             else {
                 config = {};
             }
+
+            config = Ext.apply({ autoParagraph: false }, config);
 
             this.tidyEditor = CKEDITOR.inline(divEl, config);
         }

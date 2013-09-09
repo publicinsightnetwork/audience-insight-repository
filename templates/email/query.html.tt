@@ -1,0 +1,142 @@
+[%  # in-line style definitions
+
+    font_face = 'font-family: Helvetica';
+    font_size = '9px';
+
+    content = 'max-width: 600px; margin: 0 auto; display: block;';
+    css_logo = 'width: 100%; padding-bottom: 5px; margin-bottom: 5px; color: #999999; font-size: 14px; border-bottom: 1px solid #eeeeee;';
+    css_container = 'display:block !important; max-width:600px !important; margin:0 auto !important; clear:both !important;';
+    css_text = 'margin: 15px 0; font-weight: normal; font-size:14px; line-height:1.5;';
+    css_body_links = 'color: #4887ff; text-decoration: none;'
+    css_footer_links = 'color: #666666; text-decoration: none;';
+
+    all_inline_styles = "$font_face; $font_size;";
+
+%]
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!-- If you delete this meta tag, Half Life 3 will never be released. -->
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>[% email.title %]</title>
+</head>
+
+<body style="-webkit-text-size-adjust:none; width: 100% !important; height: 100%; background-color: #f6f6f6; background: #f6f6f6 url([% pin.asset_uri %]/css/img/back-gray-grid.jpg) repeat; color: #444444; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0;">
+
+
+<!-- BACKGROUND COLOR FOR GMAIL -->
+<table bgcolor="#eeeeee" width="100%" cellpadding="0" cellspacing="0" style="background: #f6f6f6 url([% pin.asset_uri %]/css/img/back-gray-grid.jpg) repeat;">
+  <tr>
+    <td>
+
+
+<!-- HEADER -->
+<table style="width: 100%; text-align: center; margin-bottom: 25px;" bgcolor="#B80007" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <td style="[% css_container %] text-align: center; margin: 0; padding: 10px;">
+            <a href="[% pin.uri %]"><img src="[% pin.asset_uri %]/css/img/pin-logo-white.png" style="border: 0; max-width: 200px; text-align: center;" /></a>
+        </td>
+    </tr>
+</table>
+<!-- /HEADER -->
+
+
+<!-- BODY -->
+<table style="width: 100%;" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <td></td>
+        <td style="[% css_container %]">
+
+            <div style="[% content %] background: #ffffff; padding: 20px; box-shadow: 0 0 5px rgba(0,0,0,.1);">
+            <table>
+                <tr>
+                    <td>
+
+                        <!-- LOGO -->
+                        [% IF email.logo_uri %]
+                        <table style="[% css_logo %]">
+                            <tr>
+                                <td style="width: 100%;">
+                                    <img src="[% email.logo_uri %]" style="border-radius: 2px;" />
+                                </td>
+                            </tr>
+                        </table>
+                        [% END %]
+                        <!-- /LOGO -->
+
+                        <!-- HEADLINE -->
+                        [% IF email.headline %]
+                        <h3 style="font-weight:500; font-size: 27px; margin-bottom: 20px;">[% email.headline %]</h3>
+                        [% END %]
+                        <!-- /HEADLINE -->
+
+                        <!-- BODY -->
+                        [% IF email.body %]
+                        <div style="[% css_text %]">[% email.body %]</div>
+                        [% END %]
+                        <!-- /BODY -->
+
+                        <!-- SIGNATURE -->
+                        [% IF email.signature %]
+                        <hr>
+                        <div style="[% css_text %]">[% email.signature %]</div>
+                        [% END %]
+                        <!-- /SIGNATURE -->
+
+                        <!-- Callout Panel -->
+                        <p style="[% css_text %] padding:15px; background-color:#ECF8FF; margin-top: 10px; margin-bottom: 10px;">
+                            <strong>What is the Public Insight Network?</strong><br />
+                            American Public Media's Public Insight Network (PIN) is a platform for connecting trusted journalists with knowledgeable sources. Through PIN, people around the world share what they know to inform reporting by PIN partner newsrooms, making news coverage more relevant, diverse, transparent and trustworthy.<br />
+                            <a href="[% pin.uri %]" style="font-weight:bold; color: #2BA6CB;">Learn more &raquo;</a>
+                        </p><!-- /Callout Panel -->
+
+                    </td>
+                </tr>
+            </table>
+            </div><!-- /content -->
+
+        </td>
+        <td></td>
+    </tr>
+</table><!-- /BODY -->
+
+<!-- FOOTER -->
+<table style="width: 100%; clear: both !important; padding-bottom: 40px;">
+    <tr>
+        <td></td>
+        <td style="[% css_container %]">
+
+            <!-- FOOTER CONTENT -->
+            <div class="content">
+            [% FOREACH newsroom IN newsrooms %]
+                <div class="newsroom-footer">
+                    <p style="color: #999999; padding-left: 20px;">
+                        <strong><a href="[% newsroom.uri %]" style="[% css_footer_links %]">[% newsroom.name %]</a></strong><br />
+                        [% newsroom.location %]
+                    </p>
+                </div>
+            [% END %]
+                <div>
+                    <p style="font-weight: bold; padding-left: 20px;">
+                        <a href="[% unsubscribe_url %]" style="[% css_footer_links %]">Unsubscribe</a> <span style="color: #ccc;">|</span>
+                        <a href="[% pin.terms_uri %]" style="[% css_footer_links %]">Terms</a> <span style="color: #ccc;">|</span>
+                        <a href="[% pin.privacy_uri %]" style="[% css_footer_links %]">Privacy</a>
+                    </p>
+                </div>
+            </div>
+            <!-- /FOOTER CONTENT -->
+
+          </td>
+        <td></td>
+    </tr>
+</table><!-- /FOOTER -->
+
+
+
+    </td>
+  </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,125 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Carp;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+use AIR2::Config;
+use AIR2::Utils;
+use AIR2::User;
+use AIR2::Source;
+use AIR2::Mailchimp;
+use Rose::DateTime::Parser;
+use Data::Dump qw( dump );
+
+=pod
+
+=head1 NAME
+
+mailchimp-status-sync - sync Mailchimp and AIR email status values
+
+=head1 SYNOPSIS
+
+ mailchimp-status-sync [opts]
+
+=head1 DESCRIPTION
+
+mailchimp-status-sync calls AIR2::Mailchimp->sync_list
+
+=head1 OPTIONS
+
+=head2 debug
+
+=head2 help
+
+=head2 dry_run
+
+=head2 since
+
+=head2 src_id
+
+=head2 all
+
+=cut
+
+my ( $help, $debug, $dry_run, $since, $src_id, $all );
+GetOptions(
+    help       => \$help,
+    debug      => \$debug,
+    'dry_run', => \$dry_run,
+    'since=s'  => \$since,
+    'src_id=i' => \$src_id,
+    'all'      => \$all,
+) or pod2usage(2);
+
+pod2usage(2) if ($help);
+pod2usage(2)
+    if ( $all && ( $since || $src_id ) || $since && ( $all || $src_id ) );
+
+$debug   = 0 unless defined $debug;
+$dry_run = 0 unless defined $dry_run;
+$all     = 0 unless defined $all;
+
+my $source;
+if ($all) {
+
+    # nothing to do
+}
+elsif ($src_id) {
+    $source = AIR2::Source->new( src_id => $src_id )->load;
+}
+elsif ($since) {
+    my $date_parser = Rose::DateTime::Parser->new();
+    $since = $date_parser->parse_date($since) or die "invalid date $since";
+}
+else {
+    $since = 1;    # this will cause the api to lookup MAX(soe_status_dtim)
+}
+
+# create a client
+my $api = AIR2::Mailchimp->new();
+
+my $resp;
+if ($all) {
+    $resp = $api->sync_list( all => 1, dry_run => $dry_run, debug => $debug );
+}
+elsif ($src_id) {
+    $resp = $api->sync_list(
+        source  => $source,
+        dry_run => $dry_run,
+        debug   => $debug
+    );
+}
+else {
+    $resp = $api->sync_list(
+        since   => $since,
+        dry_run => $dry_run,
+        debug   => $debug
+    );
+}
+
+$debug and dump $resp;
+

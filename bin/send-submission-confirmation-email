@@ -36,6 +36,7 @@ use AIR2::Config;
 use AIR2::SrcResponseSet;
 use JSON;
 use Path::Class;
+use MIME::Base64;
 
 my $CONFIRMATION_SENT_ACTM_ID = 48;
 my ( $help, $debug, $strict, $dry_run, $FROM, $TO, $log_activity );
@@ -165,9 +166,9 @@ sub get_template_vars {
             answer    => $response,
             };
 
-        #warn sprintf( "%s : %s\n",
-        #    dump( \@submission ),
-        #    $question->ques_template );
+        $debug and warn sprintf( "%s : %s %s\n",
+            $question->ques_value, $question->ques_type,
+            ($question->ques_template||'[undef]') );
 
         next unless $question->ques_template;
         if ( $question->ques_template eq 'firstname' ) {
@@ -199,10 +200,11 @@ sub get_template_vars {
 
         push @newsrooms,
             {
-            name     => $org->org_display_name,
-            uri      => ( $org->org_site_uri || $org->get_uri() ),
-            logo_uri => ( $org->org_logo_uri || $org->get_logo_uri() ),
-            location => $org->get_location(),
+            name       => $org->org_display_name,
+            uri        => ( $org->org_site_uri || $org->get_uri() ),
+            logo_uri   => ( $org->org_logo_uri || $org->get_logo_uri() ),
+            location   => $org->get_location(),
+            short_name => $org->org_name,
             };
 
         # second true value == get evergreens if none explicitly tied to org
@@ -259,6 +261,18 @@ sub get_template_vars {
     my $base_url = AIR2::Config::get_constant('AIR2_BASE_URL');
     $base_url =~ s,/$,,;
 
+    my $unsubscribe_url = sprintf(
+        "%s/email/unsubscribe/%s",
+        $base_url,
+        encode_base64(
+            encode_json(
+                {   email => ( $email || $TO ),
+                    org => $newsrooms[0]->{short_name},
+                }
+            )
+        )
+    );
+
     return {
         submission => \@submission,
         pin        => {
@@ -278,6 +292,7 @@ sub get_template_vars {
         },
         related_queries => \@related,
         project         => $query->find_a_project(),
+        unsubscribe_url => $unsubscribe_url,
     };
 }
 

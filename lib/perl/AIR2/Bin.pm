@@ -108,7 +108,10 @@ __PACKAGE__->meta->setup(
 sub get_exportable_emails {
     my $self = shift;
     my $org  = shift or croak "org required";
-    my $mlid = $org->get_mlid();
+    my $type = shift || 'E';
+    my $soet = ( $type eq 'E' ) ? 'L' : 'M';
+    my $mlid = ( $type eq 'E' ) ? $org->get_mlid() : $org->get_mailchimp_id();
+    my $oid  = $org->org_id;
     my $sql  = qq/
     select sem_email,
            sem_status,
@@ -117,6 +120,44 @@ sub get_exportable_emails {
            src_status,
            soe_id,
            soe_org_id,
+           soe_status,
+           soe_status_dtim,
+           soe_type,
+           soc_org_id,
+           soc_status,
+           org_name,
+           UNIX_TIMESTAMP(sstat_export_dtim) as sstat_export_epoch
+    from bin_source,source
+    left join src_stat on src_id=sstat_src_id
+    left join src_email on src_id=sem_src_id and sem_primary_flag=1
+    left join src_org_cache on src_id=soc_src_id and soc_org_id = ?
+    left join organization on soc_org_id=org_id
+    left join src_org_email on sem_id=soe_sem_id and soe_type = ?  and soc_org_id in
+        (select osid_org_id from org_sys_id where osid_type = ? and osid_xuuid = ? and osid_org_id = ?) and
+        soc_org_id=soe_org_id
+    where bsrc_bin_id = ? and bsrc_src_id=src_id
+    order by sem_email
+    /;
+
+    my $dbh = $self->db->retain_dbh;
+    my $sth = $dbh->prepare($sql);
+    $sth->execute( $oid, $soet, $type, $mlid, $oid, $self->bin_id );
+    return AIR2::Reader->new( sth => $sth );
+}
+
+sub get_exportable_mailchimp_emails {
+    my $self       = shift;
+    my $org        = shift or croak "org required";
+    my $oid        = $org->org_id;
+    my $apm_org_id = AIR2::Config::get_apmpin_org_id();
+    my $sql        = qq/ 
+    select sem_email,
+           sem_status,
+           sem_id,
+           src_id,
+           src_status,
+           soe_id,
+           soe_type,
            soe_status,
            soe_status_dtim,
            soc_org_id,
@@ -128,16 +169,14 @@ sub get_exportable_emails {
     left join src_email on src_id=sem_src_id and sem_primary_flag=1
     left join src_org_cache on src_id=soc_src_id and soc_org_id = ?
     left join organization on soc_org_id=org_id
-    left join src_org_email on sem_id=soe_sem_id and soe_type='L' and soc_org_id in
-        (select osid_org_id from org_sys_id where osid_type = 'E' and osid_xuuid = ? and osid_org_id = ?) and
-        soc_org_id=soe_org_id
+    left join src_org_email on sem_id=soe_sem_id and soe_type = 'M' and soe_org_id = ?
     where bsrc_bin_id = ? and bsrc_src_id=src_id
     order by sem_email
     /;
 
     my $dbh = $self->db->retain_dbh;
     my $sth = $dbh->prepare($sql);
-    $sth->execute( $org->org_id, $mlid, $org->org_id, $self->bin_id );
+    $sth->execute( $oid, $apm_org_id, $self->bin_id );
     return AIR2::Reader->new( sth => $sth );
 }
 

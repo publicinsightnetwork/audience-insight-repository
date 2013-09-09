@@ -69,6 +69,10 @@ class UserSignature extends AIR2_Record {
             ));
         $this->hasColumn('usig_text', 'string', null, array(
                 'notnull' => true,
+                'airvalidhtml' => array(
+                    'display' => 'Signature Text',
+                    'message' => 'Not well formed html'
+                ),
             ));
 
         // meta
@@ -98,11 +102,46 @@ class UserSignature extends AIR2_Record {
         $this->hasOne('User', array(
                 'local'   => 'usig_user_id',
                 'foreign' => 'user_id',
+                'onDelete' => 'CASCADE',
             ));
         $this->hasMany('Email', array(
                 'local'   => 'usig_id',
                 'foreign' => 'email_usig_id',
             ));
     }
+
+
+    /**
+     * Inherit from user
+     *
+     * @param  User $user
+     * @return int  $authz
+     */
+    public function user_may_read($user) {
+        return $this->User->user_may_read($user);
+    }
+
+
+    /**
+     * Inherit from user
+     *
+     * @param  User $user
+     * @return int  $authz
+     */
+    public function user_may_write($user) {
+        return $this->User->user_may_write($user);
+    }
+
+
+    /**
+     * Inherit from user
+     *
+     * @param  User $user
+     * @return int  $authz
+     */
+    public function user_may_manage($user) {
+        return $this->User->user_may_manage($user);
+    }
+
 
 }

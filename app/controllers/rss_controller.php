@@ -377,10 +377,13 @@ class Rss_Controller extends Base_Controller {
             $data = json_decode($data, true);
         }
         else {
-            // count users
+            // count sources
             $conn = AIR2_DBManager::get_connection();
             $q = "select count(*) from source where (src_status in ('A','E','T'))";
             $num_sources = $conn->fetchOne($q, array(), 0);
+
+            $q = "select count(*) from user where (user_type != 'S' and user_status in ('A','P'))";
+            $num_users = $conn->fetchOne($q, array(), 0);
 
             // attempt to non-prospective orgs in one query... just check 4 levels down
             $nonprospect = "select org_id from organization where org_parent_id is null and org_name != 'prospect'";
@@ -413,6 +416,12 @@ class Rss_Controller extends Base_Controller {
                         'link'        => $link,
                         'description' => $num_sources,
                         'guid'        => 'active_src_count',
+                    ),
+                    array(
+                        'title'       => 'Active Users Count',
+                        'link'        => $link,
+                        'description' => $num_users,
+                        'guid'        => 'active_user_count',
                     ),
                 ),
             );

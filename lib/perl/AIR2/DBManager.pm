@@ -36,7 +36,7 @@ __PACKAGE__->use_private_registry;
 
 my %master_slave;
 for my $section ( $cfg->Sections ) {
-    __PACKAGE__->register_db(
+    my %conf = (
         domain   => $section,
         type     => $user,
         driver   => 'mysql',
@@ -49,6 +49,14 @@ for my $section ( $cfg->Sections ) {
         mysql_enable_utf8 => 1,
         server_time_zone  => $cfg->val( $section, 'server_time_zone' ),
     );
+
+    # if there are multiple hostnames, pick one randomly
+    if ( $conf{host} =~ m/,/ ) {
+        my @hosts = split( /,/, $conf{host} );
+        my $random_host = $hosts[ int( rand @hosts ) ];
+        $conf{host} = $random_host;
+    }
+    __PACKAGE__->register_db(%conf);
     if ( $section =~ m/^(.+)_master$/ ) {
         $master_slave{$1} = $section;
     }

@@ -108,7 +108,7 @@ requires 'Time::Local' => '1.1901';
 requires 'URI' => '1.54';
 requires 'Unix::PID::Tiny' => '0.5';
 requires 'Variable::Magic' => '0.36';
-requires 'WWW::Mailchimp' => '0.007';
+requires 'WWW::Mailchimp' => '0.008';
 requires 'XML::Simple' => '2.18';
 
 perl_version '5.8.3';

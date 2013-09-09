@@ -10,12 +10,12 @@
  *   the Free Software Foundation, either version 3 of the License, or
  *   (at your option) any later version.
  *
- *   AIR2 is distributed in the hope that it will be useful, 
+ *   AIR2 is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License 
+ *   You should have received a copy of the GNU General Public License
  *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
  *
  *************************************************************************/
@@ -74,3 +74,10 @@
 .air2-user-network-support {
     font-weight: normal !important;
 }
+
+/* user signatures */
+.air2-user-signatures strong { font-weight: bold; }
+.air2-user-signatures em { font-style: italic; }
+.air2-user-signatures ol, .air2-user-signatures ul { margin: .5em 0 .8em 20px; }
+.air2-user-signatures ol li { list-style: disc outside none; }
+.air2-user-signatures ul li { list-style: decimal outside none; }

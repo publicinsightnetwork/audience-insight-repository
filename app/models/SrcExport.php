@@ -23,7 +23,7 @@
 /**
  * SrcExport
  *
- * Register an export of Source information. Initially this is for mailer
+ * Register an export of Source information. Initially this is for Lyris
  * integration but could be re-used for other kinds of exports where you
  * need to defer the creation of an activity till after a transaction has
  * completed, and you need to store some metadata about the export in the
@@ -51,10 +51,13 @@
  */
 class SrcExport extends AIR2_Record {
 
+    public static $TYPE_LYRIS        = 'L';
     public static $TYPE_MAILCHIMP    = 'M';
     public static $TYPE_CSV          = 'C';
     public static $TYPE_XLSX         = 'X';
     public static $REF_TYPE_BIN      = 'I';
+    public static $REF_TYPE_SOURCE   = 'S';
+    public static $REF_TYPE_RESPONSE = 'R';
     public static $STATUS_COMPLETE   = 'C';
     public static $STATUS_INCOMPLETE = 'I';
     public static $STATUS_QUEUED     = 'Q';
@@ -96,7 +99,7 @@ class SrcExport extends AIR2_Record {
         $this->hasColumn('se_type', 'string', 1, array(
                 'fixed'   => true,
                 'notnull' => true,
-                'default' => self::$TYPE_MAILCHIMP,
+                'default' => self::$TYPE_LYRIS,
             )
         );
         $this->hasColumn('se_status', 'string', 1, array(
@@ -192,6 +195,77 @@ class SrcExport extends AIR2_Record {
         $data = ($json && is_array($json)) ? $json : array();
         $data[$name] = $value;
         $this->se_notes = json_encode($data);
+    }
+
+
+    /**
+     * Setup the xid relations on all existing connections
+     */
+    public static function setupRelated() {
+        foreach (AIR2_DBManager::$db_handles as $name => $conn) {
+            $tbl = $conn->getTable('SrcExport');
+            if (!$tbl->hasRelation('Bin')) {
+                $tbl->hasOne('Bin', array('local' => 'se_xid', 'foreign' => 'bin_id'));
+            }
+            if (!$tbl->hasRelation('Source')) {
+                $tbl->hasOne('Source', array('local' => 'se_xid', 'foreign' => 'src_id'));
+            }
+            if (!$tbl->hasRelation('SrcResponseSet')) {
+                $tbl->hasOne('SrcResponseSet', array('local' => 'se_xid', 'foreign' => 'srs_id'));
+            }
+        }
+    }
+
+
+    /**
+     * Joins to xid relations
+     *
+     * @param AIR2_Query $q
+     * @param string  $alias
+     */
+    public static function joinRelated($q, $alias) {
+        $a = ($alias) ? "$alias." : "";
+        SrcExport::setupRelated();
+        $q->leftJoin("{$a}Bin WITH {$a}se_ref_type = ?", self::$REF_TYPE_BIN);
+        $q->leftJoin("{$a}Source WITH {$a}se_ref_type = ?", self::$REF_TYPE_SOURCE);
+        $q->leftJoin("{$a}SrcResponseSet xidsrs WITH {$a}se_ref_type = ?", self::$REF_TYPE_RESPONSE);
+        $q->leftJoin("xidsrs.Source xidsrssrc");
+    }
+
+
+    /**
+     * Read
+     *
+     * @param User $user
+     * @return boolean
+     */
+    public function user_may_read($user) {
+        if ($user->is_system()) {
+            return AIR2_AUTHZ_IS_SYSTEM;
+        }
+        return AIR2_AUTHZ_IS_PUBLIC;
+    }
+
+
+    /**
+     * Write - dummy authz
+     *
+     * @param User $user
+     * @return boolean
+     */
+    public function user_may_write($user) {
+        return AIR2_AUTHZ_IS_DENIED;
+    }
+
+
+    /**
+     * Manage - same as write
+     *
+     * @param User $user
+     * @return boolean
+     */
+    public function user_may_manage($user) {
+        return $this->user_may_write($user);
     }
 
 

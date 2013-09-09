@@ -78,6 +78,7 @@ class Home_Controller extends AIR2_HTMLController {
             'SSDATA'    => $this->api->query("savedsearch", array('limit' => 5)),
             'IMPDATA'   => $this->api->query("tank", array('limit' => 5, 'type' => Tank::$TYPE_CSV)),
             'ALERTDATA' => $this->api->query("alert", array('limit' => 5)),
+            'EMAILDATA' => $this->api->query("email", array('limit' => 5)),
             // some counts
             'USRCOUNT'  => $usrcount,
             'ORGCOUNT'  => $orgcount,

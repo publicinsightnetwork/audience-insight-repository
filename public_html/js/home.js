@@ -23,6 +23,12 @@ AIR2.Home = function () {
         items[0].rowspan = 2;
     }
 
+    // can user create emails?
+    if (AIR2.Util.Authz.has('ACTION_EMAIL_CREATE')) {
+        items.splice(1, 0, AIR2.Home.Emails());
+        items[0].rowspan++;
+    }
+
     /* create the application */
     app = new AIR2.UI.App({
         items: new AIR2.UI.PanelGrid({

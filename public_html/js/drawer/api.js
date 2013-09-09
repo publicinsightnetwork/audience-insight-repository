@@ -80,7 +80,12 @@ AIR2.Drawer.API = (function () {
             date = Date.parseDate(data.bin_upd_dtim, "Y-m-d H:i:s");
             rec.data.bin_upd_dtim = date;
         }
-        callback(data, success, counts);
+        if (callback) {
+            callback(data, success, counts);
+        }
+        else {
+            Logger('no callback in binUpdFn:', data, success, counts, rec);
+        }
     };
     formatItemsFn = function (input) {
         var result;

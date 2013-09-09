@@ -182,6 +182,13 @@ __PACKAGE__->meta->setup(
             column_map => { org_id => 'uo_org_id' },
             type       => 'one to many',
         },
+
+        users => {
+            map_class => 'AIR2::UserOrg',
+            map_from  => 'organization',
+            map_to    => 'user',
+            type      => 'many to many',
+        },
     ],
 );
 
@@ -217,13 +224,13 @@ sub get_logo_uri {
 
 =head2 get_mlid
 
-Returns external mailing list id.
+Returns mailing list id for Lyris (EmailLabs) for use with Lyris::API.
 
 =cut
 
 sub get_mlid {
     my $self = shift;
-    my $xuuids = $self->find_org_sys_id( q => [ osid_type => 'E' ] );
+    my $xuuids = $self->find_org_sys_id( query => [ osid_type => 'E' ] );
     if ( $xuuids and @$xuuids ) {
         return $xuuids->[0]->osid_xuuid();
     }
@@ -446,8 +453,9 @@ sub is_active {
 }
 
 sub get_rss_feed {
-    my $self = shift;
-    my $limit = shift || 100;
+    my $self          = shift;
+    my $limit         = shift || 100;
+    my $use_evergreen = shift;
     my @feed;
     my $inqs
         = $self->inquiries_iterator( sort_by => 't2.inq_publish_dtim DESC' );
@@ -459,6 +467,9 @@ INQ: while ( my $inq = $inqs->next ) {
                 last INQ;
             }
         }
+    }
+    if ( !@feed and $use_evergreen ) {
+        @feed = @{ AIR2::Inquiry->get_evergreens() };
     }
     return \@feed;
 }

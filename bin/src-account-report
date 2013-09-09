@@ -1,0 +1,34 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use Data::Dump qw( dump );
+use AIR2::Source;
+
+my $has_acct = shift(@ARGV) || 'Y';
+
+my %codes
+    = map { $_->cm_code => $_->cm_disp_value }
+    @{ AIR2::CodeMaster->fetch_all(
+        query => [ cm_field_name => 'src_status' ] ) };
+
+my $sources_with_acct
+    = AIR2::Source->fetch_all_iterator(
+    query => [ src_has_acct => $has_acct ] );
+
+my %report;
+my $total = 0;
+while ( my $src = $sources_with_acct->next ) {
+    $report{ $codes{ $src->src_status } }++;
+    $total++;
+}
+
+#dump \%report;
+
+for my $status ( sort keys %report ) {
+    printf( "%40s %7d (%2d%%)\n",
+        $status, $report{$status}, ( $report{$status} / $total ) * 100 );
+}
+

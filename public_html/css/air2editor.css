@@ -10,12 +10,12 @@
  *   the Free Software Foundation, either version 3 of the License, or
  *   (at your option) any later version.
  *
- *   AIR2 is distributed in the hope that it will be useful, 
+ *   AIR2 is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License 
+ *   You should have received a copy of the GNU General Public License
  *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
  *
  *************************************************************************/
@@ -47,15 +47,19 @@
 .air2-paging-editor .row-selected, .air2-paging-editor tr.row-selected > td {
     background-color: #f8f8ea !important;
 }
-.air2-paging-editor .air2-rowedit, .air2-paging-editor .air2-rowdelete {
+.air2-paging-editor .air2-rowedit,
+.air2-paging-editor .air2-rowdelete,
+.air2-paging-editor .air2-rowdup {
     visibility: hidden;
 }
 .air2-paging-editor.unlocked .row-over,
-.air2-paging-editor.unlocked tr.row-over > td 
+.air2-paging-editor.unlocked tr.row-over > td
 .air2-paging-editor.unlocked tbody.row-over > tr > td {
     background-color: #f8f8ea !important;
 }
-.air2-paging-editor.unlocked .row-over .air2-rowedit, .air2-paging-editor.unlocked .row-over .air2-rowdelete {
+.air2-paging-editor.unlocked .row-over .air2-rowedit,
+.air2-paging-editor.unlocked .row-over .air2-rowdelete,
+.air2-paging-editor.unlocked .row-over .air2-rowdup {
     visibility: visible;
     opacity: 1;
 }
@@ -66,7 +70,9 @@
     width: 64px;
     padding: 0px 1px 0px 1px !important;
 }
-.air2-paging-editor .air2-rowedit, .air2-paging-editor .air2-rowdelete {
+.air2-paging-editor .air2-rowedit,
+.air2-paging-editor .air2-rowdelete,
+.air2-paging-editor .air2-rowdup {
     display: inline;
 }
 /* row delete/edit controls */
@@ -97,7 +103,7 @@
     font-weight: normal;
     text-shadow: inherit;
 }
-.air2-paging-editor .row-controls .confirm-delete.x-btn-over button, 
+.air2-paging-editor .row-controls .confirm-delete.x-btn-over button,
 .air2-paging-editor .row-controls .confirm-delete.x-btn-focus button {
     background-color: #aa4400;
 }

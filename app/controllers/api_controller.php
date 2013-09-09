@@ -70,7 +70,7 @@ class API_Controller extends Base_Controller {
             $this->load->library('email');
 
             // allow for configure via etc/profiles.ini
-            $this->email->initialize(array('smtp_host' => 'localhost'));
+            $this->email->initialize(array('smtp_host' => AIR2_SMTP_HOST));
 
             // send to support@
             $this->email->from($email, $name);

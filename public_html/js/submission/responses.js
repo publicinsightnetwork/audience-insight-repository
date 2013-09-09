@@ -26,6 +26,7 @@ AIR2.Submission.Responses = function (config) {
         pagerTotal,
         prevButton,
         printBtn,
+        replyBtn,
         s,
         src,
         srclink,
@@ -234,7 +235,7 @@ AIR2.Submission.Responses = function (config) {
                         return sr_mod_value;
                     }
                     return values.sr_orig_value;
-                }, 
+                },
                 renderOptions: function (sr_mod_value, values) {
                     return AIR2.Util.Response.formatOptions(values);
                 },
@@ -299,7 +300,7 @@ AIR2.Submission.Responses = function (config) {
 
                             if (txt) {
                                 val = txt.getValue();
-                            } 
+                            }
                             else {
                                 record = reponse_data_view.store.getById(id);
                                 ques_uuid = record.data.Question.ques_uuid;
@@ -318,7 +319,7 @@ AIR2.Submission.Responses = function (config) {
                                         }
                                         val += option.getValue();
                                     });
-                                } 
+                                }
                                 else if (ques_type == 'L' || ques_type == 'O') {
                                     name = 'group' + ques_uuid;
                                     selectString = 'div.ann select[name='+name+'] option';
@@ -334,7 +335,7 @@ AIR2.Submission.Responses = function (config) {
                                             }
                                             val += option.getValue();
                                         }
-                                        
+
                                     });
                                 }
                             }
@@ -568,7 +569,7 @@ AIR2.Submission.Responses = function (config) {
                                     Ext.apply({}, this.newRowDef)
                                 );
                                 rec.set('sran_value', this.addarea.getValue());
-                               
+
                                 this.store.insert(0, rec);
                                 this.store.save();
                                 this.addarea.reset();
@@ -869,7 +870,7 @@ AIR2.Submission.Responses = function (config) {
 
                 display += theClass + '"';
 
-                
+
                 display += '>' + status + '</a>';
 
                 return display;
@@ -933,7 +934,7 @@ AIR2.Submission.Responses = function (config) {
                     var publish_state = submissionButton.getAttribute('data-publish_state');
                     var title = 'This submission cannot be published because there ';
                     title += 'are no publishable questions.';
-                    
+
 
                     if (publish_state == AIR2.Reader.CONSTANTS.PUBLISHED) {
                         title = 'Unpublishing this submission will remove it from ';
@@ -966,7 +967,7 @@ AIR2.Submission.Responses = function (config) {
                     });
                 }
             },
-            
+
         }
     });
     AIR2.Submission.publishHandler(summaryView);
@@ -1177,6 +1178,35 @@ AIR2.Submission.Responses = function (config) {
         }
     });
 
+    // reply button
+    var queryName, queryObj, srcFullName, srcObj;
+    queryObj = AIR2.Submission.INQDATA.radix;
+    srcObj = AIR2.Submission.SRCDATA.radix;
+    queryName = queryObj.inq_title;
+    if (queryObj.inq_ext_title) {
+        queryName = Ext.util.Format.stripTags(queryObj.inq_ext_title);
+    }
+    srcFullName = srcObj.src_username;
+    if (srcObj.src_first_name && srcObj.src_last_name) {
+        srcFullName = srcObj.src_first_name + ' ' + srcObj.src_last_name;
+    }
+    replyBtn = new AIR2.UI.Button({
+        air2size: 'MEDIUM',
+        air2type: 'FRIENDLY',
+        text: 'Reply',
+        iconCls: 'air2-icon-email',
+        style: 'float:right;margin-left:8px;',
+        handler: function () {
+            AIR2.Email.Sender({
+                originEl: replyBtn.el,
+                title: 'Reply to ' + srcFullName,
+                srs_uuid: AIR2.Submission.UUID,
+                internal_name: 'Re: ' + srcFullName + ' - ' + queryName,
+                type: 'F',
+                subject_line: 'Re: ' + queryName
+            });
+        }
+    });
 
     defaultConfig = {
         id: 'air2-submission-responses',
@@ -1201,7 +1231,7 @@ AIR2.Submission.Responses = function (config) {
             '</span>'
         ],
         itemSelector: '.subm-response',
-        items: [printBtn, summaryView],
+        items: [replyBtn, printBtn, summaryView],
         fbar: pager,
         tpl: viewTemplate,
         listeners: {

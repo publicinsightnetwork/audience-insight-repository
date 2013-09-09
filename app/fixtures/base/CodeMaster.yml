@@ -1523,8 +1523,15 @@ CodeMaster:
     cm_table_name: email
     cm_field_name: email_status
     cm_code: A
-    cm_disp_value: 'Active'
+    cm_disp_value: 'Sent'
     cm_disp_seq: '10'
+    cm_area: 'Email Status'
+  CodeMaster_email_status_q:
+    cm_table_name: email
+    cm_field_name: email_status
+    cm_code: Q
+    cm_disp_value: 'Scheduled'
+    cm_disp_seq: '15'
     cm_area: 'Email Status'
   CodeMaster_email_status_d:
     cm_table_name: email
@@ -1537,7 +1544,7 @@ CodeMaster:
     cm_table_name: email
     cm_field_name: email_status
     cm_code: F
-    cm_disp_value: 'Inactive'
+    cm_disp_value: 'Archived'
     cm_disp_seq: '30'
     cm_area: 'Email Status'
   CodeMaster_email_type_q:

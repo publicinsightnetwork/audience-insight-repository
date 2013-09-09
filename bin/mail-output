@@ -22,9 +22,13 @@
 
 use strict;
 use warnings;
+use Data::Dump qw( dump );
 use Email::Stuff;
 use Getopt::Long;
 use Pod::Usage;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use AIR2::Config;
 
 my ( $help, $debug, $to, $subject, $attachment );
 GetOptions(
@@ -53,10 +57,46 @@ while (<CMD>) {
 }
 close(CMD);
 
-Email::Stuff->to($to)->from('pijdev@mpr.org')->subject($subject)
-    ->text_body("See attached report $attachment")
-    ->attach( $buf, filename => $attachment )
-    ->send;
+send_email(
+    to      => $to,
+    from    => 'pijdev@mpr.org',
+    subject => $subject,
+    text    => "See attached report $attachment",
+    attach  => [ $buf, filename => $attachment ]
+);
+
+sub send_email {
+    my %args = @_;
+    if ($debug) {
+        dump \%args;
+    }
+    my $stuff = Email::Stuff->to( $args{to} )->from( $args{from} )
+        ->subject( $args{subject} );
+    if ( $args{text} ) {
+        $stuff->text_body( $args{text} );
+    }
+    if ( $args{html} ) {
+        $stuff->html_body( $args{html} );
+    }
+    if ( $args{attach} ) {
+        $stuff->attach( @{ $args{attach} } );
+    }
+    my %mailer_args = ( Host => AIR2::Config->get_smtp_host, );
+    if ( AIR2::Config->smtp_host_requires_auth ) {
+        $mailer_args{username} = AIR2::Config->get_smtp_username;
+        $mailer_args{password} = AIR2::Config->get_smtp_password;
+    }
+    my $smtp = Email::Send->new(
+        {   mailer      => 'SMTP',
+            mailer_args => [ %mailer_args, ]
+        }
+    ) or die "failed to create Email::Send::SMTP: $@ $!\n";
+    my $result = $stuff->using($smtp)->send();
+
+    $debug and warn $result;
+
+    return $result;
+}
 
 __END__
 

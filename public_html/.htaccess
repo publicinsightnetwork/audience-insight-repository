@@ -10,7 +10,7 @@ AddType application/rss+xml .rss
     # proxy search server
     # TODO host:port is defined in etc/profiles.ini
     # we just assume localhost
-    RewriteRule ^search-admin/(.*)$ http://mprweb4:5000/$1  [P,L]
+    RewriteRule ^search-admin/(.*)$ http://localhost:5002/$1  [P,L]
 
     # querymaker shortcuts
     RewriteCond  %{REQUEST_METHOD} =POST [OR]

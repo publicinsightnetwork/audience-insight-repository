@@ -99,6 +99,7 @@ class Question extends AIR2_Record {
     public static $DTYPE_PHONE      = 'P';
     public static $DTYPE_YEAR       = 'Y';
     public static $DTYPE_ZIP        = 'Z';
+    public static $DTYPE_GEO        = 'G';
 
     // template keys
     public static $TKEY_FIRSTNAME = 'firstname';
@@ -112,6 +113,8 @@ class Question extends AIR2_Record {
     public static $TKEY_PHONE = 'phone';
     public static $TKEY_TWITTER = 'twitter';
     public static $TKEY_PERMISSION = 'publicflag';
+    public static $TKEY_LATITUDE = 'latitude';
+    public static $TKEY_LONGITUDE = 'longitude';
 
     // checkbox/radio directions
     public static $DIRECTION_VERTICAL = 'V';

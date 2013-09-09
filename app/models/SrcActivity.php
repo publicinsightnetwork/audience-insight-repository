@@ -50,7 +50,8 @@ class SrcActivity extends AIR2_Record {
     public static $REF_TYPE_INQUIRY = 'I';
     public static $REF_TYPE_TANK = 'T';
     public static $REF_TYPE_ORG = 'O';
-    public static $REF_TYPE_MAIL = 'M';  
+    public static $REF_TYPE_MAIL = 'M';   // Lyris
+    public static $REF_TYPE_EMAIL = 'E';
 
 
     /**
@@ -158,6 +159,7 @@ class SrcActivity extends AIR2_Record {
             self::$REF_TYPE_TANK,
             self::$REF_TYPE_ORG,
             self::$REF_TYPE_MAIL,
+            self::$REF_TYPE_EMAIL,
         );
         if ($this->sact_ref_type && $this->sact_xid) {
             if (!in_array($this->sact_ref_type, $types)) {
@@ -189,6 +191,9 @@ class SrcActivity extends AIR2_Record {
             if (!$tbl->hasRelation('Inquiry')) {
                 $tbl->hasOne('Inquiry', array('local' => 'sact_xid', 'foreign' => 'inq_id'));
             }
+            if (!$tbl->hasRelation('Email')) {
+                $tbl->hasOne('Email', array('local' => 'sact_xid', 'foreign' => 'email_id'));
+            }
         }
     }
 
@@ -207,6 +212,7 @@ class SrcActivity extends AIR2_Record {
         $q->leftJoin("{$a}Tank WITH {$a}sact_ref_type = ?", self::$REF_TYPE_TANK);
         $q->leftJoin("{$a}Organization WITH {$a}sact_ref_type = ?", self::$REF_TYPE_ORG);
         $q->leftJoin("{$a}Inquiry WITH {$a}sact_ref_type = ?", self::$REF_TYPE_INQUIRY);
+        $q->leftJoin("{$a}Email WITH {$a}sact_ref_type = ?", self::$REF_TYPE_EMAIL);
     }
 
 

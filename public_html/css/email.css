@@ -1,0 +1,188 @@
+@charset "utf-8";
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+/* create modal */
+.air2-email-create form { padding-bottom: 4px; }
+.air2-email-sender form { padding-bottom: 4px; min-height: 202px; }
+.air2-email-sender form .campaign-name { font-weight: bold; padding-top: 3px; }
+.air2-email-sender form .email-body { padding-right: 25px; }
+
+/* search panel */
+.air2-email-search .header-tools .xtb-text { margin: 0 10px 2px 0; }
+.air2-email-search .header-tools .x-form-check-wrap { margin: 0 0 4px 0; }
+.air2-email-search input.email-text-filter {
+    padding: 3px 10px;
+    margin: 0 0 0 15px;
+    -webkit-border-radius: 13px;
+    -moz-border-radius: 13px;
+    border-radius: 13px;
+}
+.air2-email-search .air2-paging-editor { min-height: 180px; }
+
+/* TODO: remove this if label widths get fixed globally */
+.air2-email-content .x-form-element,
+.air2-email-summary .x-form-element { margin-left: 10px; }
+.air2-email-content .x-form-text,
+.air2-email-summary .x-form-text { height: 22px; }
+.air2-email-content .x-form-field-wrap .x-form-text,
+.air2-email-summary .x-form-field-wrap .x-form-text { height: 18px; }
+.air2-email-content .x-form-item label.x-form-item-label,
+.air2-email-summary .x-form-item label.x-form-item-label { padding: 3px; }
+
+/* TODO: why does AIR remove normal html styling? */
+.air2-email-content strong { font-weight: bold; }
+.air2-email-content em { font-style: italic; }
+.air2-email-content ol, .air2-email-content ul { margin: .5em 0 .8em 20px; }
+.air2-email-content ul li { list-style: disc outside none; }
+.air2-email-content ol li { list-style: decimal outside none; }
+
+/* content panel */
+.air2-email-content .email-from-email { margin-left: 6px; }
+.air2-email-content .email-right-arrow, .air2-email-content .email-left-arrow {
+    margin-top: 2px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+}
+.air2-email-content .email-right-arrow { margin-left: 4px; }
+.air2-email-content .email-left-arrow { margin-left: 8px; }
+.air2-email-content .x-fieldset-body { position: relative; }
+.air2-email-content .logo-instructions {
+    font-size: 12px;
+    color: #666;
+    position: absolute;
+    right: 8px;
+    top: 5px;
+}
+.air2-email-content .eml-subject {
+    font-size: 14px;
+    color: #999;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 20px 15px;
+    margin: 0 8px 15px;
+}
+.air2-email-content .eml-subject .from { margin-bottom: 10px; }
+.air2-email-content .eml-subject .label { width: 60px; display: inline-block; }
+.air2-email-content .eml-subject .name, .air2-email-content .eml-subject .line {
+    margin: 0 4px;
+    color: #777;
+    font-weight: bold;
+}
+.air2-email-content .eml-content {
+    margin: 2px 90px 8px 90px;
+    color: #777;
+}
+.air2-email-content .eml-content .logo img {
+    border: 1px dashed #bbb;
+    margin-bottom: 8px;
+    padding: 4px;
+}
+.air2-email-content .eml-content .headline {
+    margin: 4px 0 12px;
+    color: #444;
+}
+.air2-email-content .eml-content .body {
+    margin: 14px 0;
+    padding: 16px 0;
+    border-top: 1px dashed #bbb;
+    border-bottom: 1px dashed #bbb;
+}
+.air2-email-content .eml-content .signature {
+    margin-bottom: 18px;
+}
+
+/* summary panel */
+.air2-email-summary ul.pill {
+    margin: 0 15px 10px 0;
+    display: inline-block;
+    background: #eee;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    padding: 5px 0;
+}
+.air2-email-summary ul.pill li {
+    font-size: 11px;
+    display: inline;
+    border: none;
+    padding: 5px 7px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}
+.air2-email-summary ul.pill.upper li { text-transform: uppercase; }
+.air2-email-summary ul.pill li.green { background: #339900; color: #fff; }
+.air2-email-summary ul.pill li.dark { background: #666; color: #fff; }
+.air2-email-summary ul.pill li.red { background: #E21E26; color: #fff; }
+.air2-email-summary ul.pill li.norm { margin-left: -8px; }
+.air2-email-summary ul.pill span.air2-icon {
+    background-position: 0 0;
+    padding: 1px 0 1px 20px;
+}
+.air2-email-summary .meta { margin: 8px 0; }
+.air2-email-summary .meta ul.pill { margin: 0 15px 5px 0; }
+
+/* export modal styles */
+.air2-email-exporter .air2-editwin-body {
+    padding: 8px 12px 8px 8px;
+}
+.air2-email-exporter .x-form-item {
+    margin-bottom: 9px;
+}
+.air2-email-exporter .x-form-item .bborder {
+    padding-bottom: 9px;
+    border-bottom: 1px solid #ddd;
+}
+.air2-email-exporter .x-form-item .nospace {
+    margin-top: -9px;
+}
+.air2-email-exporter .x-form-item .tborder {
+    padding-top: 9px;
+    border-top: 3px solid #eee;
+}
+.air2-email-exporter .x-form-display-field.email-display {
+    padding-top: 3px;
+}
+.air2-email-exporter .x-form-item .working {
+    background-image: url(../lib/extjs/resources/images/default/grid/loading.gif);
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+    padding-left: 18px;
+    font-size: 14px;
+    color: #35f;
+}
+.air2-email-exporter .x-plain-bbar {
+    padding-left: 100px;
+    padding-top: 10px;
+    border-top: 3px solid #eee;
+}
+.air2-email-exporter .check-msg {
+    margin: 2px;
+    line-height: 16px;
+    color: #2a8df0;
+}
+.air2-email-exporter .check-msg.error {
+    color: #c0272b;
+}
+
+/* statistics panel */
+.air2-email-stats .air2-panel-body { min-height: 52px; }

@@ -25,8 +25,8 @@
  *
  * Associate 1 or more inquiries with an email template
  *
+ * @property integer    $einq_email_id
  * @property integer    $einq_inq_id
- * @property integer    $einq_org_id
  * @property string     $einq_status
  *
  * @property integer    $einq_cre_user
@@ -87,11 +87,46 @@ class EmailInquiry extends AIR2_Record {
         $this->hasOne('Email', array(
                 'local'   => 'einq_email_id',
                 'foreign' => 'email_id',
+                'onDelete' => 'CASCADE',
             ));
         $this->hasOne('Inquiry', array(
                 'local'   => 'einq_inq_id',
                 'foreign' => 'inq_id',
+                'onDelete' => 'CASCADE',
             ));
+    }
+
+
+    /**
+     * Inherit from Email
+     *
+     * @param User    $user
+     * @return authz integer
+     */
+    public function user_may_read($user) {
+        return $this->Email->user_may_read($user);
+    }
+
+
+    /**
+     * Inherit from Email
+     *
+     * @param User    $user
+     * @return authz integer
+     */
+    public function user_may_write($user) {
+        return $this->Email->user_may_write($user);
+    }
+
+
+    /**
+     * Inherit from Email
+     *
+     * @param User    $user
+     * @return authz integer
+     */
+    public function user_may_manage($user) {
+        return $this->Email->user_may_manage($user);
     }
 
 }

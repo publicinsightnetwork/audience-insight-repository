@@ -113,10 +113,7 @@ AIR2.Bin.Contents = function () {
                 if (src.primary_email) {
                     eml = src.primary_email;
                     abbr = Ext.util.Format.ellipsis(eml, 25);
-                    str += AIR2.Format.createLink(abbr,
-                        'mailto:' + eml,
-                        true,
-                        true);
+                    str += AIR2.Format.mailTo(abbr, src);
                 }
                 return str;
             },

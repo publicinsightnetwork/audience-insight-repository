@@ -482,7 +482,8 @@ sub as_xml {
                 || $resp->{sr_orig_value}
                 || 'no';
             $answer =~ s/\W//g;
-            my $perm = ( lc($answer) eq 'yes' ? 'yes' : 'no' );
+            my $perm
+                = ( AIR2::Utils::looks_like_yes($answer) ? 'yes' : 'no' );
             push @perm_granted, $perm;
         }
 

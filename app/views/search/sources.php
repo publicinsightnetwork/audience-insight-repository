@@ -84,7 +84,7 @@ $inquiry_titles_json = $c->uri_for('js/cache/inquiry-titles.js');
               '<ul>',
                '<li class="r-loc">{primary_location}</li>',
                '<li class="r-phone">{primary_phone}</li>',
-               '<li class="r-mail last"><a href="mailto:{primary_email}">{primary_email_html}</a></li>', // TODO air2 mta?
+               '<li class="r-mail last">{[this.mailTo(values)]}</li>',
               '</ul>',
              '</div>', // source-contact
              '</td>',
@@ -150,6 +150,10 @@ $inquiry_titles_json = $c->uri_for('js/cache/inquiry-titles.js');
                },
                getSubmissionsTip: function() {
                    return submissions_tip;
+               },
+               mailTo: function(src) {
+                   Logger(src);
+                   return AIR2.Format.mailTo(src.primary_email, src);
                }
            }
         );

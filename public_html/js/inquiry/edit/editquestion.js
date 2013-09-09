@@ -3,6 +3,7 @@ AIR2.Inquiry.editQuestion = function (dv, index, node, event) {
     var buildChoiceSet,
         choiceItems,
         choiceSet,
+        ckEditorConfig,
         dTypes,
         editEl,
         editForm,
@@ -19,7 +20,14 @@ AIR2.Inquiry.editQuestion = function (dv, index, node, event) {
         rowTypes,
         store,
         type,
-        typeNormalized;
+        typeNormalized,
+        viewport;
+
+    //tell our ckeditor to be _very_ plain here
+    ckEditorConfig = {
+        removeButtons:'Bold,Italic,Cut,Copy,Paste,Undo,Redo,Anchor,Underline,' +
+            'Strike,Subscript,Superscript'
+    };
 
     if (!node) {
         Logger("node not defined:", arguments);
@@ -39,7 +47,8 @@ AIR2.Inquiry.editQuestion = function (dv, index, node, event) {
 
     items = [
         {
-            xtype: 'textarea',
+            xtype: 'air2ckeditor',
+            ckEditorConfig: ckEditorConfig,
             fieldLabel: 'Question',
             name: 'ques_value'
         }
@@ -172,11 +181,12 @@ AIR2.Inquiry.editQuestion = function (dv, index, node, event) {
             airIndex: index,
             airKey: 'value',
             airOption: true,
+            ckEditorConfig: ckEditorConfig,
             disabled: item.disableForm,
             fieldLabel: 'Value',
             name: 'option_' + index + '_value',
             value: item.value,
-            xtype: 'textarea'
+            xtype: 'air2ckeditor'
         }];
 
         if (AIR2.Inquiry.QUESTION.TYPE.CHECKBOX.indexOf(typeNormalized) > -1) {
@@ -557,9 +567,11 @@ AIR2.Inquiry.editQuestion = function (dv, index, node, event) {
 
     Ext.getCmp('air2-app').doLayout();
 
+    viewport = Ext.getBody().getViewSize();
+
     editWindow = new AIR2.UI.Window({
         closable: false,
-        height: 'auto',
+        height: (viewport.height - 80),
         id: 'air2-question-edit-window',
         items: [editForm],
         layout: 'fit',
@@ -573,13 +585,13 @@ AIR2.Inquiry.editQuestion = function (dv, index, node, event) {
 
         viewport = Ext.getBody().getViewSize();
 
-        if (window.getHeight() >= (viewport.height - 80)) {
+        if (window.getHeight() > (viewport.height - 80)) {
             position = window.getPosition();
             window.setPosition(position[0], 40);
             window.setHeight(viewport.height - 80);
         }
 
-        if (window.getWidth() >= (viewport.width - 80)) {
+        if (window.getWidth() > (viewport.width - 80)) {
             window.setWidth(viewport.width - 80);
             position = window.getPosition();
             window.setPosition(40, position[1]);

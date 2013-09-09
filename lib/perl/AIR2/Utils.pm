@@ -85,10 +85,16 @@ sub str_clean {
     my $len  = shift;
     return $str unless ( defined $str && length $str );
 
-    $str = to_utf8($str);    # utf8-ify
-    $str =~ s/^\s+|\s+$//g;  #trim whitespace
+    $str = to_utf8($str);      # utf8-ify
+    $str =~ s/^\s+|\s+$//g;    #trim whitespace
     $str =~ s/\\$//g
         ;    # trim any trailing \ because they break data infile import
+
+# utf-8 4-byte nonlingual chars break mysql's utf8 implementation
+# so convert these emoticons to numeric entities to preserve them.
+# we choose not use utf8mb4 mysql feature because it is not portable across versions.
+# http://dev.mysql.com/doc/refman/5.5/en/charset-unicode-utf8mb4.html
+    $str =~ s/([\x{1F601}-\x{1F64F}])/'&#' . ord($1) . ';'/eg;
 
 # substr works on characters, but we want absolute bytes.
 # note that this might break the utf8 validity by splitting on bytes rather than characters.
@@ -148,16 +154,33 @@ sub parse_phone_number {
 
 sub pack_authz {
     my $org_hash = shift or croak "org_hash required";
-    return encode_base64( pack( "(NN)*", %$org_hash ) );
+
+    my $packed;
+    for my $id ( keys %$org_hash ) {
+        my $mask  = $org_hash->{$id};     #64-bit mask
+        my $half1 = $mask >> 32;
+        my $half2 = $mask & 0xFFFFFFFF;
+
+        # pack the 32-bit halves seperately
+        $packed .= pack( "nNN", $id, $half1, $half2 );
+    }
+    return encode_base64($packed);
 }
 
 sub unpack_authz {
-    my $packed = shift or croak "packed authz string required";
-    my $decoded_packed = decode_base64($packed);
-    if ( length($decoded_packed) % 8 ) {
-        croak "invalid packed authz string: $decoded_packed";
+    my $pauthz = shift or croak "packed authz string required";
+    my $packed = decode_base64($pauthz);
+
+    # SANITY ... divisible by 10 bytes!
+    croak "invalid packed authz string: $packed" if ( length($packed) % 10 );
+
+    my %authz;
+    for ( my $i = 0; $i < length($packed); $i += 10 ) {
+        my $a = [ unpack( 'nNN', substr( $packed, $i, 10 ) ) ];
+        my $mask = ( $a->[1] << 32 ) | $a->[2];
+        $authz{ $a->[0] } = $mask;
     }
-    return { unpack( "(NN)*", $decoded_packed ) };
+    return \%authz;
 }
 
 # analog to PHP function of same name
@@ -187,6 +210,65 @@ sub generate_stderr {
     my $n = 0;
     my $foo;
     while ( $n++ < 100 ) { print $foo }
+}
+
+sub looks_like_yes {
+    my $text = shift || '';
+
+    # normalize case
+    $text = lc($text);
+
+    # english or spanish
+    if ( $text eq 'yes' ) {
+        return 1;
+    }
+    if ( $text eq 'si' ) {
+        return 1;
+    }
+    if ( $text eq 'y' ) {
+        return 1;
+    }
+    if ( $text eq 'sí' ) {
+        return 1;
+    }
+    if ( $text eq "s\xed" ) {
+        return 1;
+    }
+    return 0;
+}
+
+# cache whitelist
+my $email_whitelist_cached = 0;
+my @email_whitelist;
+
+sub allow_email_export {
+    my $addr = shift;
+
+    # create whitelist on first run
+    unless ($email_whitelist_cached) {
+        if ( my $wl = AIR2::Config::get_constant('AIR2_MAILCHIMP_WHITELIST') )
+        {
+            @email_whitelist = split( /\s*,\s*/, $wl );
+            map { $_ =~ s/\*/.+/g } @email_whitelist;
+        }
+        $email_whitelist_cached = 1;
+    }
+
+    my $profile = AIR2::Config::get_profile();
+    if ( $profile eq 'prod' or $profile eq 'visi_prod' ) {
+        return 1;
+    }
+    elsif ( !AIR2::Config::get_constant('AIR2_MAILCHIMP_WHITELIST')
+        && $profile eq 'qa' )
+    {
+        return 1;
+    }
+    else {
+        for my $regex (@email_whitelist) {
+            return 1 if $addr =~ /^$regex$/;
+        }
+        return 0;
+    }
 }
 
 1;

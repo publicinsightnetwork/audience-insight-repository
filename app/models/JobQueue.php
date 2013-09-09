@@ -38,6 +38,8 @@
  */
 class JobQueue extends AIR2_Record {
 
+    public static $TYPE_EMAIL = 'E';
+
     /**
      * Set the table columns
      */
@@ -61,6 +63,8 @@ class JobQueue extends AIR2_Record {
         $this->hasColumn('jq_error_msg', 'string', null, array(
             )
         );
+        $this->hasColumn('jq_type', 'string', 1, array());
+        $this->hasColumn('jq_xid', 'integer', 4, array());
         $this->hasColumn('jq_cre_user', 'integer', 4, array(
                 'notnull' => true,
             )

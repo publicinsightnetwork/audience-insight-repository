@@ -39,6 +39,7 @@ use AIR2::Source;
 use AIR2::SrcOrg;
 use AIR2::SearchUtils;
 use Search::Tools::XML;
+use MIME::Base64;
 
 =pod
 
@@ -243,6 +244,12 @@ sub send_email {
 sub get_template_vars {
 
     my ( $source, $org ) = @_;
+
+    my $primary_email = $source->get_primary_email;
+    if ( !$primary_email ) {
+        die "No primary email defined for Source: " . $source->src_username;
+    }
+
     my $newsroom = {
         name     => $org->org_display_name,
         email    => $org->org_email || 'support@publicinsightnetwork.org',
@@ -283,6 +290,18 @@ INQ: for my $inq (@$rss) {
     my $base_url = AIR2::Config::get_constant('AIR2_BASE_URL');
     $base_url =~ s,/$,,;
 
+    my $unsubscribe_url = sprintf(
+        "%s/email/unsubscribe/%s",
+        $base_url,
+        encode_base64(
+            encode_json(
+                {   email => $primary_email->sem_email,
+                    org   => $org->org_name
+                }
+            )
+        )
+    );
+
     my $vars = {
         newsroom        => $newsroom,
         related_queries => \@related,
@@ -294,8 +313,9 @@ INQ: for my $inq (@$rss) {
         },
         source => {
             name  => $source->get_first_last_name,
-            email => $source->get_primary_email->sem_email,
+            email => $primary_email->sem_email,
         },
+        unsubscribe_url => $unsubscribe_url,
     };
     $debug and dump $vars;
     return $vars;

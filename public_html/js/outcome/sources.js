@@ -22,13 +22,6 @@ AIR2.Outcome.Sources = function () {
     });
 
     // formatters
-    AIR2.Outcome.fmtEmail = function (v) {
-        if (v.SrcEmail && v.SrcEmail.length) {
-            return AIR2.Format.sourceEmail(v.SrcEmail[0], true);
-        }
-        return '<span class="lighter">(none)</span>';
-    };
-
     AIR2.Outcome.fmtPhone = function (v) {
         if (v.SrcPhoneNumber && v.SrcPhoneNumber.length) {
             return AIR2.Format.sourcePhone(v.SrcPhoneNumber[0]);

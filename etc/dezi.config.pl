@@ -17,6 +17,26 @@ my $stats_logger = Dezi::Stats->new(
     quote    => 1,               # since we use mysql
 );
 
+# each key must map to a 'path' in MasterServer
+my %path2config = (
+    'sources'                => 'fuzzy_sources',
+    'active-sources'         => 'fuzzy_sources',
+    'primary-sources'        => 'fuzzy_sources',
+    'fuzzy-sources'          => 'fuzzy_sources',
+    'fuzzy-active-sources'   => 'fuzzy_sources',
+    'fuzzy-primary-sources'  => 'fuzzy_sources',
+    'strict-sources'         => 'sources',
+    'strict-active-sources'  => 'sources',
+    'strict-primary-sources' => 'sources',
+    'inquiries'              => 'inquiries',
+    'projects'               => 'projects',
+    'responses'              => 'fuzzy_responses',
+    'fuzzy-responses'        => 'fuzzy_responses',
+    'strict-responses'       => 'responses',
+    'public-responses'       => 'public_responses',
+);
+
+# basic config
 my $conf = {
     skip => {},
 
@@ -26,196 +46,38 @@ my $conf = {
     # but shouldn't ever really get used.
     engine_config => { indexer_config => { highlightable_fields => 1, }, },
 
-    # each key must map to a 'path' in MasterServer
-    'sources' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('fuzzy_sources')
-                        ->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-    },
-    'active-sources' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('fuzzy_sources')
-                        ->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-    },
-    'primary-sources' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('fuzzy_sources')
-                        ->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-    },
-    'fuzzy-sources' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('fuzzy_sources')
-                        ->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-    },
-    'fuzzy-active-sources' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('fuzzy_sources')
-                        ->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-    },
-    'fuzzy-primary-sources' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('fuzzy_sources')
-                        ->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-    },
-    'strict-sources' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('sources')->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-    },
-    'strict-active-sources' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('sources')->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-    },
-    'strict-primary-sources' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('sources')->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-    },
-    'inquiries' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('inquiries')->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-        #debug => 1,
-    },
-    'projects' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('projects')->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-    },
-    'responses' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('fuzzy_responses')
-                        ->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-    },
-    'fuzzy-responses' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('fuzzy_responses')
-                        ->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-    },
-    'strict-responses' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('responses')->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-    },
-    'public-responses' => {
-        engine_config => {
-            indexer_config => {
-                highlightable_fields => 1,
-                config               => SWISH::Prog::Config->new(
-                    AIR2::Config::get_search_config('public_responses')
-                        ->stringify
-                ),
-            },
-            searcher_config => { find_relevant_fields => 1, },
-        },
-    },
 };
 
-for my $key ( keys %$conf ) {
-    next if $key eq 'skip';
-    next if $key eq 'engine_config';
-    next if $key eq 'base_uri';
+# fill out with path-specifics
+for my $path ( keys %path2config ) {
+    my $config = $path2config{$path};
+    $conf->{$path}->{engine_config} = {
+        indexer_config => {
+            config => SWISH::Prog::Config->new(
+                AIR2::Config::get_search_config($config)->stringify
+            ),
+            highlightable_fields => 1,
+        },
+        searcher_config => {
+            find_relevant_fields => 1,
+            qp_config            => {
+                dialect          => 'Lucy',
+                null_term        => 'NULL',
+                croak_on_error   => 1,
+                query_class_opts => { debug => $ENV{DEZI_DEBUG} },
+            },
+        },
+    };
+    $conf->{$path}->{base_uri}     = $conf->{base_uri} . $path;
+    $conf->{$path}->{stats_logger} = $stats_logger;
+    $conf->{$path}->{ui_class}     = 'Dezi::UI';
+    $conf->{$path}->{admin_class}  = 'Dezi::Admin';
+    $conf->{$path}->{admin}        = {
+        base_uri => $conf->{$path}->{base_uri},
+        username => 'deziadmin',
+        password => 'pinsearcher',
+    };
 
-    $conf->{$key}->{base_uri}     = $conf->{base_uri} . $key;
-    $conf->{$key}->{stats_logger} = $stats_logger;
-    $conf->{$key}->{ui_class}     = 'Dezi::UI';
-    $conf->{$key}->{admin_class}  = 'Dezi::Admin';
-    $conf->{$key}->{admin}->{base_uri} = $conf->{$key}->{base_uri};
-    $conf->{$key}->{admin}->{username} = 'deziadmin';
-    $conf->{$key}->{admin}->{password} = 'pinsearcher';
 }
 
 #dump $conf;

@@ -17,7 +17,9 @@ AIR2.Reader.expandHandler = function (dv) {
                 '<div class="submission">' +
                     '<div class="sub-act clearfix">' +
                         '<a href="{inq_uuid:this.queryLink(values)}" target="_blank" class="view-query">Insights Page <i class="icon-external-link"></i></a>' +
-                        '<a href="{srs_uuid:this.printLink}" target="_blank" class="print-submission"><i class="icon-print"></i> Print Submission</a>' +                         '<a href="{srs_uuid:this.permaLink}" class="submission-permalink"><i class="icon-link"></i> Submission Permalink</a>' +
+                        '<a href="{srs_uuid:this.printLink}" target="_blank" class="print-submission"><i class="icon-print"></i> Print Submission</a>' +
+                        '<a href="{srs_uuid:this.permaLink}" class="submission-permalink"><i class="icon-link"></i> Submission Permalink</a>' +
+                        '<a href="#" class="submission-reply"><i class="icon-envelope"></i> Reply</a>' +
                     '</div>' +
                     '<h4 class="sub-inq">{.:air.inquiryTitle(1)}</h4>' +
                     '<div style="clear: left;">' +
@@ -459,12 +461,7 @@ AIR2.Reader.expandHandler = function (dv) {
                 if (e1) {
                     e2 = v.primary_email_html;
                     s += '<li style="list-style:none;">';
-                    s += AIR2.Format.createLink(
-                        e2,
-                        'mailto:' + e1,
-                        true,
-                        true
-                    );
+                    s += AIR2.Format.mailTo(v.primary_email_html, v);
                     s += '</li>';
                 }
                 if (v.primary_phone) {

@@ -11,7 +11,7 @@ fi
 
 # Annie Anderson gets monthly fact report
 $PERL $AIR2_ROOT/bin/mail-output \
-    --to 'aanderson@mpr.org, jeaston@mpr.org, mcramer@mpr.org, pijdev@mpr.org' \
+    --to 'aanderson@mpr.org, jeaston@mpr.org, pijdev@mpr.org' \
     --subject 'PIN Facts' \
     --attachment pin-facts-$TODAY.txt -- \
     $PERL $AIR2_ROOT/bin/fact-stats --end $TODAY
@@ -28,17 +28,17 @@ $PERL $AIR2_ROOT/bin/first-activities \
     --start=$FROM \
     --end=$TODAY \
     --format=email \
-    --mailto 'aanderson@mpr.org, mcramer@mpr.org, pijdev@mpr.org'
+    --mailto 'aanderson@mpr.org, pijdev@mpr.org'
 
 # Annie Anderson gets monthly "query totals" report
 $PERL $AIR2_ROOT/bin/mail-output \
-    --to 'aanderson@mpr.org, mcramer@mpr.org, pijdev@mpr.org' \
+    --to 'aanderson@mpr.org, pijdev@mpr.org' \
     --subject 'PIN Query Totals' \
     --attachment pin-query-totals-$TODAY.txt -- \
     $PERL $AIR2_ROOT/bin/queries-emails-sent --start $FROM --end $TODAY
 
 $PERL $AIR2_ROOT/bin/mail-output \
-    --to 'aanderson@mpr.org, mcramer@mpr.org, pijdev@mpr.org' \
+    --to 'aanderson@mpr.org, pijdev@mpr.org' \
     --subject 'PIN Newsroom Totals' \
     --attachment pin-newsroom-totals-$TODAY.txt -- \
     $PERL $AIR2_ROOT/bin/newsroom-report

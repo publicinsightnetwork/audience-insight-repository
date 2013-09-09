@@ -68,8 +68,8 @@ class AAPI_Organization_SysId extends AIRAPI_Resource {
         $q->leftJoin('os.UpdUser uu');
         return $q;
     }
-    
-    
+
+
     /**
      * Create
      *
@@ -78,7 +78,7 @@ class AAPI_Organization_SysId extends AIRAPI_Resource {
      */
     protected function air_create($data) {
         $this->require_data($data, array('osid_type', 'osid_xuuid'));
-        if (!in_array($data['osid_type'], array('E'))) {
+        if (!in_array($data['osid_type'], array('E', 'M'))) {
             throw new Rframe_Exception(Rframe::BAD_DATA, "invalid osid_type");
         }
 

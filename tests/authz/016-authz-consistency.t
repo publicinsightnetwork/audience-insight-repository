@@ -18,13 +18,16 @@ $testUser = new TestUser();
 $testUser->save();
 
 $o = new TestOrganization();
-$o->add_users(array($testUser), 3); 
+$o->add_users(array($testUser), 3);
 $o->save();
 
 $authz = $testUser->get_authz();
 $packed = null;
 foreach ($authz as $id => $mask) {
-    $packed .= pack("NN", $id, $mask);
+    // mask is a 64-bit unsigned int - split it!
+    $half1 = $mask >> 32;
+    $half2 = $mask & 0xFFFFFFFF;
+    $packed .= pack("nNN", $id, $half1, $half2);
 }
 $encoded = base64_encode($packed);
 

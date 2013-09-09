@@ -21,7 +21,7 @@ AIR2.Submission.Source = function () {
             '<tpl for="SrcEmail">' +
               '<tr>' +
                 '<td class="date right">Email</td>' +
-                '<td>{[AIR2.Format.sourceEmail(values, true)]}</td>' +
+                '<td>{[this.sourceEmail(values)]}</td>' +
               '</tr>' +
             '</tpl>' +
             // phone
@@ -45,6 +45,9 @@ AIR2.Submission.Source = function () {
         {
             compiled: true,
             disableFormats: true,
+            sourceEmail: function (v) {
+                return AIR2.Format.mailTo(v.sem_email, AIR2.Submission.SRCDATA.radix);
+            },
             formatOther: function (v) {
                 var bas,
                     count,
@@ -89,9 +92,9 @@ AIR2.Submission.Source = function () {
                     str += '<tr><td class="date right">';
                     if (sf.Fact.fact_identifier == 'birth_year') {
                         str += 'Age </td>';
-                    } 
+                    }
                     else {
-                        str += sf.Fact.fact_name + '</td>'; 
+                        str += sf.Fact.fact_name + '</td>';
                     }
                     val = sf.sf_src_value;
 

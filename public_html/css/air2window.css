@@ -10,12 +10,12 @@
  *   the Free Software Foundation, either version 3 of the License, or
  *   (at your option) any later version.
  *
- *   AIR2 is distributed in the hope that it will be useful, 
+ *   AIR2 is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License 
+ *   You should have received a copy of the GNU General Public License
  *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
  *
  *************************************************************************/
@@ -96,4 +96,14 @@
 }
 .air2-editwin.win-transition .air2-editwin-bwrap {
     background: #eee url(../lib/extjs/resources/images/default/grid/wait.gif) no-repeat 50%;
+}
+
+/* modal prompt */
+.air2-prompt .x-window-body {
+    padding: 16px 10px;
+}
+.air2-prompt .x-window-body .ext-mb-input {
+    height: 18px;
+    margin-top: 6px;
+    padding-bottom: 2px;
 }

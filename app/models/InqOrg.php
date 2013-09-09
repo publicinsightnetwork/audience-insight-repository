@@ -204,7 +204,7 @@ class InqOrg extends AIR2_Record {
      * @return authz integer
      */
     public function user_may_write($user) {
-        return $this->Organization->user_may_write($user);
+        return $this->Inquiry->user_may_write($user);
     }
 
 
@@ -215,7 +215,7 @@ class InqOrg extends AIR2_Record {
      * @return authz integer
      */
     public function user_may_manage($user) {
-        return $this->Organization->user_may_manage($user);
+        return $this->Inquiry->user_may_manage($user);
     }
 
 

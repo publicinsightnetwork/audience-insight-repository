@@ -173,7 +173,7 @@ AIR2.Reader.Inbox = function () {
     AIR2.Reader.publishHandler(AIR2.Reader.DV);
     AIR2.Reader.tagHandler(AIR2.Reader.DV);
     AIR2.Reader.refUrl(AIR2.Reader.DV);
-
+    AIR2.Reader.replyHandler(AIR2.Reader.DV);
 
     // pager
     AIR2.Reader.DV.pager = new Ext.PagingToolbar({
@@ -385,85 +385,85 @@ AIR2.Reader.Inbox = function () {
         air2type: 'UPLOAD',
         air2size: 'MEDIUM',
         handler: function (b) {
-        var dateStamp = new Date();
-        var binName = AIR2.Reader.INITARGS.q + dateStamp;
-        var params = {};
-        var count, all_selected, selected_uuids, selected_rows;
-
-        AIR2.APP.el.mask('Loading items to print...');
-
-        params['bin_name'] = binName;
-        params['bin_type'] = 'S';
-
-        all_selected = Ext.get(Ext.select('.notify-all').elements[0]);
-        all_selected = !all_selected.hasClass('hide');
-        selected_rows = Ext.select('.srs-row.row-checked').elements;
-        count = selected_rows.length;
-        all_count = AIR2.Reader.DV.store.getTotalCount();
-        Logger("Count", count);
-        if (all_selected && all_count > 1000) {
-            m = 'Print-friendly view supports up to 1000 ' +
-                'submissions and you selected ' + count +
-                ' submissions.<br/>Please deselect some of ' +
-                'the submissions  and try again.';
-            AIR2.UI.ErrorMsg(b.el, 'Sorry!', m);
-            AIR2.APP.el.unmask();
-        }
-        else if (count == 0) {
-            m = 'Print-friendly view requires at least one submission.' +
-            'Please select a submission and try again.';
-            AIR2.UI.ErrorMsg(b.el, 'Sorry!', m);
-            AIR2.APP.el.unmask();
-        }
-        else {
-            Ext.Ajax.request({
-                url: AIR2.HOMEURL + '/bin.json',
-                params: {radix: Ext.encode(params)},
-                callback: function (opts, success, resp) {
-                    var data, bin_uuid, params, store, record, selected_uuids;
-                    data = Ext.util.JSON.decode(resp.responseText);
-                    store = new AIR2.UI.APIStore({
-                        url: AIR2.Bin.URL + '/srcsub.json',
-                        data: data
-                    });
-                    record = store.getAt(0);
-                    bin_uuid = data.radix.bin_uuid;
-                    selected_uuids = [];
-                    params = {}
-                    if(!all_selected) {
-                        params.uuids = [];
-                        Ext.each(selected_rows, function(row, index) {
-                            row = Ext.get(row);
-                            var srs_uuid = row.getAttribute("data-srs_uuid");
-                            params.uuids.push(srs_uuid);
-
+            var dateStamp = new Date();
+            var binName = AIR2.Reader.INITARGS.q + dateStamp;
+            var params = {};
+            var count, all_selected, selected_uuids, selected_rows;
+    
+            AIR2.APP.el.mask('Loading items to print...');
+    
+            params['bin_name'] = binName;
+            params['bin_type'] = 'T';  // temp source bin
+    
+            all_selected = Ext.get(Ext.select('.notify-all').elements[0]);
+            all_selected = !all_selected.hasClass('hide');
+            selected_rows = Ext.select('.srs-row.row-checked').elements;
+            count = selected_rows.length;
+            all_count = AIR2.Reader.DV.store.getTotalCount();
+            Logger("Count", count);
+            if (all_selected && all_count > 1000) {
+                m = 'Print-friendly view supports up to 1000 ' +
+                    'submissions and you selected ' + count +
+                    ' submissions.<br/>Please deselect some of ' +
+                    'the submissions  and try again.';
+                AIR2.UI.ErrorMsg(b.el, 'Sorry!', m);
+                AIR2.APP.el.unmask();
+            }
+            else if (count == 0) {
+                m = 'Print-friendly view requires at least one submission.' +
+                'Please select a submission and try again.';
+                AIR2.UI.ErrorMsg(b.el, 'Sorry!', m);
+                AIR2.APP.el.unmask();
+            }
+            else {
+                Ext.Ajax.request({
+                    url: AIR2.HOMEURL + '/bin.json',
+                    params: {radix: Ext.encode(params)},
+                    callback: function (opts, success, resp) {
+                        var data, bin_uuid, params, store, record, selected_uuids;
+                        data = Ext.util.JSON.decode(resp.responseText);
+                        store = new AIR2.UI.APIStore({
+                            url: AIR2.Bin.URL + '/srcsub.json',
+                            data: data
                         });
-                    }
-                    else {
-                        params.uuids = {
-                            i: 'responses',
-                            q: AIR2.Reader.ARGS.q,
-                            M: AIR2.Reader.ARGS.M,
-                            total: count
-                        };
-                    }
-
-                if (Ext.isArray(params.uuids)) {
-                   params.uuids.push({reltype: "submission"});
-                }
-
-                AIR2.Drawer.API.addItems(record, params.uuids, function() {
-                    AIR2.APP.el.unmask();
-                    window.open(AIR2.HOMEURL + '/bin/' +bin_uuid+'.phtml');
+                        record = store.getAt(0);
+                        bin_uuid = data.radix.bin_uuid;
+                        selected_uuids = [];
+                        params = {}
+                        if(!all_selected) {
+                            params.uuids = [];
+                            Ext.each(selected_rows, function(row, index) {
+                                row = Ext.get(row);
+                                var srs_uuid = row.getAttribute("data-srs_uuid");
+                                params.uuids.push(srs_uuid);
+    
+                            });
+                        }
+                        else {
+                            params.uuids = {
+                                i: 'responses',
+                                q: AIR2.Reader.ARGS.q,
+                                M: AIR2.Reader.ARGS.M,
+                                total: count
+                            };
+                        }
+    
+                        if (Ext.isArray(params.uuids)) {
+                            params.uuids.push({reltype: "submission"});
+                        }
+    
+                        AIR2.Drawer.API.addItems(record, params.uuids, function() {
+                            AIR2.APP.el.unmask();
+                            window.open(AIR2.HOMEURL + '/bin/' +bin_uuid+'.phtml');
+                        });
+    
+                    },
+                    failure: function(response, opts) {
+                      Logger('server-side failure with status code ', response);
+                   }
                 });
-
-                },
-                failure: function(response, opts) {
-                  Logger('server-side failure with status code ' + response);
-               }
-            });
+            }
         }
-    }
     });
 
 

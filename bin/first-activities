@@ -29,8 +29,10 @@ use Data::Dump qw( dump );
 use Getopt::Long;
 use Pod::Usage;
 use Rose::DateTime::Parser;
+use AIR2::Config;
 use AIR2::Source;
 use Email::Stuff;
+use Email::Send;
 use Text::CSV_XS;
 use File::Slurp;
 
@@ -80,35 +82,40 @@ GetOptions(
 if ($help) {
     pod2usage(2);
 }
-if ($format ne 'file' && $format ne 'email') {
+if ( $format ne 'file' && $format ne 'email' ) {
     pod2usage('Invalid format specified! Valid formats are (file, email)');
 }
-if ($format eq 'email' && !$mailto) {
+if ( $format eq 'email' && !$mailto ) {
     pod2usage('Must provide a valid mailto for format=email');
 }
 
 # validate dates
 my $date_parser = Rose::DateTime::Parser->new();
-my $start_dt = $date_parser->parse_date($start) or die "Bad date: $start";
-my $end_dt = $date_parser->parse_date($end) or die "Bad date: $end";
-die "Bad date range: $start to $end" unless ($start_dt < $end_dt);
+my $start_dt    = $date_parser->parse_date($start) or die "Bad date: $start";
+my $end_dt      = $date_parser->parse_date($end) or die "Bad date: $end";
+die "Bad date range: $start to $end" unless ( $start_dt < $end_dt );
 
 # parse to mysql format
 my $start_str = DateTime::Format::MySQL->format_datetime($start_dt);
-my $end_str = DateTime::Format::MySQL->format_datetime($end_dt);
+my $end_str   = DateTime::Format::MySQL->format_datetime($end_dt);
 
 # build raw-sql query
-my $first_act  = "select sact_id from src_activity where sact_src_id=a.src_id order by sact_cre_dtim, "
-               . "sact_dtim, sact_id limit 1";
-my $date_limit = "where a.src_cre_dtim > '$start_str' and a.src_cre_dtim <= '$end_str'";
-my $since      = "select a.src_id as first_src_id, ($first_act) as first_sact_id from source a $date_limit";
-my $from       = "($since) b join source on (first_src_id=src_id) join src_activity on (first_sact_id=sact_id) "
-               . "join activity_master on (sact_actm_id=actm_id)";
-my $sel        = "src_uuid, src_username, src_cre_dtim, actm_name, sact_desc, sact_notes, sact_cre_dtim, sact_dtim";
+my $first_act
+    = "select sact_id from src_activity where sact_src_id=a.src_id order by sact_cre_dtim, "
+    . "sact_dtim, sact_id limit 1";
+my $date_limit
+    = "where a.src_cre_dtim > '$start_str' and a.src_cre_dtim <= '$end_str'";
+my $since
+    = "select a.src_id as first_src_id, ($first_act) as first_sact_id from source a $date_limit";
+my $from
+    = "($since) b join source on (first_src_id=src_id) join src_activity on (first_sact_id=sact_id) "
+    . "join activity_master on (sact_actm_id=actm_id)";
+my $sel
+    = "src_uuid, src_username, src_cre_dtim, actm_name, sact_desc, sact_notes, sact_cre_dtim, sact_dtim";
 
 # execute
 my $dbh = AIR2::DBManager->new->retain_dbh();
-my $sth = $dbh->prepare( "select $sel from $from" );
+my $sth = $dbh->prepare("select $sel from $from");
 $sth->execute();
 
 # csv printer
@@ -116,27 +123,35 @@ my $fh;
 my $str = '';
 my $csv = Text::CSV_XS->new( { binary => 1, eol => $/ } )
     or die "Cannot use CSV: " . Text::CSV_XS->error_diag();
-if ($format eq 'file') {
+if ( $format eq 'file' ) {
     open $fh, ">$filename" or die $!;
 }
-elsif ($format eq 'email') {
+elsif ( $format eq 'email' ) {
     open $fh, '>', \$str or die $!;
 }
 
 # print it!
 my $headers = $sth->{NAME};
-$csv->print($fh, $headers);
-while (my $row = $sth->fetchrow_arrayref) {
-   $csv->print($fh, $row);
+$csv->print( $fh, $headers );
+while ( my $row = $sth->fetchrow_arrayref ) {
+    $csv->print( $fh, $row );
 }
 close $fh or die $!;
 
 # email output
-if ($format eq 'email') {
-    Email::Stuff->to($mailto)
-        ->from('support@publicinsightnetwork.org')
+if ( $format eq 'email' ) {
+    my %mailer_args = ( Host => AIR2::Config->get_smtp_host, );
+    if ( AIR2::Config->smtp_host_requires_auth ) {
+        $mailer_args{username} = AIR2::Config->get_smtp_username;
+        $mailer_args{password} = AIR2::Config->get_smtp_password;
+    }
+    my $smtp = Email::Send->new(
+        {   mailer      => 'SMTP',
+            mailer_args => [ %mailer_args, ]
+        }
+    ) or die "failed to create Email::Send::SMTP: $@ $!\n";
+    Email::Stuff->to($mailto)->from('support@publicinsightnetwork.org')
         ->subject("AIR Monthly Report - How Sources Join")
-        ->text_body( "See attachment for new sources from $start to $end" )
-        ->attach($str, filename => $filename)
-        ->send();
+        ->text_body("See attachment for new sources from $start to $end")
+        ->attach( $str, filename => $filename )->using($smtp)->send();
 }

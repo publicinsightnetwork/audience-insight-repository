@@ -116,6 +116,22 @@ class SrcOrg extends AIR2_Record {
     }
 
 
+
+
+
+    /**
+     *
+     *
+     * @param unknown $event
+     */
+    public function preInsert($event) {
+        parent::preInsert($event);
+        if ($this->so_effective_date == '1970-01-01') {
+            $this->so_effective_date = air2_date();
+        }
+    }
+
+
     /**
      * Re-cache source authz on any save
      *
@@ -196,7 +212,8 @@ class SrcOrg extends AIR2_Record {
     /**
      * Don't allow deleting APM PIN org
      *
-     * @param User $u
+     * @param User    $u
+     * @return unknown
      */
     public function user_may_delete(User $u) {
         if ($this->so_org_id == Organization::$APMPIN_ORG_ID) {
@@ -209,7 +226,7 @@ class SrcOrg extends AIR2_Record {
     /**
      * Forces a source to be opted-into APMG
      *
-     * @param int $src_id
+     * @param int     $src_id
      * @return bool $inserted
      */
     public static function force_apmg($src_id) {
@@ -251,7 +268,7 @@ class SrcOrg extends AIR2_Record {
         $so = new SrcOrg();
         $so->so_home_flag = true;
         $so->so_org_id = $org->org_id;
-        //$so->so_effective_date = air2_date();  // TODO how is this used?
+        $so->so_effective_date = air2_date();
         return $so;
     }
 

@@ -100,6 +100,7 @@ sub get_php_path {
     return ( $profiles->val( $profile, 'php_path' ) || '/usr/local/bin/php' );
 }
 sub get_profiles { return $profiles }
+sub get_profile  { return $profile }
 sub get_hostname { return $hostname }
 sub get_user     { return $user }
 sub get_tz       { return $TIMEZONE }

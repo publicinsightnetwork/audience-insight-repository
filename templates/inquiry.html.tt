@@ -48,7 +48,6 @@
     <form class="pin-form" action="[% base_url %]q/[% inquiry.inq_uuid %]" method="POST">
 
 [%  
-    # see https://metacpan.org/module/HTML::SuperForm for form object docs
     USE Handy;
     Formatters = {
         'A' = 'doTextArea',

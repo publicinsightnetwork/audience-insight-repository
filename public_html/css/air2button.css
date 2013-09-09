@@ -217,7 +217,7 @@
 /**************
  * special ROWEDIT and ROWDELETE button classes
  *************/
-.air2-rowedit, .air2-rowdelete, .air2-rowadd {
+.air2-rowedit, .air2-rowdelete, .air2-rowadd, .air2-rowdup {
     padding: 0;
     margin: 0 2px 0 0;
     background: #eee no-repeat 50%;
@@ -239,9 +239,13 @@
 .air2-rowadd {
     background-image: url(img/icons/plus-circle-frame-medium.png);
 }
+.air2-rowdup {
+    background-image: url(img/icons/tables-copy.png);
+}
 .air2-rowedit:hover, .air2-rowedit:focus,
 .air2-rowdelete:hover, .air2-rowdelete:focus,
-.air2-rowadd:hover, .air2-rowadd:focus {
+.air2-rowadd:hover, .air2-rowadd:focus,
+.air2-rowdup:hover, .air2-rowdup:focus {
     background-color: #ddd;
     border-color: #bbb;
 }

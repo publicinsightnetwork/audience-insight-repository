@@ -1,0 +1,44 @@
+<?php
+/**************************************************************************
+ *
+ *   Copyright 2010 American Public Media Group
+ *
+ *   This file is part of AIR2.
+ *
+ *   AIR2 is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   AIR2 is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *************************************************************************/
+
+require_once realpath(dirname(__FILE__).'/../app/init.php');
+require_once 'AIR2_DBManager.php';
+
+AIR2_DBManager::init();
+
+array_shift($argv);
+
+if (count($argv) < 2) {
+    die("get-exportable-count user_uuid bin_uuid\n");
+}
+
+$user_uuid = array_shift($argv);
+$bin_uuid = array_shift($argv);
+
+$user = AIR2_Record::find('User', $user_uuid);
+$bin = AIR2_Record::find('Bin', $bin_uuid);
+
+printf("     MAX_LYRIS_EXPORT=%d\n", Bin::$MAX_LYRIS_EXPORT);
+printf(" MAX_MAILCHIMP_EXPORT=%d\n", Bin::$MAX_MAILCHIMP_EXPORT);
+printf("    get_lyris_exportable_count=%d\n", $bin->get_lyris_exportable_count($user));
+printf("get_mailchimp_exportable_count=%d\n", $bin->get_mailchimp_exportable_count($user, false));
+

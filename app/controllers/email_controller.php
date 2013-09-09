@@ -1,7 +1,7 @@
 <?php
 /**************************************************************************
  *
- *   Copyright 2013 American Public Media Group
+ *   Copyright 2010 American Public Media Group
  *
  *   This file is part of AIR2.
  *
@@ -20,103 +20,62 @@
  *
  *************************************************************************/
 
+require_once 'AIR2_HTMLController.php';
+
 /**
- * Controller in charge of outputting all RSS feeds from air2.
+ * Email Controller
  *
+ * @author rcavis
  * @package default
  */
-class Email_Controller extends Base_Controller {
+class Email_Controller extends AIR2_HTMLController {
+
 
     /**
-     * Request email change.
+     * Load inline HTML
      *
-     * @return void
+     * @param type $uuid
+     * @param type $base_rs
      */
-    public function change() {
+    protected function show_html($uuid, $base_rs) {
+        $user = $this->user->user_uuid;
+        $inline = array(
+            // base data
+            'UUID' => $base_rs['uuid'],
+            'URL'  => air2_uri_for($base_rs['path']),
+            'BASE' => $base_rs,
+            // related data
+            'SIGDATA' => $this->api->query("user/$user/signature", array('limit' => 30, 'sort' => 'usig_upd_dtim desc')),
+            'INQDATA' => $this->api->query("email/$uuid/inquiry", array('limit' => 8, 'sort' => 'einq_cre_dtim desc')),
+            'EXPDATA' => $this->api->fetch("email/$uuid/export"),
+            // users primary email
+            'USEREMAIL' => $this->user->get_primary_email(),
+        );
 
-        $this->load->library('session');  // for flash data on POST redirect
-
-        $method = $_SERVER['REQUEST_METHOD'];
-        $action = current_url();
-
-        if ($method == 'GET') {
-            $stash = array(
-                'static_url' => $this->uri_for(''),
-                'action'     => $action,
-                'method'     => 'GET',
-            );
-            $this->load->view('email/change', $stash);
-        }
-        else {
-            $name = $this->input->post('name');
-            $before = $this->input->post('before');
-            $after = $this->input->post('after');
-
-            // invalid params, re-render form with msg
-            if (!$name || !$before || !$after) {
-                $stash = array(
-                    'static_url' => $this->uri_for(''),
-                    'action'     => $action,
-                    'method'     => 'GET',
-                    'error'      => 'Must supply a before and after email address and a name.'
-                );
-                $this->load->view('email/change', $stash);
-                return;
-            }
-
-            // docs at http://ellislab.com/codeigniter/user-guide/libraries/email.html
-            $this->load->library('email');
-
-            // allow for configure via etc/profiles.ini
-            $this->email->initialize(array('smtp_host' => AIR2_SMTP_HOST));
-
-            // send to support@
-            $this->email->from($after, $name);
-            $this->email->to(AIR2_SUPPORT_EMAIL);
-            $this->email->subject('PIN email change request');
-            $this->email->message("$name at $before has requested an email change to $after\n".
-                "Sent from AIR2 " . AIR2_ENVIRONMENT . " server.");
-            if (!$this->email->send()) {
-                error_log($this->email->print_debugger());
-                return false;
-            }
-
-            // reset to use again
-            $this->email->clear();
-
-            // send to requester
-            $this->email->from(AIR2_SUPPORT_EMAIL, 'PIN Support');
-            $this->email->to("$before, $after");
-            $this->email->subject('Public Insight Network: your email change request');
-            $this->email->message("Thanks for requesting an email change for the Public Insight Network.\n".
-                "Your request is being processed.");
-            if (!$this->email->send()) {
-                error_log($this->email->print_debugger());
-                return false;
-            }
-
-            // redirect to avoid double post
-            $this->session->set_flashdata('request', 'ok');
-            redirect($this->uri_for('email/thanks'));
-        }
+        // show page
+        $title = $base_rs['radix']['email_campaign_name'].' - '.AIR2_SYSTEM_DISP_NAME;
+        $data = $this->airhtml->get_inline($title, 'Email', $inline);
+        $this->response($data);
     }
 
 
-
     /**
      *
+     * Load inline HTML for the "index" page
+     *
+     * @param array $index_rs
      */
-    public function thanks() {
-        $this->load->library('session');
-        if (!$this->session->flashdata('request')) {
-            redirect($this->uri_for('email/change'));
-            return;
-        }
-        $stash = array(
-            'static_url' => $this->uri_for(''),
-            'method'     => 'THANKS'
+    protected function index_html($index_rs) {
+        $inline = array(
+            // base data
+            'URL'    => air2_uri_for($index_rs['path']),
+            'BASE'   => $index_rs,
         );
-        $this->load->view('email/change', $stash);
+
+        // show page
+        $title = 'Search Emails - '.AIR2_SYSTEM_DISP_NAME;
+        $data = $this->airhtml->get_inline($title, 'EmailSearch', $inline);
+        $this->response($data);
     }
 
 

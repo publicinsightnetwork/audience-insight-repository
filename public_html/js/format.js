@@ -180,25 +180,23 @@ AIR2.Format.dateHuman = function (dtimStr, boldToday) {
     if (!dtimStr) {
         return '';
     }
-    dt = Date.parseDate(dtimStr, "Y-m-d H:i:s");
-    if (dt) {
+
+    if (dtimStr.getMonth) {
+        // already a date
+    }
+    else if (dt = Date.parseDate(dtimStr, "Y-m-d H:i:s")) {
+        dtimStr = dt;
+    }
+    else if (dt = Date.parseDate(dtimStr, 'Ymd')) {
+        dtimStr = dt;
+    }
+    else if (dt = Date.parseDate(dtimStr, 'Y-m-d')) {
         dtimStr = dt;
     }
     else {
-        dt = Date.parseDate(dtimStr, 'Ymd');
-        if (dt) {
-            dtimStr = dt;
-        }
-        else {
-            dt = Date.parseDate(dtimStr, 'Y-m-d');
-            if (dt) {
-                dtimStr = dt;
-            }
-            else {
-                return '';  // un-parseable
-            }
-        }
+        return ''; // un-parseable
     }
+
     now = new Date();
     today = now.format('Ymd');
     yesterday = now.add(Date.DAY, -1).format('Ymd');
@@ -339,6 +337,30 @@ AIR2.Format.sourceEmail = function (srcEmail, returnLink) {
     return AIR2.Format.createLink(e, 'mailto:' + e, returnLink, true);
 };
 
+/* A mailto link that doesn't really open up "mailto" */
+AIR2.Format.mailTo = function (email, srcObj) {
+    var srcFullName, link;
+
+    srcFullName = srcObj.src_username;
+    if (srcObj.src_first_name && srcObj.src_last_name) {
+        srcFullName = srcObj.src_first_name + ' ' + srcObj.src_last_name;
+    }
+    
+    // make sure fullname has no html in it,
+    // as it might from search highlighting
+    srcFullName = srcFullName.replace(/<.+?>/g, '');
+    //Logger('srcFullName=', srcFullName);
+
+
+    link = '<a href="#" onclick="return AIR2.Email.Mailto(';
+    link += 'this,';
+    link += "'" + srcObj.src_uuid + "',";
+    link += "'" + srcFullName + "'";
+    link += ');">' + email + '</a>';
+
+    return link;
+}
+
 AIR2.Format.sourcePhone = function (srcPhone) {
     var num;
 
@@ -426,7 +448,8 @@ AIR2.Format.vitaOrigin = function (svObj) {
 
 AIR2.Format.orgSysIdType = function (code) {
     var types = {
-        E: 'Lyris'
+        E: 'Lyris',
+        M: 'Mailchimp'
     };
     return (types[code]) ? types[code] : 'Not Known';
 };
@@ -795,6 +818,22 @@ AIR2.Format.tagName = function (tagObj) {
     return Ext.util.Format.trim(result);
 };
 
+/* format bin name */
+AIR2.Format.binName = function (binObj, returnLink, ellipsis) {
+    if (!binObj) {
+        return '<span class="lighter">(unknown bin)</span>';
+    }
+    var n = binObj.bin_name;
+    if (ellipsis) {
+        n = Ext.util.Format.ellipsis(n, ellipsis);
+    }
+    return AIR2.Format.createLink(
+        n,
+        '/bin/' + binObj.bin_uuid,
+        returnLink
+    );
+}
+
 /* format bin last use */
 AIR2.Format.binLastUse = function (binObj) {
     if (binObj.bin_upd_dtim) {
@@ -1035,13 +1074,13 @@ AIR2.Format.liveQuestionChoice = function (value, type, ischecked, isdefault, qu
     if (isdefault) {
         value += ' <span class="lighter">(default)</span>';
     }
-    
+
     if (ischecked){
         checked = 'checked';
     }
     return '<input class ="' + cls + '" type="' + inputType +
         '" name="'+name+'" value="' + value + '" ' + checked + '> ' + value + ' </input>';
-}; 
+};
 
 AIR2.Format.quesType = function (type) {
     switch (type) {
@@ -1157,4 +1196,70 @@ AIR2.Format.toggle = function(btn, parent_id, clsName) {
     else {
         btnEl.child('.label').dom.innerHTML = 'Show';
     }
+}
+
+AIR2.Format.emailName = function (emailObj, returnLink, ellipsis) {
+    if (!emailObj) {
+        return '<span class="lighter">(unknown email)</span>';
+    }
+    var n = emailObj.email_campaign_name;
+    if (ellipsis) {
+        n = Ext.util.Format.ellipsis(n, ellipsis);
+    }
+    return AIR2.Format.createLink(
+        n,
+        '/email/' + emailObj.email_uuid,
+        returnLink
+    );
+}
+AIR2.Format.emailType = function (emailObj) {
+    var def, t;
+    t = {
+        Q: ['air2-icon-inquiries', 'Query'],
+        F: ['air2-icon-retry', 'Follow Up'],
+        R: ['air2-icon-activity', 'Reminder'],
+        T: ['air2-icon-outcome', 'Thank You'],
+        O: ['air2-icon-annotation', 'Other']
+    };
+    def = t[emailObj.email_type] || t.O;
+    return '<span class="air2-icon ' + def[0] + '">' + def[1] + '</span>';
+}
+AIR2.Format.emailStatus = function (emailObj) {
+    if (emailObj.email_status == 'A') {
+        return '<span class="air2-email-status sent">Sent</span>';
+    }
+    else if (emailObj.email_status == 'Q') {
+        return '<span class="air2-email-status scheduled">Scheduled</span>';
+    }
+    else if (emailObj.email_status == 'D') {
+        return '<span class="air2-email-status draft">Draft</span>';
+    }
+    else {
+        return '<span class="air2-email-status archived">Archived</span>';
+    }
+}
+AIR2.Format.emailLogo = function (obj, width, height) {
+    var alt, src, tag;
+
+    src = AIR2.HOMEURL + '/css/img/not_found_org.png';
+    alt = 'email_logo';
+    if (obj.Logo) {
+        src = obj.Logo.medium;
+        alt = obj.Logo.img_file_name;
+    }
+    tag = '<img class="logo" src="' + src + '" alt="' + alt + '"';
+    if (width) tag += ' width=' + width;
+    else if (height) tag += ' height=' + height;
+    tag += '></img>';
+    return tag;
+};
+AIR2.Format.signature = function (obj, ellipsis) {
+    var f, t;
+    f = Ext.util.Format;
+    t = obj.usig_text || obj;
+
+    // ext has a bad html-decoder, so jump through some hoops
+    var tmpEl = Ext.get(document.createElement('div'));
+    tmpEl.update(f.stripTags(t.replace(/&nbsp;/g, ' ')));
+    return f.ellipsis(tmpEl.dom.innerHTML, ellipsis || 40);
 }

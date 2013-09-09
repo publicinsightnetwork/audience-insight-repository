@@ -79,7 +79,7 @@ AIR2.UI.JsonDataView = function (config) {
     AIR2.UI.JsonDataView.superclass.constructor.call(this, config);
 };
 Ext.extend(AIR2.UI.JsonDataView, AIR2.UI.DataView, {
-    emptyText: '<div class="air2-panel-empty"><h3>(none)</h3></div>',
+    emptyText: '<div class="air2-panel-empty"></div>',
     deferEmptyText: false,
     trackOver: true,
     renderEmpty: false,

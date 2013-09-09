@@ -1,0 +1,168 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Carp;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+use Email::Stuff;
+use AIR2::Config;
+use AIR2::Bin;
+use AIR2::Project;
+use AIR2::User;
+use AIR2::Inquiry;
+use AIR2::Organization;
+use AIR2::Exporter::Mailchimp;
+
+=pod
+
+=head1 NAME
+
+mailchimp-export - export a Bin of email addresses to Mailchimp
+
+=head1 SYNOPSIS
+
+ mailchimp-export [opts] --email_id E --bin_id B --user_id U
+
+=head1 DESCRIPTION
+
+mailchimp-export is a cli for AIR2::Exporter::Mailchimp.
+
+=head1 OPTIONS
+
+=head2 email_id I<E>
+
+The Email pk.
+
+=head2 bin_id I<B>
+
+The Bin pk.
+
+=head2 user_id I<U>
+
+The User pk.
+
+=cut
+
+my ( $email_id, $bin_id, $user_id );
+my ( $help, $debug, $strict, $dry_run, $no_export, $email_notify );
+GetOptions(
+    'email_id=i'     => \$email_id,
+    'bin_id=i'       => \$bin_id,
+    'user_id=i'      => \$user_id,
+    help             => \$help,
+    'debug:i'        => \$debug,
+    'strict=i'       => \$strict,
+    'dry_run=i',     => \$dry_run,
+    'no_export=i'    => \$no_export,
+    'email_notify=s' => \$email_notify,
+) or pod2usage(2);
+
+pod2usage(2) if ($help);
+pod2usage(2) if ( !$email_id or !$bin_id or !$user_id );
+
+my $email = AIR2::Email->new( email_id => $email_id )->load;
+my $bin = AIR2::Bin->new( bin_id => $bin_id )->load;
+my $user = AIR2::User->new( user_id => $user_id )->load;
+$debug     = 0 unless defined $debug;
+$strict    = 1 unless defined $strict;
+$dry_run   = 0 unless defined $dry_run;
+$no_export = 0 unless defined $no_export;
+
+# get some email to notify when this job runs
+if ( !$email_notify && !$user->get_primary_email() ) {
+    croak "user_id($user_id) has no email and no --email_notify supplied";
+}
+unless ( defined $email_notify ) {
+    $email_notify = $user->get_primary_email()->uem_address;
+}
+
+# email record must be active or queued (scheduled) when this runs
+my $stat = $email->email_status;
+if ( $stat ne 'A' && $stat ne 'Q' ) {
+    croak "email_id($email_id) has an inactive email_status($stat)";
+}
+
+my $exporter;
+my $export_success = 0;
+my $error_msg      = 0;
+
+# run the exporter, catching errors
+eval {
+    $exporter = AIR2::Exporter::Mailchimp->new(
+        debug     => $debug,
+        dry_run   => $dry_run,
+        no_export => $no_export,
+        strict    => $strict,
+        reader =>
+            $bin->get_exportable_emails( $email->organization ),
+            #$bin->get_exportable_mailchimp_emails( $email->organization ),
+        export_email => $email,
+        export_bin   => $bin,
+        user         => $user,
+    );
+    $exporter->run();
+    $export_success = 1;
+};
+
+# re-croak so the job fails
+$error_msg = $@ if ($@);
+
+# update queued to sent - whether or not it actually sent
+if ($dry_run) {
+    if ($debug) {
+        warn $exporter->report;
+    }
+    warn "dry_run mode on ... no email sent\n";
+    exit(0);
+}
+else {
+    $email->email_status('A');
+    $email->email_report( $exporter->report ) if $exporter;
+    $email->save();
+}
+
+# send some sort of email... either "success" or "contact support"
+if ($export_success) {
+    my $camp = $email->email_campaign_name;
+    Email::Stuff->to($email_notify)->from('support@publicinsightnetwork.org')
+        ->subject("Mailchimp export results for $camp")
+        ->text_body( $exporter->report )->send;
+}
+else {
+    my $camp = $email->email_campaign_name;
+    my $msg  = "An error occured while exporting your bin to Mailchimp.\n\n"
+        . 'Please contact support@publicinsightnetwork.org to resolve this issue.';
+    Email::Stuff->to($email_notify)->cc('pijdev@mpr.org')
+        ->from('support@publicinsightnetwork.org')
+        ->subject("Mailchimp exporter failed for $camp")->text_body($msg)
+        ->send;
+
+    # re-croak so the job fails
+    if ($error_msg) {
+        warn $exporter->report if $exporter;
+        croak $error_msg;
+    }
+}

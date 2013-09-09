@@ -89,8 +89,8 @@ AIR2.UI.SearchBox = function (config) {
         })
     }, config));
 
-    // event handlers
-    this.on('select', function (combo, record, index) {
+    // event handlers (fire before select, so it's there for validation)
+    this.on('beforeselect', function (combo, record, index) {
         this.selectedRecord = record;
     }, this);
 };

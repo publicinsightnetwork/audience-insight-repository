@@ -303,7 +303,7 @@ AIR2.UI.Panel = function (config) {
 
         // copy other config values
         cpy = 'nonapistore,url,storeData,baseParams,store,itemSelector,';
-        cpy += 'emptyText,deferEmptyText,autoLoad';
+        cpy += 'emptyText,deferEmptyText,autoLoad,prepareData';
         Ext.copyTo(dvcfg, config, cpy);
         if (dvcfg.storeData) {
             dvcfg.data = dvcfg.storeData; //alias
@@ -334,7 +334,14 @@ AIR2.UI.Panel = function (config) {
     }
 
     // call parent constructor
-    config.items = [this.header, this.editform, this.body];
+    config.items = [this.header];
+
+    if (! this.editInPlaceUsesModal) {
+        config.items.push(this.editform);
+    }
+
+    config.items.push(this.body);
+
     if (this.footer) {
         config.items.push(this.footer);
     }
@@ -496,7 +503,7 @@ Ext.extend(AIR2.UI.Panel, Ext.Container, {
 
                 this.editModal = new AIR2.UI.Window(this.editModalConfig);
 
-                this.editModal.add(editPanel);
+                this.editModal.add(this.getEditForm());
 
                 this.editModal.on('hide', function () {
                     this.isediting = false;

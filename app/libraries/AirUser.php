@@ -213,13 +213,14 @@ class AirUser {
         if ($this->has_valid_tkt() && isset($this->tkt_data['authz'])) {
             $packed = base64_decode($this->tkt_data['authz']);
 
-            // SANITY ... divisible by 6 bytes!
-            if (strlen($packed) % 8 != 0) return false;
+            // SANITY ... divisible by 10 bytes!
+            if (strlen($packed) % 10 != 0) return false;
 
             $authz = array();
-            for ($i=0; $i<strlen($packed); $i+=8) {
-                $a = unpack('Nid/Nmask', substr($packed, $i, 8));
-                $authz[$a['id']] = $a['mask'];
+            for ($i=0; $i<strlen($packed); $i+=10) {
+                $a = unpack('nid/Nhalf1/Nhalf2', substr($packed, $i, 10));
+                $mask = ($a['half1'] << 32) | $a['half2'];
+                $authz[$a['id']] = $mask;
             }
             return $authz;
         }
@@ -236,7 +237,10 @@ class AirUser {
     public function set_authz($authz) {
         $packed = null;
         foreach ($authz as $id => $mask) {
-            $packed .= pack("NN", $id, $mask);
+            // mask is a 64-bit unsigned int - split it!
+            $half1 = $mask >> 32;
+            $half2 = $mask & 0xFFFFFFFF;
+            $packed .= pack("nNN", $id, $half1, $half2);
         }
         $this->tkt_data['authz'] = base64_encode($packed);
     }

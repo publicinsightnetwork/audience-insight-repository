@@ -236,7 +236,7 @@ class SrcEmail extends AIR2_Record {
 
     /**
      * Override save() to update the parent Source's status
-     * and queue any actions necessary.
+     * and queue any actions necessary at Lyris on sem_status change.
      *
      * @param object  $conn (optional)
      * @return return value from parent::save($conn)
@@ -247,11 +247,83 @@ class SrcEmail extends AIR2_Record {
         $src = $this->Source;
         $src->set_and_save_src_status();
 
-        // if EITHER the status or email has changed, TODO
+        // if EITHER the status or email has changed, tell lyris about it
         $email_changed  = array_key_exists('sem_email', $modified)  ? $modified['sem_email'] : false;
         $status_changed = array_key_exists('sem_status', $modified) ? $modified['sem_status'] : false;
-
+        if ($email_changed || $status_changed) {
+            $this->_queue_manager_status_change($email_changed, $status_changed);
+        }
         return $ret;
+    }
+
+
+    /**
+     *
+     *
+     * @param unknown $sem_status
+     */
+    private function _queue_manager_status_change($chg_email, $chg_status) {
+        $action = false;
+
+        // email changed - only tell campaign manager if the email is marked 'good'
+        if ($chg_email) {
+            if ($chg_status == self::$STATUS_GOOD || $this->sem_status == self::$STATUS_GOOD) {
+                $action = 'create';
+            }
+        }
+
+        // only status changed - tell campaign manager all about it
+        elseif ($chg_status) {
+            $status_to_action = array(
+                self::$STATUS_GOOD          => 'activate',
+                self::$STATUS_BOUNCED       => 'bounce',
+                self::$STATUS_CONFIRMED_BAD => 'trash',
+                self::$STATUS_UNSUBSCRIBED  => 'unsubscribe',
+            );
+            if (isset($status_to_action[$chg_status])) {
+                $action = $status_to_action[$chg_status];
+            }
+            else {
+                throw new Exception("Unknown sem_status value $chg_status");
+            }
+        }
+
+        // queue it up
+        if ($action) {
+
+            // TODO zap all this once Lyris turned off
+            // get unique org_sys_id.osid_xuuid's
+            $conn = AIR2_DBManager::get_connection();
+            $osidxuuid_to_orgid = array();
+            foreach ($this->SrcOrgEmail as $soe) {
+                $org = $soe->Organization;
+                foreach ($org->OrgSysId as $osid) {
+                    if ($osid->osid_type == OrgSysId::$TYPE_EMAIL_MGR) {
+                        $osidxuuid_to_orgid[$osid->osid_xuuid] = $org->org_id;
+                    }
+                }
+            }
+
+            // issue commands only once per mailing list (osid_xuuid)
+            foreach ($osidxuuid_to_orgid as $xuuid => $org_id) {
+                $cmd = sprintf("PERL AIR2_ROOT/bin/modify-lyris-email --org_id %d --email %s --action %s",
+                    $org_id,
+                    escapeshellarg($this->sem_email),
+                    $action
+                );
+                $job = new JobQueue();
+                $job->jq_job = $cmd;
+                $job->save();
+            }
+            // end lyris section
+
+            // mailchimp
+            $cmd = sprintf("PERL AIR2_ROOT/bin/mailchimp-status-sync --src_id %s", $this->sem_src_id);
+            $job = new JobQueue();
+            $job->jq_job = $cmd;
+            $job->save();
+
+        }
     }
 
 

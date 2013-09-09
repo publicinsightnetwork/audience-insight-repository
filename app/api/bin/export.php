@@ -24,7 +24,8 @@ require_once 'rframe/AIRAPI_Resource.php';
 /**
  * Bin/Export API
  *
- * Resource representing any SrcExports related to a bin. 
+ * Resource representing any SrcExports related to a bin.  Also allows
+ * creating (scheduling) a new Lyris-export.
  *
  * @author rcavis
  * @package default
@@ -60,6 +61,7 @@ class AAPI_Bin_Export extends AIRAPI_Resource {
         'UpdUser' => 'DEF::USERSTAMP',
         'Inquiry' => 'DEF::INQUIRY',
         'Project' => 'DEF::PROJECT',
+        'Email'   => 'DEF::EMAIL',
     );
 
 
@@ -77,6 +79,7 @@ class AAPI_Bin_Export extends AIRAPI_Resource {
         $q->leftJoin('s.UpdUser u');
         $q->leftJoin('s.Inquiry i');
         $q->leftJoin('s.Project p');
+        $q->leftJoin('s.Email e');
 
         // type
         if (isset($args['type'])) {
@@ -108,9 +111,83 @@ class AAPI_Bin_Export extends AIRAPI_Resource {
      */
     protected function air_create($data) {
         $typ = isset($data['se_type']) ? $data['se_type'] : null;
-        // TODO
-        $msg = "Invalid se_type for export: '$typ'";
-        throw new Rframe_Exception(Rframe::BAD_DATA, $msg);
+        if ($typ == SrcExport::$TYPE_LYRIS) {
+            return $this->schedule_lyris_export($data);
+        }
+        else {
+            $msg = "Invalid se_type for export: '$typ'";
+            throw new Rframe_Exception(Rframe::BAD_DATA, $msg);
+        }
+    }
+
+
+    /**
+     * Attempt to schedule a Lyris export
+     *
+     * @param array $data
+     */
+    private function schedule_lyris_export($data) {
+        $this->require_data($data, array('org_uuid'));
+
+        // validate input
+        $org = AIR2_Record::find('Organization', $data['org_uuid']);
+        if (!$org) {
+            throw new Rframe_Exception(Rframe::BAD_DATA, 'Invalid org_uuid');
+        }
+        $prj = $org->DefaultProject; //default
+        if (isset($data['prj_uuid'])) {
+            $prj = AIR2_Record::find('Project', $data['prj_uuid']);
+        }
+        if (!$prj) {
+            throw new Rframe_Exception(Rframe::BAD_DATA, 'Invalid prj_uuid');
+        }
+        $inq = null;
+        if (isset($data['inq_uuid'])) {
+            $inq = AIR2_Record::find('Inquiry', $data['inq_uuid']);
+            if (!$inq) {
+                throw new Rframe_Exception(Rframe::BAD_DATA, 'Invalid inq_uuid');
+            }
+        }
+
+        // extra params (and defaults)
+        $strict = true;
+        $dry = false;
+        $no_exp = false;
+        if (array_key_exists('strict_check', $data) && !$data['strict_check']) {
+            $strict = false;
+        }
+        if (array_key_exists('dry_run', $data) && $data['dry_run']) {
+            $dry = true;
+        }
+        if (array_key_exists('no_export', $data) && $data['no_export']) {
+            $no_exp = true;
+        }
+        $extra = array('strict' => $strict, 'dry_run' => $dry, 'no_exp' => $no_exp);
+
+        // params
+        $params = array(
+            'prj_uuid'  => $prj->prj_uuid,
+            'org_uuid'  => $org->org_uuid,
+            'strict'    => $strict,
+            'dry_run'   => $dry,
+            'no_export' => $no_exp,
+        );
+        if ($inq) {
+            $params['inq_uuid'] = $inq->inq_uuid;
+        }
+
+        // punch it!
+        try {
+            $bin = $this->parent_rec;
+            $bin->queue_lyris_export($this->user, $prj, $org, $inq, $extra);
+        }
+        catch (Exception $e) {
+            throw new Rframe_Exception(Rframe::UNKNOWN_ERROR, $e->getMessage());
+        }
+
+        // success, but the resource doesn't exist yet, so throw up!
+        $msg = 'Lyris export scheduled for background processing';
+        throw new Rframe_Exception(Rframe::BGND_CREATE, $msg);
     }
 
 

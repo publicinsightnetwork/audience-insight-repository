@@ -120,27 +120,22 @@ Returns a Search::Query::Dialect object.
 sub air_parse_query {
     my ( $self, $q, $opts ) = @_;
     my $meta_map = $opts->{meta_map};
-    my %args     = (
-        fields         => $self->air_get_meta('query_fields'),
-        dialect        => 'Lucy',
-        field_class    => 'AIR2::Search::Field',
-        croak_on_error => 1,
-    );
+
+    #dump $self;
+    my %args = %{ $self->{engine_config}->{searcher_config}->{qp_config} };
+    $args{fields} = $self->air_get_meta('query_fields');
+
     if ($meta_map) {
         $args{default_field} = $meta_map;
     }
     elsif ( $self->air_get_default_field ) {
         $args{default_field} = $self->air_get_default_field;
     }
-    
+
     # redmine #7142, disallow ? mark as wildcard
-    $q =~ s/\?//g; 
+    $q =~ s/\?//g;
 
-    # syntactic sugar for finding empty fields
-    $q =~ s/(\w+)\s*[:=]\s*NULL/$1!=?*/g;
-    $q =~ s/(\w+)\s*\![:=]\s*NULL/$1=?*/g;
-
-    # same thing for date fields
+    # syntactic sugar for date fields
     $q =~ s/(\w+)[:=]NEVER/$1=19700101/g;
 
     #$self->log( dump \%args );

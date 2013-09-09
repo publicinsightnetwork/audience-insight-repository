@@ -41,7 +41,7 @@ AIR2.UI.CreateWin = function (cfg) {
     this.savebtn = new AIR2.UI.Button({
         air2type: 'SAVE',
         air2size: 'MEDIUM',
-        text: 'Save',
+        text: cfg.saveText || 'Save',
         scope: this,
         handler: function () {
             var f = this.get(0).getForm(), el = this.get(0).el;
@@ -91,7 +91,7 @@ AIR2.UI.CreateWin = function (cfg) {
     this.cancelbtn = new AIR2.UI.Button({
         air2type: 'CANCEL',
         air2size: 'MEDIUM',
-        text: 'Cancel',
+        text: cfg.cancelText || 'Cancel',
         scope: this,
         handler: function () {this.close(); }
     });
@@ -101,11 +101,11 @@ AIR2.UI.CreateWin = function (cfg) {
         xtype: 'form',
         unstyled: true,
         style: cfg.formStyle ? cfg.formStyle : 'padding: 10px 10px 0',
-        labelWidth: cfg.labelWidth ? cfg.labelWidth : 80,
+        labelWidth: cfg.labelWidth || 80,
         defaults: {
             xtype: 'textfield',
             allowBlank: false,
-            width: 200,
+            width: cfg.defaultWidth || 200,
             msgTarget: 'under'
         },
         items: cfg.formItems,

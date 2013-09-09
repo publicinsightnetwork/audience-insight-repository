@@ -2,7 +2,7 @@
  * Home Projects Panel
  */
 AIR2.Home.Projects = function () {
-    var pnl, template;
+    var template;
 
     template = new Ext.XTemplate(
         '<table class="air2-tbl">' +
@@ -63,7 +63,7 @@ AIR2.Home.Projects = function () {
         }
     );
 
-    pnl = new AIR2.UI.Panel({
+    AIR2.Home.Projects = new AIR2.UI.Panel({
         colspan: 2,
         title: 'Projects',
         cls: 'air2-home-project',
@@ -75,5 +75,5 @@ AIR2.Home.Projects = function () {
         itemSelector: '.project-row',
         tpl: template
     });
-    return pnl;
+    return AIR2.Home.Projects;
 };

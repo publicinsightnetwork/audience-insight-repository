@@ -45,6 +45,7 @@ class AirHtml {
         // recursively scan js directory
         $js = air2_dirscan(AIR2_DOCROOT.'/js/', '/.js$/');
         air2_array_remove(array('pinform.js'), $js);
+        air2_array_remove(array('pinform.min.js'), $js);
 
         // fix order (for inheritance), and remove console.js for prod
         $js = air2_fix_js_order($js);

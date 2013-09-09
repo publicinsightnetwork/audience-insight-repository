@@ -29,6 +29,7 @@ $api_routes = array(
     'background',
     'bin',
     'csv',
+    'email',
     'import',
     'inquiry',
     'organization',
@@ -64,6 +65,13 @@ $route['builder/([\w]+)'] = 'builder/index/$1';
 $route['search/responses'] = 'reader';
 $route['search/strict-responses'] = 'reader/strict';
 $route['reader/strict-query/([\w]+)'] = 'reader/strict_query/$1';
+
+// emails - "change" and "thanks" STEAL this route from the api
+$route['email/change'] = 'emailchange/change';
+$route['email/thanks'] = 'emailchange/thanks';
+$route['email/unsubscribe'] = 'emailchange/unsubscribe';
+$route['email/unsubscribe/(:any)'] = 'emailchange/unsubscribe/$1';
+$route['email/unsubscribe-confirm'] = 'emailchange/unsubscribe_confirm';
 
 // api namespace
 $route['api/public/(:any)'] = 'public/$1';

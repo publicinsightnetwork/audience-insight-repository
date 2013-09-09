@@ -81,5 +81,15 @@ __PACKAGE__->meta->setup(
     ],
 );
 
+sub insert {
+    my $self = shift;
+    if ( defined $self->so_effective_date
+        and $self->so_effective_date->ymd('') eq '19700101' )
+    {
+        $self->so_effective_date( time() );
+    }
+    return $self->SUPER::insert(@_);
+}
+
 1;
 

@@ -1,0 +1,142 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Carp;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+use AIR2::Config;
+use AIR2::Utils;
+use AIR2::User;
+use AIR2::Organization;
+use AIR2::Mailchimp;
+use Rose::DateTime::Parser;
+use Data::Dump qw( dump );
+
+=pod
+
+=head1 NAME
+
+mailchimp-stats-import
+
+=head1 SYNOPSIS
+
+ mailchimp-stats-import [opts]
+
+=head1 DESCRIPTION
+
+mailchimp-stats-import adds statistical info to AIR after a Mailchimp
+campaign is sent.
+
+=head1 OPTIONS
+
+=head2 debug
+
+=head2 help
+
+=head2 dry_run
+
+=head2 since
+
+=cut
+
+my ( $help, $debug, $dry_run, $since );
+GetOptions(
+    help        => \$help,
+    debug       => \$debug,
+    dry_run     => \$dry_run,
+    'since=s'   => \$since,
+) or pod2usage(2);
+
+pod2usage(2) if ( $help );
+$debug   = 0 unless defined $debug;
+$dry_run = 0 unless defined $dry_run;
+
+# only pull stats for a fixed interval after campaign export
+my $export_win;
+my $date_parser = Rose::DateTime::Parser->new();
+if ($since) {
+    unless ( $since =~ /[1-2][0-9]{3}[0-1][0-9][0-3][0-9]/ ) {
+        die "invalid date '$since' ... use format YYYYMMDD";
+    }
+    $export_win = $date_parser->parse_date($since) or die "invalid date '$since'";
+}
+else {
+    $export_win = DateTime->now()->subtract( days => 10 );
+}
+$debug and warn "*Grabbing stats for src_exports newer than $export_win\n";
+
+# which stats to grab off values returned from campaignStats()
+my @GRAB_STATS = qw(
+    abuse_reports
+    clicks
+    emails_sent
+    forwards
+    forwards_opens
+    hard_bounces
+    opens
+    soft_bounces
+    unique_clicks
+    unique_opens
+    unsubscribes
+);
+
+# get recent src_exports that were sent to a bin (Mailchimp)
+my $se_it = AIR2::SrcExport->fetch_all_iterator(
+    query => [
+        se_type     => 'M',
+        se_ref_type => 'I',
+        se_status   => 'C',
+        se_cre_dtim => { ge => $export_win },
+    ],
+    sort_by => 'se_id ASC',
+);
+
+# try to find the campaign in mailchimp
+while ( my $se = $se_it->next() ) {
+    if ( my $resp = AIR2::Mailchimp->campaign( $se->se_name, 1 ) ) {
+        my $stats = $se->get_meta('stats') || {};
+
+        # record changes for debug mode
+        my $changes = '';
+
+        # set/update a subset of stats
+        for my $name ( @GRAB_STATS ) {
+            if ( $resp->{$name} > 0 && (!$stats->{$name} || $resp->{$name} != $stats->{$name}) ) {
+                $changes .= "$name(" . $resp->{$name} . ") ";
+            }
+            $stats->{$name} = $resp->{$name};
+        }
+        $se->set_meta('stats', $stats);
+        $se->save() unless $dry_run;
+
+        # changes
+        $changes = '(no changes)' unless $changes;
+        $debug and warn "campaign_id($se->{se_name}) = $changes\n";
+    }
+    else {
+        $debug and warn "unknown campaign_id($se->{se_name})\n";
+    }
+}

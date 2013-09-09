@@ -47,6 +47,10 @@ class AAPI_Submission_Inquiry extends AIRAPI_Resource {
             'pinq_upd_dtim',
             'Project' => 'DEF::PROJECT',
         ),
+        'InqOrg' => array(
+            'iorg_status',
+            'Organization' => 'DEF::ORGANIZATION',
+        ),
         'CreUser' => array(
             'DEF::USERSTAMP',
             'UserOrg' => array(
@@ -82,6 +86,8 @@ class AAPI_Submission_Inquiry extends AIRAPI_Resource {
         $q->leftJoin('icuo.Organization o');
         $q->leftJoin('i.ProjectInquiry pi');
         $q->leftJoin('pi.Project');
+        $q->leftJoin('i.InqOrg io');
+        $q->leftJoin('io.Organization ioo');
         Inquiry::add_counts($q, 'i');
         return $q->fetchOne();
     }

@@ -52,7 +52,12 @@ class AIR2_HTMLController extends AIR2_Controller {
             $path = implode('/', $args);
             $rs = $this->api->query_or_fetch($path);
             if ($rs['code'] == Rframe::OKAY) {
-                show_error('HTML view not available', 415);
+                if (method_exists($this, 'index_html')) {
+                    $this->index_html($rs);
+                }
+                else {
+                    show_error('HTML view not available', 415);
+                }
             }
             else {
                 $this->show_html_error($rs['code'], $rs['message'], $rs);

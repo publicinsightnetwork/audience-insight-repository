@@ -34,7 +34,7 @@ class AAPI_Inquiry extends AIRAPI_Resource {
     protected $ALLOWED = array('query', 'fetch', 'create', 'update', 'delete');
     protected $CREATE_DATA = array('inq_title', 'inq_ext_title', 'inq_rss_intro', 'loc_key', 'org_uuid', 'prj_uuid', 'source_query_uuid');
     protected $QUERY_ARGS  = array('status', 'excl_prj', 'type', 'prj_uuid',
-        'excl_out');
+        'excl_out', 'excl_eml');
     protected $UPDATE_DATA = array(
         // identifiers
         'inq_title', 'inq_ext_title',
@@ -207,6 +207,13 @@ class AAPI_Inquiry extends AIRAPI_Resource {
             $excl = "select iout_inq_id from inq_outcome where iout_out_id = ($outq)";
             $q->addWhere("i.inq_id not in ($excl)", $args['excl_out']);
         }
+
+        // exclude an email
+        if (isset($args['excl_eml'])) {
+            $emlq = "select email_id from email where email_uuid = ?";
+            $excl = "select einq_inq_id from email_inquiry where einq_email_id = ($emlq)";
+            $q->addWhere("i.inq_id not in ($excl)", $args['excl_eml']);
+        }
         return $q;
     }
 
@@ -331,6 +338,8 @@ class AAPI_Inquiry extends AIRAPI_Resource {
      *
      * @return Inquiry $new_inquiry
      */
+
+     // TODO this should go in the Model
     protected function duplicate_query($uuid) {
 
         $rec = $this->air_fetch($uuid);
@@ -363,8 +372,8 @@ class AAPI_Inquiry extends AIRAPI_Resource {
             'inq_cache_user',
             'inq_cre_dtim',
             'inq_org_id',
-            'inq_title',
             'inq_url',
+            'inq_title',
         );
 
         foreach ($reset_keys as $reset_key) {

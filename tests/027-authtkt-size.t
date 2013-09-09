@@ -56,7 +56,9 @@ $usr = new TestUser();
 $usr->save();
 
 // max out fields
-$usr->user_username = str_pad($usr->user_username, 255, '0');
+// NOTE: 255 is the max username, but that's a bit ridiculous.  Let's go with
+// something a bit less for this test.
+$usr->user_username = str_pad($usr->user_username, 155, '0');
 $usr->user_last_name = str_pad($usr->user_last_name, 64, '0');
 $usr->user_first_name = str_pad($usr->user_first_name, 64, '0');
 $usr->save();
@@ -65,7 +67,7 @@ $usr->save();
 $o = new TestOrganization();
 $o->add_users(array($usr));
 $o->save();
-$o->org_name = str_pad($o->org_name, 32, '0');
+$o->org_name = str_pad($o->org_name, 16, '0');
 $o->UserOrg[0]->uo_home_flag = true;
 $o->save();
 

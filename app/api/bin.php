@@ -118,7 +118,7 @@ class AAPI_Bin extends AIRAPI_Resource {
      * @param  array          $args
      * @return Doctrine_Query $q
      */
-    protected function air_query($args=array()) {
+    protected function air_query($args=array(), $include_temp=false) {
         $q = Doctrine_Query::create()->from('Bin b');
         $q->leftJoin('b.User u');
 
@@ -134,6 +134,11 @@ class AAPI_Bin extends AIRAPI_Resource {
         $my_id = $this->user->user_id;
         $q->addSelect("(b.bin_user_id=$my_id) as owner_flag");
 
+        // skip the temp Bins (print only)
+        if (!$include_temp) {
+            $q->addWhere("b.bin_type not in ('T')");
+        }
+        
         // query args
         if (isset($args['owner']) || isset($args['owner_flag'])) {
             $q->addWhere('b.bin_user_id = ?', $this->user->user_id);
@@ -156,21 +161,23 @@ class AAPI_Bin extends AIRAPI_Resource {
      * @return Bin    $rec
      */
     protected function air_fetch($uuid, $minimal=false) {
-        $q = ($minimal) ? Doctrine_Query::create()->from('Bin b') : $this->air_query();
+        $q = ($minimal) ? Doctrine_Query::create()->from('Bin b') : $this->air_query(null, true);
         $q->andWhere('b.bin_uuid = ?', $uuid);
         $rec = $q->fetchOne();
 
         // add some complex aggregate counts
         if (!$minimal && $rec && $rec->user_may_read($this->user)) {
             $counts = array(
-                'src_total'        => $rec->src_count,
-                'src_read'         => $this->_get_bin_src_count($rec, ACTION_ORG_SRC_READ),
-                'src_update'       => $this->_get_bin_src_count($rec, ACTION_ORG_SRC_UPDATE),
-                'src_export_csv'   => $this->_get_bin_src_count($rec, ACTION_EXPORT_CSV),
-                'src_export_print' => $this->_get_bin_src_count($rec, ACTION_EXPORT_PRINT),
-                'subm_total'       => $rec->subm_count,
-                'subm_read'        => $this->_get_bin_subm_count($rec, ACTION_ORG_PRJ_INQ_SRS_READ),
-                'subm_update'      => $this->_get_bin_subm_count($rec, ACTION_ORG_PRJ_INQ_SRS_UPDATE),
+                'src_total'            => $rec->src_count,
+                'src_read'             => $this->_get_bin_src_count($rec, ACTION_ORG_SRC_READ),
+                'src_update'           => $this->_get_bin_src_count($rec, ACTION_ORG_SRC_UPDATE),
+                'src_export_csv'       => $this->_get_bin_src_count($rec, ACTION_EXPORT_CSV),
+                'src_export_lyris'     => $this->_get_bin_src_count($rec, ACTION_EXPORT_LYRIS),
+                'src_export_mailchimp' => $this->_get_bin_src_count($rec, ACTION_EXPORT_MAILCHIMP),
+                'src_export_print'     => $this->_get_bin_src_count($rec, ACTION_EXPORT_PRINT),
+                'subm_total'           => $rec->subm_count,
+                'subm_read'            => $this->_get_bin_subm_count($rec, ACTION_ORG_PRJ_INQ_SRS_READ),
+                'subm_update'          => $this->_get_bin_subm_count($rec, ACTION_ORG_PRJ_INQ_SRS_UPDATE),
             );
             $rec->mapValue('counts', $counts);
         }
@@ -360,6 +367,21 @@ class AAPI_Bin extends AIRAPI_Resource {
     private function _get_bin_src_count($rec, $action) {
         $org_ids = $this->user->get_authz_str($action, 'soc_org_id');
         $cache = "select soc_src_id from src_org_cache where $org_ids";
+
+        // special case - lyris export also requires opted-in src_status
+        if ($action == ACTION_EXPORT_LYRIS) {
+            $cache .= " and soc_status = '".SrcOrg::$STATUS_OPTED_IN."'";
+        }
+
+        // specialer case - mailchimp opted-in, optionally in a specific org
+        if ($action == ACTION_EXPORT_MAILCHIMP) {
+            $cache .= " and soc_status = '".SrcOrg::$STATUS_OPTED_IN."'";
+            if (isset($_GET['email_uuid'])) {
+                $email_uuid = 'email_uuid = "'.$_GET['email_uuid'].'"';
+                $one_org = "select email_org_id from email where $email_uuid";
+                $cache .= " and soc_org_id = ($one_org)";
+            }
+        }
 
         // exec count query
         $conn = AIR2_DBManager::get_connection();

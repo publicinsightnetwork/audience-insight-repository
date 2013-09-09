@@ -22,7 +22,8 @@ AIR2.Inquiry.Create = function (cfg) {
         searchUrl: AIR2.HOMEURL + '/organization',
         pageSize: 10,
         baseParams: {
-            sort: 'org_display_name asc'
+            sort: 'org_display_name asc',
+            role: 'W'
         },
         valueField: 'org_uuid',
         displayField: 'org_display_name',

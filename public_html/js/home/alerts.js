@@ -159,6 +159,7 @@ AIR2.Home.Alerts = function () {
 
     return new AIR2.UI.Panel({
         colspan: 2,
+        rowspan: 1,
         title: 'Alerts',
         cls: 'air2-home-alert',
         iconCls: 'air2-icon-alert',

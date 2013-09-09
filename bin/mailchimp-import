@@ -1,0 +1,117 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use Carp;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Getopt::Long;
+use Pod::Usage;
+use AIR2::Config;
+use AIR2::Utils;
+use AIR2::User;
+use AIR2::Organization;
+use AIR2::Mailchimp;
+use Rose::DateTime::Parser;
+use Data::Dump qw( dump );
+
+=pod
+
+=head1 NAME
+
+mailchimp-import - generate sent-message activities from Mailchimp
+
+=head1 SYNOPSIS
+
+ mailchimp-import [opts]
+
+=head1 DESCRIPTION
+
+mailchimp-import updates log records in AIR after mailchimp sends a campaign.
+
+=head1 OPTIONS
+
+=head2 debug
+
+=head2 help
+
+=head2 dry_run
+
+=head2 cleanup
+
+=cut
+
+my ( $help, $debug, $dry_run, $cleanup );
+GetOptions(
+    help        => \$help,
+    debug       => \$debug,
+    dry_run     => \$dry_run,
+    cleanup     => \$cleanup
+) or pod2usage(2);
+
+pod2usage(2) if ( $help );
+$debug   = 0 unless defined $debug;
+$dry_run = 0 unless defined $dry_run;
+$cleanup = 0 unless defined $cleanup;
+
+# shortcut statement to update src_inquiry status
+my $dbh  = AIR2::DBManager->new()->get_write_handle->retain_dbh;
+my $stmt = "UPDATE src_inquiry SET si_status='C' WHERE si_sent_by = ?";
+if ( $dry_run ) {
+    $stmt = "SELECT si_id FROM src_inquiry WHERE si_sent_by = ?";
+}
+my $sth  = $dbh->prepare($stmt);
+
+# get every src_export that isn't complete
+my $se_it = AIR2::SrcExport->fetch_all_iterator(
+    query   => [ se_type => 'M', se_status => { ne => 'C' } ],
+    sort_by => 'se_id ASC',
+);
+
+# try to find the campaign in mailchimp
+while ( my $se = $se_it->next() ) {
+    if ( my $resp = AIR2::Mailchimp->campaign( $se->se_name ) ) {
+        if ( $resp->{status} eq 'sent' ) {
+            $debug and warn "campaign_id($se->{se_name}) has been sent\n";
+
+            # update src_inquiry records (will just select on dry_run)
+            $sth->execute( $se->se_name );
+            $debug and warn "  *updated ".$sth->rows." src_inquiry records\n";
+
+            # update the src_export record
+            $se->se_status('C');
+            $se->set_meta('mailchimp_emails', $resp->{emails_sent});
+            $se->save() unless $dry_run;
+        }
+        else {
+            $debug and warn "campaign_id($se->{se_name}) is $resp->{status}\n";
+        }
+    }
+    else {
+        $debug and warn "campaign_id($se->{se_name}) not found in mailchimp\n";
+        if ( $cleanup ) {
+            $debug and warn "  *deleted src_export record\n";
+            $se->delete() unless $dry_run;
+        }
+    }
+}

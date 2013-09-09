@@ -240,6 +240,9 @@ class Image extends AIR2_Record {
             $name = basename($image);
             $path = $image;
         }
+        else {
+            throw new Exception("Invalid image");
+        }
 
         // validate image
         if (!is_readable($path)) {

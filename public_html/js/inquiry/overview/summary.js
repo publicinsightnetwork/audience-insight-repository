@@ -165,6 +165,10 @@ AIR2.Inquiry.Summary = function () {
                    '<td class="value">' +
                     '<div class="inquiry-links">' +
                      '<div>' +
+                      '<tpl if="values.inq_url">' +
+                       '<div>Custom URL:</div>' +
+                       '<div><a target="_blank" href="{inq_url}">{inq_url}</a></div>' +
+                      '</tpl>' +
                       '<div>Full:</div>' +
                       '<div><a target="_blank" href="{[this.publishedLink(values)]}">{[this.publishedLink(values)]}</a></div>' +
                      '</div>' +

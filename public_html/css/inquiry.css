@@ -40,7 +40,7 @@
 }
 
 .air2-inquiry-summary .inquiry-row .inquiry-links td,
-.air2-inquiry-summary .inquiry-row .inquiry-links th 
+.air2-inquiry-summary .inquiry-row .inquiry-links th
 {
     vertical-align: top;
 }
@@ -271,9 +271,22 @@
     padding: 8px 10px 0;
 }
 
+#air2-inquiry-editview b,
 #air2-inquiry-editview strong {
    font-weight: bold;
 }
+
+#air2-inquiry-editview i,
+#air2-inquiry-editview em {
+    font-style: italic;
+}
+
+#air2-inquiry-editview ol,
+#air2-inquiry-editview ol li {
+    list-style: decimal;
+    list-style-type: decimal;
+}
+
 
 #air2-inquiry-editview textarea, #air2-inquiry-editview input {
     border: 1px solid #ccc;
@@ -298,10 +311,6 @@
     background: none;
     padding: 3px 5px;
     border-radius: 2px;
-}
-
-.x-form-item label.x-form-item-label {
-    padding: 6px;
 }
 
 #air2-question-edit-form fieldset.draggable legend {
@@ -347,6 +356,7 @@
 /*tabs*/
 .air2-inquiry-tab-button button {
     width: 100px;
+    height: 32px;
 }
 
 .air2-inquiry-tab-button.active-tab button {
@@ -376,7 +386,9 @@
 .air2-tbl .notify.hide td { display: none; }
 .air2-tbl .notify td span { color: #444; font-weight: bold; }
 
-
+.air2-editwin-body .air2-panel-editform {
+    overflow-y:auto;
+}
 
 /* ==========================================================
  * templates panel
@@ -432,8 +444,21 @@
  * preview
  * ========================================================== */
 
-#pin-query-preview strong {
+#pin-query-preview strong,
+#pin-query-preview b {
     font-weight: bold;
+}
+
+#pin-query-preview i,
+#pin-query-preview em {
+    font-style: italic;
+}
+
+#pin-query-preview ol,
+#pin-query-preview ol li {
+    margin-left: 10px;
+    list-style: decimal;
+    list-style-type: decimal;
 }
 
 /* status */

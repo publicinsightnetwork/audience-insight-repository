@@ -100,8 +100,8 @@ class AAPI_Inquiry_Organization extends AIRAPI_Resource {
             $u = $data['org_uuid'];
             throw new Rframe_Exception(Rframe::BAD_DATA, "Invalid org_uuid '$u'");
         }
-        if (!$org->user_may_write($this->user)) {
-            throw new Rframe_Exception(Rframe::BAD_DATA, "Invalid Organization authz");
+        if (!$this->parent_rec->user_may_write($this->user)) {
+            throw new Rframe_Exception(Rframe::BAD_DATA, "You do not appear to have access to modify this Inquiry (Invalid Inquiry authz)");
         }
 
         $iorg = new InqOrg();
@@ -152,7 +152,7 @@ class AAPI_Inquiry_Organization extends AIRAPI_Resource {
      */
     protected function update_parent(InqOrg $rec) {
         // raw sql update rather than calling parent_rec->save()
-        // because nested objects cascade 
+        // because nested objects cascade
         $upd = 'update inquiry set inq_stale_flag=1 where inq_id = ?';
         AIR2_DBManager::get_master_connection()->exec($upd, array($rec->iorg_inq_id));
     }
