@@ -65,9 +65,8 @@ for my $section ( $cfg->Sections ) {
 sub get_write_handle {
     my $self   = shift;
     my $domain = $self->domain;
-    my $class  = ref($self) || $self;
     if ( exists $master_slave{$domain} ) {
-        return $class->new_or_cached( domain => $master_slave{$domain} );
+        return __PACKAGE__->new_or_cached( domain => $master_slave{$domain} );
     }
     return $self;
 }

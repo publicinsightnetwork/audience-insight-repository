@@ -33,13 +33,6 @@ use AIR2::Utils;
 use Scalar::Util qw( blessed );
 use Search::Tools::UTF8;
 
-if ( $Rose::DB::VERSION gt '0.758' ) {
-    die "Rose::DB::VERSION too new. See Redmine #2883.";
-}
-if ( $Rose::DB::Object::VERSION gt '0.786' ) {
-    die "Rose::DB::Object::VERSION too new. See Redmine #2883.";
-}
-
 sub init_db {
     my $self = shift;
     my $db   = AIR2::DBManager->new_or_cached();
