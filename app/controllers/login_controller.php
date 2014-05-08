@@ -32,6 +32,8 @@ require_once 'Search_Proxy.php';
  * @author pkarman
  * @package default
  */
+
+
 class Login_Controller extends AIR2_Controller {
 
     /**
@@ -189,6 +191,8 @@ class Login_Controller extends AIR2_Controller {
 
             // delegate to PIN SSO?
             $pw_ok = false;
+            // the !$admin means we avoid infinite loop with the SSO service,
+            // which just points back here.
             if (AIR2_PIN_SSO_TRUST && !$admin) {
                 $pw_ok = $this->check_pin_sso($uname, $pwd);
             }
@@ -267,7 +271,7 @@ class Login_Controller extends AIR2_Controller {
     /**
      * Helper function to fetch a User
      *
-     * @param string $username
+     * @param string  $username
      * @return User
      */
     private function _fetch_user($username) {
@@ -275,6 +279,7 @@ class Login_Controller extends AIR2_Controller {
         $user = AIR2_Query::create()
         ->from('User u')
         ->where('u.user_username = ?', $username)
+        ->andWhere('u.user_status != ?', User::$STATUS_INACTIVE)
         ->leftJoin('u.UserOrg o')
         ->leftJoin('o.AdminRole a')
         ->fetchOne();
