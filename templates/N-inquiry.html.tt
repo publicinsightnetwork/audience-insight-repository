@@ -1,0 +1,269 @@
+[% # set flag if inquiry is expired 
+    USE date;
+    IF (inquiry.inq_expire_dtim.defined && date.now >= inquiry.inq_expire_dtim.epoch);
+        inquiry_is_expired = 1;
+    ELSE;
+        inquiry_is_expired = 0;
+    END;
+%]
+<!DOCTYPE html>
+<html>
+ <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>[% inquiry.inq_ext_title | html %]</title>
+    <script type="text/javascript" src="//www.publicinsightnetwork.org/source/js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript" src="//www.publicinsightnetwork.org/source/js/jquery.tooltip.min.js"></script>
+    <script type="text/javascript" src="//www.publicinsightnetwork.org/source/js/jquery.blockUI.js"></script>
+    <script type="text/javascript" src="[% base_url %]js/pinform.js"></script>
+    [% IF (!inquiry_is_expired) %]
+    <script type="text/javascript">
+     PIN_QUERY = { 
+        uuid:       '[% inquiry.inq_uuid %]',
+        baseUrl:    '[% base_url %]',
+        opts: { 
+            rendered: '[% timestamp %]'
+        }
+     };  
+     $(document).ready(function() {
+         PIN.Form.render(PIN_QUERY);
+     });
+    </script>
+    [% END %]
+    <link rel="stylesheet" type="text/css" href="[% base_url %]css/pinform.css" />
+    <link rel="stylesheet" type="text/css" href="[% base_url %]css/query.css" />
+ </head>
+ <body>
+  <div id="pin-query-[% inquiry.inq_uuid | html %]" class="pin-query"></div>
+  [% IF (inquiry_is_expired) %]
+  <div class="pin-query-expired">
+   [% inquiry.inq_expire_msg %]
+  </div>
+  [% END %]
+  [% IF (!inquiry_is_expired) %]
+  <!-- if javascript does not work, fall back to explicit form render -->
+  <noscript>
+   <div class="pin-query no-js">
+    <h1>[% inquiry.inq_ext_title | html %]</h1>
+    <p class="intro">[% inquiry.inq_intro_para %]</p>
+    <form class="pin-form" action="[% base_url %]q/[% inquiry.inq_uuid %]" method="POST">
+
+[%  
+    USE Handy;
+    Formatters = {
+        'A' = 'doTextArea',
+        'T' = 'doText',
+        'D' = 'doGeneric', # Date
+        'I' = 'doGeneric', #DateTime
+        'F' = 'doFile',
+        'H' = 'doHidden',
+        'R' = 'doRadio',
+        'O' = 'doMenu',
+        'S' = 'doStates',
+        'Y' = 'doCountries',
+        'C' = 'doCheckbox',
+        'L' = 'doList',
+        '2' = 'doGeneric', #doBreak
+        '3' = 'doGeneric', #doDisplay
+        'P' = 'doRadio', #doPermission
+        'p' = 'doRadio', #doPermission
+        'Z' = 'doGeneric' #doContributor
+    };
+    
+    #Formatters.dump_stderr;
+
+    FOREACH ques = inquiry.questions_in_display_order;
+        ques_tree = ques.to_tree(); # decodes JSON column values
+        type = ques.ques_type;
+        block_name = Formatters.$type;
+        debug = { type => type, block_name => block_name };
+        #debug.dump_stderr;
+        IF (!block_name.defined || !block_name.length);
+            block_name = 'doText';
+        END;
+        PROCESS $block_name ques = ques_tree;
+    END
+
+%]
+   <input type="submit" value="Submit" class="pin-submit">
+   </form>
+   <div class="pin-query-ending">
+
+   </div>
+   <div id="pin-legal-wrapper">
+   [% INCLUDE $legal_file %]
+   </div>
+  </div>
+  </noscript>
+  [% END   # !is_expired %]
+ </body>
+</html>
+
+[% BLOCK doGeneric %]
+    <div class="pin-question pin-query-generic">
+        <label for="[% ques.ques_uuid %]">[% ques.ques_value %][% IF (ques.ques_resp_opts.require) %] <span class="required">*</span>[% END %]</label>
+        <span class="pin-field-border">
+        <input type="text" class="pin-field" 
+            name="[% ques.ques_uuid %][]" 
+            id="pin-q-[% ques.ques_uuid %]" 
+            [% IF (ques.ques_resp_opts) && (ques.ques_resp_opts.maxlen) %]maxlength="[% ques.ques_resp_opts.maxlen %]"[% END %]
+            [% IF (ques.ques_resp_opts) && (ques.ques_resp_opts.size) %]size="[% ques.ques_resp_opts.size %]"
+            [% ELSE %]size="50"
+            [% END %]
+            ></input>
+        </span>
+    </div>
+[%  END %]
+[% BLOCK doTextArea %]
+    <div class="pin-question pin-query-textarea">
+        <label for="[% ques.ques_uuid %]">[% ques.ques_value %][% IF (ques.ques_resp_opts.require) %] <span class="required">*</span>[% END %]</label>
+        <span class="pin-field-border">
+        <textarea class="pin-field" 
+            name="[% ques.ques_uuid %][]" 
+            id="pin-q-[% ques.ques_uuid %]" 
+            [% IF (ques.ques_resp_opts.rows) %]rows="[% ques.ques_resp_opts.rows %]"[% END %] 
+            [% IF (ques.ques_resp_opts.cols) %]cols="[% ques.ques_resp_opts.cols %]"[% END %] 
+            ></textarea>
+        </span>
+    </div>
+[%  END %]
+[% BLOCK doText %]
+    <div class="pin-question pin-query-text">
+        <label for="[% ques.ques_uuid %]">[% ques.ques_value %][% IF (ques.ques_resp_opts.require) %] <span class="required">*</span>[% END %]</label>
+        <span class="pin-field-border">
+        <input type="text" class="pin-field" 
+            name="[% ques.ques_uuid %][]" 
+            id="pin-q-[% ques.ques_uuid %]" 
+            [% IF (ques.ques_resp_opts.maxlen) %]maxlength="[% ques.ques_resp_opts.maxlen %]"[% END %] 
+            [% IF (ques.ques_resp_opts.size) %]size="[% ques.ques_resp_opts.size %]" 
+            [% ELSE %]size="50"[% END %]
+            ></input>
+        </span>
+    </div>
+[%  END %]
+[% BLOCK doFile %]
+    <div class="pin-question pin-query-file">
+        <label for="[% ques.ques_uuid %]">[% ques.ques_value %][% IF (ques.ques_resp_opts.require) %] <span class="required">*</span>[% END %]</label>
+        <input type="file" class="pin-field" 
+            name="[% ques.ques_uuid %][]" 
+            id="pin-q-[% ques.ques_uuid %]" 
+            ></input>
+    </div>
+[%  END %]
+[% BLOCK doHidden %]
+    <input type="hidden" class="pin-field" 
+        name="[% ques.ques_uuid %][]" 
+        id="pin-q-[% ques.ques_uuid %]" 
+        value="" />
+[%  END %]
+[% BLOCK doRadio %]
+    <div class="pin-question pin-query-radio">
+        <label for="[% ques.ques_uuid %]">[% ques.ques_value %][% IF (ques.ques_resp_opts.require) %] <span class="required">*</span>[% END %]</label>
+        [% FOREACH choice IN ques.ques_choices %]
+            <input type="radio" class="pin-field"
+            name="[% ques.ques_uuid %][]" 
+            id="pin-q-[% loop.index %]-[% ques.ques_uuid %]"
+            [% IF choice.isdefault %] selected="selected" [% END %]
+            value="[% choice.value %]" />&nbsp;[% choice.value %]<br/>
+        [% END %]
+    </div>
+[%  END %]
+[% BLOCK doStates %]
+    <div class="pin-question pin-query-menu pin-query-menu-states">
+        <label for="[% ques.ques_uuid %]">[% ques.ques_value %][% IF (ques.ques_resp_opts.require) %] <span class="required">*</span>[% END %]</label>
+        [% IF ques.ques_resp_opts && ques.ques_resp_opts.size %]
+            [% size = ques.ques_resp_opts.size %]
+        [% ELSE %]
+        [% size = 8 %]
+        [% END %]
+        [% menuData = []; def = '' %]    
+        [% FOREACH state IN states %]    
+            [% menuData.push([state.key,state.value]) %]    
+        [% END %]
+    [% PROCESS buildMenu multiple='false' %]
+    </div>
+[%  END %]
+[% BLOCK doCountries %]
+    <div class="pin-question pin-query-menu pin-query-menu-countries">
+        <label for="[% ques.ques_uuid %]">[% ques.ques_value %][% IF (ques.ques_resp_opts.require) %] <span class="required">*</span>[% END %]</label>
+        [% IF ques.ques_resp_opts && ques.ques_resp_opts.size %]
+            [% size = ques.ques_resp_opts.size %]
+        [% ELSE %]
+        [% size = 8 %]
+        [% END %]
+        [% menuData = []; def = '' %]
+        [% FOREACH country IN countries %]
+            [% menuData.push([country.key,country.value]) %]
+        [% END %]
+        [% PROCESS buildMenu multiple='false' %]
+    </div>
+[%  END %]
+[% BLOCK doCheckbox %]
+    <div class="pin-question pin-query-checkbox">
+        <label for="[% ques.ques_uuid %]">[% ques.ques_value %][% IF (ques.ques_resp_opts.require) %] <span class="required">*</span>[% END %]</label>
+        [% FOREACH choice IN ques.ques_choices %]
+            <input type="checkbox" class="pin-field"
+            name="[% ques.ques_uuid %][]" 
+            id="pin-q-[% loop.index %]-[% ques.ques_uuid %]"
+            [% IF choice.isdefault %] selected="selected" [% END %]
+            value="[% choice.value %]" />&nbsp;[% choice.value %]<br/>
+        [% END %]
+    </div>
+[%  END %]
+[% BLOCK doList %]
+    <div class="pin-question pin-query-menu pin-menu-multiple">
+    <label for="[% ques.ques_uuid %]">[% ques.ques_value %][% IF (ques.ques_resp_opts.require) %] <span class="required">*</span>[% END %]</label>
+    [% IF ques.ques_resp_opts && ques.ques_resp_opts.size %]
+        [% size = ques.ques_resp_opts.size %]
+    [% ELSE %]
+        [% size = 8 %]
+    [% END %]
+    [% menuData = []; def = '' %]
+    [% FOREACH choice IN ques.ques_choices %]
+        [% menuData.push([choice.value,choice.value])%]
+        [% IF choice.isdefault %]
+            [% def = choice.value %]
+        [% END %]
+    [% END %]
+    [% PROCESS buildMenu multiple='true' %]
+    </div>
+[% END %]
+[% BLOCK doMenu %]
+    <div class="pin-question pin-query-menu">
+    <label for="[% ques.ques_uuid %]">[% ques.ques_value %][% IF (ques.ques_resp_opts.require) %] <span class="required">*</span>[% END %]</label>
+    [% IF ques.ques_resp_opts && ques.ques_resp_opts.size %]
+        [% size = ques.ques_resp_opts.size %]
+    [% ELSE %]
+    [% size = 8 %]
+    [% END %]
+    [% menuData = []; def = '' %]
+    [% FOREACH choice IN ques.ques_choices %]
+        [% menuData.push([choice.value,choice.value]) %]
+        [% IF choice.isdefault %]
+            [% def = choice.value %]
+        [% END %]
+    [% END %]
+    [% PROCESS buildMenu multiple='false' %]
+    </div>
+[% END %]
+[% BLOCK buildMenu %]
+    <select class="pin-field"
+    name="[% ques.ques_uuid %][]"
+    id="pin-q-[% ques.ques_uuid %]"
+    size="[% size %]"
+    [% IF multiple == 'true' %]
+        multiple="multiple"
+    [% END %]
+    >
+    [% IF !def %]
+        <option class="pin-field-option" value="" selected="selected"></option>
+    [% END %]
+    [% FOREACH pair IN menuData %]
+        <option class="pin-field-option"
+        value="[% pair.0 %]"
+        [% IF def && pair.0 == def %]
+            selected="selected"
+        [% END %]
+        >[% pair.1 %]</option>
+    [% END %]
+    </select>
+[% END %]
