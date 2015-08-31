@@ -42,8 +42,6 @@ PERL=/path/to/bin/perl
 */3 * * * *            $PERL $AIR2_ROOT/bin/reaper --send_confirm_email
 */15 1-23 * * *        $PERL $AIR2_ROOT/bin/check-queries
 
-# Lyris import
-*/15 * * * *           LYRIS_DOMAIN=prod /opt/pij/bin/perl $AIR2_ROOT/bin/lyris-import
 # Mailchimp import and status sync
 */15 * * * *           $PERL $AIR2_ROOT/bin/mailchimp-import
 10,25,40,55 * * * *    $PERL $AIR2_ROOT/bin/mailchimp-status-sync
@@ -58,9 +56,6 @@ PERL=/path/to/bin/perl
 #
 # hourly jobs
 #
-# sync lyris db with AIR
-5    * * * *           LYRIS_DOMAIN=prod $PERL $AIR2_ROOT/bin/sync-lyris-unsub-bounced
-10   * * * *           LYRIS_DOMAIN=prod $PERL $AIR2_ROOT/bin/sync-lyris-soe
 #
 # daily jobs
 #

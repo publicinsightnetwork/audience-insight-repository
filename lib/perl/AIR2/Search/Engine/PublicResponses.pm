@@ -81,12 +81,16 @@ sub process_result {
     if ( exists $res{qa} && $res{qa} ne "" ) {
         for my $qa ( @{ $res{qa} } ) {
             my ( $ques_uuid, $ques_type, $ques_seq, $ques_value, $resp )
-                = ( $qa =~ m/^(.+?):(.+?):(.+?):(.+?):(.*?)$/s );
+                = ( $qa =~ m/^(.+?)\|(.+?)\|(.+?)\|(.+?)\|(.*?)$/s );
 
             if ( defined $resp ) {
 
                 # IMPORTANT turn on utf8 flag
                 $resp = Search::Tools::UTF8::to_utf8($resp);
+
+                # un-escape HTML formatting redmine #9149
+                $ques_value = Search::Tools::UTF8::to_utf8(
+                    $XMLer->unescape($ques_value) );
 
                 my $question = {
                     'seq'   => $ques_seq,

@@ -20,10 +20,9 @@
 ###########################################################################
 
 package AIR2::FactValue;
-
 use strict;
-
 use base qw(AIR2::DB);
+use Carp;
 
 __PACKAGE__->meta->setup(
     table => 'fact_value',
@@ -45,6 +44,7 @@ __PACKAGE__->meta->setup(
             length   => 1,
             not_null => 1
         },
+        fv_loc_id   => { type => 'integer', default  => 52, not_null => 1, },
         fv_cre_user => { type => 'integer', not_null => 1 },
         fv_upd_user => { type => 'integer' },
         fv_cre_dtim => {
@@ -56,6 +56,8 @@ __PACKAGE__->meta->setup(
 
     primary_key_columns => ['fv_id'],
 
+    unique_keys => [ [ 'fv_fact_id', 'fv_value', 'fv_loc_id', ] ],
+
     foreign_keys => [
         cre_user => {
             class       => 'AIR2::User',
@@ -65,6 +67,11 @@ __PACKAGE__->meta->setup(
         fact => {
             class       => 'AIR2::Fact',
             key_columns => { fv_fact_id => 'fact_id' },
+        },
+
+        locale => {
+            class       => 'AIR2::Locale',
+            key_columns => { 'fv_loc_id' => 'loc_id', },
         },
 
         upd_user => {
@@ -93,6 +100,32 @@ __PACKAGE__->meta->setup(
         },
     ],
 );
+
+my %fvids;
+
+sub find_fv_id {
+    my $self    = shift;
+    my $fact_id = shift or croak "fact_id required";
+    my $val     = shift or croak "fact value required";
+    my $lockey  = shift || 'en_US';
+    my $key     = $fact_id . ':' . $val;
+    return $fvids{$key} if exists $fvids{$key};
+    my $locale = AIR2::Locale->get_by_key($lockey);
+    my $fv     = $self->new(
+        fv_fact_id => $fact_id,
+        fv_value   => $val,
+        fv_loc_id  => $locale->loc_id,
+    );
+    $fv->load_speculative;
+
+    # cache no matter what
+    $fvids{$key} = $fv->fv_id;
+
+    if ($fv) {
+        return $fv->fv_id;
+    }
+    return undef;
+}
 
 1;
 

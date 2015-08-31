@@ -47,7 +47,7 @@
 <table style="width: 100%; text-align: center; margin-bottom: 25px;" bgcolor="#B80007" cellpadding="0" cellspacing="0" border="0">
     <tr>
         <td style="[% css_container %] text-align: center; margin: 0; padding: 10px;">
-            <a href="[% pin.uri %]"><img src="[% pin.asset_uri %]/css/img/pin-logo-white.jpg" style="border: 0; max-width: 200px; text-align: center;" /></a>
+            <a href="[% pin.uri %]"><img src="[% pin.asset_uri %]/css/img/pin-logo-white.png" style="border: 0; max-width: 200px; text-align: center;" /></a>
         </td>
     </tr>
 </table>
@@ -128,7 +128,7 @@
                                   [% NEXT IF (response.ques_type == '2' || response.ques_type == '3') %]
                                     <li style="margin-bottom: 15px;">
                                         <strong>[% response.question %]</strong><br />
-                                        [% response.answer %]
+                                        <pre style="white-space:pre-wrap;word-wrap:break-word;">[% response.answer %]</pre>
                                     </li>
                                 [% END %]
                             [% END %]

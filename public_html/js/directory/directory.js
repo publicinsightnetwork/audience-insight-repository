@@ -151,6 +151,8 @@ AIR2.Directory.Directory = function () {
             '<td class="name">' +
                 '<span style="{[this.indentStyle(values)]}">' +
                     '{[AIR2.Format.orgNameLong(values, true, 48)]}' +
+                    '&nbsp;' +
+                    '{[AIR2.Format.orgName(values, true)]}' +
                 '</span>' +
         '</td>' +
         '<td class="date">{[AIR2.Format.date(values.org_cre_dtim)]}</td>' +
@@ -186,7 +188,7 @@ AIR2.Directory.Directory = function () {
 
                 style = '';
                 if (values.level > 0) {
-                    amt = values.level * 20;
+                    amt = values.level * 10;
                     style += 'margin-left:' + amt + 'px;';
                 }
                 return style;

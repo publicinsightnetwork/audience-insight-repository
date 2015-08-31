@@ -168,6 +168,12 @@ elsif ($complete) {
 }
 
 for my $user (@users) {
+    if ( !$user->get_primary_email ) {
+        warn "User "
+            . $user->get_name_first_last
+            . " has no primary email set\n";
+        next;
+    }
     my $to = sprintf( qq/"%s" <%s>/,
         $user->get_name_first_last,
         $user->get_primary_email->uem_address );
@@ -192,7 +198,11 @@ sub send_email {
     my $stuff = Email::Stuff->to( $args{to} )->from( $args{from} )
         ->subject( $args{subject} )->text_body($msg);
 
-    my %mailer_args = ( Host => AIR2::Config->get_smtp_host, );
+    my %mailer_args = (
+        Host  => AIR2::Config->get_smtp_host,
+        Debug => $debug,
+        Hello => 'publicinsightnetwork.org'
+    );
     if ( AIR2::Config->smtp_host_requires_auth ) {
         $mailer_args{username} = AIR2::Config->get_smtp_username;
         $mailer_args{password} = AIR2::Config->get_smtp_password;

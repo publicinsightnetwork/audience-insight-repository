@@ -28,7 +28,8 @@ package AIR2::SearchServerManager;
 local $| = 1;    # do not buffer stdout
 use strict;
 use warnings;
-use lib 'lib/perl';
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
 use AIR2::Config;
 use Unix::PID::Tiny;
 use IO::Socket;
@@ -156,6 +157,8 @@ sub stop_watcher {
 }
 
 sub start_search_server {
+    # make sure we start in our app dir so INC works.
+    chdir $app_root;
     my $cmd
         = "$^X -Ilib/perl $dezi $server --access-log=$logfile --error-log=$error_logfile";
     my $friendly = $cmd;
@@ -217,6 +220,11 @@ sub stop_search_server {
 sub restart_watcher {
     stop_watcher();
     start_watcher();
+}
+
+sub restart_server {
+    stop_search_server();
+    start_search_server();
 }
 
 sub restart {

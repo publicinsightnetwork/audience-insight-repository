@@ -40,6 +40,7 @@ $img_root            = AIR2_IMG_ROOT;
 $rss_cache_root      = AIR2_RSS_CACHE_ROOT;
 $search_root         = AIR2_SEARCH_ROOT;
 $js_cache_root       = AIR2_JS_CACHE_ROOT;
+$downloads_root      = AIR2_SECURE_PUBLIC_PATH;
 
 /**
  * helper function to check/create path
@@ -86,6 +87,7 @@ $symlinks = array(
     AIR2_DOCROOT . '/rss' => $rss_cache_root,
     AIR2_DOCROOT . '/js/cache' => $js_cache_root,
     AIR2_DOCROOT . '/querys' => $query_docroot,
+    AIR2_CODEROOT. '/assets/downloads' => $downloads_root,
 );
 
 foreach ($symlinks as $symlink_path => $real_path) {
@@ -94,7 +96,8 @@ foreach ($symlinks as $symlink_path => $real_path) {
             error_log(" > Unable to symlink $symlink_path directory - " .
                 'existing symlink points somewhere else.  Try running ' .
                 'a "make assets-drop" first');
-            exit(3);
+            //exit(3);
+            continue;
         }
     }
     elseif (is_dir($symlink_path)) {

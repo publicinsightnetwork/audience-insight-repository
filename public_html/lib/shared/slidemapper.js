@@ -127,16 +127,16 @@
     else if (tileType == 'mapquest') {
       var tileOpts = {
         subdomains:  ['otile1', 'otile2', 'otile3', 'otile4'],
-        attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">'
+        attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="https://developer.mapquest.com/content/osm/mq_logo.png">'
       };
-      DATA.tileLayer = new L.TileLayer('http://{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', tileOpts);
+      DATA.tileLayer = new L.TileLayer('https://{s}-s.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', tileOpts);
     }
     else if (tileType == 'mapquest-aerial') {
       var tileOpts = {
         subdomains:  ['oatile1', 'oatile2', 'oatile3', 'oatile4'],
-        attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">'
+        attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="https://developer.mapquest.com/content/osm/mq_logo.png">'
       };
-      DATA.tileLayer = new L.TileLayer('http://{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', tileOpts);
+      DATA.tileLayer = new L.TileLayer('https://{s}-s.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', tileOpts);
     }
     else {
       $.error('invalid tile type: '+tileType);

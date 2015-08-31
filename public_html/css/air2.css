@@ -317,7 +317,7 @@ pre {
     text-align: center;
 }
 
-/* generic style for displaying newsrooms */
+/* generic style for displaying newsroom pills */
 .air2-newsroom, .air2-newsroom:visited {
     text-transform: uppercase;
     color: #fff;
@@ -327,6 +327,7 @@ pre {
     -webkit-border-radius: 3px;
     border-radius: 3px;
     margin-right: 3px;
+    white-space: nowrap;
 }
 
 .air2-search-excerpt .air2-newsroom {

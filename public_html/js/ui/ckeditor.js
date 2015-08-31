@@ -53,6 +53,10 @@ AIR2.UI.CKEditor = Ext.extend(Ext.form.TextArea,  {
         Ext.form.TextArea.superclass.setValue.apply(this, [value]);
     },
 
+    setEditorValue : function(value) {
+        this.ckEditorInstance.setData(value);
+    },
+
     getValue : function () {
         var editor, value;
         editor = CKEDITOR.instances[this.id];

@@ -19,10 +19,10 @@
 #
 ###########################################################################
 package AIR2::Outcome;
-
 use strict;
-
 use base qw(AIR2::DB);
+use Carp;
+use Data::Dump qw( dump );
 
 __PACKAGE__->meta->setup(
     table => 'outcome',
@@ -85,6 +85,13 @@ __PACKAGE__->meta->setup(
 
     relationships => [
 
+        # Annotations
+        annotations => {
+            class      => 'AIR2::OutAnnotation',
+            column_map => { out_id => 'oa_out_id' },
+            type       => 'one to many',
+        },
+
         # Projects
         prj_outcomes => {
             class      => 'AIR2::PrjOutcome',
@@ -123,8 +130,109 @@ __PACKAGE__->meta->setup(
             map_to    => 'source',
             type      => 'many to many',
         },
+
+        tags => {
+            class      => 'AIR2::Tag',
+            column_map => { out_id => 'tag_xid' },
+            query_args => [ tag_ref_type => tag_ref_type() ],
+            type       => 'one to many',
+        },
     ],
 );
+
+sub tag_ref_type {'O'}
+
+sub init_indexer {
+    my $self = shift;
+    return $self->SUPER::init_indexer(
+        prune            => {},
+        max_depth        => 2,
+        xml_root_element => 'outcome',
+        force_load       => 0,
+        @_
+    );
+}
+
+my @indexables = qw(
+    projects
+    inquiries
+    sources
+    organization
+    cre_user
+    upd_user
+    tags
+    annotations
+);
+
+my @searchables = qw(
+);
+
+sub get_searchable_rels { return [@searchables] }
+
+sub load_indexable_rels {
+    my $self = shift;
+    for my $rel (@indexables) {
+        $self->$rel;
+    }
+}
+
+sub as_xml {
+    my $self    = shift;
+    my $args    = shift or croak "args required";
+    my $debug   = delete $args->{debug} || 0;
+    my $indexer = delete $args->{indexer}
+        || $self->init_indexer( debug => $debug, );
+    my $base_dir = delete $args->{base_dir}
+        || Path::Class::dir('no/such/dir');
+    my $sources = delete $args->{sources}
+        || AIR2::SearchUtils::get_source_id_uuid_matrix();
+    my $publishable = delete $args->{publishable}
+        || 0;
+
+    $self->load_indexable_rels;
+
+    my $dmp = $indexer->serialize_object($self);
+
+    for my $inq ( @{ $self->inquiries } ) {
+        push @{ $dmp->{inq_uuids} }, $inq->inq_uuid;
+        push @{ $dmp->{inq_uuid_titles} },
+            join( ':', $inq->inq_uuid, $inq->get_title );
+    }
+    for my $prj ( @{ $self->projects } ) {
+        push @{ $dmp->{prj_uuids} }, $prj->prj_uuid;
+        push @{ $dmp->{prj_uuid_titles} },
+            join( ":", $prj->prj_uuid, $prj->prj_display_name );
+    }
+    for my $src ( @{ $self->sources } ) {
+        push @{ $dmp->{src_uuids} }, $src->src_uuid;
+        push @{ $dmp->{src_names} }, $src->get_name;
+    }
+    $dmp->{creator}      = $self->cre_user->get_name;
+    $dmp->{creator_fl}   = $self->cre_user->get_name_first_last;
+    $dmp->{creator_uuid} = $self->cre_user->user_uuid;
+    $dmp->{updater}      = $self->upd_user->get_name;
+    $dmp->{updater_uuid} = $self->upd_user->user_uuid;
+    $dmp->{tags}         = [ map { $_->get_name } @{ $self->get_tags } ];
+
+    # zap full rel structs to reduce noise
+    for my $rel (qw( projects inquiries sources cre_user upd_user )) {
+        delete $dmp->{$rel};
+    }
+
+    $debug and dump $dmp;
+
+    my $xml = $indexer->to_xml( $dmp, $self, 1 );    # last 1 to strip plurals
+
+    # hack in the authz string
+    # currently Outcome authz is public to all users,
+    # so this is just a placeholder.
+    my @authz;
+    my $authz_str = join( ",", @authz );
+    my $root = $indexer->xml_root_element;
+    $xml =~ s,^<$root,<$root authz="$authz_str",;
+
+    return $xml;
+}
 
 1;
 

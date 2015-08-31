@@ -15,7 +15,7 @@ use AIR2Test::Organization;
 use AIR2Test::User;
 use AIR2::JobQueue;
 use Data::Dump qw( dump );
-use Test::More tests => 51;
+use Test::More tests => 52;
 use Path::Class;
 use JSON;
 use File::Slurp;
@@ -189,7 +189,8 @@ system("cp $TEST_FILE_UPLOAD $tmpfile");
 my $submission1 = {
     $email_question->ques_uuid()       => 'me@pinsight.org',
     $first_name_question->ques_uuid()  => 'me',
-    $last_name_question->ques_uuid()   => 'myself',
+    $last_name_question->ques_uuid() =>
+        "myself \x{1F609} \x{1F338}\x{1F41D}\x{1F41E}",
     $postal_code_question->ques_uuid() => '12345',
     $religion_question->ques_uuid() =>
         'Christian Mysticism',    # should get translated
@@ -211,6 +212,14 @@ my $submission1 = {
 
 };
 
+like(
+    Search::Tools::UTF8::to_utf8(
+        $submission1->{ $last_name_question->ques_uuid() }
+    ),
+    qr/[\x{10000}-\x{10ffff}]/,
+    "response matches 4-byte utf8 character"
+);
+
 ok( write_file( "$inquiry2_path/$srs_uuid.json", encode_json($submission1) ),
     "write submission1 json"
 );
@@ -225,7 +234,7 @@ ok( my $reader = AIR2::Reader::FS->new( root => $TEMP_SUBMISSION_PEN ),
 ok( my $importer = AIR2::Importer::FS->new(
         reader       => $reader,
         user         => $user,
-        debug        => 1,
+        debug        => $ENV{AIR2_DEBUG},    #1,
         email_notify => 'pijdev@mpr.org',
     ),
     "new importer"
@@ -301,7 +310,8 @@ for my $srs ( @{ $new_source->response_sets } ) {
     for my $sr ( @{ $srs->responses } ) {
         diag(
             sprintf( "%s => %s",
-                $sr->question->ques_uuid, ( $sr->sr_orig_value || '(NULL)' ) )
+                $sr->question->ques_uuid,
+                ( $sr->sr_orig_value || '(NULL)' ) )
         );
         if ( $sr->sr_media_asset_flag ) {
             $has_media = $sr->sr_orig_value;
@@ -342,8 +352,8 @@ for my $sact ( @{ $new_source->activities } ) {
     }
 }
 
-is( $new_source->get_pref_lang, 'es_US',
-    "preferred language mapped to preferences" );
+is( $new_source->get_pref_lang,
+    'es_US', "preferred language mapped to preferences" );
 
 ##########################################################
 ##             clean up

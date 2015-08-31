@@ -23,7 +23,7 @@
     <title>Welcome - Public Insight Network</title>
 </head>
 
-<body style="-webkit-text-size-adjust:none; width: 100% !important; height: 100%; background: #f6f6f6 url([% pin.asset_uri %]/css/img/back-gray-grid.jpg) repeat; color: #444; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; margin: 0; padding: 0;">
+<body style="-webkit-text-size-adjust:none; width: 100% !important; height: 100%; background: #f6f6f6 url([% pin.asset_uri %]/css/img/back-gray-grid.jpg) repeat; color: #444; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0;">
 
 
 <!-- BACKGROUND COLOR FOR GMAIL -->
@@ -70,7 +70,7 @@
 
 
                         <!-- MESSAGE -->
-                        <h3 style="font-weight:500; font-size: 27px; margin-bottom: 20px;">Hi, [% source.name %].</h3>
+                        <h3 style="font-weight:500; font-size: 27px; margin-bottom: 20px;">Hi, [% source.name %],</h3>
                         <p style="font-size:17px;">Thanks for becoming part of [% newsroom.name %]'s Public Insight Network!</p>
 
                         [% IF newsroom.msg %]
@@ -115,7 +115,7 @@
                         </p>
 
                         <p style="[% css_text %]">
-                            Feel free to send me a note anytime with things you've noticed recently that you think we should look into.
+                            Feel free to send us a note anytime with things you've noticed recently that you think we should look into.
                         </p>
 
                         <p style="[% css_text %]">

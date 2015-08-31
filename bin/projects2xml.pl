@@ -164,4 +164,9 @@ sub make_xml {
         base => $base_dir,
         xml  => $xml,
     );
+
+    # if this was a stale record, zap the stale record
+    $proj->db->get_write_handle->dbh->do(
+        "delete from stale_record where str_type = 'P' and str_xid = ?",
+        {}, $proj->prj_id );
 }

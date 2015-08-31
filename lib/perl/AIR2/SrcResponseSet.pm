@@ -42,6 +42,8 @@ use constant UNPUBLISHED_PRIVATE => 3;
 use constant PUBLISHED           => 4;
 use constant UNPUBLISHABLE       => 5;
 
+use constant PINSIGHTFUL_TAG => AIR2::Config->get_pinsightful_tag();
+
 __PACKAGE__->meta->setup(
     table => 'src_response_set',
 
@@ -141,6 +143,19 @@ __PACKAGE__->meta->setup(
             type       => 'one to many',
         },
 
+        bin_responses => {
+            class      => 'AIR2::BinSrcResponseSet',
+            column_map => { srs_id => 'bsrs_srs_id' },
+            type       => 'one to many',
+        },
+
+        bins => {
+            map_class => 'AIR2::BinSrcResponseSet',
+            map_from  => 'response_set',
+            map_to    => 'bin',
+            type      => 'many to many',
+        },
+
         tags => {
             class      => 'AIR2::Tag',
             column_map => { srs_id => 'tag_xid' },
@@ -163,6 +178,7 @@ my @indexables = qw(
 
 my @searchables = (
     @indexables, qw(
+        bin_responses
         tags
         users
         )
@@ -351,16 +367,25 @@ sub as_xml {
     $dmp->{src_status}
         = AIR2::CodeMaster::lookup( 'src_status', $source->src_status );
 
+    # authz for 'active responses' -- see redmine #8359
+    $dmp->{orgid_statuses} = $source->get_orgid_statuses();
+
     my $sem   = $source->get_primary_email;
     my $sph   = $source->get_primary_phone;
     my $smadd = $source->get_primary_address;
     my $sorg  = $source->get_primary_newsroom;
     if ($sem) {
-        $dmp->{primary_email} = $sem->sem_email;
+        $dmp->{primary_email}
+            = join( ':', $sem->sem_email, $sem->sem_status );
     }
     if ($sph) {
-        $dmp->{primary_phone}
-            = join( ' ', grep {defined} $sph->{sph_number}, $sph->{sph_ext} );
+        $dmp->{primary_phone} = join(
+            ' ',
+            grep {defined} AIR2::SrcPhoneNumber->format_number(
+                $sph->{sph_number} || ''
+            ),
+            $sph->{sph_ext}
+        );
     }
     if ($smadd) {
         $dmp->{primary_city}    = $smadd->{smadd_city};
@@ -580,6 +605,11 @@ sub as_xml {
         }
     }
 
+    # if anyone has starred this srs, tag it for search only
+    if ( $dmp->{user_stars} and @{ $dmp->{user_stars} } ) {
+        push @{ $dmp->{tags} }, PINSIGHTFUL_TAG;
+    }
+
     # lowercase versions of fields, for sortability
     my @lowercase
         = qw(src_first_name src_last_name primary_city primary_org_name
@@ -588,6 +618,11 @@ sub as_xml {
         if ( $dmp->{$fld} ) {
             $dmp->{ $fld . "_lc" } = lc $dmp->{$fld};
         }
+    }
+
+    # bins, just uuids
+    for my $bin ( @{ $set->bins } ) {
+        push @{ $dmp->{bins} }, $bin->bin_uuid;
     }
 
     # to xml! - only need project authz now (not source authz)
@@ -834,11 +869,10 @@ sub get_country_response {
 
 sub get_city_response {
     my $self = shift;
-    return $self->get_contributor_response('31');
+    return $self->get_contributor_response('32');
 }
 
 sub get_street_response {
-    croak "TODO street pmap == city pmap";
     my $self = shift;
     return $self->get_contributor_response('31');
 }

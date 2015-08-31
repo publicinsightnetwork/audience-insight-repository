@@ -46,7 +46,7 @@ AIR2.Submission.Source = function () {
             compiled: true,
             disableFormats: true,
             sourceEmail: function (v) {
-                return AIR2.Format.mailTo(v.sem_email, AIR2.Submission.SRCDATA.radix);
+                return AIR2.Format.mailTo(v, AIR2.Submission.SRCDATA.radix);
             },
             formatOther: function (v) {
                 var bas,

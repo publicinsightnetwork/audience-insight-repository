@@ -65,8 +65,7 @@ class Query_Controller extends AIR2_HTMLController {
             'QUESURL'   => air2_uri_for("inquiry/$uuid/question"),
             'ORGDATA'   => $this->api->query("inquiry/$uuid/organization", array('sort' => 'org_display_name asc')),
             'PROJDATA'  => $this->api->query("inquiry/$uuid/project", array('sort' => 'prj_display_name asc')),
-            'OUTDATA'   => $this->api->query("inquiry/$uuid/outcome", array('limit' => 4)),
-            'OUTSRCH'   => air2_uri_for('search/outcomes', $search_query),
+            'OUTDATA'   => $this->api->query("inquiry/$uuid/outcome", array('limit' => 10)),
             'ANNOTDATA' => $this->api->query("inquiry/$uuid/annotation", array('limit' => 3, 'sort' => 'inqan_cre_dtim desc')),
             'TAGDATA'   => $this->api->query("inquiry/$uuid/tag", array('limit' => 0)),
             'STATSDATA' => $this->_stats_data($inq),
@@ -96,7 +95,8 @@ class Query_Controller extends AIR2_HTMLController {
         $radix = array('inq_uuid' => $inquiry->inq_uuid);
         $status = array(
             SrcInquiry::$STATUS_COMPLETE,
-            SrcInquiry::$STATUS_AIR1
+            SrcInquiry::$STATUS_AIR1,
+            SrcInquiry::$STATUS_LYRIS
         );
 
         // find when the inquiry was sent, and by whom

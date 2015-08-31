@@ -122,7 +122,7 @@ sub air_parse_query {
     my $meta_map = $opts->{meta_map};
 
     #dump $self;
-    my %args = %{ $self->{engine_config}->{searcher_config}->{qp_config} };
+    my %args = %{ $self->engine->searcher->qp_config };
     $args{fields} = $self->air_get_meta('query_fields');
 
     if ($meta_map) {
@@ -391,7 +391,7 @@ sub do_search {
             $opts->{org_masks}
                 = AIR2::SearchUtils::unpack_authz( $opts->{authz}->{authz} );
         }
-        $unauthz_total = $self->engine->searcher->search($query)->hits;
+        $unauthz_total = $self->engine->searcher->search("$query")->hits;
 
         $query = $self->air_transform_query( $query, $opts->{org_masks} );
 

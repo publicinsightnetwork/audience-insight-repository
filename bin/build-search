@@ -62,6 +62,7 @@ my $debug = 0;
 my $do_xml;
 my $do_index;
 my $do_prune;
+my $do_parallel;
 my $increm;
 GetOptions(
     'help'   => \$help,
@@ -70,6 +71,7 @@ GetOptions(
     'index'  => \$do_index,
     'xml'    => \$do_xml,
     'prune'  => \$do_prune,
+    'parallel' => \$do_parallel,
     'increm' => \$increm,
 ) or pod2usage(2);
 pod2usage(1) if $help;
@@ -82,6 +84,7 @@ my @types = qw(
     responses
     sources
     inquiries
+    outcomes
     projects
     fuzzy_responses
     fuzzy_sources
@@ -101,10 +104,11 @@ if (@ARGV) {
 
 my %convert = (
     responses =>
-        'db2xml-parallel --pools 3 --script resp2xml.pl --idx responses pij01 pij02 pij03 ',
+        'db2xml-parallel --pools 2 --script resp2xml.pl --idx responses hqpinappprod01 hqpinappprod02 ',
     sources =>
-        'db2xml-parallel --pools 3 --script sources2xml.pl --idx sources pij01 pij02 pij03 ',
+        'db2xml-parallel --pools 2 --script sources2xml.pl --idx sources hqpinappprod01 hqpinappprod02 ',
     inquiries        => 'inq2xml.pl',
+    outcomes         => 'outcomes2xml.pl',
     projects         => 'projects2xml.pl',
     public_responses => 'publicresp2xml.pl',
 );
@@ -114,8 +118,7 @@ $convert{responses} .= ' --verbose ' unless $quiet;
 
 my $perl = $^X;
 
-# use parallel build in prod only for now
-if ( AIR2::Config::get_profile_name() ne 'prod' ) {
+if ( !$do_parallel ) {
     $convert{sources}   = 'sources2xml.pl';
     $convert{responses} = 'resp2xml.pl';
 }

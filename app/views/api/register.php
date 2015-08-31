@@ -99,6 +99,10 @@ function clear_errors() {
 
 <div class="wrap panel">
 <h2>Request an API Key</h2>
+<p>
+Currently, only existing journalists who work for
+contracted PIN partners are eligible to receive API keys.
+</p>
 <?php if ($method == 'GET') :?>
 	<form method="POST" onsubmit="return validate()" >
         <table id="apikey" style="width: 100%;">

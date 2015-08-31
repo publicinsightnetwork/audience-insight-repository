@@ -1189,6 +1189,11 @@ AIR2.SearchPanel = function (cfg) {
                             ddObj.ddBinType = 'S';
                             break;
                         case 'responses':
+                        case 'fuzzy-responses':
+                        case 'strict-responses':
+                        case 'active-responses':
+                        case 'fuzzy-active-responses':
+                        case 'strict-active-responses':
                             ddObj.ddBinType = 'S';
                             ddObj.ddRelType = 'S';
                             dataField = 'srs_uuid';
@@ -1404,7 +1409,8 @@ AIR2.Search.CATEGORIES = {
     'active-sources'    : 'Available Sources',
     'primary-sources'   : 'Primary Sources',
     'responses'         : 'Submissions',
-    'projects'          : 'Projects'
+    'projects'          : 'Projects',
+    'outcomes'          : 'PINfluence'
 };
 AIR2.Search.STRICTABLE = {
     'responses'         : 'strict-responses',
@@ -1418,6 +1424,7 @@ AIR2.Search.siloLinks = function (cfg) {
 
     altCats  = AIR2.Search.CATEGORIES;
     altHrefs = {
+        'outcomes'          : 'pinfluence',
         'inquiries'         : 'queries' // per #1944
     };
 

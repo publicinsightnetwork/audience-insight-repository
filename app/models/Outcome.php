@@ -221,8 +221,14 @@ class Outcome extends AIR2_Record {
         if (!$this->exists()) {
             return AIR2_AUTHZ_IS_NEW;
         }
+        if ($this->Organization) {
+            $authz = $this->Organization->user_may_write($user);
+            if ($authz) {
+                return $authz;
+            }
+        }
 
-        // per #9533, only owner may edit
+        // per redmine #4022, only owner may edit
         // foreach ($this->PrjOutcome as $pout) {
         //     $authz = $pout->Project->user_may_write($user);
         //     if ($authz) return $authz;

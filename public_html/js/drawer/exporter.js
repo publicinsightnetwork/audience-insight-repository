@@ -1,8 +1,6 @@
 /* Export a Bin in various formats */
 Ext.ns('AIR2.Drawer');
 AIR2.Drawer.Exporter = {
-    // cf Trac #1841
-    MAX_LYRIS_SIZE: AIR2.MAX_EMAIL_EXPORT,
     /* require authn, with dire warnings, and then prompt for output format */
     show: function (drawer) {
 
@@ -13,29 +11,11 @@ AIR2.Drawer.Exporter = {
     },
     formatHandler: function (drawer, picker, ev) {
         var v = picker.getValue();
-        Logger("picked", v);
-        if (v === 'lyris') {
-
-            //Logger(drawer);
-            if (drawer.get('src_count') > AIR2.Drawer.Exporter.MAX_LYRIS_SIZE) {
-                AIR2.UI.ErrorMsg(
-                    picker,
-                    "Maximum size exceeded",
-                    "You may not export more then " +
-                    AIR2.Drawer.Exporter.MAX_LYRIS_SIZE +
-                    " items to Lyris at a time"
-                );
-                return;
-            }
-            AIR2.Drawer.Exporter.lyrisSelectors(true);
-        }
-        else {
-            AIR2.Drawer.Exporter.lyrisSelectors(false);
-        }
-
+        //Logger("picked", v);
+        AIR2.Drawer.Exporter.exportSelectors(false);
 
     },
-    lyrisSelectors: function (show) {
+    exportSelectors: function (show) {
         var form, inqPicker, orgPicker, prjPicker;
 
         form = Ext.getCmp('air2-drawer-exporter-form');
@@ -68,8 +48,7 @@ AIR2.Drawer.Exporter = {
                 title: 'Select an Organization',
                 target: 'air2-drawer-exporter-orgpicker-tt',
                 anchor: 'right',
-                text: 'Your Export will create a new segment on the Lyris ' +
-                    'mailing list for this Organization.'
+                text: 'Export to Lyris no longer supported. Please contact support if you receive this message.'
             });
         }
     },
@@ -226,14 +205,13 @@ AIR2.Drawer.Exporter = {
                             target: 'air2-drawer-exporter-strict-tt',
                             anchor: 'right',
                             text: 'If checked, will skip Sources who have ' +
-                            'been exported to Lyris within the last 24 hours.'
+                            'been exported within the last 24 hours.'
                         });
                         Ext.QuickTips.register({
                             title: 'Select a Query',
                             target: 'air2-drawer-exporter-inqpicker-tt',
                             anchor: 'right',
-                            text: 'After sending your e-mail via Lyris, ' +
-                            'exported Sources will be automatically ' +
+                            text: 'Exported Sources will be automatically ' +
                             'associated with this Query.'
                         });
                     }
@@ -308,8 +286,7 @@ AIR2.Drawer.Exporter = {
             emptyText: 'Select an output...',
             width : 200,
             store : [
-                ['csv',   'CSV'],
-                ['lyris', 'Lyris']
+                ['csv',   'CSV']
                 //['email', 'Email'],
                 //['word',  'Word']
             ],
@@ -403,58 +380,6 @@ AIR2.Drawer.Exporter = {
 
         //AIR2.Drawer.Exporter.Window.close();  // TODO decide
         formpanel.showCloseBtn();
-    },
-    lyris: function (drawer, formpanel) {
-        var form, basicForm, mask, url, values;
-
-        url = AIR2.HOMEURL + '/bin/' + drawer.get('bin_uuid') +
-            '/export-lyris.json';
-        form = Ext.getCmp('air2-drawer-exporter-form');
-        basicForm = form.getForm();
-        if (!basicForm.isValid()) {
-            AIR2.UI.ErrorMsg(
-                basicForm,
-                'Invalid', 'Check that all form values are selected.'
-            );
-            formpanel.buttons[0].enable();
-            formpanel.buttons[1].enable();
-            return;
-        }
-        values = basicForm.getFieldValues();
-        Logger(values);
-        // do not user basicForm.submit() because it fails to send 'values'
-        mask = new Ext.LoadMask(
-            form.getEl(),
-            {msg: 'Sending export request...'}
-        );
-        mask.show();
-        Ext.Ajax.request({
-            url: url,
-            params: values,
-            method: 'POST',
-            success: function (f, action) {
-                Logger(action);
-                mask.hide();
-                Ext.Msg.alert(
-                    'Success',
-                    'Your Bin was scheduled for export. You should receive ' +
-                    'email shortly.'
-                );
-                formpanel.showCloseBtn();
-            },
-            failure: function (f, action) {
-                Logger(action);
-                mask.hide();
-                AIR2.UI.ErrorMsg(
-                    basicForm,
-                    'Export Error',
-                    'There was a problem exporting your Bin. Contact an ' +
-                    'administrator for help.'
-                );
-                formpanel.buttons[0].enable();
-                formpanel.buttons[1].enable();
-            }
-        });
     }
 };
 

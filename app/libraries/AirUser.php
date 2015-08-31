@@ -326,7 +326,7 @@ class AirUser {
         if (!$recent) {
             $recent = array();
         }
-        $reqd_views = array('project', 'source', 'inquiry', 'submission');
+        $reqd_views = array('email', 'project', 'source', 'inquiry', 'submission');
         foreach ($reqd_views as $name) {
             if (!isset($recent[$name])) {
                 $recent[$name] = array();

@@ -38,6 +38,7 @@ use AIR2::Organization;
 use AIR2::Project;
 use AIR2::Inquiry;
 use AIR2::OutcomeWriter;
+use AIR2::Utils;
 
 =pod
 
@@ -150,7 +151,7 @@ elsif ( $format eq 'email' ) {
         || $sources )
     {
         $body
-            = "Your PINfluence report is attached as a CSV file. It includes:\n";
+            = "Your PINfluence report is available at the URL below. It includes:\n";
     }
     if ($org_id) {
         my $org = AIR2::Organization->new( org_id => $org_id )->load;
@@ -177,12 +178,9 @@ elsif ( $format eq 'email' ) {
         $body .= "  --One row per PINfluence entry\n";
     }
 
-    # generate the csv string
-    my $str = '';
-    my $csv = Text::CSV_XS->new( { binary => 1, eol => $/ } )
-        or die "Cannot use CSV: " . Text::CSV_XS->error_diag();
-    open my $fh, '>', \$str;
-    $csv->print( $fh, $_ ) for @{$obj};
+    # generate the csv file
+    my $url = AIR2::Utils::write_secure_csv_report( rows => $obj );
+    $body .= "\nReport available at:\n$url\n";
 
     # fire!
     send_email(
@@ -190,7 +188,6 @@ elsif ( $format eq 'email' ) {
         from    => 'support@publicinsightnetwork.org',
         subject => "Here is the PINfluence Report you just exported from AIR",
         text    => $body,
-        attach  => [ $str, filename => "pinfluence_report.csv" ]
     );
 }
 

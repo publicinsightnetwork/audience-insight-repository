@@ -247,7 +247,7 @@ class SrcEmail extends AIR2_Record {
         $src = $this->Source;
         $src->set_and_save_src_status();
 
-        // if EITHER the status or email has changed, tell lyris about it
+        // if EITHER the status or email has changed, tell email provider about it
         $email_changed  = array_key_exists('sem_email', $modified)  ? $modified['sem_email'] : false;
         $status_changed = array_key_exists('sem_status', $modified) ? $modified['sem_status'] : false;
         if ($email_changed || $status_changed) {
@@ -260,7 +260,8 @@ class SrcEmail extends AIR2_Record {
     /**
      *
      *
-     * @param unknown $sem_status
+     * @param unknown $chg_email
+     * @param unknown $chg_status
      */
     private function _queue_manager_status_change($chg_email, $chg_status) {
         $action = false;
@@ -290,32 +291,6 @@ class SrcEmail extends AIR2_Record {
 
         // queue it up
         if ($action) {
-
-            // TODO zap all this once Lyris turned off
-            // get unique org_sys_id.osid_xuuid's
-            $conn = AIR2_DBManager::get_connection();
-            $osidxuuid_to_orgid = array();
-            foreach ($this->SrcOrgEmail as $soe) {
-                $org = $soe->Organization;
-                foreach ($org->OrgSysId as $osid) {
-                    if ($osid->osid_type == OrgSysId::$TYPE_EMAIL_MGR) {
-                        $osidxuuid_to_orgid[$osid->osid_xuuid] = $org->org_id;
-                    }
-                }
-            }
-
-            // issue commands only once per mailing list (osid_xuuid)
-            foreach ($osidxuuid_to_orgid as $xuuid => $org_id) {
-                $cmd = sprintf("PERL AIR2_ROOT/bin/modify-lyris-email --org_id %d --email %s --action %s",
-                    $org_id,
-                    escapeshellarg($this->sem_email),
-                    $action
-                );
-                $job = new JobQueue();
-                $job->jq_job = $cmd;
-                $job->save();
-            }
-            // end lyris section
 
             // mailchimp
             $cmd = sprintf("PERL AIR2_ROOT/bin/mailchimp-status-sync --src_id %s", $this->sem_src_id);

@@ -49,6 +49,8 @@
  * @author rcavis
  * @package default
  */
+
+
 class Question extends AIR2_Record {
 
     // question types
@@ -257,12 +259,27 @@ class Question extends AIR2_Record {
 
 
     /**
+     * Questions may be deleted as long as there are no responses to them.
+     *
+     * @param User    $user
+     * @return authz integer
+     */
+    public function user_may_delete($user) {
+        if (count($this->SrcResponse)) {
+            return AIR2_AUTHZ_IS_DENIED;
+        }
+        return $this->Inquiry->user_may_write($user);
+    }
+
+
+    /**
      * Post save() hook provided by Doctrine.
      *
      *
      * @return void
+     *
      * @param Doctrine_Event $event
-     * */
+     */
     public function postSave($event) {
         $this->Inquiry->check_permission_question();
     }
@@ -283,8 +300,7 @@ class Question extends AIR2_Record {
      *
      * @return string $message
      */
-    public function getErrorStackAsString()
-    {
+    public function getErrorStackAsString() {
         $errorStack = $this->getErrorStack();
 
         $message = '';
@@ -298,5 +314,6 @@ class Question extends AIR2_Record {
             return false;
         }
     }
+
 
 }

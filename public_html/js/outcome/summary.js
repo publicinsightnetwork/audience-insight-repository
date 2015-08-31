@@ -429,34 +429,7 @@ AIR2.Outcome.Summary = function () {
                 allowBlank: true,
                 width: 375,
                 columns: 1,
-                items: [
-                    {
-                        boxLabel: 'find authentic voices'
-                    },
-                    {
-                        boxLabel: 'find insight quickly'
-                    },
-                    {
-                        boxLabel: 'get ahead of the news'
-                    },
-                    {
-                        boxLabel: 'identify stories that might have ' +
-                                  'otherwise been missed'
-                    },
-                    {
-                        boxLabel: 'pursue investigative reporting'
-                    },
-                    {
-                        boxLabel: 'collaborate with another program, project ' +
-                                  'or newsroom'
-                    },
-                    {
-                        boxLabel: 'define a coverage stream or project'
-                    },
-                    {
-                        boxLabel: 'other'
-                    }
-                ],
+                items: AIR2.Outcome.surveyOptions,
                 getValue: function () {
                     var out = {};
                     this.eachItem(function (item) {

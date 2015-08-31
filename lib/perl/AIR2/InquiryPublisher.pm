@@ -86,8 +86,11 @@ sub publish {
             ->load( with => qw( questions ) );
     }
 
-    # T type is reserved for testing
-    if ( $inquiry->inq_type !~ m/^[FQ]/ and $inquiry->inq_type ne 'T' ) {
+    if (    $inquiry->inq_type ne AIR2::Inquiry::TYPE_FORMBUILDER
+        and $inquiry->inq_type ne AIR2::Inquiry::TYPE_QUERYBUILDER
+        and $inquiry->inq_type ne AIR2::Inquiry::TYPE_TEST
+        and $inquiry->inq_type ne AIR2::Inquiry::TYPE_NONJOURN )
+    {
         croak(
             "Can't publish inquiry $inq_uuid of type " . $inquiry->inq_type );
     }
@@ -231,10 +234,31 @@ sub get_output {
             }
         );
 
+        # default template name is for (FORM|QUERY)BUILDER type
+        my $template_file = 'inquiry.html.tt';
+
+        # but allow for type-specific overrides
+        my $itype_template_file = $inq->inq_type . '-' . $template_file;
+        if ( -s $template_dir->file($itype_template_file) ) {
+            $template_file = $itype_template_file;
+        }
+
+        # same include logic for legal footer file
+        my $locale
+            = $inq->locale
+            ? $inq->locale->loc_key
+            : 'en_US';
+        my $legal_file       = 'legal-' . $locale . '.html';
+        my $itype_legal_file = $inq->inq_type . '-' . $legal_file;
+        if ( -s $public_html->file($itype_legal_file) ) {
+            $legal_file = $itype_legal_file;
+        }
+
         $template->process(
-            'inquiry.html.tt',
+            $template_file,
             {   inquiry   => $inq,
                 base_url  => $base_url,
+                legal_file => $legal_file,
                 timestamp => time(),
                 states    => AIR2::State->get_all_by_code,
                 countries => AIR2::Country->get_all_by_code,
@@ -250,11 +274,12 @@ sub get_output {
     if ( $format eq 'json' ) {
 
         my %struct;
-        if ( $inq->inq_expire_dtim && $inq->inq_expire_dtim->epoch <= time() )
+        if (   $inq->inq_expire_dtim
+            && $inq->inq_expire_dtim->epoch <= time() )
         {
             $struct{error} = 'Expired at ' . $inq->inq_expire_dtim;
-            $struct{msg}
-                = $inq->inq_expire_msg || $inq->get_default_expire_msg();
+            $struct{msg}   = $inq->inq_expire_msg
+                || $inq->get_default_expire_msg();
         }
         else {
 
@@ -276,7 +301,10 @@ sub get_output {
                 source_url => AIR2::Config::get_constant('AIR2_MYPIN2_URL'),
                 authors    => \@authors,
                 query      => $inq->as_tree( depth => 0 ),
-                questions  => [ map { $_->to_tree() } @{ $inq->questions } ],
+                questions  => [
+                    map  { $_->to_tree() }
+                    grep { $_->ques_status eq 'A' } @{ $inq->questions }
+                ],
                 projects   => [
                     map {
                         {   uuid         => $_->prj_uuid,

@@ -419,7 +419,8 @@ AIR2.Inquiry.editQuestion = function (dv, index, node, event) {
     // hidden fields are always output as type='hidden'
     if (
         (!Ext.num(type, false) && type === type.toLowerCase()) ||
-         AIR2.Inquiry.QUESTION.TYPE.TEXT.indexOf(typeNormalized) > -1
+         AIR2.Inquiry.QUESTION.TYPE.TEXT.indexOf(typeNormalized) > -1 ||
+         AIR2.Inquiry.QUESTION.TYPE.TEXTAREA.indexOf(typeNormalized) > -1
     ) {
         items.push({
             xtype: 'checkbox',

@@ -206,8 +206,17 @@ sub get_pks_to_index {
             while ( my $o = $objs->next ) {
                 push @$ids, $o->$column;
             }
+
         }
     }
+
+    # include those explicitly marked stale
+    my $stale_records
+        = get_stale_records_for_type( get_stale_type_for_class($class) );
+    my %id_hash = map { $_ => 1 } @$ids;
+    my @uniq_stale = grep { !exists $id_hash{$_} } @$stale_records;
+    push @$ids, @uniq_stale;
+    $total_expected += scalar @uniq_stale;
 
     if ( $total_expected != scalar(@$ids) ) {
         $lock_file->unlock;
@@ -260,6 +269,22 @@ sub get_pks_to_index {
     }
 
     return { ids => $ids, total_expected => $total_expected };
+}
+
+=head2 get_stale_records_for_type( I<type> )
+
+Returns array of PK ints for I<type> from the stale_record table.
+
+=cut
+
+sub get_stale_records_for_type {
+    my $type = shift or confess "type required";
+    my $stale = [];
+    my $recs = AIR2::StaleRecord->fetch_all( query => [ str_type => $type ] );
+    for my $r (@$recs) {
+        push @$stale, $r->str_xid;
+    }
+    return $stale;
 }
 
 sub xml_path_for {
@@ -631,6 +656,8 @@ my %stale_types = (
     'sources'          => [ 'S', 'AIR2::Source' ],
     'inquiry'          => [ 'I', 'AIR2::Inquiry' ],
     'inquiries'        => [ 'I', 'AIR2::Inquiry' ],
+    'outcome'          => [ 'O', 'AIR2::Outcome' ],
+    'outcomes'         => [ 'O', 'AIR2::Outcome' ],
     'src_response_set' => [ 'R', 'AIR2::SrcResponseSet' ],
     'responses'        => [ 'R', 'AIR2::SrcResponseSet' ],
     'project'          => [ 'P', 'AIR2::Project' ],
@@ -641,6 +668,17 @@ my %stale_types = (
 
 sub get_stale_type_map {
     return \%stale_types;
+}
+
+sub get_stale_type_for_class {
+    my $class = shift or confess "class name required";
+    for my $nick ( keys %stale_types ) {
+        my ( $type, $class_name ) = @{ $stale_types{$nick} };
+        if ( $class eq $class_name ) {
+            return $type;
+        }
+    }
+    return undef;
 }
 
 sub touch_stale {
@@ -731,6 +769,7 @@ my %class_type_map = (
     'responses'        => 'AIR2::SrcResponseSet',
     'public_responses' => 'AIR2::PublicSrcResponseSet',
     'inquiries'        => 'AIR2::Inquiry',
+    'outcomes'         => 'AIR2::Outcome',
     'projects'         => 'AIR2::Project',
 );
 

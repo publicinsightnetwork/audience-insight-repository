@@ -23,7 +23,7 @@ for my $f (@$files) {
 
 my $mini  = scalar(@ARGV) ? $js : minify( input => $js );
 my $after = length($mini);
-my $saved = int( $after / $total * 100 );
+my $saved = int( ( $total - $after ) / $total * 100 );
 write_file( "$compressed_file", $mini );
 print
     "Compressed $total bytes to $after (saved $saved\%) in $compressed_file\n";
@@ -40,7 +40,7 @@ sub get_js_files {
     );
     my %skip = map { $_ => 1 } (
         "$js_dir/pinform.js", "$js_dir/pinform.min.js",
-        "$js_dir/cache/fixtures.min.js"
+        "$js_dir/cache/fixtures.min.js", "$js_dir/third_party.js",
     );
     my @ui;
     my @rest;

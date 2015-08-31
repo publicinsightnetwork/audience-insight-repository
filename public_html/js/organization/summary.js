@@ -5,15 +5,10 @@ AIR2.Organization.Summary = function () {
     var mayUpdateMaxUsers,
         orgnamefld,
         orgpanel,
-        puuid,
         orgpanelTemplate;
 
-    // must have update on parent to update max users
+    // must be sysadmin to update max users
     mayUpdateMaxUsers = (AIR2.USERINFO.type === 'S');
-    if (AIR2.Organization.BASE.radix.parent) {
-        puuid = AIR2.Organization.BASE.radix.parent.org_uuid;
-        mayUpdateMaxUsers = AIR2.Util.Authz.has('ACTION_ORG_UPDATE', puuid);
-    }
 
     // org_name only editable by system
     orgnamefld = {
@@ -57,6 +52,10 @@ AIR2.Organization.Summary = function () {
               '<tr>' +
                 '<td style="width: 150px;"><b>Short Name</b></td>' +
                 '<td>{org_name}</td>' +
+              '</tr>' +
+              '<tr>' +
+                '<td><b>Suppress Welcome message</b></td>' +
+                '<td>{[this.orgSuppressWelcome(values)]}</td>' +
               '</tr>' +
               '<tr>' +
                 '<td><b>Seats Used</b></td>' +
@@ -109,6 +108,13 @@ AIR2.Organization.Summary = function () {
                     t = values.org_welcome_msg;
                 }
                 return t;
+            },
+            orgSuppressWelcome: function(values) {
+                var b = 'false';
+                if (values.org_suppress_welcome_email_flag) {
+                    b = 'true';
+                }
+                return b;
             },
             orgLinks: function (values) {
                 var links = '';
@@ -312,6 +318,8 @@ AIR2.Organization.Summary = function () {
                         name: 'org_max_users',
                         disabled: !mayUpdateMaxUsers,
                         width: 100,
+                        forceSelection: false,
+                        editable: true,
                         choices: AIR2.Organization.ORGMAXLIST
                     }]
                 }, {
@@ -380,6 +388,10 @@ AIR2.Organization.Summary = function () {
                         xtype: 'textarea',
                         fieldLabel: 'Welcome message',
                         name: 'org_welcome_msg'
+                    }, {
+                        xtype: 'checkbox',
+                        name: 'org_suppress_welcome_email_flag',
+                        fieldLabel: 'Suppress Welcome Email',
                     }, {
                         xtype: 'textfield',
                         fieldLabel: 'Email',

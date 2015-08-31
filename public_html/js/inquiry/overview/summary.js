@@ -9,15 +9,17 @@ AIR2.Inquiry.Summary = function () {
         pinButton,
         embedButton,
         isFormbuilder,
+        isNonJourno,
         isQuerymaker;
 
     inqRadix = AIR2.Inquiry.BASE.radix;
     isFormbuilder = (inqRadix.inq_type === 'F');
     isQuerymaker  = (inqRadix.inq_type === 'Q');
+    isNonJourno   = (inqRadix.inq_type === 'N');
     uuid = AIR2.Inquiry.UUID;
 
     // PINbutton embed code generator
-    if (isFormbuilder || isQuerymaker) {
+    if (isFormbuilder || isQuerymaker || isNonJourno) {
         pinButton = new AIR2.UI.Button({
             air2type: 'CLEAR',
             iconCls: 'air2-icon-pinbutton',
@@ -216,7 +218,7 @@ AIR2.Inquiry.Summary = function () {
             compiled: true,
             disableFormats: true,
             isAQuery: function() {
-                return isFormbuilder || isQuerymaker || false;
+                return isFormbuilder || isQuerymaker || isNonJourno || false;
             },
             isPublished: function(values) {
                 if (values.inq_status.match(/^[AELS]$/)

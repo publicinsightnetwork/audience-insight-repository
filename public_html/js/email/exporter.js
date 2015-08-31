@@ -16,7 +16,9 @@ AIR2.Email.Exporter = function (cfg) {
         return false;
     }
     var emailfld, emailmsg, pswd, binfld, binmsg, stricter, datefld, timefld,
-        schedule, sendnow, working, exportbtn, closebtn, w;
+        schedule, scheduleTip, sendnow, working, exportbtn, closebtn, w;
+
+    scheduleTip = AIR2.Util.Tipper.create('92462006');
 
     // email display field
     emailfld = new Ext.form.DisplayField({
@@ -169,7 +171,7 @@ AIR2.Email.Exporter = function (cfg) {
         searchUrl: AIR2.HOMEURL + '/bin',
         pageSize: 10,
         baseParams: {
-            owner: true,
+            //owner: true,
             status: 'AP',
             sort: 'bin_upd_dtim desc',
         },
@@ -286,7 +288,7 @@ AIR2.Email.Exporter = function (cfg) {
         disabled: true
     });
     schedule = new Ext.form.CompositeField({
-        fieldLabel: 'Schedule',
+        fieldLabel: 'Schedule  ' + scheduleTip,
         items: [datefld, timefld],
         onFieldMarkInvalid: function(fld, msg) {
             this.fieldErrors.replace(fld, {field: fld.fieldLabel, error: msg});
@@ -345,8 +347,9 @@ AIR2.Email.Exporter = function (cfg) {
                 // manually compile the date
                 if (!sendnow.getValue()) {
                     timestamp = datefld.getValue().format('Y-m-d');
-                    timestamp += Date.parseDate(timefld.getValue(),
-                        timefld.format).format(' H:i:s');
+                    var timeDate = Date.parseDate(timefld.getValue(), timefld.format);
+                    timestamp += timeDate.format('TH:i:s');
+                    timestamp += timeDate.getGMTOffset(); // make sure we include timezone.
                 }
 
                 // callback function

@@ -36,6 +36,9 @@ class AirRecent {
     // configure logging
     protected $recent_max = 5;
     protected $config = array(
+        'email'   => array(
+            'email_uuid', 'email_campaign_name',
+        ),
         'project' => array(
             'prj_uuid', 'prj_name', 'prj_display_name',
         ),

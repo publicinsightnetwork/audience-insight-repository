@@ -332,6 +332,10 @@ AIR2.Format.sourceEmail = function (srcEmail, returnLink) {
         return '<span class="lighter">unknown email</span>';
     }
 
+    if (srcEmail.sem_status != 'G') {
+        return '<span class="lighter">'+srcEmail.sem_email+'</span>';
+    }
+
     e = srcEmail.sem_email;
 
     return AIR2.Format.createLink(e, 'mailto:' + e, returnLink, true);
@@ -339,7 +343,29 @@ AIR2.Format.sourceEmail = function (srcEmail, returnLink) {
 
 /* A mailto link that doesn't really open up "mailto" */
 AIR2.Format.mailTo = function (email, srcObj) {
-    var srcFullName, link;
+    var srcFullName, link, address;
+
+    if (Ext.isObject(email)) {
+        if (email.sem_status != 'G') {
+            return email.sem_email;
+        }
+        else {
+            address = email.sem_email;
+        }
+    }
+    else {
+        // status may be appended to address string
+        if (email.match(/:[A-Z]$/)) {
+            var m = email.split(':');
+            address = m[0];
+            if (m[1] != 'G') {
+                return address;
+            }
+        }
+        else {
+            address = email;
+        }
+    }
 
     srcFullName = srcObj.src_username;
     if (srcObj.src_first_name && srcObj.src_last_name) {
@@ -356,7 +382,7 @@ AIR2.Format.mailTo = function (email, srcObj) {
     link += 'this,';
     link += "'" + srcObj.src_uuid + "',";
     link += "'" + srcFullName + "'";
-    link += ');">' + email + '</a>';
+    link += ');">' + address + '</a>';
 
     return link;
 }
@@ -448,7 +474,6 @@ AIR2.Format.vitaOrigin = function (svObj) {
 
 AIR2.Format.orgSysIdType = function (code) {
     var types = {
-        E: 'Lyris',
         M: 'Mailchimp'
     };
     return (types[code]) ? types[code] : 'Not Known';
@@ -727,18 +752,27 @@ AIR2.Format.orgLogo = function (obj, width, height) {
 
 /* format the inquiry logo image */
 AIR2.Format.inqLogo = function (obj, width, height) {
-    var alt, src, tag;
+    var alt, src, tag, nonGlobalOrg;
 
     src = AIR2.HOMEURL + '/css/img/not_found_org.png';
     alt = 'inq_logo';
+
+    // we do not want the global org image because we
+    // want to persist the UI illusion that it isn't really an "org"
+    Ext.each(obj.InqOrg, function(inqo, idx) {
+      if (inqo.Organization.org_name != "global") {
+        nonGlobalOrg = inqo;
+        return false; // abort loop
+      }
+    }); 
 
     if (obj.Logo) {
         src = obj.Logo.thumb;
         alt = obj.Logo.img_file_name;
     }
-    else if (obj.InqOrg[0].OrgLogo) {
-        src = obj.InqOrg[0].OrgLogo.thumb;
-        alt = obj.InqOrg[0].OrgLogo.img_file_name;
+    else if (nonGlobalOrg && nonGlobalOrg.OrgLogo) {
+        src = nonGlobalOrg.OrgLogo.thumb;
+        alt = nonGlobalOrg.OrgLogo.img_file_name;
     }
 
     tag = '<img class="logo" src="' + src + '" alt="' + alt + '"';

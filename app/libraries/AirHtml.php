@@ -28,7 +28,54 @@
  * @author rcavis
  * @package default
  */
+
+
 class AirHtml {
+
+
+    /**
+     *
+     * @return array $js_paths
+     */
+    public static function third_party_js() {
+        return array(
+            'lib/extjs/adapter/ext/ext-base.js',
+            'lib/extjs/ext-all.js',
+            'lib/extjs/examples/ux/datetime.js',
+            'lib/extjs/examples/ux/RowEditor.js',
+            'lib/extjs/examples/ux/Spinner.js',
+            'lib/extjs/examples/ux/SpinnerField.js',
+            'lib/extjs/examples/ux/FileUploadField.js',
+            'lib/shared/groupcombo.js',
+            'lib/shared/groupdataview.js',
+            'lib/shared/livedataview.js',
+            'lib/shared/search-query.js',
+            'lib/shared/hyphenator.js',
+            'lib/shared/long.js',
+            'lib/ckeditor/ckeditor.js',
+            'lib/shared/leafpile.js',
+            'lib/shared/jquery-1.7.2.min.js',
+            'lib/shared/slidemapper.min.js',
+            'lib/extjs/plugins/date-time-ux.js',
+        );
+    }
+
+
+    /**
+     *
+     * @return array $css_paths
+     */
+    public static function third_party_css() {
+        return array(
+            'lib/extjs/resources/css/ext-all.css',
+            'css/ext-theme-air2.css',
+            'lib/extjs/examples/ux/css/RowEditor.css',
+            'lib/extjs/examples/ux/css/Spinner.css',
+            'lib/extjs/examples/ux/css/FileUploadField.css',
+            'lib/shared/livedataview.css',
+            'lib/shared/slidemapper.min.css',
+        );
+    }
 
 
     /**
@@ -46,6 +93,7 @@ class AirHtml {
         $js = air2_dirscan(AIR2_DOCROOT.'/js/', '/.js$/');
         air2_array_remove(array('pinform.js'), $js);
         air2_array_remove(array('pinform.min.js'), $js);
+        air2_array_remove(array('third_party.js'), $js);
 
         // fix order (for inheritance), and remove console.js for prod
         $js = air2_fix_js_order($js);
@@ -76,7 +124,7 @@ class AirHtml {
 
         // recursively scan css directory
         $css = air2_dirscan(AIR2_DOCROOT.'/css/', '/.css$/');
-        $rmv = array('docbook.css', 'login.css', 'ie.css', 'print.css', 'ext-theme-air2.css', 'query.css', 'pinform.css');
+        $rmv = array('docbook.css', 'login.css', 'ie.css', 'print.css', 'ext-theme-air2.css', 'query.css', 'pinform.css', 'third_party.css');
         air2_array_remove($rmv, $css);
 
         // change to absolute paths
@@ -94,6 +142,7 @@ class AirHtml {
      * @param string $title
      * @param string $js_namespace
      * @param array $data
+     * @return unknown
      */
     public function get_inline($title, $js_namespace, $data) {
         // format to what view expects
@@ -125,6 +174,7 @@ class AirHtml {
      * @param string $title
      * @param array  $payload
      * @param string $view
+     * @return unknown
      */
     public function get_deprecated_inline($title, $payload, $view) {
         $CI =& get_instance();

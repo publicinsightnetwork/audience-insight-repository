@@ -310,7 +310,7 @@ abstract class AIRAPI_Resource extends DOCframe_Resource {
      */
     protected function apply_search($q, $str, $root_tbl=null, $root_alias=null) {
         if (method_exists($root_tbl, 'add_search_str')) {
-            call_user_func(array($root_tbl, 'add_search_str'), $q, $root_alias, $str);
+            $root_tbl::add_search_str($q, $root_alias, $str);
         }
     }
 
@@ -326,7 +326,10 @@ abstract class AIRAPI_Resource extends DOCframe_Resource {
     protected function rec_fetch($uuid, $minimal=false) {
         $rec = $this->air_fetch($uuid, $minimal);
         if (!$rec || !$rec->exists()) {
+            $cls = '';
+            if (is_object($rec)) {
             $cls = get_class($rec);
+            }
             throw new Rframe_Exception(Rframe::BAD_IDENT, "$cls '$uuid' not found");
         }
 
@@ -409,7 +412,7 @@ abstract class AIRAPI_Resource extends DOCframe_Resource {
         $method_name = "user_may_$authz_type";
         if (!$rec->$method_name($this->user)) {
             $cls = get_class($rec);
-            $msg = "Insufficient $authz_type-authz on $cls";
+            $msg = "Insufficient $authz_type authz on $cls";
             throw new Rframe_Exception(Rframe::BAD_AUTHZ, $msg);
         }
     }

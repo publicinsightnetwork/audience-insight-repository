@@ -38,6 +38,8 @@ use Term::ProgressBar::Simple;
 use Getopt::Long;
 use Pod::Usage;
 use Search::Tools::XML;
+use Parallel::Forker;
+use List::MoreUtils qw( part );
 
 umask(0007);    # group rw, world null
 
@@ -46,6 +48,7 @@ my $quiet       = 0;
 my $mod_since   = 0;
 my $debug       = 0;
 my $base_dir    = AIR2::Config->get_search_xml->subdir('responses');
+my $nprocs      = AIR2::Config->get_profile_val('nprocs') || 1;
 my $column_name = 'srs_id';
 my $pk_filelist;
 my $offset;
@@ -59,6 +62,7 @@ GetOptions(
     'from_file=s'      => \$pk_filelist,
     'offset=i'         => \$offset,
     'limit=i'          => \$limit,
+    'nprocs=i'         => \$nprocs,
     'use_column=s'     => \$column_name,
 ) or pod2usage(2);
 pod2usage(1) if $help;
@@ -112,17 +116,94 @@ my $pks = AIR2::SearchUtils::get_pks_to_index(
     offset      => $offset,
     limit       => $limit,
 );
-my $progress      = Term::ProgressBar::Simple->new( $pks->{total_expected} );
-my $count         = 0;
 my $organizations = AIR2::SearchUtils::all_organizations_by_id();
 
+# if nprocs > 1, we split the ids into $nprocs groups
+# and fork a child for each group.
+if ( $nprocs > 1 ) {
+    my $manager = Parallel::Forker->new( use_sig_child => 1 );
+
+    # signal handling (propagate death)
+    $SIG{CHLD} = sub { Parallel::Forker::sig_child($manager) };
+    $SIG{TERM} = sub {
+        if ( $manager && $manager->in_parent ) {
+            $manager->kill_tree_all('TERM');
+            die "Quitting...\n";
+        }
+    };
+
+    # divide up the PKs into pools
+    my $i = 0;
+    my @pk_pools = part { $i++ % $nprocs } @{ $pks->{ids} };
+
+    # don't spawn empty workers
+    if ( $nprocs > scalar @pk_pools ) {
+        $nprocs = scalar @pk_pools;
+    }
+
+    # spawn workers, one per pool
+    my $max_procs = $nprocs - 1;    # zero-based to match pk_pools
+
+WORKER: for my $worker_n ( ( 0 .. $max_procs ) ) {
+
+        my $process = $manager->schedule(
+            name => sprintf( "worker %2s", $worker_n ),    # unique
+            run_on_start => sub {
+                my $proc  = shift;
+                my $pool  = $pk_pools[$worker_n];
+                my $n_pks = scalar @$pool;
+                $quiet
+                    or AIR2::Utils::logger(
+                    sprintf(
+                        "Starting %s with %s records\n",
+                        $proc->name, $n_pks
+                    )
+                    );
+                my $progress = Term::ProgressBar::Simple->new(
+                    { count => $n_pks, name => $proc->name } );
+                for my $srs_id (@$pool) {
+                    write_xml($srs_id);
+                    $quiet or $progress++;
+                }
+            },
+            run_on_finish => sub {
+                my ( $proc, $exit_status ) = @_;
+                $quiet
+                    or
+                    AIR2::Utils::logger( sprintf "Child %s exited with %s\n",
+                    $proc->name, $exit_status );
+            },
+        );
+        $process->ready();
+    }
+
+    $manager->poll();        # start ready workers
+    $manager->wait_all();    # block till we're done
+}
+else {
+
+    my $progress = Term::ProgressBar::Simple->new( $pks->{total_expected} );
 for my $srs_id ( @{ $pks->{ids} } ) {
+        write_xml($srs_id);
+        $quiet or $progress++;
+    }
+
+}
+
+$lock_file->unlock;
+unless ($quiet) {
+    AIR2::Utils::logger("Done.\n");
+}
+
+sub write_xml {
+    my ($srs_id) = @_;
 
     my $set = AIR2::SrcResponseSet->new( $column_name => $srs_id )
         ->load( speculative => 1 );
     if ( !$set or $set->not_found ) {
-        warn "No SrcResponseSet found where $column_name=$srs_id . Skipping.\n";
-        next;
+        warn
+            "No SrcResponseSet found where $column_name=$srs_id . Skipping.\n";
+        return;
     }
     make_xml($set);
 
@@ -134,15 +215,10 @@ for my $srs_id ( @{ $pks->{ids} } ) {
         AIR2::SearchUtils::touch_stale($inq);
     }
 
-    unless ($quiet) {
-        $progress++;
-    }
-
-}
-
-$lock_file->unlock;
-unless ($quiet) {
-    AIR2::Utils::logger("Done.\n");
+    # if this was a stale record, zap the stale record
+    $set->db->get_write_handle->dbh->do(
+        "delete from stale_record where str_type = 'R' and str_xid = ?",
+        {}, $set->srs_id );
 }
 
 sub make_xml {

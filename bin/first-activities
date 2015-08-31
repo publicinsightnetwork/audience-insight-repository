@@ -130,6 +130,8 @@ elsif ( $format eq 'email' ) {
     open $fh, '>', \$str or die $!;
 }
 
+binmode($fh, ":utf8");
+
 # print it!
 my $headers = $sth->{NAME};
 $csv->print( $fh, $headers );

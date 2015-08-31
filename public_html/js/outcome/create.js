@@ -14,6 +14,51 @@ Ext.ns('AIR2.Outcome');
  * @cfg {String}        inq_uuid
  *
  */
+
+AIR2.Outcome.surveyOptions = [
+    {   
+        boxLabel: 'engage diverse audiences and/or increase diversity of voices in media'
+    },  
+    {   
+        boxLabel: 'find authentic voices'
+    },  
+    {   
+        boxLabel: 'find insight quickly'
+    },  
+    {   
+        boxLabel: 'get ahead of the news'
+    },  
+    {   
+        boxLabel: 'identify stories that might have ' +
+                  'otherwise been missed'
+    },  
+    {   
+        boxLabel: 'pursue investigative reporting'
+    },  
+    {   
+        boxLabel: 'collaborate with another program, project ' +
+                  'or newsroom'
+    },  
+    {   
+        boxLabel: 'define a coverage stream or project'
+    },  
+    {   
+        boxLabel: 'highlight solutions to an issue'
+    },  
+    {   
+        boxLabel: 'increase knowledge/understanding or cause emotional response'
+    },  
+    {   
+        boxLabel: 'create conversation or help people relate to others'
+    },  
+    {   
+        boxLabel: 'stimulate action in support of positive community change'
+    },  
+    {   
+        boxLabel: 'other'
+    }   
+];
+
 AIR2.Outcome.Create = function (cfg) {
     var flds,
         getPublishableToolTip,
@@ -424,34 +469,7 @@ AIR2.Outcome.Create = function (cfg) {
         allowBlank: true,
         width: 375,
         columns: 1,
-        items: [
-            {
-                boxLabel: 'find authentic voices'
-            },
-            {
-                boxLabel: 'find insight quickly'
-            },
-            {
-                boxLabel: 'get ahead of the news'
-            },
-            {
-                boxLabel: 'identify stories that might have otherwise been ' +
-                          'missed'
-            },
-            {
-                boxLabel: 'pursue investigative reporting'
-            },
-            {
-                boxLabel: 'collaborate with another program, project or ' +
-                          'newsroom'
-            },
-            {
-                boxLabel: 'define a coverage stream or project'
-            },
-            {
-                boxLabel: 'other'
-            }
-        ],
+        items: AIR2.Outcome.surveyOptions,
         getValue: function () {
             var out = {};
             this.eachItem(function (item) {

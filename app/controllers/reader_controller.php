@@ -29,9 +29,12 @@ require_once 'rframe/AIRAPI.php';
  * Displays a submissions-search result in a generic "inbox" interface,
  * which can be customized for specific search types.  (Like queries).
  *
- * @package default
+ *
  * @author rcavis
- **/
+ * @package default
+ */
+
+
 class Reader_Controller extends AIR2_Controller {
 
     protected $default_args = array(
@@ -61,12 +64,28 @@ class Reader_Controller extends AIR2_Controller {
 
 
     /**
+     *
+     */
+    public function active() {
+        $this->do_search($this->input_all, array(), false, true);
+    }
+
+
+    /**
+     *
+     */
+    public function strict_active() {
+        $this->do_search($this->input_all, array(), true, true);
+    }
+
+
+    /**
      * Magic path to restrict search to a specific query
      *
      * @param string $inq_uuid
      */
     public function query($inq_uuid=null) {
-        $this->search_with_query($inq_uuid, false);
+        $this->search_with_query($inq_uuid, false, false);
     }
 
 
@@ -76,7 +95,25 @@ class Reader_Controller extends AIR2_Controller {
      * @param string $inq_uuid
      */
     public function strict_query($inq_uuid=null) {
-        $this->search_with_query($inq_uuid, true);
+        $this->search_with_query($inq_uuid, true, false);
+    }
+
+
+    /**
+     *
+     * @param string  $inq_uuid (optional)
+     */
+    public function active_query($inq_uuid=null) {
+        $this->search_with_query($inq_uuid, false, true);
+    }
+
+
+    /**
+     *
+     * @param string $inq_uuid (optional)
+     */
+    public function strict_active_query($inq_uuid=null) {
+        $this->search_with_query($inq_uuid, true, true);
     }
 
 
@@ -84,6 +121,7 @@ class Reader_Controller extends AIR2_Controller {
      * Magic path to mark submissions as read
      *
      * @param string @srs_uuid
+     * @param unknown $srs_uuid
      */
     public function read($srs_uuid) {
         $conn = AIR2_DBManager::get_master_connection();
@@ -101,6 +139,7 @@ class Reader_Controller extends AIR2_Controller {
      * Magic path to mark submissions as unread
      *
      * @param string @srs_uuid
+     * @param unknown $srs_uuid
      */
     public function unread($srs_uuid) {
         $conn = AIR2_DBManager::get_master_connection();
@@ -118,6 +157,7 @@ class Reader_Controller extends AIR2_Controller {
      * Magic path to mark submissions as favorite
      *
      * @param string @srs_uuid
+     * @param unknown $srs_uuid
      */
     public function favorite($srs_uuid) {
         $conn = AIR2_DBManager::get_master_connection();
@@ -136,6 +176,7 @@ class Reader_Controller extends AIR2_Controller {
      * Magic path to mark submissions as unfavorite
      *
      * @param string @srs_uuid
+     * @param unknown $srs_uuid
      */
     public function unfavorite($srs_uuid) {
         $conn = AIR2_DBManager::get_master_connection();
@@ -155,8 +196,9 @@ class Reader_Controller extends AIR2_Controller {
      *
      * @param string  $inq_uuid the inquiry uuid
      * @param boolean $is_strict true to run a strict responses search
+     * @param unknown $is_active
      */
-    protected function search_with_query($inq_uuid, $is_strict) {
+    protected function search_with_query($inq_uuid, $is_strict, $is_active) {
         $rs = $this->api->fetch("inquiry/$inq_uuid");
         if ($rs['code'] < Rframe::OKAY) {
             $status = AIR2_APIController::$API_TO_STATUS[$rs['code']];
@@ -179,7 +221,7 @@ class Reader_Controller extends AIR2_Controller {
 
         // search, adding the inquiry to the inline data
         $inline = array('INQUIRY' => $rs);
-        $this->do_search($params, $inline, $is_strict);
+        $this->do_search($params, $inline, $is_strict, $is_active);
     }
 
 
@@ -188,10 +230,23 @@ class Reader_Controller extends AIR2_Controller {
      * inline-html data that the view can understand.
      *
      * @param array $params the search parameters
-     * @param array $inline extra inline data to include
+     * @param array   $inline    (optional) extra inline data to include
+     * @param unknown $is_strict (optional)
+     * @param unknown $is_active (optional)
      */
-    protected function do_search($params, $inline=array(), $is_strict=false) {
-        $params['i'] = $is_strict ? 'strict-responses' : 'responses'; //force
+    protected function do_search($params, $inline=array(), $is_strict=false, $is_active=false) {
+        if ($is_strict && $is_active) {
+            $params['i'] = 'strict-active-responses';
+        }
+        elseif ($is_strict) {
+            $params['i'] = 'strict-responses';
+        }
+        elseif ($is_active) {
+            $params['i'] = 'active-responses';
+        }
+        else {
+            $params['i'] = 'responses';
+        }
 
         // combine with default args and run the search query
         $params = array_merge($this->default_args, $params);

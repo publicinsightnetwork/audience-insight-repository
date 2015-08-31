@@ -152,7 +152,7 @@ $inquiry_titles_json = $c->uri_for('js/cache/inquiry-titles.js');
                    return submissions_tip;
                },
                mailTo: function(src) {
-                   Logger(src);
+                   //Logger(src);
                    return AIR2.Format.mailTo(src.primary_email, src);
                }
            }

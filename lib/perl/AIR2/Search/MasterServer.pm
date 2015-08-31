@@ -90,7 +90,11 @@ sub app {
         'responses'              => 'FuzzyResponses',
         'fuzzy-responses'        => 'FuzzyResponses',
         'strict-responses'       => 'Responses',
+        'active-responses'        => 'FuzzyActiveResponses',
+        'strict-active-responses' => 'ActiveResponses',
+        'fuzzy-active-responses'  => 'FuzzyActiveResponses',
         'public-responses'       => 'PublicResponses',
+        'outcomes'                => 'Outcomes',
     );
 
     my $url_map = Plack::App::URLMap->new();

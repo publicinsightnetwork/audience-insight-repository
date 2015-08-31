@@ -7,7 +7,6 @@ AIR2.Inquiry.SummaryPanel = function () {
         fullDescriptionPanel,
         fullDescriptionTemplate,
         inqRadix,
-        isFormbuilder,
         shortDescriptionHeader,
         shortDescriptionPanel,
         shortDescriptionTemplate,
@@ -37,7 +36,6 @@ AIR2.Inquiry.SummaryPanel = function () {
     };
 
     inqRadix = AIR2.Inquiry.BASE.radix;
-    isFormbuilder = (inqRadix.inq_type === 'F');
 
     titleTemplate = new Ext.XTemplate(
         '<tpl for=".">' +

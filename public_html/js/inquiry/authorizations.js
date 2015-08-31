@@ -5,25 +5,38 @@ AIR2.Inquiry.Authorizations = function () {
     var dv,
         panel,
         spinner,
-        template;
+        template,
+        tips;
+
+    // support article
+    tips = {};
+    Ext.iterate(['projects','orgs','authors','watchers'], function(k) {
+        tips[k] = {};
+        tips[k].tip = AIR2.Util.Tipper.create(k);
+        tips[k].tipLight = AIR2.Util.Tipper.create({
+            id: k,
+            cls: 'lighter',
+            align: 15
+        }); 
+    });
 
     template = new Ext.XTemplate(
         '<tpl for=".">' +
             '<table class="air2-tbl">' +
                 '<tr>' +
-                    '<td class="label right">Projects:</td>' +
+                    '<td class="label right">Projects  ' + tips['projects'].tip + '</td>' +
                     '<td class="left">{.:this.formatProjects}</td>' +
                 '</tr>' +
                 '<tr>' +
-                    '<td class="label right">Organizations:</td>' +
+                    '<td class="label right">Organizations  ' + tips['orgs'].tip + '</td>' +
                     '<td class="left">{.:this.formatOrganizations}</td>' +
                 '</tr>' +
                 '<tr>' +
-                    '<td class="label right">Authors:</td>' +
+                    '<td class="label right">Authors  ' + tips['authors'].tip + '</td>' +
                     '<td class="left">{.:this.formatAuthors}</td>' +
                 '</tr>' +
                 '<tr>' +
-                    '<td class="label right">Watchers:</td>' +
+                    '<td class="label right">Watchers  ' + tips['watchers'].tip + '</td>' +
                     '<td class="left">{.:this.formatWatchers}</td>' +
                 '</tr>' +
                 '<tr>' +

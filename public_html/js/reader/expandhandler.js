@@ -19,7 +19,9 @@ AIR2.Reader.expandHandler = function (dv) {
                         '<a href="{inq_uuid:this.queryLink(values)}" target="_blank" class="view-query">Insights Page <i class="icon-external-link"></i></a>' +
                         '<a href="{srs_uuid:this.printLink}" target="_blank" class="print-submission"><i class="icon-print"></i> Print Submission</a>' +
                         '<a href="{srs_uuid:this.permaLink}" class="submission-permalink"><i class="icon-link"></i> Submission Permalink</a>' +
+                        '<tpl if="this.hasGoodEmail(values.primary_email)">' +
                         '<a href="#" class="submission-reply"><i class="icon-envelope"></i> Reply</a>' +
+                        '</tpl>' +
                     '</div>' +
                     '<h4 class="sub-inq">{.:air.inquiryTitle(1)}</h4>' +
                     '<div style="clear: left;">' +
@@ -132,6 +134,12 @@ AIR2.Reader.expandHandler = function (dv) {
                     }
                 });
                 return nContrib;
+            },
+            hasGoodEmail: function(email) {
+                if (email.match(/:G$/)) {
+                    return true;
+                }
+                return false;
             },
             publishState: function (publish_state) {
                 switch (publish_state) {
@@ -466,7 +474,7 @@ AIR2.Reader.expandHandler = function (dv) {
                 }
                 if (v.primary_phone) {
                     s += '<li style="list-style:none;">';
-                    s += v.primary_phone;
+                    s += AIR2.Format.formatPhone(v.primary_phone);
                     s += '</li>';
                 }
                 if (
@@ -647,7 +655,7 @@ AIR2.Reader.expandHandler = function (dv) {
                  || r.ques_type.toLowerCase() == 'y'
                 ) {
                     r.is_contrib = true;
-                    if (r.ques_value && r.ques_value.match(/e-?mail/i) && r.sr_orig_value != rec.data.primary_email) {
+                    if (r.ques_value && r.ques_value.match(/e-?mail/i) && r.sr_orig_value != rec.data.primary_email.replace(/:[A-Z]$/, '')) {
                         r.is_contrib_diff = true;
                     }
                     if (r.ques_value && r.ques_value.match(/first name/i) && r.sr_orig_value != rec.data.src_first_name) {
@@ -656,7 +664,7 @@ AIR2.Reader.expandHandler = function (dv) {
                     if (r.ques_value && r.ques_value.match(/last name/i) && r.sr_orig_value != rec.data.src_last_name) {
                         r.is_contrib_diff = true;
                     }
-                    if (r.ques_value && r.ques_value.match(/phone/i) && r.sr_orig_value != rec.data.primary_phone) {
+                    if (r.ques_value && r.ques_value.match(/phone/i) && r.sr_orig_value.replace(/\D/g,'') != rec.data.primary_phone.replace(/\D/g, '')) {
                         r.is_contrib_diff = true;
                     }
                     if (r.ques_value && r.ques_value.match(/state/i) && r.sr_orig_value != rec.data.primary_state) {

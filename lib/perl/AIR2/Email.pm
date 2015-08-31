@@ -28,6 +28,7 @@ use Email::Valid;
 use Template;
 use AIR2::SrcEmail;
 use AIR2::SrcActivity;
+use AIR2::HTML;
 
 __PACKAGE__->meta->setup(
     table => 'email',
@@ -172,7 +173,7 @@ sub compile_html_body {
                        $self->organization->org_logo_uri
                     || $self->organization->get_logo_uri()
             ),
-            location => $self->organization->get_location(),
+            location => $self->organization->get_location(1),
             };
     }
 
@@ -182,7 +183,7 @@ sub compile_html_body {
             title => $self->email_subject_line || '',
             logo_uri  => $self->get_logo_uri(),
             headline  => $self->email_headline || '',
-            body      => $self->email_body || '',
+            body      => $self->mangle_email_body( $self->email_body || '' ),
             signature => $self->get_signature(),
         },
         newsrooms => \@newsrooms,
@@ -207,6 +208,13 @@ sub compile_html_body {
     return $html;
 }
 
+sub mangle_email_body {
+    my $self = shift;
+    my $body = shift;
+    return $body;  # skip html clean for now
+    return AIR2::HTML->clean($body);
+}
+
 # send a preview email
 sub send_preview {
     my $self = shift;
@@ -226,6 +234,9 @@ sub send_preview {
         die "'$addr' is not a real email address";
     }
 
+    # optional subject prefix
+    my $subject_prefix = shift || '';
+
     # crunch the "from" address
     my $from = sprintf( "%s <%s>", $self->email_from_name,
         $self->email_from_email );
@@ -244,7 +255,7 @@ sub send_preview {
 
     # send it
     Email::Stuff->to($addr)->from($from)
-        ->subject( $self->email_subject_line )
+        ->subject( $subject_prefix . $self->email_subject_line )
         ->html_body( $self->compile_html_body )->using($smtp)->send;
     return 1;
 }

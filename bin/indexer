@@ -90,6 +90,13 @@ indexer - crawl and index XML files
    
 =cut
 
+# make sure our version of swish3 is new enough
+# since options change in version 3.1
+my $swish3_version = `$swish3 -V`;
+if ( $swish3_version =~ m/ 3\.0\./ ) {
+    die "swish3 version 3.1.0 or later required\n";
+}
+
 my $now       = DateTime->now->set_time_zone( AIR2::Config->get_tz() );
 my $timestamp = $now->ymd('') . '-' . $now->hms('');
 
@@ -146,7 +153,7 @@ if ( !$expected ) {
 
 # run the command
 my $cmd
-    = "$swish3 -F lucy -f $build_index -i $xml_dir -c $config --lucy_highlightable";
+    = "$swish3 -F lucy -f $build_index -i $xml_dir -c $config -I highlightable_fields=1";
 $cmd .= qq/ -E $expected /   if is_interactive();
 $cmd .= qq/ -N "$mod_since"/ if $mod_since;
 $cmd .= " -v " unless $quiet;

@@ -154,6 +154,10 @@ class Organization extends AIR2_Record {
         $this->hasColumn('org_max_users', 'integer', 4, array(
                 'default' => 0, //no more users may be added
             ));
+        $this->hasColumn('org_suppress_welcome_email_flag', 'boolean', null, array(
+                'notnull' => true,
+                'default' => false,
+            ));
 
         // stamps
         $this->hasColumn('org_cre_user', 'integer',   4,    array(

@@ -194,8 +194,14 @@ sub get_template_vars {
 
         # redmine 8249 apmpin disguises global org
         if ( $org->org_id == AIR2::Config::get_global_pin_org_id() ) {
+            if ( @orgs == 1 ) {
             $org = AIR2::Organization->new(
                 org_id => AIR2::Config::get_apmpin_org_id() )->load;
+        }
+            else {
+                # ignore global pin completely if more than one org. #10548
+                next;
+            }
         }
 
         push @newsrooms,
@@ -203,7 +209,7 @@ sub get_template_vars {
             name       => $org->org_display_name,
             uri        => ( $org->org_site_uri || $org->get_uri() ),
             logo_uri   => ( $org->org_logo_uri || $org->get_logo_uri() ),
-            location   => $org->get_location(),
+            location   => $org->get_location(1),
             short_name => $org->org_name,
             };
 
@@ -228,6 +234,12 @@ sub get_template_vars {
     my $from;
     for my $author ( @{ $query->authors } ) {
         next unless $author->user->is_active;
+        if ( !$author->user->get_primary_email ) {
+            warn "User "
+                . $author->user->get_name_first_last
+                . " has no primary email defined";
+            next;
+        }
         $from = {
             name  => $author->user->get_name_first_last,
             email => $author->user->get_primary_email->uem_address
@@ -236,18 +248,38 @@ sub get_template_vars {
     if ( !$from ) {
 
         if ( $query->cre_user->is_active ) {
+            my $from_email = 'support@publicinsightnetwork.org';
+            if ( $query->cre_user->get_primary_email ) {
+                $from_email
+                    = $query->cre_user->get_primary_email->uem_address;
+            }
+            else {
+                warn "User "
+                    . $query->cre_user->get_name_first_last
+                    . " has no primary email defined";
+            }
+
             $from = {
                 name  => $query->cre_user->get_name_first_last,
-                email => $query->cre_user->get_primary_email->uem_address
+                email => $from_email,
             };
         }
         else {
+
+            # grab the first one. very random.
             my $org = $orgs[0];
 
             # redmine 8249 apmpin disguises global org
             if ( $org->org_id == AIR2::Config::get_global_pin_org_id() ) {
+
+                # if we have multiple orgs, grab the next one instead.
+                if ( @orgs > 1 ) {
+                    $org = $orgs[1];
+                }
+                else {
                 $org = AIR2::Organization->new(
                     org_id => AIR2::Config::get_apmpin_org_id() )->load;
+            }
             }
 
             $from = {

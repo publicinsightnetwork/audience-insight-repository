@@ -4,7 +4,7 @@
 AIR2.Organization.SysIds = function () {
     var allTypes, editTemplate, getRemainingTypes, p, template;
 
-    allTypes = [['E', 'Lyris'], ['M', 'Mailchimp']];
+    allTypes = [['M', 'Mailchimp']];
     getRemainingTypes = function (store) {
         var all = [];
         Ext.each(allTypes, function (item) {

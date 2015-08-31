@@ -140,24 +140,18 @@ elsif ( $fmt eq 'email' ) {
         $name = $bin->bin_name;
     }
 
-    # generate the csv string
-    my $str = '';
-    my $csv = Text::CSV_XS->new( { binary => 1, eol => $/ } )
-        or die "Cannot use CSV: " . Text::CSV_XS->error_diag();
-    open my $fh, '>', \$str;
-    $csv->print( $fh, $_ ) for @{$obj};
-
-    # friendly filename
-    my $friendly = $name;
-    $friendly =~ s/[^\w]+/\_/g;
+    my $url = AIR2::Utils::write_secure_csv_report( rows => $obj );
 
     # fire!
     send_email(
         to      => $eml,
         from    => 'support@publicinsightnetwork.org',
         subject => "AIR CSV export results - $name",
-        text => ( $src_id ? "Exported source $name" : "Exported bin $name" ),
-        attach => [ $str, filename => "$friendly.csv" ]
+        text    => (
+            $src_id
+            ? "Exported source $name\n$url"
+            : "Exported bin $name\n$url"
+        ),
     );
 
 }

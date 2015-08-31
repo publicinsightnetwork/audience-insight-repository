@@ -10,7 +10,7 @@
 set -x
 
 PERL=/opt/pin/local/bin/perl
-SHARED=/opt/pin/shared
+SHARED=/opt/pin/shared/prod
 
 if [ -z "$AIR2_ROOT" ]; then
     echo "AIR2_ROOT not set";
@@ -19,7 +19,7 @@ fi
 
 MYENV=`cat $AIR2_ROOT/etc/my_profile`
 
-if [ $MYENV == "visi_prod" ]; then
+if [ $MYENV == "prod" ]; then
     IS_PRODUCTION=1
 fi
 
@@ -32,11 +32,8 @@ $PERL $AIR2_ROOT/bin/set-src-stat
 $PERL $AIR2_ROOT/bin/check-user-orgs.pl
 #$PERL $AIR2_ROOT/bin/clean-up-empty-srs --debug
 
-# remove temp csv export files after 90 days.
-$PERL $AIR2_ROOT/bin/clean-up-lyris-export-csv 90
-
-# remake budghero.ini
-$PERL $AIR2_ROOT/bin/mk-budgethero-ini > $AIR2_ROOT/etc/budgethero.ini
+# zap old reports
+find $AIR2_ROOT/assets/downloads -type f -mtime +5 -exec rm {} \;
 
 # send dezi-stats-report
 if [ $IS_PRODUCTION ]; then

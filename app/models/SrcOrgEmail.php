@@ -23,7 +23,7 @@
 /**
  * SrcOrgEmail
  *
- * Cache mailing list status for quick lookup on export.
+ * Cache Lyris mailing list status for quick lookup on export.
  *
  * @package default
  */
@@ -33,6 +33,7 @@ class SrcOrgEmail extends AIR2_Record {
     public static $STATUS_BOUNCED      = 'B';
     public static $STATUS_UNSUBSCRIBED = 'U';
     public static $STATUS_ERROR        = 'E';
+    public static $TYPE_LYRIS          = 'L';
     public static $TYPE_MAILCHIMP      = 'M';
 
 
@@ -66,7 +67,7 @@ class SrcOrgEmail extends AIR2_Record {
         $this->hasColumn('soe_type', 'string', 1, array(
                 'fixed' => true,
                 'notnull' => true,
-                'default' => self::$TYPE_MAILCHIMP,
+                'default' => self::$TYPE_LYRIS,
             ));
 
         parent::setTableDefinition();

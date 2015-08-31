@@ -197,7 +197,7 @@ class Email extends AIR2_Record {
 
         // need edit authz
         $tests[] = array('No authz to edit email', $this->user_may_write($user));
-        $tests[] = array('No authz to send email', $this->email_cre_user == $user->user_id);
+        $tests[] = array('No authz to send email', $this->user_may_write($user));
 
         // required fields
         $tests[] = array('Missing from name', $this->email_from_name);

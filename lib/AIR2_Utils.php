@@ -158,17 +158,8 @@ function air2_valid_email($email) {
  */
 function air2_valid_url($url) {
     // the internets are full of conflicting advice on how best to do this,
-    // but the concensus seems to be that the built-in PHP functions (filter_var, parse_url)
-    // are *not* safe.
-    // this taken from http://www.devshed.com/c/a/PHP/PHP-URL-Validation-Functions/
-    $regex = "((https?|ftp)://)?";
-    $regex .= "([a-z0-9+!*(),;?&=$_.-]+(:[a-z0-9+!*(),;?&=$_.-]+)?@)?";
-    $regex .= "([a-z0-9-.]*).([a-z]{2,3})";
-    $regex .= "(:[0-9]{2,5})?";
-    $regex .= "(/([a-z0-9+$_-].?)+)*/?";
-    $regex .= "(?[a-z+&$_.-][a-z0-9;:@&%=+/$_.-]*)?";
-    $regex .= "(#[a-z_.-][a-z0-9+$_.-]*)?";
-    if (preg_match("/^$regex$/", $url)) {
+    // and regexs prove brittle. We use parse_url for Good Enough Parsing.
+    if (parse_url($url)) {
         return true;
     }
     return false;
@@ -1063,6 +1054,10 @@ function air2_valid_phone_number($phone) {
  * @return boolean
  */
 function air2_valid_postal_code($code) {
+    if (strlen($code) > 10) {
+        // our db schema accepts varchar(10) so duck out early
+        return false;
+    }
     // US style
     if (preg_match('/^\d\d\d\d\d(-\d\d\d\d)?$/', $code)) {
         return true;

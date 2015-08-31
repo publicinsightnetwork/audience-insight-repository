@@ -9,36 +9,43 @@ if [ -z "$AIR2_ROOT" ]; then
     exit 2;
 fi
 
-# Annie Anderson gets monthly fact report
+# monthly fact report
 $PERL $AIR2_ROOT/bin/mail-output \
-    --to 'aanderson@mpr.org, jeaston@mpr.org, pijdev@mpr.org' \
+    --to 'pij@mpr.org, pijdev@mpr.org' \
     --subject 'PIN Facts' \
     --attachment pin-facts-$TODAY.txt -- \
     $PERL $AIR2_ROOT/bin/fact-stats --end $TODAY
 
-# Annie Anderson gets monthly unmapped translations
+# monthly unmapped translations
 $PERL $AIR2_ROOT/bin/mail-output \
-    --to 'aanderson@mpr.org, pijdev@mpr.org' \
+    --to 'pij@mpr.org, pijdev@mpr.org' \
     --subject 'PIN Unmapped Values' \
     --attachment pin-unmapped-values-$TODAY.csv -- \
     $PERL $AIR2_ROOT/bin/unmapped-fact.pl --end $TODAY
 
-# Annie Anderson gets monthly "how sources join" report
+# monthly "how sources join" report
 $PERL $AIR2_ROOT/bin/first-activities \
     --start=$FROM \
     --end=$TODAY \
     --format=email \
-    --mailto 'aanderson@mpr.org, pijdev@mpr.org'
+    --mailto 'pij@mpr.org, pijdev@mpr.org'
 
-# Annie Anderson gets monthly "query totals" report
+# monthly "query totals" report
 $PERL $AIR2_ROOT/bin/mail-output \
-    --to 'aanderson@mpr.org, pijdev@mpr.org' \
+    --to 'pij@mpr.org, pijdev@mpr.org' \
     --subject 'PIN Query Totals' \
     --attachment pin-query-totals-$TODAY.txt -- \
     $PERL $AIR2_ROOT/bin/queries-emails-sent --start $FROM --end $TODAY
 
+# monthly email export
 $PERL $AIR2_ROOT/bin/mail-output \
-    --to 'aanderson@mpr.org, pijdev@mpr.org' \
+    --to 'pij@mpr.org' \
+    --subject 'PIN Email Report' \
+    --attachment pin-email-report-$TODAY.csv -- \
+    $PERL $AIR2_ROOT/bin/email-report --start $FROM --end $TODAY
+
+$PERL $AIR2_ROOT/bin/mail-output \
+    --to 'pij@mpr.org, pijdev@mpr.org' \
     --subject 'PIN Newsroom Totals' \
     --attachment pin-newsroom-totals-$TODAY.txt -- \
     $PERL $AIR2_ROOT/bin/newsroom-report

@@ -58,18 +58,26 @@
                         [% IF email.logo_uri %]
                         <table style="[% css_logo %]">
                             <tr>
-                                <td style="width: 100%;">
-                                    <img src="[% email.logo_uri %]" style="border-radius: 2px;" />
+                                <td>
+                                    <img src="[% email.logo_uri %]" style="max-height: 100px; border-radius: 2px;" />
                                 </td>
+                                <!-- HEADLINE -->
+                                [% IF email.headline %]
+                                <td>
+                                    <h3 style="font-weight:500; font-size: 27px; margin-bottom: 20px;">[% email.headline %]</h3>
+                                </td>
+                                [% END %]
                             </tr>
                         </table>
                         [% END %]
                         <!-- /LOGO -->
 
                         <!-- HEADLINE -->
+                        <!--
                         [% IF email.headline %]
                         <h3 style="font-weight:500; font-size: 27px; margin-bottom: 20px;">[% email.headline %]</h3>
                         [% END %]
+                         -->
                         <!-- /HEADLINE -->
 
                         <!-- BODY -->

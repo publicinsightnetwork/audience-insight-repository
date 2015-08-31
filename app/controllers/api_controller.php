@@ -25,6 +25,8 @@
  *
  * @package default
  */
+
+
 class API_Controller extends Base_Controller {
 
     /**
@@ -70,7 +72,13 @@ class API_Controller extends Base_Controller {
             $this->load->library('email');
 
             // allow for configure via etc/profiles.ini
-            $this->email->initialize(array('smtp_host' => AIR2_SMTP_HOST));
+            $this->email->initialize(array(
+                    'smtp_host' => AIR2_SMTP_HOST,
+                    'smtp_user' => AIR2_SMTP_USERNAME,
+                    'smtp_pass' => AIR2_SMTP_PASSWORD,
+                    'smtp_port' => AIR2_SMTP_PORT
+                )
+            );
 
             // send to support@
             $this->email->from($email, $name);

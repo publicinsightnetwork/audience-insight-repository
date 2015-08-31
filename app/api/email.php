@@ -276,9 +276,9 @@ class AAPI_Email extends AIRAPI_Resource {
         $eml->Organization = $org;
 
         // default logo (pull from the org)
-        if ($org->Banner->exists() || $org->Logo->exists()) {
+        if ($org->Logo->exists()) {
             try {
-                $cpy = $org->Banner->exists() ? $org->Banner->get_image() : $org->Logo->get_image();
+                $cpy = $org->Logo->get_image();
                 $eml->Logo = new ImageEmailLogo();
                 $eml->Logo->set_image($cpy['original']);
             }

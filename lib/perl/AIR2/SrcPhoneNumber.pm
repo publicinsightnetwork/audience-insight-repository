@@ -92,5 +92,18 @@ sub save {
     return $ret;
 }
 
+sub format_number {
+    my $self = shift;
+    my $num  = shift;
+    return '' unless defined $num;
+    if ( $num =~ m/^(\d\d\d)(\d\d\d)(\d\d\d\d)$/ ) {
+        return sprintf( '(%s) %s-%s', $1, $2, $3 );
+    }
+    if ( $num =~ m/^(\d\d)(\d\d)(\d)(\d\d\d\d)(\d\d\d\d\d\d)$/ ) {
+        return sprintf( '%s %s (%s) %s %s', $1, $2, $3, $4, $5 );
+    }
+    return $num;
+}
+
 1;
 

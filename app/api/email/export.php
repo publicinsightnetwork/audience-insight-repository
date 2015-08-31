@@ -139,7 +139,7 @@ class AAPI_Email_Export extends AIRAPI_Resource {
     private function send_preview($addr) {
         try {
             $email_id = $this->parent_rec->email_id;
-            CallPerl::exec('AIR2::Email->send_preview', $email_id, $addr);
+            CallPerl::exec('AIR2::Email->send_preview', $email_id, $addr, '[PROOF] ');
         }
         catch (PerlException $e) {
             throw new Rframe_Exception(Rframe::BAD_DATA, $e->getMessage());
@@ -168,14 +168,19 @@ class AAPI_Email_Export extends AIRAPI_Resource {
         if (!$bin) {
             throw new Rframe_Exception(Rframe::BAD_DATA, 'Invalid bin_uuid');
         }
-        if (!$bin->user_may_write($this->user)) {
-            throw new Rframe_Exception(Rframe::BAD_DATA, 'No write authz for bin');
+        if (!$bin->user_may_read($this->user)) {
+            throw new Rframe_Exception(Rframe::BAD_DATA, 'No read authz for bin');
         }
 
         // timestamp
         $time = null;
         if (array_key_exists('schedule', $data) && $data['schedule']) {
             $time = $data['schedule'];
+            // make sure we save it in server timezone
+            $tz = new DateTimeZone(AIR2_SERVER_TIME_ZONE);
+            $dt = new DateTime($time);
+            $dt->setTimezone($tz);
+            $time = $dt->format(AIR2_DTIM_FORMAT);
         }
 
         // extra params (and defaults)

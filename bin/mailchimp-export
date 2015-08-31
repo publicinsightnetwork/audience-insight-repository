@@ -116,9 +116,7 @@ eval {
         dry_run   => $dry_run,
         no_export => $no_export,
         strict    => $strict,
-        reader =>
-            $bin->get_exportable_emails( $email->organization ),
-            #$bin->get_exportable_mailchimp_emails( $email->organization ),
+        reader       => $bin->get_exportable_emails( $email->organization ),
         export_email => $email,
         export_bin   => $bin,
         user         => $user,
@@ -140,7 +138,13 @@ if ($dry_run) {
 }
 else {
     $email->email_status('A');
-    $email->email_report( $exporter->report ) if $exporter;
+    if ($exporter) {
+        my $report = $exporter->report;
+        if ( length $report > 65535 ) {
+            $report = substr( $report, 0, 65534 );
+        }
+        $email->email_report($report);
+    }
     $email->save();
 }
 
@@ -163,6 +167,16 @@ else {
     # re-croak so the job fails
     if ($error_msg) {
         warn $exporter->report if $exporter;
+
+    # if the error was a failure to verify the sender's domain,
+    # send email to pij@ since it requires support not technical intervention.
+        if ( $error_msg =~ m/(\S+ must be verified to send from it)/ ) {
+            my $pij_err = $1;
+            Email::Stuff->to('support@publicinsightnetwork.org')->cc('pijdev@mpr.org')
+                ->from('pijdev@mpr.org')
+                ->subject("Mailchimp requires domain be verified")
+                ->text_body("Mailchimp job failed with error: $pij_err")->send;
+        }
         croak $error_msg;
     }
 }

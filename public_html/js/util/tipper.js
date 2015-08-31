@@ -5,6 +5,19 @@ AIR2.Util.Tipper.tpl = false;
 
 // some presets (loaded with the id-key)
 AIR2.Util.Tipper.presets = {
+    projects: {
+        text: 'Projects control which organization(s) can view submissions to this query.'
+    },
+    orgs: {
+        text: 'Organizations control which organization(s) sources are opted into ' +
+            'when they respond to the query.'
+    },
+    authors: {
+        text: 'Authors get byline credit (displayed on published query).'
+    },
+    watchers: {
+        text: 'Watchers get notified whenever someone responds to the query.'
+    },
     20825306: {
         text: 'Click here to discover what all the links on this page mean, ' +
             'and how to resize this page.',
@@ -56,6 +69,16 @@ AIR2.Util.Tipper.presets = {
             'authorization.',
         link: 'http://support.publicinsightnetwork.org/entries/21998162',
         linkText: 'Click here'
+    },
+    20164251: {
+        text: 'Available sources include those with active status who have opted into your newsroom or the Global PIN',
+        link: 'http://support.publicinsightnetwork.org/entries/20164251',
+        linkText: 'Available sources'
+    },
+    92462006: {
+        text: 'AIR shows all times in Central time, so this email will be sent out at the time you pick in your timezone, but AIR will always display the time in Central time.',
+        link: 'http://support.publicinsightnetwork.org/entries/92462006-What-timezone-is-AIR-in',
+        linkText: 'US Central'
     }
 };
 
@@ -76,7 +99,7 @@ AIR2.Util.Tipper.presets = {
 AIR2.Util.Tipper.create = function (cfg) {
     var a, hide, re, show, tip;
 
-    if (Ext.isNumber(cfg)) {
+    if (Ext.isPrimitive(cfg)) {
         cfg = {id: cfg};
     }
     cfg = Ext.apply({}, cfg, {

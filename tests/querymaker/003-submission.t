@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use utf8;
 use Test::More tests => 42;
 use LWP::UserAgent;
 use FindBin;
@@ -15,6 +16,7 @@ use AIR2Test::Organization;
 use JSON;
 use Search::Tools::UTF8;
 use Data::Dump qw( dump );
+use Encode;
 
 my $path_to_file
     = AIR2::Config::get_app_root->file('tests/querymaker/test-upload.jpg');
@@ -168,7 +170,9 @@ my $submission_pen
 # send bad submission: non-existent question
 ok( $resp = $browser->post(
         $url . '?query=' . $inq_uuid_safe,
-        { 'nosuchquestion' => 'i am the walrus' },
+        {   $question->ques_uuid => 'foo@bar.com',
+            'nosuchquestion'     => 'i am the walrus'
+        },
         'X-Requested-With' => 'xmlhttprequest',      # mimic ajax
         'Accept'           => 'application/json',    # demand response format
     ),
@@ -211,7 +215,7 @@ my $ok_submission = [
     $question->ques_uuid()             => 'foo@nosuchemail.org',
     $text_question->ques_uuid() . '[]' => 'blue',
     $text_question->ques_uuid() . '[]' => 'no wait! red!',
-    $utf8_question->ques_uuid()        => 'mamá',
+    $utf8_question->ques_uuid()        => encode_utf8("mamá \x{1F609}"),
     $file_question->ques_uuid()        => ["$path_to_file"],
 ];
 ok( $resp = $browser->post(
@@ -242,7 +246,7 @@ is_deeply(
     $json,
     {   $text_question->ques_uuid() => [ 'blue', 'no wait! red!' ],
         $question->ques_uuid()      => 'foo@nosuchemail.org',
-        $utf8_question->ques_uuid() => to_utf8('mamá'),
+        $utf8_question->ques_uuid() => to_utf8("mamá \x{1F609}"),
         $file_question->ques_uuid() => {
             orig_name => 'test-upload.jpg',
 

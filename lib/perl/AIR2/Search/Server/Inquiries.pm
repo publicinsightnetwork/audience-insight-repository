@@ -10,7 +10,7 @@ sub new {
     my $class  = shift;
     my %config = @_;
 
-    # single index for projects with stemming on
+    # single index for inquiries with stemming on
     my $snowball = Lingua::Stem::Snowball->new(
         lang     => 'en',
         encoding => 'UTF-8',
@@ -82,7 +82,7 @@ sub new {
         },
         facets        => { names => \@facet_names, },
         fields        => $class->air_property_names,
-        do_not_hilite => \@no_hilite,
+        do_not_hilite => { map { $_ => 1 } @no_hilite },
     };
 
     # merge with anything in config

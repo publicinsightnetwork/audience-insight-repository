@@ -9,6 +9,7 @@ AIR2.Reader.Inbox = function () {
         filterCount,
         filterWrap,
         hbox,
+        isActive,
         isStrict,
         makeTemplate,
         pnl,
@@ -357,10 +358,12 @@ AIR2.Reader.Inbox = function () {
             if (starfilter.pressed) {
                 if (qstr !== '') {
                     return '(' + qstr + ') AND (user_star=' +
-                        AIR2.USERINFO.uuid + ')';
+                        AIR2.USERINFO.uuid + ' OR tag:' +
+                        AIR2.PINSIGHTFUL_TAG + ')';
                 }
                 else {
-                    return '(user_star=' + AIR2.USERINFO.uuid + ')';
+                    return '(user_star=' + AIR2.USERINFO.uuid + ' OR tag:' + 
+                            AIR2.PINSIGHTFUL_TAG + ')';
                 }
             }
             return qstr;
@@ -489,7 +492,7 @@ AIR2.Reader.Inbox = function () {
     }
 
     // strict search
-    isStrict = window.location.href.match(/strict-(responses|query)/);
+    isStrict = window.location.href.match(/\/strict-/);
     pnlHtml = '<input type="checkbox" ';
 
     if (isStrict) {
@@ -501,25 +504,67 @@ AIR2.Reader.Inbox = function () {
     pnlHtml += '<label for="air2-reader-header-check" ';
     pnlHtml += 'onclick="AIR2.Reader.toggleStrict()"> Exact match</label>';
 
+    // active sources
+    isActive = window.location.href.match(/active-(responses|query)/);
+    pnlHtml += '&nbsp;|&nbsp;';
+    pnlHtml += '<input type="checkbox" ';
+
+    if (isActive) {
+        pnlHtml += 'checked';
+    }   
+
+    pnlHtml += ' onclick="AIR2.Reader.toggleActive()" ';
+    pnlHtml += 'id="air2-reader-active-check" />';
+    pnlHtml += '<label for="air2-reader-active-check" ';
+    pnlHtml += 'onclick="AIR2.Reader.toggleActive()"> Show only available sources</label>';
+    pnlHtml += ' ' + AIR2.Util.Tipper.create('20164251');
+
     pnlTools = [{
         xtype: 'box',
         cls: 'header-check',
         html: pnlHtml
     }];
 
-    // helper to redirect between urls
+    // helpers to redirect between urls
     AIR2.Reader.toggleStrict = function () {
         var curr = window.location.href;
         if (curr.match(/strict-(responses|query)/)) {
             window.location = curr.replace(/strict-(responses|query)/, '$1');
+        }
+        else if (curr.match(/strict-active-(responses|query)/)) {
+            window.location = curr.replace(/strict-active-(responses|query)/, 'active-$1');
+        }
+        else if (curr.match(/active-(responses|query)/)) {
+            window.location = curr.replace(/active-(responses|query)/, 'strict-active-$1');
         }
         else {
             window.location = curr.replace(/(responses|query)/, 'strict-$1');
         }
     };
 
+    AIR2.Reader.toggleActive = function() {
+        var curr = window.location.href;
+        if (!curr.match(/active-(responses|query)/)) {
+            window.location = curr.replace(/(responses|query)/, 'active-$1');
+        }
+        else {
+            window.location = curr.replace(/active-/, '');
+        }
+    };
+
     // must set for saved-searches to work
-    AIR2.Search.IDX = isStrict ? 'strict-responses' : 'responses';
+    if (isStrict && isActive) {
+        AIR2.Search.IDX = 'strict-active-responses';
+    }
+    else if (isStrict) {
+        AIR2.Search.IDX = 'strict-responses';
+    }
+    else if (isActive) {
+        AIR2.Search.IDX = 'active-responses';
+    }
+    else {
+        AIR2.Search.IDX = 'responses';
+    }
 
     // search tools for non-query-view
     if (!AIR2.Reader.INQUIRY) {

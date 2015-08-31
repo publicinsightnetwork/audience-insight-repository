@@ -26,6 +26,7 @@ use base qw( AIR2::SrcResponseSet );
 use Carp;
 use Data::Dump qw( dump );
 use Rose::DateTime::Parser;
+use Search::Tools::XML;
 
 # legacy hacks
 my %last_initial_only = ( b6f315470887 => 'librarius', );
@@ -193,7 +194,8 @@ sub as_xml {
             prj_name         => $pinq->project->prj_name,
             prj_display_name => $pinq->project->prj_display_name,
             prj_uuid_title   => join( ':',
-                $pinq->project->prj_uuid, $pinq->project->prj_display_name ),
+                $pinq->project->prj_uuid,
+                $pinq->project->prj_display_name ),
             };
         push @organizations,
             {
@@ -251,10 +253,12 @@ sub as_xml {
 
                 # virtual field for finding
                 # specific answers to specific questions
+                # preserve html in questions #9149
+                my $ques_value = Search::Tools::XML->escape($ques->ques_value);
                 push @public_responses,
-                    join( ':',
+                    join( '|',
                     $ques->ques_uuid,    $ques->ques_type,
-                    $ques->ques_dis_seq, $ques->ques_value,
+                    $ques->ques_dis_seq, $ques_value,
                     ( $value || '' ) );
                 push( @public_response_values, $value ) if $value;
                 push(

@@ -45,6 +45,7 @@ class SrcInquiry extends AIR2_Record {
     public static $STATUS_PENDING  = 'P';
     public static $STATUS_DELETED  = 'X';
     public static $STATUS_AIR1     = 'A';
+    public static $STATUS_LYRIS    = 'L';
 
     /**
      * Set the table columns

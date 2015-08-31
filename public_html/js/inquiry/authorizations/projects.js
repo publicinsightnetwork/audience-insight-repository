@@ -70,7 +70,7 @@ AIR2.Inquiry.Authorizations.Projects = function () {
                     searchUrl: AIR2.HOMEURL + '/project',
                     pageSize: 10,
                     baseParams: {
-                        manage: 1,
+                        write: 1,
                         excl_org: AIR2.Organization.UUID
                     },
                     valueField: 'prj_uuid',

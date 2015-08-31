@@ -4,7 +4,6 @@ use warnings;
 use JavaScript::Minifier qw(minify);
 
 my $copyright = <<EOF;
-/**************************************************************************
  *
  *   Copyright 2013 American Public Media Group
  *
@@ -23,7 +22,6 @@ my $copyright = <<EOF;
  *   You should have received a copy of the GNU General Public License
  *   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
  *
- *************************************************************************/
 
 EOF
 

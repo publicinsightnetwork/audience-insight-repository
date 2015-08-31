@@ -90,14 +90,7 @@
 
    </div>
    <div id="pin-legal-wrapper">
-   [% IF !inquiry.locale; 
-         locale = inquiry.locale; 
-      ELSE; 
-          locale = "en_US"; 
-      END; 
-      legal_file = 'legal-' _ locale _ '.html'; 
-      INCLUDE $legal_file;
-   %]
+   [% INCLUDE $legal_file %]
    </div>
   </div>
   </noscript>

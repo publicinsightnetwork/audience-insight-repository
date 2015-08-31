@@ -20,10 +20,9 @@
 ###########################################################################
 
 package AIR2::Locale;
-
 use strict;
-
 use base qw(AIR2::DB);
+use Carp;
 
 __PACKAGE__->meta->setup(
     table => 'locale',
@@ -36,7 +35,20 @@ __PACKAGE__->meta->setup(
     ],
 
     primary_key_columns => ['loc_id'],
+
+    unique_key => ['loc_key'],
 );
+
+my %locales;
+
+sub get_by_key {
+    my $self = shift;
+    my $key = shift or croak "loc_key required";
+    return $locales{$key} if $locales{$key};
+    my $locale = $self->new( loc_key => $key )->load;
+    $locales{$key} = $locale;
+    return $locale;
+}
 
 1;
 

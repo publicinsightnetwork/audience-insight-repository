@@ -89,7 +89,7 @@ AIR2.Email.Sender = function (cfg) {
         name: 'email_body',
         allowBlank: false,
         ctCls: 'email-body',
-        CKConfig: { height: 100 },
+        ckEditorConfig: { height: 100 },
         value: cfg.body
     },{
         xtype: 'air2searchbox',

@@ -34,6 +34,13 @@ my $date_parser
 
 my @EVERGREEN_QUERY_UUIDS = qw( a5e5f19b1c58 b6be40de1385 c729062daffb );
 
+use constant TYPE_FORMBUILDER  => 'F';
+use constant TYPE_QUERYBUILDER => 'Q';
+use constant TYPE_TEST         => 'T';
+use constant TYPE_NONJOURN     => 'N';
+use constant TYPE_MANUAL_ENTRY => 'E';
+use constant TYPE_COMMENT      => 'C';
+
 __PACKAGE__->meta->setup(
     table => 'inquiry',
 
@@ -57,7 +64,7 @@ __PACKAGE__->meta->setup(
         inq_desc         => { type => 'varchar', length => 255 },
         inq_type         => {
             type     => 'character',
-            default  => 'F',
+            default  => TYPE_FORMBUILDER,
             length   => 1,
             not_null => 1
         },
@@ -140,6 +147,19 @@ __PACKAGE__->meta->setup(
             column_map => { 'inq_id' => 'iu_inq_id' },
             query_args => [ iu_type => 'A' ],
             type       => 'one to many',
+        },
+
+        bin_responses => {
+            class      => 'AIR2::BinSrcResponseSet',
+            column_map => { inq_id => 'bsrs_inq_id' },
+            type       => 'one to many',
+        },
+
+        bins => {
+            map_class => 'AIR2::BinSrcResponseSet',
+            map_from  => 'inquiry',
+            map_to    => 'bin',
+            type      => 'many to many',
         },
 
         watchers => {
@@ -276,6 +296,7 @@ my @indexables = qw(
 );
 
 my @searchables = qw(
+    bin_responses
     tags
     questions
     src_inquiries
@@ -572,6 +593,11 @@ sub as_xml {
 
     $dmp->{title} = $inq->get_title();
 
+    # bins, just uuids
+    for my $bin ( @{ $inq->bins } ) {
+        push @{ $dmp->{bins} }, $bin->bin_uuid;
+    }
+
     my $xml = $indexer->to_xml( $dmp, $inq, 1 );    # last 1 to strip plurals
 
     # hack in the authz string
@@ -610,7 +636,7 @@ sub make_manual_entry {
         inq_title     => 'manual_entry',
         inq_ext_title => 'Submission Manual Entry',
         inq_desc      => 'Query object to hold manual User input',
-        inq_type  => 'E',    #manual entry
+        inq_type      => TYPE_MANUAL_ENTRY,
         questions => [
             {   ques_type    => 'O',            #dropdown
                 ques_value   => 'Entry type',
@@ -663,7 +689,10 @@ sub is_published {
         and ( !$self->inq_deadline_dtim
             or $self->inq_deadline_dtim->epoch >= $now )
         and ( $status eq 'A' or $status eq 'L' or $status eq 'E' )
-        and ( $type eq 'F'   or $type eq 'Q'   or $type eq 'T' )
+        and (  $type eq TYPE_FORMBUILDER
+            or $type eq TYPE_QUERYBUILDER
+            or $type eq TYPE_TEST
+            or $type eq TYPE_NONJOURN )
         )
     {
         return 1;
@@ -750,7 +779,7 @@ sub questions_in_display_order {
 
     # initial sort to make sure we have no dis_seq collisions
     my @questions = sort { $a->ques_dis_seq <=> $b->ques_dis_seq }
-        @{ $self->questions };
+        grep { $_->ques_status eq 'A' } @{ $self->questions };
     my $dis_seq = 0;
     for my $q (@questions) {
         if (   lc( $q->ques_type ) eq 'z'

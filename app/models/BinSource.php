@@ -29,6 +29,7 @@
  * @property integer $bsrc_src_id
  * @property string  $bsrc_notes
  * @property string  $bsrc_meta
+ * @property string  $bsrc_cre_dtim
  *
  * @property Bin                 $Bin
  * @property Source              $Source
@@ -36,6 +37,8 @@
  * @author  rcavis
  * @package default
  */
+
+
 class BinSource extends AIR2_Record {
 
     /**
@@ -53,6 +56,7 @@ class BinSource extends AIR2_Record {
             ));
         $this->hasColumn('bsrc_meta', 'string', 255, array(
             ));
+        $this->hasColumn('bsrc_cre_dtim', 'timestamp', null, array());
         parent::setTableDefinition();
     }
 
@@ -156,9 +160,10 @@ class BinSource extends AIR2_Record {
         if ($u->is_system()) return;
         $a = ($alias) ? "$alias." : "";
         $uid = $u->user_id;
+        $user_org_ids = $u->get_authz_str(ACTION_BATCH_READ, 'uo_org_id', true);
 
         // readable bins
-        $read_bin_ids = "select bin_id from bin where bin_shared_flag=1 or bin_user_id=$uid";
+        $read_bin_ids = "select bin_id from bin where bin_shared_flag=1 or bin_user_id=$uid or bin_user_id in (select uo_user_id from user_org where $user_org_ids)";
         $bin_read = "{$a}bsrc_bin_id in ($read_bin_ids)";
 
         // readable sources

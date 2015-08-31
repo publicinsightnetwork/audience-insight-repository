@@ -151,6 +151,8 @@ AIR2.Organization.Create = function (cfg) {
                 name: 'org_max_users',
                 width: 100,
                 value: 0,
+                forceSelection: false,
+                editable: true,
                 choices: AIR2.Organization.ORGMAXLIST
             }],
             bbar: [{

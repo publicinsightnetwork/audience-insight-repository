@@ -541,7 +541,7 @@ sub import_srs {
             }
 
             my $phone
-                = AIR2::Utils::parse_phone_number( $contributor{ctb_phone}
+                = AIR2::Utils::parse_phone_number( $contributor{phone}
                     || '' );
             my $zip = AIR2::Utils->str_clean( $contributor{zip} || '' );
             $zip =~ s/\ +//g;

@@ -40,8 +40,12 @@ use Statistics::Basic qw(:all);
 my $inqs = AIR2::Inquiry->fetch_all_iterator(
     query => [
         inq_status => [qw( A E L S )],
-        inq_type   => [qw( Q F )],
-    ]
+        inq_type   => [
+            AIR2::Inquiry::TYPE_FORMBUILDER,
+            AIR2::Inquiry::TYPE_QUERYBUILDER,
+            AIR2::Inquiry::TYPE_NONJOURN,
+        ],
+    ],
 );
 my @subm_per_query  = ();
 my @sent_per_query  = ();

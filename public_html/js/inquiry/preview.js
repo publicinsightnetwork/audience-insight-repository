@@ -6,7 +6,6 @@ AIR2.Inquiry.Preview = function () {
         editMode,
         editItems,
         inqRadix,
-        isFormbuilder,
         panelListeners,
         storeConf,
         tbar,

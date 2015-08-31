@@ -122,7 +122,17 @@ sub normalize_text {
 
         my $val = $self->$get_method;
         if ( defined $val and length $val and $val =~ /\S/ ) {
-            $self->$set_method( to_utf8($val) );
+            my $utf8 = to_utf8($val);
+
+     # currently mysql config allows for "utf8" of max 3 bytes-per-codepoint
+     # rather than the proper 4 bytes (utf8mb4)
+     # see redmine #13615
+     # we test for codepoints in the 4-byte range and convert to HTML entities
+     # just for portability.
+            if ( $utf8 =~ m/([\x{10000}-\x{10ffff}])/ ) {
+                $utf8 =~ s/([\x{10000}-\x{10ffff}])/'&#'.(ord($1)).';'/eg;
+            }
+            $self->$set_method($utf8);
         }
     }
     return $self;
@@ -378,7 +388,7 @@ RELNAME: for my $rel_name ( @{ $self->get_searchable_rels } ) {
             }
             else {
                 dump $rel->column_map;
-                croak $rel->type . " rel type not yet supported: $rel_name";
+                confess $rel->type . " rel type not yet supported: $rel_name";
             }
         COL: for my $col ( @{ $rel->class->meta->column_names } ) {
                 if ( $col =~ m/_upd_dtim/i ) {

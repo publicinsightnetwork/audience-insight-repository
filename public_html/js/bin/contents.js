@@ -4,6 +4,7 @@
 AIR2.Bin.Contents = function () {
 
     var actionbtn,
+        asSearchBtn,
         ctrls,
         dv,
         filterbox,
@@ -375,6 +376,19 @@ AIR2.Bin.Contents = function () {
     });
     ctrls.insert(0, filterbox);
 
+    asSearchBtn = new AIR2.UI.Button({
+        text: 'Search/Map',
+        air2type: 'BLUE',
+        air2size: 'small',
+        handler: function() {
+            // redirect to search page
+            // use 'all sources' search since we can't predict
+            // what status of bin contents is.
+            var newUrl = AIR2.HOMEURL + '/search/sources?q=bin:'+AIR2.Bin.UUID;
+            window.location = newUrl;
+        }
+    });
+
     // actions
     actionbtn = new AIR2.UI.Button({
         text: 'Actions',
@@ -449,7 +463,7 @@ AIR2.Bin.Contents = function () {
         iconCls: 'air2-icon-sources',
         showTotal: true,
         showHidden: true,
-        //tools: ['->', filterbox, '   ', actionbtn],
+        tools: ['->', asSearchBtn],
         items: [ctrls, dv],
         fbar: pager,
         listeners: {

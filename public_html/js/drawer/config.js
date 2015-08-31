@@ -10,7 +10,7 @@ AIR2.Drawer.Config.SORTFIELDS = {
         {text: 'Last Modified', fld: 'bin_upd_dtim'},
         {text: 'Name', fld: 'bin_name', flip: true},
         {text: 'Size', fld: 'src_count'},
-        {text: 'Owner Name', fld: 'user_first_name', flip: true}
+        {text: 'Owner Name', fld: 'user_last_name', flip: true}
     ],
     si: { // single bin -- must also indicate bin_type
         S: [

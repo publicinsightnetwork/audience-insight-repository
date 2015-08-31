@@ -258,10 +258,19 @@ abstract class DBManager {
      * @return string $dsn
      */
     public static function make_dsn($profile) {
+        $hostname = $profile['hostname'];
+
+        // if hostname has a comma, it is a list, so pick a random entry.
+        if (preg_match('/,/', $hostname)) {
+            $hostnames = explode(',', $hostname);
+            $random = rand(0, count($hostnames)-1);
+            $hostname = $hostnames[$random];
+        }
+            
         $dsn = 'mysql' .
             '://' . $profile['username'] .
             ':'   . $profile['password'] .
-            '@'   . $profile['hostname'] .
+            '@'   . $hostname .
             '/'   . $profile['dbname'];
         return $dsn;
     }

@@ -143,4 +143,19 @@ class InquiryUser extends AIR2_Record {
     }
 
 
+    /**
+     * May delete if you can manage or if you are the user referenced.
+     *
+     * @param User    $user
+     * @return authz integer
+     */
+    public function user_may_delete($user) {
+        $ret = $this->user_may_manage($user);
+        if ($ret || $user->user_id == $this->iu_user_id) {
+            return $ret;
+        }
+        return AIR2_AUTHZ_IS_DENIED;
+    }
+
+
 }

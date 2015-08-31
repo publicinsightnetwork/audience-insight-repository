@@ -46,6 +46,16 @@ AIR2.Util.Authz.has = function (action, orguuid) {
 };
 
 /**
+ * AIR2.Util.Authz.isGlobalManager
+ *
+ * Returns Boolean indicating whether the current user has Manager authz in the Global org.
+ *
+ */
+AIR2.Util.Authz.isGlobalManager = function() {
+    return AIR2.Util.Authz.has('AIR2_AUTHZ_ROLE_M', 'ADKLm8Okenaa');
+};
+
+/**
  * AIR2.Util.Authz.hasAnyId
  *
  * Like has() but takes an array of org_ids instead of a single org_uuid.

@@ -73,7 +73,7 @@ while ( my $smadd = $smadds->next ) {
     }
 
     # do not touch upd_dtim
-    $smadd->set_admin_update(1);
+    #$smadd->set_admin_update(1);
 
     # only update if smadd is null, and geo_lookup is not
     if ( $geo->state && !$smadd->smadd_state ) {
@@ -109,7 +109,7 @@ while ( my $srs = $sets->next ) {
 
     # let srs update itself
     if ( $srs->set_geo_cache() ) {
-        $srs->set_admin_update(1);
+        #$srs->set_admin_update(1);
         $srs->save();
     }
 }

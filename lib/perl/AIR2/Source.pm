@@ -116,6 +116,32 @@ __PACKAGE__->meta->setup(
             type       => 'one to many',
         },
 
+        bin_sources => {
+            class      => 'AIR2::BinSource',
+            column_map => { src_id => 'bsrc_src_id' },
+            type       => 'one to many',
+        },
+
+        bin_responses => {
+            class      => 'AIR2::BinSrcResponseSet',
+            column_map => { src_id => 'bsrs_src_id' },
+            type       => 'one to many',
+        },
+
+        bins => {
+            map_class => 'AIR2::BinSource',
+            map_from  => 'source',
+            map_to    => 'bin',
+            type      => 'many to many',
+        },
+
+        response_bins => {
+            map_class => 'AIR2::BinSrcResponseSet',
+            map_from  => 'source',
+            map_to    => 'bin',
+            type      => 'many to many',
+        },
+
         emails => {
             class      => 'AIR2::SrcEmail',
             column_map => { src_id => 'sem_src_id' },
@@ -295,6 +321,8 @@ my @indexables = qw(
 my @searchables = (
     @indexables, qw(
         activities
+        bin_sources
+        bin_responses
         tags
         response_sets
         response_sets.tags
@@ -540,7 +568,7 @@ sub last_contacted {
     # look first at cached date
     my $stat = $self->stat;
     if ( $stat && $stat->sstat_contact_dtim ) {
-        return $stat->epoch;
+        return $stat->sstat_contact_dtim->epoch;
     }
 
     # then look at activities
@@ -719,30 +747,7 @@ sub as_xml {
         $org->{org_new_date} =~ s/\-//g;
     }
 
-    # "available" authz should apply to all implicit orgs.
-    # src_orgs are just explicit. see #2266
-    my %src_orgs_with_kids;
-    for my $soc ( @{ $source->src_org_cache } ) {
-        push @{ $dmp->{orgid_statuses} },
-            join( '_', $soc->soc_org_id, $soc->soc_status );
-        $src_orgs_with_kids{ $soc->soc_org_id } = $soc->soc_status;
-    }
-
-    # src_org_cache does not include parents,
-    # so ask for those explicitly.
-    # added for #6657
-    for my $org_id ( keys %src_orgs_with_kids ) {
-        my $parents = AIR2::Organization::get_org_parents($org_id);
-        my $stat    = $src_orgs_with_kids{$org_id};
-    PARENT: for my $parent_org_id (@$parents) {
-
-            # do not override parent status if already set
-            next PARENT if exists $src_orgs_with_kids{$parent_org_id};
-
-            push @{ $dmp->{orgid_statuses} },
-                join( '_', $parent_org_id, $stat );
-        }
-    }
+    $dmp->{orgid_statuses} = $source->get_orgid_statuses();
 
     # pseudo-tags for emails
     for my $email ( @{ $dmp->{emails} } ) {
@@ -1018,6 +1023,14 @@ SACT: for my $sact ( @{ $dmp->{activities} } ) {
         }
     }
 
+    # bins, just uuids
+    for my $bin ( @{ $source->bins } ) {
+        push @{ $dmp->{bins} }, $bin->bin_uuid;
+    }
+    for my $bin ( @{ $source->response_bins } ) {
+        push @{ $dmp->{bins} }, $bin->bin_uuid;
+    }
+
     my $xml = $indexer->to_xml( $dmp, $source, 1 );  # last 1 to strip plurals
     my $root = $indexer->xml_root_element;
 
@@ -1028,6 +1041,39 @@ SACT: for my $sact ( @{ $dmp->{activities} } ) {
         =~ s,^<$root,<$root authz="$authz_str" xmlns:xi="http://www.w3.org/2001/XInclude",;
 
     return $xml;
+}
+
+sub get_orgid_statuses {
+    my $self = shift;
+
+    return $self->{__orgid_statuses} if $self->{__orgid_statuses};
+
+    # "available" authz should apply to all implicit orgs.
+    # src_orgs are just explicit. see #2266
+    my @ois;
+    my %src_orgs_with_kids;
+    for my $soc ( @{ $self->src_org_cache } ) {
+        push @ois, join( '_', $soc->soc_org_id, $soc->soc_status );
+        $src_orgs_with_kids{ $soc->soc_org_id } = $soc->soc_status;
+    }
+
+    # src_org_cache does not include parents,
+    # so ask for those explicitly.
+    # added for #6657
+    for my $org_id ( keys %src_orgs_with_kids ) {
+        my $parents = AIR2::Organization::get_org_parents($org_id);
+        my $stat    = $src_orgs_with_kids{$org_id};
+    PARENT: for my $parent_org_id (@$parents) {
+
+            # do not override parent status if already set
+            next PARENT if exists $src_orgs_with_kids{$parent_org_id};
+
+            push @ois, join( '_', $parent_org_id, $stat );
+        }
+    }
+
+    $self->{__orgid_statuses} = \@ois;
+    return \@ois;
 }
 
 sub get_xml_title {

@@ -182,7 +182,7 @@ class Bin extends AIR2_Record {
 
 
     /**
-     * Read - owner or shared
+     * Read - owner, owner's org or shared
      *
      * @param User $user
      * @return boolean
@@ -197,6 +197,18 @@ class Bin extends AIR2_Record {
         if ($this->bin_shared_flag) {
             return AIR2_AUTHZ_IS_PUBLIC;
         }
+
+        // $user can see same-org and down, but not up.
+        $owner_authz = $this->User->get_explicit_authz();
+        $user_authz  = $user->get_authz();
+
+        // any overlap ok since all roles can read Bins
+        foreach ($owner_authz as $org_id => $role) {
+            if (isset($user_authz[$org_id])) {
+                return AIR2_AUTHZ_IS_ORG;
+            }
+        }
+
         return AIR2_AUTHZ_IS_DENIED;
     }
 
@@ -248,7 +260,10 @@ class Bin extends AIR2_Record {
         if ($u->is_system()) return;
         $a = ($alias) ? "$alias." : "";
         $uid = $u->user_id;
-        $q->addWhere("({$a}bin_shared_flag=1 or {$a}bin_user_id=$uid)");
+        $org_ids = $u->get_authz_str(ACTION_BATCH_READ, 'uo_org_id', false);
+        $q->addWhere(
+            "({$a}bin_shared_flag=1 or {$a}bin_user_id=$uid or {$a}bin_user_id in (select uo_user_id from user_org where $org_ids))"
+        );
     }
 
 
@@ -275,57 +290,6 @@ class Bin extends AIR2_Record {
      */
     public static function query_may_manage($q, $u, $alias=null) {
         self::query_may_write($q, $u, $alias);
-    }
-
-
-    /**
-     * Schedule a job_queue to export this bin to lyris.  Valid $extra
-     * parameters are:
-     *    'strict'    => true|false,
-     *    'dry_run'   => true|false,
-     *    'no_export' => true|false,
-     *
-     * @param User    $usr
-     * @param Project $prj
-     * @param Organization $org
-     * @param Inquiry $inq   (optional)
-     * @param array   $extra (optional)
-     * @return JobQueue
-     */
-    public function queue_lyris_export($usr, $prj, $org, $inq=null, $extra=array()) {
-        $cmd = sprintf("PERL AIR2_ROOT/bin/lyris-export --user_id %d --prj_id %d --org_id %d --bin_id %d",
-            $usr->user_id,
-            $prj->prj_id,
-            $org->org_id,
-            $this->bin_id
-        );
-
-        // inquiry optional
-        if ($inq) {
-            $cmd .= ' --inq_id ' . $inq->inq_id;
-        }
-
-        // default value for 'strict'
-        if (!isset($extra['strict'])) {
-            $extra['strict'] = true; //default
-        }
-
-        // extra params
-        foreach ($extra as $param => $bool) {
-            $val = ($bool) ? '1' : '0';
-            $cmd .= " --$param=$val";
-        }
-
-        // see trac #1841
-        if ($this->get_lyris_exportable_count($usr) > self::$MAX_LYRIS_EXPORT) {
-            throw new Exception("exportable count exceeds max of " . self::$MAX_LYRIS_EXPORT);
-        }
-
-        // TODO should reuse_demographic be exposed here?
-        $job = new JobQueue();
-        $job->jq_job = $cmd;
-        $job->save();
-        return $job;
     }
 
 
@@ -377,25 +341,6 @@ class Bin extends AIR2_Record {
 
 
     /**
-     * Returns authorized count of sources for $user.
-     *
-     * @param  User    $user
-     * @return integer $count
-     */
-    public function get_lyris_exportable_count($user) {
-        $q = AIR2_Query::create()->from('BinSource');
-        $q->where("bsrc_bin_id = ?", $this->bin_id);
-
-        $exportable_org_ids = $user->get_authz_str(ACTION_EXPORT_LYRIS, 'soc_org_id');
-        $status = "soc_status = '".SrcOrg::$STATUS_OPTED_IN."'";
-        $cache = "select soc_src_id from src_org_cache where $exportable_org_ids and $status";
-        $q->addWhere("bsrc_src_id in ($cache)");
-        // TODO should probably check emails status too
-        return $q->count();
-    }
-
-
-    /**
      * Returns authorized count of sources for $user + $org.
      *
      * @param  User    $user
@@ -421,8 +366,7 @@ class Bin extends AIR2_Record {
      * user.  Note that this will FAIL if the user has no email.
      *
      * @param  User     $usr
-     * @param  boolean  $allfacts
-     * @param  boolean  $notes
+     * @param unknown $extra (optional)
      * @return JobQueue $job
      */
     public function queue_csv_export($usr, $extra=array()) {

@@ -24,11 +24,18 @@
 require_once '../app/init.php';
 require_once 'Encoding.php';
 
-$valid_methods = array('GET');
+$valid_methods = array('GET','OPTIONS');
 $request_method = $_SERVER['REQUEST_METHOD'];
 if (!in_array($request_method, $valid_methods)) {
     header('X-PIN: invalid request: ' . $request_method, false, 405);
     header('Allow: ' . implode(' ', $valid_methods));
+    exit(0);
+}
+
+if ($request_method == 'OPTIONS') {
+    // cross-domain requirement for embedded queries
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Headers: Content-Type, Content-Range, Content-Disposition, Content-Description, X-Requested-With');
     exit(0);
 }
 
@@ -66,9 +73,13 @@ $query = json_decode(file_get_contents($query_file_path));
 $legal_buf = file_get_contents($legal_file_path);
 
 $copyright_holders = array();
+$num_orgs = count($query->orgs);
 foreach ($query->orgs as $org) {
     $org_name = $org->display_name;
     if ($org_name == 'Global PIN Access') {
+        if ($num_orgs > 1) {
+            continue; // skip global completely if it is one of multiple orgs
+        }
         $org_name = 'American Public Media';
     }
     $org_url = $org->site;

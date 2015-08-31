@@ -12,6 +12,10 @@ use JSON;
 use File::Slurp;
 use Data::Dump qw( dump );
 
+# http://code.google.com/p/test-more/issues/detail?id=46
+binmode Test::More->builder->output,         ":utf8";
+binmode Test::More->builder->failure_output, ":utf8";
+
 #
 # add facts for any missing spanish translations
 #
@@ -96,6 +100,7 @@ for my $v ( @{ $QUESTION_TEMPLATES->{political}->{ques_choices}->{en_US} } ) {
         fv_fact_id => $table{political_affiliation}->{fact_id},
         fv_seq     => $en_fact->fv_seq,
         fv_value   => $es_US,
+        fv_loc_id  => 72,
     );
     $es_fact->save();
     pass("$es_US created");
@@ -144,6 +149,7 @@ for my $v ( @{ $QUESTION_TEMPLATES->{education}->{ques_choices}->{en_US} } ) {
         fv_fact_id => $table{education_level}->{fact_id},
         fv_seq     => $en_fact->fv_seq,
         fv_value   => $es_US,
+        fv_loc_id  => 72,
     );
     $es_fact->save();
     pass("$es_US created");

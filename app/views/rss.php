@@ -109,6 +109,9 @@ function recursive_item_print($key, $val, $indent=0) {
                     if ($key == 'media') {
                         echo "$pad<enclosure url='$subval' type='image/png' />\n";
                     } 
+                    elseif ($key == 'guid') {
+                        echo "$pad<$key isPermaLink=\"false\"><![CDATA[" . $subval . "]]></$key>\n";
+                    }
                     else {
                         echo "$pad<$key><![CDATA[" . $subval . "]]></$key>\n";
                     }
@@ -124,6 +127,9 @@ function recursive_item_print($key, $val, $indent=0) {
             if ($key == 'media') {
                 echo "$pad<enclosure url='$val' type='image/png' />\n";
             }
+            elseif ($key == 'guid') {
+                echo "$pad<$key isPermaLink=\"false\"><![CDATA[" . $val . "]]></$key>\n";
+            }
             else {
                 echo "$pad<$key><![CDATA[" . $val . "]]></$key>\n";
             }
@@ -138,8 +144,9 @@ function recursive_item_print($key, $val, $indent=0) {
 // PRINT XML!
 // echo the whole thing to make sure we get the correct indentations
 echo "<?xml version=\"1.0\"?>\n";
-echo "<rss version=\"2.0\">\n";
+echo "<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n";
 echo " <channel>\n";
+echo "  <atom:link href=\"" . $c->uri_for($c->uri->uri_string()) . "\" rel=\"self\" type=\"application/rss+xml\" />\n";
 foreach ($rss as $key => $val) {
     recursive_item_print($key, $val, 2);
 }

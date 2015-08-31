@@ -101,6 +101,8 @@ if ($help) {
 # default variables
 $debug  = 0    unless defined $debug;
 $LOCALE = 'en' unless defined $LOCALE;
+my $PIN_LOGO_URI
+    = 'https://www.publicinsightnetwork.org/air2/img/org/49896787525b/logo_medium.png';
 
 $Rose::DB::Object::Manager::Debug = $debug;
 $Rose::DB::Object::Debug          = $debug;
@@ -110,6 +112,12 @@ if ($test) {
     # just send mail for $test newsroom to any email in @ARGV
     for my $addr (@ARGV) {
         my $org = AIR2::Organization->new( org_name => $test )->load;
+
+        # if org has org_suppress_welcome_email_flag==1, skip it
+        if ( $org->org_suppress_welcome_email_flag ) {
+            warn "Org $test has org_suppress_welcome_email_flag==1\n";
+            next;
+        }
 
         # redmine 8249 apmpin disguises global org
         if ( $org->org_id == AIR2::Config::get_global_pin_org_id() ) {
@@ -164,6 +172,14 @@ SRCORG: while ( my $so = $sos->next ) {
 
     my $source = $so->source;
     my $org    = $org_cache->{ $so->so_org_id };
+
+    # redmine #10011
+    if ( $org->org_suppress_welcome_email_flag ) {
+        $debug
+            and warn sprintf( "Org %s has org_suppress_welcome_email_flag==1",
+            $org->org_name );
+        next SRCORG;
+    }
 
     # redmine 8249 apmpin disguises global org
     if ( $org->org_id == AIR2::Config::get_global_pin_org_id() ) {
@@ -251,13 +267,17 @@ sub get_template_vars {
     }
 
     my $newsroom = {
-        name     => $org->org_display_name,
-        email    => $org->org_email || 'support@publicinsightnetwork.org',
-        msg      => $org->org_welcome_msg,
+        name => ( $org->org_display_name || $org->org_name ),
+        email => $org->get_email(),
+        msg   => ( $org->org_welcome_msg || '' ),
         uri      => ( $org->org_site_uri || $org->get_uri() ),
-        logo_uri => ( $org->org_logo_uri || $org->get_logo_uri() ),
-        location => $org->get_location(),
+        logo_uri =>
+            ( $org->org_logo_uri || $org->get_logo_uri() || $PIN_LOGO_URI ),
+        location => $org->get_location(1),
     };
+
+    # fallback
+    $newsroom->{email} ||= 'support@publicinsightnetwork.org';
 
     my @related;
 

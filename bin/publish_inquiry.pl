@@ -84,13 +84,24 @@ elsif ($inq_uuid) {
 elsif ($do_all) {
     my $progress = Term::ProgressBar::Simple->new(
         AIR2::Inquiry->fetch_count(
-            query => [ inq_status => [qw( A L E S )], inq_type => [qw( F Q )] ],
+            query => [
+                inq_status => [qw( A L E S )],
+                inq_type   => [
+                    AIR2::Inquiry::TYPE_FORMBUILDER,
+                    AIR2::Inquiry::TYPE_QUERYBUILDER,
+                    AIR2::Inquiry::TYPE_NONJOURN,
+                ]
+            ],
         )
     );
     my $inquiries = AIR2::Inquiry->fetch_all_iterator(
         query => [
             inq_status => [qw( A L E S )],
-            inq_type   => [qw( F Q )],
+            inq_type   => [
+                AIR2::Inquiry::TYPE_FORMBUILDER,
+                AIR2::Inquiry::TYPE_QUERYBUILDER,
+                AIR2::Inquiry::TYPE_NONJOURN,
+            ],
         ],
     );
     while ( my $inq = $inquiries->next ) {

@@ -33,12 +33,12 @@ class AAPI_Organization extends AIRAPI_Resource {
     // API definitions
     protected $ALLOWED = array('query', 'fetch', 'create', 'update');
     protected $CREATE_DATA = array('org_parent_uuid', 'org_name', 'org_display_name',
-        'org_site_uri', 'org_status', 'org_max_users', 'org_html_color');
+        'org_site_uri', 'org_status', 'org_max_users', 'org_html_color', 'org_suppress_welcome_email_flag');
     protected $QUERY_ARGS  = array('excl_user', 'excl_proj', 'excl_src',
         'excl_inq', 'role', 'status', 'type');
     protected $UPDATE_DATA = array('org_name', 'org_display_name',
         'org_summary', 'org_desc', 'org_address', 'org_city', 'org_state', 'org_zip', 'org_site_uri',
-        'org_welcome_msg', 'org_email',
+        'org_welcome_msg', 'org_email', 'org_suppress_welcome_email_flag',
         'org_status', 'org_max_users', 'org_html_color', 'banner', 'logo');
 
     // default paging/sorting
@@ -65,6 +65,7 @@ class AAPI_Organization extends AIRAPI_Resource {
         'org_site_uri',
         'org_type',
         'org_status',
+        'org_suppress_welcome_email_flag',
         'org_max_users',
         'org_html_color',
         'org_cre_dtim',

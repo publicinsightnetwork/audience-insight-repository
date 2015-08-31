@@ -1,6 +1,14 @@
 /***************
  * Query Settings Panel
  */
+AIR2.Inquiry.typeLabels = {
+    Q : "Standard", // really Querymaker
+    F : "Formbuilder",
+    N : "Non-Journalism",
+    E : "Manual Entry",
+    C : "Comment"
+};
+
 AIR2.Inquiry.Settings = function () {
     var dv,
         editItems,
@@ -236,7 +244,7 @@ AIR2.Inquiry.Settings = function () {
                     '</tr>' +
                 '</tpl>' +
                 '<tr>' +
-                    '<td class="label right">Image:</td>' +
+                    '<td class="label right">Social Media Logo/Image:</td>' +
                     '<td class="">' +
                         '<div id="air2-inq-logo">' +
                             '{[AIR2.Format.inqLogo(values)]}' +
@@ -304,10 +312,18 @@ AIR2.Inquiry.Settings = function () {
                 '</tpl>' +
                 '<tr>' +
                     '<td class="label right">' +
-                        'Display on PublicInsightNetwork.org:' +
+                        'Display on PIN site / RSS feeds:' +
                     '</td>' +
                     '<td class="left">' +
                         '{.:this.formatQueryFeedStatus}' +
+                    '</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td class="label right">' +
+                        'Type' +
+                    '</td>' +
+                    '<td class="left">' +
+                        '{.:this.formatQueryType}' +
                     '</td>' +
                 '</tr>' +
                 '<tr>' +
@@ -378,6 +394,14 @@ AIR2.Inquiry.Settings = function () {
                     '</span>';
                 }
             },
+            formatQueryType: function(values) {
+                if (AIR2.Util.Authz.isGlobalManager()) {
+                    return '<span>' + AIR2.Inquiry.typeLabels[values.inq_type] + '</span>';
+                }
+                else {
+                    return '<span>Standard</span>';
+                }
+            },
             previewLink: function (display, key) {
                 return '<a onclick="AIR2.Inquiry.inquiryPreviewModal(\'' +
                 display + '\',\'' + key + '\')"' + '>' + display + '</a>';
@@ -385,7 +409,7 @@ AIR2.Inquiry.Settings = function () {
             publishStatus: function (values) {
                 var status;
 
-                status = '<td class="label right">Publish Status</td>';
+                status = '<td class="label right">Publish Status:</td>';
                 status += '<td>';
 
                 switch (values.inq_status) {
@@ -437,7 +461,7 @@ AIR2.Inquiry.Settings = function () {
             }, {
                 xtype: 'box',
                 html: 'Please upload a square .jpg or .png file at least ' +
-                    '400px by 400px. We will display this image on this ' +
+                    '400px by 400px. We will display the image on social media for this ' +
                     'query and in RSS feeds.',
                 id: 'logo-instructions'
             }]
@@ -502,26 +526,43 @@ AIR2.Inquiry.Settings = function () {
             name: 'inq_confirm_msg',
             style: 'resize:auto;width:96%'
         },
+        // IMPORTANT that this hidden field immediately precedes the checkbox field.
         {
             xtype: 'hidden',
             name: 'inq_rss_status'
         },
+        // IMPORTANT that the hidden inq_rss_status precedes checkbox.
         {
             xtype: 'checkbox',
             checked: (
                 AIR2.Inquiry.inqStore.getAt(0).get('inq_rss_status') == 'Y'
             ),
-            fieldLabel: 'Display on PublicInsightNetwork.org',
+            fieldLabel: 'Display on PIN site / RSS feeds',
             handler: function (checkbox, checked) {
                 checkbox.originalValue = checked;
                 if (checked) {
-                    checkbox.previousSibling().setValue('Y');
+                    checkbox.previousSibling().setValue('Y'); // TODO previousSibliing is a brittle assumption.
                 }
                 else {
                     checkbox.previousSibling().setValue('N');
                 }
             },
             submitValue: false
+        },
+        {
+            xtype: 'combo',
+            autoSelect: true,
+            editable: false,
+            disabled: !AIR2.Util.Authz.isGlobalManager(),
+            fieldLabel: 'Type',
+            forceSelection: true,
+            name: 'inq_type',
+            store: [
+                ['Q', 'Standard'],
+                ['N', 'Non-Journalism']
+            ],  
+            triggerAction: 'all',
+            value: AIR2.Inquiry.inqStore.getAt(0).get('inq_type')
         },
         {
             xtype: 'combo',

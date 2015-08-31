@@ -68,7 +68,7 @@ sub new {
         },
         facets        => { names => \@facet_names, },
         fields        => $class->air_property_names,
-        do_not_hilite => \@no_hilite,
+        do_not_hilite => { map { $_ => 1 } @no_hilite },
 
         # TODO
         #            cache          => $FACET_CACHE,

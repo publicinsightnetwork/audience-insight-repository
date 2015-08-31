@@ -124,6 +124,21 @@ class Search_Controller extends AIR2_Controller {
             'title' => 'Submissions',
             'idx'   => 'strict-responses',
         ),
+        'active-responses' => array(
+            'view'  => 'search/responses',
+            'title' => 'Submissions',
+            'idx'   => 'active-responses',
+        ),  
+        'fuzzy-active-responses' => array(
+            'view'  => 'search/responses',
+            'title' => 'Submissions',
+            'idx'   => 'fuzzy-active-responses',
+        ),  
+        'strict-active-responses' => array(
+            'view'  => 'search/responses',
+            'title' => 'Submissions',
+            'idx'   => 'strict-active-responses',
+        ),
         'help' => array(
             'view'  => 'search/help',
             'title' => 'Help',

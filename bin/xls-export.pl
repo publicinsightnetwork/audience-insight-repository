@@ -439,9 +439,7 @@ elsif ( $format eq 'email' ) {
         $name = $bin->bin_name;
     }
 
-    # friendly filename
-    my $friendly = $name;
-    $friendly =~ s/[^\w]+/\_/g;
+    my $url = AIR2::Utils::write_secure_report( str => $str, ext => 'xlsx' );
 
     # fire!
     send_email(
@@ -450,10 +448,9 @@ elsif ( $format eq 'email' ) {
         subject => "AIR Submission export results - $name",
         text    => (
             $srs_id
-            ? "Exported submission for $name"
-            : "Exported submissions for bin $name"
+            ? "Exported submission for $name\n$url"
+            : "Exported submissions for bin $name\n$url"
         ),
-        attach => [ $str, filename => "$friendly.xlsx" ]
     );
 }
 

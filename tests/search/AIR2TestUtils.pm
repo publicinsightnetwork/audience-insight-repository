@@ -129,7 +129,7 @@ sub create_index {
     my $config   = $arg{config} or croak "config required";
     my $input    = $arg{input} or croak "input required";
     my $cmd
-        = "swish3 -F lucy -f $invindex -c $config -i $input --lucy_highlightable";
+        = "swish3 -F lucy -f $invindex -c $config -i $input -I highlightable_fields=1";
     my $buf = run_it( $cmd, $arg{debug} );
     $buf = join( "", @$buf );
 

@@ -46,80 +46,9 @@ AIR2.Bin.Exporter.toCSV = function (binuuid, callback, allfacts, email) {
 
 
 /**
- * cf Trac #1841
- */
-AIR2.Bin.Exporter.MAX_LYRIS_SIZE = AIR2.MAX_EMAIL_EXPORT;
-
-/**
- * Similarly, Trac #4458
+ * Trac #4458
  */
 AIR2.Bin.Exporter.MAX_CSV_SIZE = 2500;
-
-
-/**
- * Schedule a Lyris export of a bin.
- *
- * @function AIR2.Bin.Exporter.toLyris
- * @cfg {String}    binuuid  (required)
- * @cfg {String}    orguuid  (required)
- * @cfg {String}    prjuuid  (required)
- * @cfg {String}    inquuid
- * @cfg {Boolean}   dostrict
- * @cfg {Function}  callback (required)
- */
-AIR2.Bin.Exporter.toLyris = function (
-        binuuid,
-        orguuid,
-        prjuuid,
-        inquuid,
-        dostrict,
-        callback
-    ) {
-
-    if (!binuuid || !orguuid || !prjuuid) {
-        alert("Invalid call to lyris exporter!");
-        return;
-    }
-
-    // setup data
-    var data = {
-        se_type:      'L', //create lyris export
-        org_uuid:     orguuid,
-        prj_uuid:     prjuuid,
-        strict_check: dostrict
-        //dry_run:      true,
-        //no_export:    true,
-    };
-    if (inquuid) {
-        data.inq_uuid = inquuid;
-    }
-
-    // fire!
-    Ext.Ajax.request({
-        url: AIR2.HOMEURL + '/bin/' + binuuid + '/export.json',
-        params: {radix: Ext.encode(data)},
-        method: 'POST',
-        callback: function (opts, success, resp) {
-            var data, msg;
-            data = Ext.util.JSON.decode(resp.responseText);
-            if (success && data.success) {
-                msg = 'Your Bin was scheduled for export. You should receive ' +
-                    'email shortly.';
-                callback(true, msg);
-            }
-            else {
-                if (data && data.message) {
-                    msg = data.message;
-                }
-                else {
-                    msg = 'Unknown remote error';
-                }
-                msg += '<br/>Contact an administrator for help.';
-                callback(false, msg);
-            }
-        }
-    });
-};
 
 
 /**

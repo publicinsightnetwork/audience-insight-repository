@@ -32,6 +32,7 @@ __PACKAGE__->meta->setup(
         bsrs_srs_id => { type => 'integer', default => '', not_null => 1 },
         bsrs_inq_id => { type => 'integer', default => '', not_null => 1 },
         bsrs_src_id => { type => 'integer', default => '', not_null => 1 },
+        bsrs_cre_dtim => { type => 'datetime', },
     ],
 
     primary_key_columns => ['bsrs_bin_id', 'bsrs_src_id'],

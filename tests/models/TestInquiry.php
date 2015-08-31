@@ -78,7 +78,7 @@ class TestInquiry extends Inquiry {
         // table-specific
         $this->inq_title = 'Inquiry '.$this->inq_uuid;
         //$this->inq_status = 'A';
-        $this->inq_type = 'T'; //test
+        $this->inq_type = Inquiry::$TYPE_TEST;
     }
 
 

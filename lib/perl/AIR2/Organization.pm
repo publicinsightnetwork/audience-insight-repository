@@ -66,6 +66,8 @@ __PACKAGE__->meta->setup(
             not_null => 1
         },
         org_max_users => { type => 'integer', default => 0 },
+        org_suppress_welcome_email_flag =>
+            { type => 'integer', default => 0, not_null => 1 },
 
         org_cre_user => { type => 'integer',  not_null => 1 },
         org_upd_user => { type => 'integer' },
@@ -194,19 +196,37 @@ __PACKAGE__->meta->setup(
 
 sub get_location {
     my $self = shift;
-    return join(
+    my $default_to_apm = shift || 0;
+    my $loc            = join(
         ', ',
         grep { defined and length } (
             $self->org_address, $self->org_city,
             $self->org_state,   $self->org_zip
         )
     );
+    if ( !$loc and $default_to_apm ) {
+        return '480 Cedar St., Saint Paul, MN, 55101';
+    }
+    return $loc;
 }
 
 sub get_uri {
     my $self = shift;
     return sprintf( '%s/en/newsroom/%s',
         AIR2::Config::get_mypin2_url, $self->org_name, );
+}
+
+sub get_email {
+    my $self = shift;
+    return $self->org_email if $self->org_email;
+
+    # find a user who has this as home org and use their email
+    for my $uo ( @{ $self->user_org } ) {
+        if ( $uo->uo_home_flag ) {
+            return $uo->user->get_primary_email->uem_address;
+        }
+    }
+    return 'support@publicinsightnetwork.org';
 }
 
 sub get_logo_uri {

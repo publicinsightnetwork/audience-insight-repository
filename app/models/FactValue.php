@@ -1,4 +1,11 @@
 <?php
+/**
+ * app/models/FactValue.php
+ *
+ * @package default
+ */
+
+
 /**************************************************************************
  *
  *   Copyright 2010 American Public Media Group
@@ -31,6 +38,7 @@
  * @property integer $fv_seq
  * @property string $fv_value
  * @property string $fv_status
+ * @property string $fv_loc_id
  * @property integer $fv_cre_user
  * @property integer $fv_upd_user
  * @property timestamp $fv_cre_dtim
@@ -63,9 +71,10 @@ class FactValue extends AIR2_Record {
      * -timezone
      *               false if none found.
      *
+     *
      * @param string  $type The type of fact to look up. Examples:
      * @return array Associative array from values to readable labels. Returns
-     * */
+     */
     public static function get_hash_for($type) {
         $q = AIR2_Query::create()
         ->from("FactValue fv")
@@ -114,6 +123,11 @@ class FactValue extends AIR2_Record {
                 'notnull' => true,
                 'default' => self::$STATUS_ACTIVE,
             ));
+        $this->hasColumn('fv_loc_id', 'integer', 4, array(
+                'notnull' => true,
+                'default' => 52, // en_US
+            )
+        );
         $this->hasColumn('fv_cre_user', 'integer', 4, array(
                 'notnull' => true,
             ));
@@ -126,7 +140,10 @@ class FactValue extends AIR2_Record {
         $this->hasColumn('fv_upd_dtim', 'timestamp', null, array(
 
             ));
-
+        $this->index('fv_uniq_idx', array(
+                'fields' => array('fv_fact_id', 'fv_value', 'fv_loc_id'),
+            )   
+        );
         parent::setTableDefinition();
     }
 
@@ -143,6 +160,10 @@ class FactValue extends AIR2_Record {
         $this->hasOne('Fact', array(
                 'local' => 'fv_fact_id',
                 'foreign' => 'fact_id'
+            ));
+        $this->hasOne('Locale', array(
+                'local' => 'fv_loc_id',
+                'foreign' => 'loc_id'
             ));
         $this->hasMany('SrcFact', array(
                 'local' => 'fv_id',

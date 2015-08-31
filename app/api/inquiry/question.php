@@ -29,6 +29,8 @@ require_once 'querybuilder/AIR2_QueryBuilder.php';
  * @author rcavis
  * @package default
  */
+
+
 class AAPI_Inquiry_Question extends AIRAPI_Resource {
 
     // API definitions
@@ -106,6 +108,12 @@ class AAPI_Inquiry_Question extends AIRAPI_Resource {
     protected function air_create($data) {
         if (!isset($data['ques_template']) && !isset($data['duplicate'])) {
             throw new Rframe_Exception(Rframe::BAD_DATA, "Missing required param: ques_template OR duplicate");
+        }
+
+        if (isset($data['ques_template']) && $data['ques_template'] == 'fileupload') {
+            if ($this->parent_rec->has_file_upload_question()) {
+                throw new Rframe_Exception(Rframe::BAD_DATA, "Only one file upload question allowed per query");
+            }
         }
 
         $q = new Question();

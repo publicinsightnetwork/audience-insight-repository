@@ -62,6 +62,7 @@
 
 
 /* read-only panels */
+.air2-paging-editor .air2-outcome .outcome-row, 
 .air2-outcome.air2-editwin .outcome-row {
     border-bottom: 1px dotted #ddd;
     padding: 10px 10px 10px 20px;

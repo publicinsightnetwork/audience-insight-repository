@@ -30,7 +30,7 @@ __PACKAGE__->meta->setup(
     columns => [
         xm_id      => { type => 'serial',  not_null => 1 },
         xm_fact_id => { type => 'integer', default  => '0', not_null => 1 },
-        xm_xlate_from => { type => 'varchar', length => 128, not_null => 1 },
+        xm_xlate_from => { type => 'varchar', length => 255, not_null => 1 },
         xm_cre_dtim => { type => 'datetime' },
         xm_xlate_to_fv_id =>
             { type => 'integer', default => '0', not_null => 1 },
@@ -53,6 +53,13 @@ __PACKAGE__->meta->setup(
 # memoize
 my %facts_cache;
 
+=head2 find_translation(I<fact_id>, I<text>)
+
+Returns a fv_id (FactValue id) for I<text>, if one
+exists. Returns undef if no match is found.
+
+=cut
+
 sub find_translation {
     my $self    = shift;
     my $fact_id = shift or croak "fact_id required";
@@ -61,6 +68,13 @@ sub find_translation {
         return;
     }
     my $lc_text = lc($text);
+
+    # truncate anything too long
+    if ( length $lc_text > $self->meta->column('xm_xlate_from')->length ) {
+        #carp "xm_xlate_from value too long: $lc_text\nTruncating...";
+        $lc_text = substr( $lc_text, 0,
+            $self->meta->column('xm_xlate_from')->length );
+    }
     if (    exists $facts_cache{$fact_id}
         and exists $facts_cache{$fact_id}->{$lc_text} )
     {

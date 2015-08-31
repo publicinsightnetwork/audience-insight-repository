@@ -60,6 +60,7 @@ class BinSrcResponseSet extends AIR2_Record {
         $this->hasColumn('bsrs_src_id', 'integer', 4, array(
                 'notnull' => true,
             ));
+        $this->hasColumn('bsrs_cre_dtim', 'timestamp', null, array());
         parent::setTableDefinition();
     }
 

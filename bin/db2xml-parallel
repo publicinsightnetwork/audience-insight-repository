@@ -149,7 +149,7 @@ for my $host (@hosts) {
     my @opts = ("--offset $offset ");
 
     # last $host never gets limit, in case any new records
-    # get created sinze get_pool_offsets() did calculation,
+    # get created since get_pool_offsets() did calculation,
     # and to allow for rounding errors.
     push @opts, "--limit $limit" unless $#hosts == $i;
     if ($increm) {

@@ -34,6 +34,7 @@ my $help    = 0;
 my $quiet   = 0;
 my $debug   = 0;
 my $dry_run = 0;
+my $recover = 0;
 my $all;
 GetOptions(
     'help'    => \$help,
@@ -41,6 +42,7 @@ GetOptions(
     'quiet'   => \$quiet,
     'all'     => \$all,
     'dry_run' => \$dry_run,
+    'recover' => \$recover,
 ) or pod2usage(2);
 pod2usage(1) if $help;
 
@@ -76,6 +78,18 @@ if ($all) {
 else {
     for my $tid (@ARGV) {
         my $t      = AIR2::Tank->new( tank_id => $tid )->load;
+        if ($recover) {
+
+            # if any tank_source has a status of E, clear its error+message
+            my $sources
+                = $t->sources_iterator( query => [ tsrc_status => 'E' ] );
+            while ( my $src = $sources->next ) {
+                $debug and printf( "Recover TankSource %s\n", $src->tsrc_id );
+                $src->tsrc_status('N');
+                $src->tsrc_errors(undef);
+                $src->save;
+            }
+        }
         my $report = $t->discriminate();
         my $status = $t->tank_status;
         if ($report) {

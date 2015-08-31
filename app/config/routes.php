@@ -57,14 +57,22 @@ $route['password/([\w]+)'] = 'password/change_password_page/$1';
 
 // alias search for "queries"
 $route['search/queries'] = 'search/inquiries';
+// alias search for "pinfluence"
+$route['search/pinfluence'] = 'search/outcomes';
 
 // querybuilder
 $route['builder/([\w]+)'] = 'builder/index/$1';
 
 // give the reader control of responses
 $route['search/responses'] = 'reader';
+$route['search/fuzzy-responses'] = 'reader';
 $route['search/strict-responses'] = 'reader/strict';
+$route['search/strict-active-responses'] = 'reader/strict_active';
+$route['search/fuzzy-active-responses'] = 'reader/active';
+$route['search/active-responses'] = 'reader/active';
 $route['reader/strict-query/([\w]+)'] = 'reader/strict_query/$1';
+$route['reader/active-query/([\w]+)'] = 'reader/active_query/$1';
+$route['reader/strict-active-query/([\w]+)'] = 'reader/strict_active_query/$1';
 
 // emails - "change" and "thanks" STEAL this route from the api
 $route['email/change'] = 'emailchange/change';

@@ -252,7 +252,7 @@ AIR2.Source.Contact = function () {
             emAddress: function (values) {
                 var em = this.getFirst(values, 'SrcEmail');
                 if (em.sem_email) {
-                    return AIR2.Format.mailTo(em.sem_email, values);
+                    return AIR2.Format.mailTo(em, values);
                 }
                 return '<span class="none">none</span>';
             },

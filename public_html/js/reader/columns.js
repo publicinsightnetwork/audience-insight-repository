@@ -147,7 +147,7 @@ AIR2.Reader.COLUMNS = {
     primary_email: {
         header:   'Email',
         cls:      'email',
-        format:   '{primary_email_html}',
+        format:   '{[values.primary_email_html.replace(/:[A-Z]$/, "")]}',
         sortable: 'asc',
         uid:      'v'
     },

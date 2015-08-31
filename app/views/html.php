@@ -50,44 +50,47 @@ if (!isset($search_idx)) {
   <link href="<?php echo $c->uri_for('favicon.ico'); ?>" rel="shortcut icon" type="image/ico" />
 
   <!-- ExtJS and shared stylesheets -->
-  <link rel="stylesheet" href="<?php echo $c->uri_for('lib/extjs/resources/css/ext-all.css') ?>"/>
-  <link rel="stylesheet" href="<?php echo $c->uri_for('css/ext-theme-air2.css') ?>"/>
-  <link rel="stylesheet" href="<?php echo $c->uri_for('lib/extjs/examples/ux/css/RowEditor.css') ?>"/>
-  <link rel="stylesheet" href="<?php echo $c->uri_for('lib/extjs/examples/ux/css/Spinner.css') ?>"/>
-  <link rel="stylesheet" href="<?php echo $c->uri_for('lib/extjs/examples/ux/css/FileUploadField.css') ?>"/>
-  <link rel="stylesheet" href="<?php echo $c->uri_for('lib/shared/livedataview.css') ?>"/>
+  <?php
+      if (file_exists(AIR2_DOCROOT.'/css/third_party.css')) {
+  ?>
+  <link rel="stylesheet" href="<?php echo $c->uri_for('css/third_party.css') ?>"/>
+  <?php
+      }
+      else {
+          foreach (AirHtml::third_party_css() as $csspath) {
+  ?>
+  <link rel="stylesheet" href="<?php echo $c->uri_for($csspath) ?>"/>
+  <?php
+          }
+      }
+  ?>
 
   <!-- ExtJS and shared javascript libraries -->
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/extjs/adapter/ext/ext-base.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/extjs/ext-all.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/extjs/examples/ux/datetime.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/extjs/examples/ux/RowEditor.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/extjs/examples/ux/Spinner.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/extjs/examples/ux/SpinnerField.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/extjs/examples/ux/FileUploadField.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/shared/groupcombo.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/shared/groupdataview.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/shared/livedataview.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/shared/search-query.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/shared/hyphenator.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/shared/long.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/ckeditor/ckeditor.js') ?>"></script>
-
-  <?php if ($c && is_a($c, 'Search_Controller')) { ?>
-  <!-- Mapping libs for search resources -->
+  <script type="text/javascript">
+      // bundled ckeditor requires this global var to find its components
+      var CKEDITOR_BASEPATH = '<?php echo $c->uri_for('lib/ckeditor/') ?>';
+  </script>
+  <!-- leaflet has (bugs) that prevent it from being bundled -->
   <link rel="stylesheet" href="<?php echo $c->uri_for('lib/leaflet/dist/leaflet.css') ?>"/>
-  <!--<link rel="stylesheet" href="<?php echo $c->uri_for('lib/leaflet/dist/leaflet.ie.css') ?>"/>-->
-  <link rel="stylesheet" href="<?php echo $c->uri_for('lib/shared/slidemapper.min.css') ?>"/>
   <script type="text/javascript" src="<?php echo $c->uri_for('lib/leaflet/dist/leaflet.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/shared/leafpile.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/shared/jquery-1.7.2.min.js') ?>"></script>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/shared/slidemapper.min.js') ?>"></script>
-  <?php } ?>
+
+  <?php
+      if (file_exists(AIR2_DOCROOT.'/js/third_party.js')) {
+  ?>
+  <script type="text/javascript" src="<?php echo $c->uri_for('js/third_party.js') ?>"></script>
+  <?php
+      }
+      else {
+          foreach (AirHtml::third_party_js() as $jspath) {
+  ?>
+  <script type="text/javascript" src="<?php echo $c->uri_for($jspath) ?>"></script>
+  <?php
+          }
+      }
+  ?>
 
   <?php if ($c && is_a($c, 'Query_Controller')) { ?>
-  <script type="text/javascript" src="<?php echo $c->uri_for('lib/extjs/plugins/date-time-ux.js') ?>"></script>
   <!-- Form Rendering JS -->
-  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
   <script type="text/javascript" src="<?php echo $c->uri_for('js/pinform.js') ?>"></script>
   <link rel="stylesheet" href="<?php echo $c->uri_for('css/pinform.css') ?>"/>
   <script type="text/javascript">
@@ -142,6 +145,7 @@ if (!isset($search_idx)) {
     AIR2.UPLOADSERVER = '<?php echo AIR2_UPLOAD_SERVER_URL; ?>';
     AIR2.PREVIEWSERVER = '<?php echo AIR2_PREVIEW_SERVER_URL; ?>';
     AIR2.MAX_EMAIL_EXPORT = <?php echo AIR2_MAX_EMAIL_EXPORT ?>;
+    AIR2.PINSIGHTFUL_TAG  = '<?php echo AIR2_PINSIGHTFUL_TAG ?>';
     <?php } ?>
   </script>
 
@@ -160,38 +164,15 @@ if (!isset($search_idx)) {
 echo $html['head']['misc'];
 ?>
 
-<!-- Google Analytics. -->
-<? if (defined('AIR2_ANALYTICS_ACCT')): ?>
-  <script type="text/javascript">
-
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', '<?= AIR2_ANALYTICS_ACCT ?>']);
-    _gaq.push(['_trackPageview']);
-
-    <?
-    // The following code is only required if you're behind a firewall.
-    if (!$c->is_production):
-    ?>
-      _gaq.push(['_setDomainName', 'none']);
-    <? endif; ?>
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-
-  </script>
-<? endif; ?>
-
-<!-- WebTrends -->
-<? if (defined('AIR2_WEBTRENDS_ACCT')): ?>
-<!-- Copyright (c) 2012 Webtrends Inc.  All rights reserved. -->
-<script type="text/javascript" src="/wp-content/themes/pin/library/js/webtrends.load.js"></script>
-<? endif; ?>
-
  </head>
  <body>
+<? if (defined('AIR2_GTM_ACCT')): ?>
+<!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5B3FSV"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-5B3FSV');</script>
+<!-- End Google Tag Manager -->
+<? endif; ?>
   <!-- header area -->
   <div id="air2-headerwrap">
    <div class="background">
@@ -212,6 +193,9 @@ echo $html['head']['misc'];
        </form>
       </div>
       <div class="recent-stuff">
+       <div class="air2-btn air2-btn-darker air2-btn-small x-btn-icon">
+        <button class="x-btn-text air2-icon-email">&nbsp;</button>
+       </div>
        <div class="air2-btn air2-btn-darker air2-btn-small x-btn-icon">
         <button class="x-btn-text air2-icon-project">&nbsp;</button>
        </div>

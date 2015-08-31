@@ -73,6 +73,8 @@
  * @author rcavis
  * @package default
  */
+
+
 require_once 'phperl/callperl.php';
 require_once 'querybuilder/AIR2_QueryBuilder.php';
 
@@ -96,6 +98,8 @@ class Inquiry extends AIR2_Record {
     public static $TYPE_MANUAL_ENTRY = 'E';
     public static $TYPE_COMMENT      = 'C';
     public static $TYPE_QUERYBUILDER = 'Q';
+    public static $TYPE_TEST         = 'T';
+    public static $TYPE_NONJOURN     = 'N';
 
     /*
      * legal types of manual-entry inquiries (these are actually used as
@@ -646,7 +650,6 @@ class Inquiry extends AIR2_Record {
 
     /**
      *
-     *
      * @param string  $uri_base (optional)
      * @return string $uri
      */
@@ -668,7 +671,6 @@ class Inquiry extends AIR2_Record {
 
     /**
      *
-     *
      * @return string $uri_path
      */
     public function get_uri_path() {
@@ -682,7 +684,6 @@ class Inquiry extends AIR2_Record {
 
 
     /**
-     *
      *
      * @return string $locale
      */
@@ -736,8 +737,9 @@ class Inquiry extends AIR2_Record {
     /**
      * Returns the values of inq_status that denote a 'published' inquiry.
      *
+     *
      * @return array Array of strings.
-     * */
+     */
     public static function published_status_flags() {
         return array(
             self::$STATUS_ACTIVE,
@@ -900,10 +902,10 @@ class Inquiry extends AIR2_Record {
         $a = ($alias) ? "$alias." : "";
         $str = "({$a}inq_title LIKE ? OR {$a}inq_ext_title LIKE ?)";
         if ($useOr) {
-            $q->orWhere($str, array("%$search%", "$search%"));
+            $q->orWhere($str, array("%$search%", "%$search%"));
         }
         else {
-            $q->addWhere($str, array("%$search%", "$search%"));
+            $q->addWhere($str, array("%$search%", "%$search%"));
         }
     }
 
@@ -922,7 +924,6 @@ class Inquiry extends AIR2_Record {
 
 
     /**
-     *
      *
      * @return boolean true if has expected number of published files
      */
@@ -945,8 +946,9 @@ class Inquiry extends AIR2_Record {
      *
      *
      * @return void
+     *
      * @param Doctrine_Event $event
-     * */
+     */
     public function postSave($event) {
         /*
          * Clear the current projects and orgs RSS feed cache(s).
@@ -983,7 +985,6 @@ class Inquiry extends AIR2_Record {
 
 
     /**
-     *
      *
      * @param unknown $event
      */
@@ -1137,6 +1138,18 @@ class Inquiry extends AIR2_Record {
 
 
     /**
+     *
+     * @return unknown
+     */
+    public function has_file_upload_question() {
+        $q = AIR2_Query::create()->from('Question q');
+        $q->where('q.ques_inq_id = ?', $this->inq_id);
+        $q->andWhereIn('q.ques_type', array(Question::$TYPE_FILE));
+        return $q->fetchOne();
+    }
+
+
+    /**
      * Returns number of published submissions.
      *
      * @return integer count of published submissions
@@ -1206,7 +1219,7 @@ class Inquiry extends AIR2_Record {
         $now = air2_date();
         $q = AIR2_Query::create()
         ->from("$class i")
-        ->whereIn("i.inq_type", array('F', 'Q', 'T'))
+        ->whereIn("i.inq_type", array(self::$TYPE_FORMBUILDER, self::$TYPE_QUERYBUILDER, self::$TYPE_TEST, self::$TYPE_NONJOURN))
         ->andWhereIn('i.inq_status', Inquiry::published_status_flags())
         ->andWhere("(i.inq_publish_dtim is null OR i.inq_publish_dtim <= '$now')")
         ->andWhere("(i.inq_expire_dtim is null OR i.inq_expire_dtim > '$now')")

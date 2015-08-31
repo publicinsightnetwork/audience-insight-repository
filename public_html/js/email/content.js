@@ -34,14 +34,22 @@ AIR2.Email.Content = function() {
             '</div>' +
             // email content
             '<div class="eml-content">' +
+             '<table>' +
+              '<tr>' +
+               '<td>' +
               '<tpl if="Logo">' +
                 '<div class="logo">' +
                   '{[AIR2.Format.emailLogo(values)]}' +
                 '</div>' +
               '</tpl>' +
+              '</td>' +
+              '<td>' +
               '<div class="headline">' +
                 '<h2>{email_headline}</h2>' +
               '</div>' +
+              '</td>' +
+             '</tr>' +
+            '</table>' +
               '<div class="body">' +
                 '{email_body}' +
               '</div>' +
@@ -72,6 +80,13 @@ AIR2.Email.Content = function() {
         usigRawText[rec.get('usig_uuid')] = rec.get('usig_text');
         usigChoices.push([rec.get('usig_uuid'), sanitize(rec.get('usig_text'))]);
     });
+
+    var existingSig = [AIR2.Email.BASE.radix.usig_uuid,AIR2.Email.BASE.radix.usig_text];
+    if (existingSig[0] && !usigStore.getById(existingSig[0])) {
+        //Logger('current email sig not assigned to current user');
+        usigChoices.push([existingSig[0], sanitize(existingSig[1])]);
+        usigRawText[existingSig[0]] = existingSig[1];
+    }
 
     // duplicate the email content
     dupbutton = new AIR2.UI.Button({
@@ -186,7 +201,7 @@ AIR2.Email.Content = function() {
                 allowBlank: true
             },{
                 xtype: 'box',
-                html: 'Please upload a wide (banner) .jpg or .png file at least 400px by 200px.',
+                html: 'Please upload a square .jpg or .png file at least 400px by 400px.',
                 cls: 'logo-instructions'
             },{
                 xtype: 'textfield',
@@ -222,7 +237,10 @@ AIR2.Email.Content = function() {
                     select: function (fld, rec, idx) {
                         if (rec.data.value) {
                             var raw = usigRawText[rec.data.value];
-                            Ext.getCmp('email-sig-editor').setValue(raw);
+                            var editor = Ext.getCmp('email-sig-editor');
+                            editor.setValue(raw);
+                            editor.setEditorValue(raw);
+                            editor.ckEditorInstance.setReadOnly(false);
                         }
                         else {
                             Ext.getCmp('email-sig-editor').setValue('New signature text here');
@@ -234,12 +252,15 @@ AIR2.Email.Content = function() {
                 xtype: 'air2ckeditor',
                 fieldLabel: '',
                 name: 'usig_text',
-                CKConfig: { height: 100 }
+                ckEditorConfig: { height: 100 }
             }]
         }],
         listeners: {
             // set faketext in the fileupload fields
             beforeedit: function (form, rs) {
+                // disable sending while editing
+                AIR2.Email.Summary.getEl().mask('Editing in progress');
+
                 if (rs[0].data.Logo) {
                     logo = form.getForm().findField('logo');
                     logo.setRawValue(' ' + rs[0].data.Logo.img_file_name);
@@ -247,9 +268,9 @@ AIR2.Email.Content = function() {
 
                 // no idea why, but need to wait for CK to render to setValue
                 setTimeout(function() {
-                    if (sid = rs[0].data.usig_uuid) {
+                    var sid = rs[0].data.usig_uuid;
                         Ext.getCmp('email-sig-editor').setValue(usigRawText[sid]);
-                    }
+                    Ext.getCmp('email-sig-editor').setEditorValue(usigRawText[sid]);
                 }, 500);
             },
             // update signature combobox with new signatures
@@ -260,6 +281,10 @@ AIR2.Email.Content = function() {
                     usigChoices.splice(1, 0, [sid, sanitize(rs[0].data.usig_text)]);
                     Ext.getCmp('email-sig-picker').store.loadData(usigChoices);
                 }
+                AIR2.Email.Summary.getEl().unmask();
+            },
+            afteredit: function(panel) {
+                AIR2.Email.Summary.getEl().unmask();
             },
             // handle ajax file-upload
             validate: function (panel) {

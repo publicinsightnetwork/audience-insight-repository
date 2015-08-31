@@ -228,7 +228,7 @@ $qb_templates = array(
         'ques_resp_opts'    => array(
             'require'       => false,
         ),
-        'single_instance'   => false,
+        'single_instance'   => true,
     ),
     'link' => array(
         'display'           =>  array(
@@ -433,6 +433,7 @@ $qb_templates = array(
                 array('value' => 'Independiente'),
                 array('value' => 'Libertariano'),
                 array('value' => 'Republicano'),
+                array('value' => 'No afiliado'),
                 array('value' => 'Otro'),
             ),
         ),
@@ -733,7 +734,7 @@ $qb_templates = array(
             'maxlen'        => 128,
         ),
         'ques_locks'        => array('maxlen'),
-        'ques_pmap_id'      => ProfileMap::$SRC_MAIL_STREET,
+        'ques_pmap_id'      => ProfileMap::$SRC_CITY,
         'single_instance'   => true,
     ),
     'state' => array(
@@ -769,7 +770,7 @@ $qb_templates = array(
         ),
         'ques_type'         => Question::$TYPE_CONTRIBUTOR,
         'ques_public_flag'  => false,
-        'ques_resp_type'    => Question::$DTYPE_STRING,
+        'ques_resp_type'    => Question::$DTYPE_ZIP,
         'ques_resp_opts'    => array(
             'require'       => true,
             'minlen'        => 5,

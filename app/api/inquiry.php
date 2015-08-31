@@ -41,14 +41,14 @@ class AAPI_Inquiry extends AIRAPI_Resource {
         // text fields
         'inq_desc', 'inq_intro_para', 'inq_rss_intro', 'inq_ending_para', 'inq_confirm_msg',
         // meta
-        'inq_rss_status', 'loc_key', 'inq_url', 'inq_tpl_opts', 'logo',
+        'inq_rss_status', 'loc_key', 'inq_type', 'inq_url', 'inq_tpl_opts', 'logo',
         // events
         'inq_publish_dtim', 'inq_deadline_msg', 'inq_deadline_dtim', 'inq_expire_msg', 'inq_expire_dtim',
         // actions
         'do_publish', 'do_deactivate', 'do_expire', 'do_schedule', 'do_unschedule');
 
     // default paging/sorting
-    protected $query_args_default = array('type' => 'FQ');  // Formbuilder&Querymaker
+    protected $query_args_default = array('type' => 'NFQ');  // allowed types
     protected $limit_default  = 10;
     protected $offset_default = 0;
     protected $sort_default   = 'inq_cre_dtim asc';
@@ -121,7 +121,7 @@ class AAPI_Inquiry extends AIRAPI_Resource {
         }
 
         $i = new Inquiry();
-        $i->inq_type = Inquiry::$TYPE_QUERYBUILDER;
+        $i->inq_type = Inquiry::$TYPE_QUERYBUILDER;  // default, editable via UI for Global Managers
         $i->inq_status = Inquiry::$STATUS_DRAFT;
         $this->require_data($data, array('inq_ext_title', 'inq_rss_intro', 'loc_key', 'org_uuid', 'prj_uuid'));
 

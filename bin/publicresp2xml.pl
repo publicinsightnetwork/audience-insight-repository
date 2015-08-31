@@ -132,6 +132,11 @@ for my $id ( @{ $pks->{ids} } ) {
     }
     else {
         warn "$id is not public. Skipping.\n";
+
+        # if this was a stale record, zap the stale record
+        $set->db->get_write_handle->dbh->do(
+            "delete from stale_record where str_type = 'A' and str_xid = ?",
+            {}, $set->srs_id );
         next;
     }
 
@@ -174,4 +179,8 @@ sub make_xml {
         debug  => $debug,
     );
 
+    # if this was a stale record, zap the stale record
+    $set->db->get_write_handle->dbh->do(
+        "delete from stale_record where str_type = 'A' and str_xid = ?",
+        {}, $set->srs_id );
 }

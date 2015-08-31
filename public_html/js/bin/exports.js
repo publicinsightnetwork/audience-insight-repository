@@ -53,9 +53,6 @@ AIR2.Bin.Exports = function () {
                     return AIR2.Format.date(values.se_cre_dtim);
                 },
                 formatType: function (values) {
-                    if (values.se_type === 'L') {
-                        return 'Lyris';
-                    }
                     if (values.se_type === 'C') {
                         return 'CSV';
                     }

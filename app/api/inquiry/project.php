@@ -100,14 +100,16 @@ class AAPI_Inquiry_Project extends AIRAPI_Resource {
             $u = $data['prj_uuid'];
             throw new Rframe_Exception(Rframe::BAD_DATA, "Invalid prj_uuid '$u'");
         }
-        if (!$prj->user_may_write($this->user)) {
-            throw new Rframe_Exception(Rframe::BAD_DATA, "Invalid Project authz");
-        }
 
         $pinq = new ProjectInquiry();
         $pinq->pinq_inq_id = $this->parent_rec->inq_id;
         $pinq->Project = $prj;
         $pinq->mapValue('prj_uuid', $pinq->Project->prj_uuid);
+
+        // adding a Project to a Query requires write authz on the Query, not the Project.
+        if (!$pinq->user_may_write($this->user)) {
+            throw new Rframe_Exception(Rframe::BAD_DATA, "Invalid Query authz");
+        }   
 
         // log activity
         $activity = new InquiryActivity();
@@ -131,6 +133,9 @@ class AAPI_Inquiry_Project extends AIRAPI_Resource {
      * @param unknown $pinq
      */
     protected function air_delete($pinq) {
+        if (!$pinq->user_may_delete($this->user)) {
+            throw new Rframe_Exception(Rframe::BAD_DATA, "Invalid Query authz");
+        }
 
         $project = $pinq->Project;
 

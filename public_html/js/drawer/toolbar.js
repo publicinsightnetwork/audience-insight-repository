@@ -294,6 +294,19 @@ AIR2.Drawer.Toolbar = function (config) {
         },
         {
             xtype: 'air2button',
+            text: 'Search/Map',
+            air2type: 'BLUE',
+            iconCls: 'air2-icon-savedsearch',
+            handler: function() {
+                // redirect to search page
+                // use 'all sources' search since we can't predict
+                // what status of bin contents is.
+                var newUrl = AIR2.HOMEURL + '/search/sources?q=bin:'+this.view.binRecord.data.bin_uuid;
+                window.location = newUrl;
+            }
+        },
+        {
+            xtype: 'air2button',
             air2type: 'BLUE',
             iconCls: 'air2-icon-upload',
             text: 'Export',

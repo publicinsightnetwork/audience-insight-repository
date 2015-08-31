@@ -7,10 +7,10 @@ AIR2.Inquiry.Outcomes = function () {
         editTemplate,
         editTemplateOptions,
         outcomePanel,
-        panelTemplate,
-        viewItem;
+        panelTemplate;
 
     editTemplate = '<tpl for=".">' +
+      '<div class="air2-outcome">' +
         '<div class="outcome-row">' +
             '<h3>' +
                 '{[AIR2.Format.outcome(values,"title",60)]}' +
@@ -35,6 +35,7 @@ AIR2.Inquiry.Outcomes = function () {
                 //'<button class="air2-rowedit"></button>' +
             '</div>' +
         '</div>' +
+      '</div>' +
     '</tpl>';
 
     editTemplateOptions = {
@@ -143,22 +144,15 @@ AIR2.Inquiry.Outcomes = function () {
         }
     });
 
-    viewItem = new Ext.Toolbar.TextItem({
-        html:
-            '<a href="' + AIR2.Inquiry.OUTSRCH + '" ' +
-            'qtip="View all PINfluence">View all</a>'
-    });
-
     outcomePanel = new AIR2.UI.Panel({
-        airTotal: AIR2.Inquiry.OUTDATA.radix.length,
+        airTotal: AIR2.Inquiry.OUTDATA.meta.total,
         cls: 'air2-inquiry-outcome',
         collapsible: false,
         colspan: 1,
         editModal: editModal,
-        fbar: [addButton, '->', viewItem],
+        fbar: [addButton],
         iconCls: 'air2-icon-outcome',
         itemSelector: '.outcome-row',
-        showAllLink: AIR2.Inquiry.OUTSRCH,
         showTotal: true,
         storeData: AIR2.Inquiry.OUTDATA,
         title: 'PINfluence',
@@ -176,7 +170,7 @@ AIR2.Inquiry.Outcomes = function () {
             var tab, tabIndex;
             tabIndex = AIR2.Inquiry.Cards.items.indexOf(panel);
             tab = AIR2.Inquiry.Tabs.items.itemAt(tabIndex);
-            tab.updateTabTotal(tab, store.getCount());
+            tab.updateTabTotal(tab, store.getTotalCount());
             if (AIR2.APP) {
                 AIR2.APP.syncSize();
             }

@@ -31,9 +31,16 @@ __PACKAGE__->meta->setup(
     columns => [
         sf_src_id    => { type => 'integer', not_null => 1 },
         sf_fact_id   => { type => 'integer', not_null => 1 },
+
+        # user-mapped value, via translation map, etc.
         sf_fv_id     => { type => 'integer' },
+
+        # source-supplied raw value
         sf_src_value => { type => 'text',    length   => 65535 },
+
+        # source-supplied mapped value (from picklist, e.g. income)
         sf_src_fv_id => { type => 'integer' },
+
         sf_lock_flag   => { type => 'integer', default => 1, not_null => 1 },
         sf_public_flag => { type => 'integer', default => 1, not_null => 1 },
         sf_cre_user => { type => 'integer', not_null => 1 },

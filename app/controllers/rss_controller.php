@@ -27,6 +27,8 @@ require_once 'Cache.php';
  *
  * @package default
  */
+
+
 class Rss_Controller extends Base_Controller {
 
 
@@ -188,7 +190,6 @@ class Rss_Controller extends Base_Controller {
 
     /**
      *
-     *
      * @param array   $inquiries
      * @return array $items
      */
@@ -209,7 +210,7 @@ class Rss_Controller extends Base_Controller {
                 'description' => $inq->inq_rss_intro,
                 'link'        => '',
                 'pubDate'     => $this->_rss_datetime($inq->inq_publish_dtim),
-                'author'      => implode(', ', $authors_str),
+                'dc:creator'  => implode(', ', $authors_str),
             );
 
             // inq_url can be set explicitly, esp if the query is being embedded on a non-pin site.
@@ -228,7 +229,6 @@ class Rss_Controller extends Base_Controller {
 
 
     /**
-     *
      *
      * @param array   $items
      * @param string  $title
@@ -340,7 +340,7 @@ class Rss_Controller extends Base_Controller {
                 'link'        => $out->out_url,
                 'guid'        => $out->out_uuid,
                 'pubDate'     => $this->_rss_datetime($out->out_dtim),
-                'author'      => $out->CreUser->user_username,
+                'dc:creator'      => $out->CreUser->user_username,
             );
 
             // for now, replace any newlines with <br/>

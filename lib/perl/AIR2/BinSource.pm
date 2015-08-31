@@ -32,6 +32,7 @@ __PACKAGE__->meta->setup(
         bsrc_src_id => { type => 'integer', default => '', not_null => 1 },
         bsrc_notes  => { type => 'varchar', length   => 255 },
         bsrc_meta   => { type => 'varchar', length   => 255 },
+        bsrc_cre_dtim => { type => 'datetime', },
     ],
 
     primary_key_columns => ['bsrc_bin_id', 'bsrc_src_id'],

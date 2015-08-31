@@ -33,6 +33,9 @@ use AIR2::Source;
 use AIR2::SrcStat;
 use File::Slurp;
 
+# avoid utf-8 wide char warnings
+binmode(STDOUT, ":utf8");
+
 =pod
 
 =head1 NAME

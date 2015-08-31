@@ -85,6 +85,7 @@ my %type_indexes = (
     'responses'        => [ 'fuzzy_responses', 'responses' ],
     'projects'         => ['projects'],
     'inquiries'        => ['inquiries'],
+    'outcomes'         => ['outcomes'],
     'public_responses' => ['public_responses'],
 );
 
@@ -120,10 +121,14 @@ $lock_file->lock;
 
 my %sql_counts = (
     'sources' => 'select src_uuid from source',
-    'inquiries' =>
-        qq/select inq_uuid from inquiry where inq_type in ('F', 'Q')/,
+    'inquiries' => sprintf(
+        "select inq_uuid from inquiry where inq_type in ('%s', '%s', '%s')",
+        AIR2::Inquiry::TYPE_FORMBUILDER, AIR2::Inquiry::TYPE_QUERYBUILDER,
+        AIR2::Inquiry::TYPE_NONJOURN
+    ),
     'projects'         => 'select prj_uuid from project',
     'responses'        => 'select srs_uuid from src_response_set',
+    'outcomes'         => 'select out_uuid from outcome',
     'public_responses' => AIR2::PublicSrcResponseSet->get_sql_all(),
 );
 $sql_counts{public_responses}

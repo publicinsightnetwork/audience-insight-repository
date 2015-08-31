@@ -119,12 +119,20 @@ for my $inq_id ( @{ $pks->{ids} } ) {
         next;
     }
 
-    if ( $inq->inq_type !~ m/^[FQ]/ ) {
+    if (    $inq->inq_type ne AIR2::Inquiry::TYPE_FORMBUILDER
+        and $inq->inq_type ne AIR2::Inquiry::TYPE_QUERYBUILDER
+        and $inq->inq_type ne AIR2::Inquiry::TYPE_NONJOURN )
+    {
         if ($debug) {
             AIR2::Utils::logger( "Inquiry $inq_id has type "
                     . $inq->inq_type
                     . " not allowed in search index. Skipping.\n" );
         }
+
+        # if this was a stale record, zap the stale record
+        $inq->db->get_write_handle->dbh->do(
+            "delete from stale_record where str_type = 'I' and str_xid = ?",
+            {}, $inq->inq_id );
         next;
     }
 
@@ -157,4 +165,9 @@ sub make_xml {
         base => $base_dir,
         xml  => $xml,
     );
+
+    # if this was a stale record, zap the stale record
+    $inq->db->get_write_handle->dbh->do(
+        "delete from stale_record where str_type = 'I' and str_xid = ?",
+        {}, $inq->inq_id );
 }

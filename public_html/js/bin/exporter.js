@@ -1,11 +1,11 @@
 Ext.ns('AIR2.Bin.Exporter');
 
 /**
- * Lyris-export modal window
+ * Export modal window
  *
- * Show a dialog to export the contents of a Bin to Lyris
+ * Show a dialog to export the contents of a Bin 
  *
- * @function AIR2.Bin.Exporter.toLyris
+ * @function AIR2.Bin.Exporter
  * @cfg {String}      binuuid  (required)
  * @cfg {HTMLElement} originEl (optional) origin element to animate from
  * @return {AIR2.UI.Window}
@@ -163,11 +163,10 @@ AIR2.Bin.Exporter = function (cfg) {
     // type of export
     typechoices = [
         ['csv', 'Sources to CSV File'],
-        ['xls', 'Submissions to XLSX File'],
-        ['lyris', 'Emails to Lyris']
+        ['xls', 'Submissions to XLSX File']
     ];
     if (AIR2.Util.Authz.has('ACTION_EMAIL_CREATE')) {
-        //typechoices.push(['mailchimp', 'Emails to Mailchimp']);
+        //typechoices.push(['mailchimp', 'Emails to Mailchimp']); // currently we do not support mailchimp this way.
     }
     typebox = new AIR2.UI.ComboBox({
         fieldLabel: 'Export Type',
@@ -182,35 +181,19 @@ AIR2.Bin.Exporter = function (cfg) {
             href = 'http://support.publicinsightnetwork.org';
             attr = 'href="' + href + '" class="external" target="_blank"';
             sup = '<a ' + attr + '>Contact support</a> for more information.';
-            if (value.match(/lyris/i)) {
-                num = binfld.bin_counts.src_export_lyris;
-                own = binfld.getOwner();
-                max = AIR2.Bin.Exporter.MAX_LYRIS_SIZE;
-                if (num > max && !isAdmin) {
-                    return 'Bin exceeds the maximum allowed for an export' +
-                        ' to Lyris (' + max + ')';
-                }
-                if (!own && !isAdmin) {
-                    return 'Only the owner of a Bin may export to Lyris';
-                }
-                if (num < 1) {
-                    return 'You don\'t have authorization to Lyris-export ' +
-                        'any sources in this bin';
-                }
-            }
             if (value.match(/mailchimp/i)) {
-                num = binfld.bin_counts.src_export_lyris;
+                num = binfld.bin_counts.src_export;
                 own = binfld.getOwner();
-                max = AIR2.Bin.Exporter.MAX_LYRIS_SIZE;
+                max = AIR2.Bin.Exporter.MAX_SIZE;
                 if (num > max && !isAdmin) {
                     return 'Bin exceeds the maximum allowed for an export' +
-                        ' to Mailchimp (' + max + ')';
+                        ' (' + max + ')';
                 }
                 if (!own && !isAdmin) {
-                    return 'Only the owner of a Bin may export to Mailchimp';
+                    return 'Only the owner of a Bin may export';
                 }
                 if (num < 1) {
-                    return 'You don\'t have authorization to Mailchimp-export ' +
+                    return 'You don\'t have authorization to export ' +
                         'any sources in this bin';
                 }
             }
@@ -265,10 +248,7 @@ AIR2.Bin.Exporter = function (cfg) {
                 }
 
                 // export count warning
-                if (rec.id === 'lyris') {
-                    num = binfld.bin_counts.src_export_lyris;
-                }
-                else if (rec.id === 'mailchimp') {
+                if (rec.id === 'mailchimp') {
                     num = binfld.bin_counts.src_export_mailchimp;
                 }
                 else {
@@ -368,14 +348,7 @@ AIR2.Bin.Exporter = function (cfg) {
                     );
                 }
                 else {
-                    AIR2.Bin.Exporter.toLyris(
-                        binuuid,
-                        values.org_uuid,
-                        values.prj_uuid,
-                        values.inq_uuid,
-                        values.strict,
-                        callback
-                    );
+                    alert('Error. Please contact support if you see this message.');
                 }
             }
         }

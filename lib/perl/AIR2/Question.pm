@@ -25,6 +25,7 @@ use base qw(AIR2::DB);
 use Carp;
 use AIR2::Config;
 use JSON;
+use Scalar::Util qw( blessed );
 use File::Slurp;
 use Search::Tools::UTF8;
 use Encode;
@@ -210,7 +211,7 @@ sub new_from_template {
         next if !defined $t{$_};
 
         #warn "$_ => $t{$_} " . ref( $t{$_} );
-        if ( ref $t{$_} eq 'JSON::XS::Boolean' ) {
+        if ( blessed $t{$_} and $t{$_}->isa('JSON::PP::Boolean') ) {
             $t{$_} = 0 if $t{$_} eq '0';
             $t{$_} = 1 if $t{$_} eq '1';
         }

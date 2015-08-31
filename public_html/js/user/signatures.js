@@ -110,7 +110,7 @@ AIR2.User.Signatures = function () {
                       allowBlank: false,
                       width: 400,
                       renderTo: textEl,
-                      CKConfig: { height: 100 }
+                      ckEditorConfig: { height: 100 }
                     });
 
                     return [text];

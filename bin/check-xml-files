@@ -55,8 +55,11 @@ my $xml_dir = AIR2::Config::get_search_xml->subdir($type);
 
 my %sql = (
     'sources' => 'select src_uuid from source',
-    'inquiries' =>
-        qq/select inq_uuid from inquiry where inq_type in ('F', 'Q')/,
+    'inquiries' => sprintf(
+        "select inq_uuid from inquiry where inq_type in ('%s', '%s', '%s')",
+        AIR2::Inquiry::TYPE_FORMBUILDER, AIR2::Inquiry::TYPE_QUERYBUILDER,
+        AIR2::Inquiry::TYPE_NONJOURN
+    ),
     'projects'         => 'select prj_uuid from project',
     'responses'        => 'select srs_uuid from src_response_set',
     'public_responses' => AIR2::PublicSrcResponseSet->get_sql_all(),

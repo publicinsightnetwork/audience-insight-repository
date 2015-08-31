@@ -172,7 +172,6 @@ class AAPI_Bin extends AIRAPI_Resource {
                 'src_read'             => $this->_get_bin_src_count($rec, ACTION_ORG_SRC_READ),
                 'src_update'           => $this->_get_bin_src_count($rec, ACTION_ORG_SRC_UPDATE),
                 'src_export_csv'       => $this->_get_bin_src_count($rec, ACTION_EXPORT_CSV),
-                'src_export_lyris'     => $this->_get_bin_src_count($rec, ACTION_EXPORT_LYRIS),
                 'src_export_mailchimp' => $this->_get_bin_src_count($rec, ACTION_EXPORT_MAILCHIMP),
                 'src_export_print'     => $this->_get_bin_src_count($rec, ACTION_EXPORT_PRINT),
                 'subm_total'           => $rec->subm_count,
@@ -368,12 +367,7 @@ class AAPI_Bin extends AIRAPI_Resource {
         $org_ids = $this->user->get_authz_str($action, 'soc_org_id');
         $cache = "select soc_src_id from src_org_cache where $org_ids";
 
-        // special case - lyris export also requires opted-in src_status
-        if ($action == ACTION_EXPORT_LYRIS) {
-            $cache .= " and soc_status = '".SrcOrg::$STATUS_OPTED_IN."'";
-        }
-
-        // specialer case - mailchimp opted-in, optionally in a specific org
+        // special case - mailchimp opted-in, optionally in a specific org
         if ($action == ACTION_EXPORT_MAILCHIMP) {
             $cache .= " and soc_status = '".SrcOrg::$STATUS_OPTED_IN."'";
             if (isset($_GET['email_uuid'])) {

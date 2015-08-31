@@ -91,10 +91,16 @@
     margin: 2px 90px 8px 90px;
     color: #777;
 }
+
+.air2-email-content .eml-content td {
+    vertical-align: top;
+}
+
 .air2-email-content .eml-content .logo img {
     border: 1px dashed #bbb;
     margin-bottom: 8px;
     padding: 4px;
+    max-height: 100px;
 }
 .air2-email-content .eml-content .headline {
     margin: 4px 0 12px;

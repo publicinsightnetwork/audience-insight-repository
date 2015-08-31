@@ -573,6 +573,34 @@ table.air2-search-inq td {
     padding-left: 4px;
 }
 
+/* outcomes */
+.air2-search-result.air2-outcome .link,
+.air2-search-result.air2-outcome .stats,
+.air2-search-result.air2-outcome .summary,
+.air2-search-result.air2-outcome .credit,
+.air2-search-result.air2-outcome .ext-link
+{
+    margin: 0 0 8px 0;
+}
+
+.air2-search-result.air2-outcome table {
+    padding: 0 0 0 8px;
+    margin: 0 0 0 8px;
+}
+
+.air2-search-result.air2-outcome table th {
+    font-weight: bold;
+}
+
+.air2-search-result.air2-outcome table td {
+    padding-left: 4px;
+}
+
+.air2-search-result.air2-outcome .stats span {
+    display: inline-block;
+    margin-left: 16px;
+}
+
 .air2-search-child-count,
 .air2-search-child-count:visited
 {

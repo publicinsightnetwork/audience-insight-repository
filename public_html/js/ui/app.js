@@ -31,6 +31,14 @@ AIR2.UI.App = function (config) {
 
     // recent buttons
     this.addRecentButton({
+        view: 'email',
+        iconCls: 'air2-icon-email',
+        data: AIR2.RECENT.email,
+        uuid: 'email_uuid',
+        tooltip: 'Recent&nbsp;Emails',
+        textFn: function (data) {return data.email_campaign_name; }
+    });
+    this.addRecentButton({
         view: 'project',
         iconCls: 'air2-icon-project',
         data: AIR2.RECENT.project,
@@ -204,7 +212,7 @@ AIR2.UI.App = function (config) {
     };
 
     // show the outcome-exporter window
-    isGlobalManager = AIR2.Util.Authz.has('AIR2_AUTHZ_ROLE_M', 'ADKLm8Okenaa');
+    isGlobalManager = AIR2.Util.Authz.isGlobalManager();
     isWriter = AIR2.Util.Authz.has('AIR2_AUTHZ_ROLE_W');
     showOutExp = function (b) {
         AIR2.Outcome.Exporter({originEl: b.el, require_org: !isGlobalManager});
@@ -277,17 +285,24 @@ AIR2.UI.App = function (config) {
                 checkHandler: function (item, checked) {
                     if (checked) {
                         stype.setIconClass(item.iconCls);
+                        if (!item.advanced) {
+                            AIR2.UI.AdvSearchButton.el.hide(true);
+                        }
+                        else {
+                            AIR2.UI.AdvSearchButton.el.show(true);
+                        }
                         form.dom.setAttribute('action', item.viewUrl);
                     }
                 }
             },
             items: [
-                {text: 'All Sources', view: 'sources'},
-                {text: 'Available Sources', view: 'active-sources'},
-                {text: 'Primary Sources', view: 'primary-sources'},
-                {text: 'Projects', view: 'projects'},
-                {text: 'Queries', view: 'inquiries', action: 'queries'},
-                {text: 'Submissions', view: 'responses'}
+                {text: 'All Sources', view: 'sources', advanced: true},
+                {text: 'Available Sources', view: 'active-sources', advanced: true},
+                {text: 'Primary Sources', view: 'primary-sources', advanced: true},
+                {text: 'PINfluence', view: 'outcomes', advanced: false},
+                {text: 'Projects', view: 'projects', advanced: false},
+                {text: 'Queries', view: 'inquiries', action: 'queries', advanced: false},
+                {text: 'Submissions', view: 'responses', advanced: false}
             ]
         },
         renderTo: this.bufferEl,
@@ -335,7 +350,7 @@ AIR2.UI.App = function (config) {
             scope: this
         }
     });
-    new AIR2.UI.Button({
+    AIR2.UI.AdvSearchButton = new AIR2.UI.Button({
         air2type: 'PLAIN',
         text: 'Advanced',
         cls: 'search-adv',
@@ -355,6 +370,16 @@ AIR2.UI.App = function (config) {
                 btn.el.replace(el);
             },
             scope: this
+        }
+    });
+
+    // retain width even when hidden
+    AIR2.UI.AdvSearchButton.el.setVisibilityMode(Ext.Element.VISIBILITY);
+
+    // hide the advanced button if the current view does not support it
+    stype.menu.items.each(function (item) {
+        if (item.view === AIR2.SEARCHIDX && !item.advanced) {
+            AIR2.UI.AdvSearchButton.el.hide();
         }
     });
 

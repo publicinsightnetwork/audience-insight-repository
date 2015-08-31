@@ -160,7 +160,11 @@ FILE: while ( my $file = $query_file_root->next ) {
 my $inquiries = AIR2::Inquiry->fetch_all_iterator(
     query => [
         inq_status => [qw( A L E S )],
-        inq_type   => [qw( F Q )],
+        inq_type   => [
+            AIR2::Inquiry::TYPE_FORMBUILDER,
+            AIR2::Inquiry::TYPE_QUERYBUILDER,
+            AIR2::Inquiry::TYPE_NONJOURN,
+        ],
     ],
 );
 INQ: while ( my $inquiry = $inquiries->next ) {

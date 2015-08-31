@@ -30,6 +30,7 @@ use DateTime;
 use DateTime::Format::MySQL;
 use AIR2::Config;
 use MIME::Base64;
+use Text::CSV_XS;
 
 my $hostname = AIR2::Config->get_hostname();
 
@@ -269,6 +270,44 @@ sub allow_email_export {
         }
         return 0;
     }
+}
+
+sub write_secure_csv_report {
+    my %args = @_;
+    my $rows = delete $args{rows} or confess "rows required";
+
+    confess "Unsupported args: " . dump( \%args ) if %args;
+
+    my $str = '';
+    my $csv = Text::CSV_XS->new( { binary => 1, eol => $/ } )
+        or die "Cannot use CSV: " . Text::CSV_XS->error_diag();
+    open my $fh, '>', \$str;
+    $csv->print( $fh, $_ ) for @$rows;
+
+    return write_secure_report( str => $str, ext => 'csv' );
+}
+
+sub write_secure_report {
+    my %args = @_;
+    my $str  = delete $args{str} or confess "str required";
+    my $ext  = delete $args{ext} || 'csv';
+
+    confess "Unsupported args: " . dump( \%args ) if %args;
+
+    # create random file name in secure web space
+    my $uuid     = AIR2::Utils::random_str();
+    my $filename = sprintf( "%s/%s.%s",
+        AIR2::Config::get_constant('AIR2_SECURE_PUBLIC_PATH'),
+        $uuid, $ext );
+    my $url = sprintf( "%s/%s.%s",
+        AIR2::Config::get_constant('AIR2_SECURE_PUBLIC_URL'),
+        $uuid, $ext );
+
+    open my $fh, ">$filename" or die "Can't write $filename: $!";
+    print $fh $str;
+    close $fh;
+
+    return $url;
 }
 
 1;

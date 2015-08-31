@@ -31,7 +31,7 @@ for my $f (@$files) {
 
 my $mini  = scalar(@ARGV) ? $css : minify( input => $css );
 my $after = length($mini);
-my $saved = int( $after / $total * 100 );
+my $saved = int( ($total - $after) / $total * 100 );
 write_file( "$compressed_file", $mini );
 print
     "Compressed $total bytes to $after (saved $saved\%) in $compressed_file\n";
@@ -53,6 +53,7 @@ sub get_css_files {
         "$css_dir/print.css",
         "$css_dir/ext-theme-air2.css",
         "$css_dir/query.css",
+        "$css_dir/third_party.css",
         "$css_dir/pinform.css" );
     my @rest;
     my %known = map { $_ => $_ } @css;

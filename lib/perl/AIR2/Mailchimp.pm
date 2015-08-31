@@ -28,7 +28,7 @@ use List::MoreUtils qw( natatime );
 use Date::Parse;
 use DateTime;
 use Scalar::Util qw( blessed );
-
+use JSON;
 use AIR2::Config;
 use AIR2::Organization;
 use WWW::Mailchimp;
@@ -79,6 +79,7 @@ my %ERRORS    = (
     Email_NotExists           => 232,
     Email_NotSubscribed       => 233,
     Invalid_Email             => 502,
+    RoleBasedOrInvalid_Email  => -99,
 );
 my %SOE_STATUS_MAP = (
     subscribed       => 'A',
@@ -98,7 +99,7 @@ my $API_KEY = AIR2::Config::get_constant('AIR2_MAILCHIMP_KEY');
 my $LIST_ID = AIR2::Config::get_constant('AIR2_EMAIL_LIST_ID');
 my $API_OPT = {
     apikey        => $API_KEY,
-    timeout       => 30,
+    timeout       => 180,
     output_format => 'json',
     api_version   => 1.3,
 };
@@ -122,6 +123,18 @@ sub init {
 
     # setup api singleton
     $API = WWW::Mailchimp->new($API_OPT) unless ($API);
+
+    # turn on debug opts to stderr
+    if ( $ENV{AIR2_DEBUG} || $ENV{MAILCHIMP_DEBUG} ) {
+        my $dumper = sub {
+            if ( $_[0] =~ m/^[\{\[]/ ) { dump( decode_json( $_[0] ) ) }
+        };
+        $API->ua->add_handler( "request_send", sub { shift->dump; return } );
+        $API->ua->add_handler( "response_done",
+            sub { $_[0]->dump; $dumper->( $_[0]->decoded_content ); return }
+        );
+    }
+
     $self->{api} = $API;
 
     # get the actual mailing list
@@ -226,7 +239,8 @@ sub push_list {
                 $results{ignored}++;
             }
             elsif ($err->{code} == $ERRORS{List_InvalidImport}
-                || $err->{code} == $ERRORS{Invalid_Email} )
+                || $err->{code} == $ERRORS{Invalid_Email}
+                || $err->{code} == $ERRORS{RoleBasedOrInvalid_Email} )
             {
                 $results{skipped}++;
             }
@@ -545,8 +559,14 @@ sub sync_list {
         my $soe = $soe_map{ $sem->sem_id };
         my $soc = $soc_map{ $sem->sem_src_id };
 
+        # case 0: no soe or soc
+        if ( !$soe and !$soc ) {
+            warn "No soe and no soc for " . $sem->sem_email;
+            next;
+        }
+
         # case 1: no src_org_email (mailchimp doesn't know about it yet)
-        if ( !$soe ) {
+        elsif ( !$soe && $soc ) {
             my $new_status = 'U';
             if ( $sem->sem_status eq 'G' && $soc->soc_status eq 'A' ) {
                 $new_status = 'A';

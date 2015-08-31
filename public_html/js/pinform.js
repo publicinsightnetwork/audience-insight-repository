@@ -20,6 +20,7 @@
  *    PIN_QUERY = {
  *      uuid: 'abcd1234',
  *      divId: 'my-query',
+ *      baseUrl: 'https://www.publicinsightnetwork.org/air2/',
  *      opts: {
  *          includeLegalFooter: true,
  *          validationErrorMsg: 'Sorry, you have problems!',
@@ -28,6 +29,10 @@
  *              var div = jQuery('#'+divId);
  *              var queryMeta = PIN.Form.Registry[divId];
  *              div.text('Thanks! Your submission is ' + respData.uuid);
+ *          },
+ *          onRender: function(divId, queryData) {
+ *              var div = jQuery('#'+divId);
+ *              div.prepend('<h2>'+queryData.query.inq_ext_title+'</h2>');
  *          }
  *      }
  *    };
@@ -49,6 +54,7 @@ if (typeof PIN === 'undefined') {
 }
 if (typeof PIN.Form === 'undefined') {
     PIN.Form = {};
+    //PIN.Form.DEBUG = true;
     PIN.Form.Registry = {};  // possible to have multiple forms on a page
 }
 else {
@@ -68,6 +74,25 @@ jQuery.each(sc, function(idx, tag) {
     }
 });
 
+PIN.Form.includeJs = function(filename, onload) {
+    var head    = document.getElementsByTagName('head')[0];
+    var script  = document.createElement('script');
+    script.src  = filename;
+    script.type = 'text/javascript';
+    script.onload = script.onreadystatechange = function() {
+        if ( script.readyState ) { 
+            if ( script.readyState === 'complete' || script.readyState === 'loaded' ) { 
+                script.onreadystatechange = null;
+                if (onload) onload();
+            }   
+        }   
+        else {
+            if (onload) onload();
+        }   
+    };  
+    head.appendChild(script);
+}
+
 // note protocol to workaround some same-origin bugs
 PIN.Form.isHTTPS    = (window.location.protocol === 'https:' ? true : false );
 PIN.Form.thisDomain = window.location.protocol + '//' + window.location.hostname;
@@ -80,7 +105,7 @@ if (typeof PIN.Form.LOADED === 'undefined') {
 
 // load fixtures from AIR, for states, countries, etc.
 if (!PIN.States && PIN.Form.THIS_URL) {
-    jQuery.getScript(PIN.Form.THIS_URL+"/cache/fixtures.min.js", function() {
+    PIN.Form.includeJs(PIN.Form.THIS_URL+"/cache/fixtures.min.js", function() {
         PIN.Form.DEBUG && console.log('fixtures.min.js loaded');
         PIN.Form.LOADED['fixtures'] = true;
     });
@@ -91,7 +116,7 @@ else {
 
 // jquery ui
 if (!jQuery.datepicker) {
-    jQuery.getScript('https://www.publicinsightnetwork.org/source/js/jquery-ui-1.10.3.min.js', function() {
+    PIN.Form.includeJs('https://www.publicinsightnetwork.org/source/js/jquery-ui-1.10.3.min.js', function() {
         PIN.Form.LOADED['ui'] = true;
     });
 }
@@ -100,7 +125,7 @@ else {
 }
 
 // jquery form
-if (!jQuery.ajaxForm) {
+if (!jQuery.ajaxForm && !jQuery.fn.ajaxForm) {
     jQuery.getScript('https://www.publicinsightnetwork.org/source/js/jquery.form.js', function() {
         PIN.Form.LOADED['form'] = true;
     });
@@ -137,6 +162,9 @@ PIN.Form.setup = function(args) {
     var jQueryUICssIsLoaded = false;
     for (var i in document.styleSheets) {
         var css = document.styleSheets[i];
+        if (!css || !css.href) {
+            continue;
+        }
         if (css.href == cssfile) {
             // already loaded
             cssIsLoaded = true;
@@ -155,7 +183,8 @@ PIN.Form.setup = function(args) {
         PIN.Form.DEBUG && console.log('injected ' + jQueryUICss);
     }
 
-    // load form data
+    // load form data, unless it is already loaded.
+    if (!args.queryData) {
     var jsonfile = baseUrl + "querys/" + uuid + '.json?';
 
     // if not same domain as this window, append jsonp param
@@ -171,6 +200,11 @@ PIN.Form.setup = function(args) {
     jQuery.getJSON(jsonfile, function(resp) {
         PIN.Form.build(resp, args);
     });
+    }
+    else {
+        PIN.Form.DEBUG && console.log('using local queryData');
+        PIN.Form.build(args.queryData, args);
+    }
 
 }
 
@@ -229,6 +263,7 @@ PIN.Form.getParams = function(args) {
         uuid: uuid,
         baseUrl: baseUrl,
         divId: divId,
+        queryData: args.queryData,  // pass through if defined
         opts: opts
     };
 }
@@ -321,7 +356,7 @@ PIN.Form.build = function(queryData, renderArgs) {
         if (queryData.msg) {
             msg = queryData.msg;
         }
-        jQuery('#'+renderArgs.divId).append('<div class="error">' + msg + '</div>');
+        jQuery('#'+renderArgs.divId).html('<div class="error">' + msg + '</div>');
         return;
     }
 
@@ -444,6 +479,9 @@ PIN.Form.build = function(queryData, renderArgs) {
         renderArgs.opts.includeLegalFooter // is true
     ) {
         var legalUrl = renderArgs.baseUrl + 'legal-' + (queryData.query.locale||'en_US') + '.html';
+        if (queryData.query.inq_type != "Q" && queryData.query.inq_type != "F") {
+          legalUrl = renderArgs.baseUrl + queryData.query.inq_type + '-legal-' + (queryData.query.locale||'en_US') + '.html';
+        }
         var legalWrapper = jQuery('<div id="pin-legal-wrapper"></div>');
         wrapper.append(legalWrapper);
         
@@ -454,6 +492,9 @@ PIN.Form.build = function(queryData, renderArgs) {
             jQuery.each(queryData.orgs, function(idx, org) {
                 var orgName = org.display_name;
                 if (orgName == 'Global PIN Access') {
+                    if (queryData.orgs.length > 1) {
+                        return; // skip global pin if it is one of multiple
+                    }
                     orgName = 'American Public Media';
                 }
                 var orgUrl = (org.site || 'http://www.publicinsightnetwork.org/source/en/newsroom/'+org.name);
@@ -463,9 +504,15 @@ PIN.Form.build = function(queryData, renderArgs) {
             legalWrapper.append(filteredLegalHtml);
         };
         
+        // legal text set in caller
+        if (typeof renderArgs.opts.includeLegalFooter === 'object') {
+            PIN.Form.DEBUG && console.log('using local legal footer');
+            legalMangler(renderArgs.opts.includeLegalFooter.legal);
+        }
+        
         // NOTE that same origin policy will prevent ajax injection if this
         // query is embedded on non-pin site, so in that case use a JSON callback
-        if (legalUrl.match(PIN.Form.thisDomain)) {
+        else if (legalUrl.match(PIN.Form.thisDomain)) {
             PIN.Form.DEBUG && console.log('legal inject on same domain, using jQuery.get');                
             // we must filter the returned HTML so can't use .load() method
             jQuery.get(legalUrl, function(legalHtml) {
@@ -485,7 +532,14 @@ PIN.Form.build = function(queryData, renderArgs) {
     }
 
     // add date pickers
+    if (!jQuery.datepicker) {
+        PIN.Form.includeJs('https://www.publicinsightnetwork.org/source/js/jquery-ui-1.10.3.min.js', function() {
     jQuery('.pin-query-date input').datepicker();
+        });  
+    }
+    else {
+        jQuery('.pin-query-date input').datepicker();
+    }
 
     // add countdown watchers
     var maxlenWatcher = function() {
@@ -497,11 +551,13 @@ PIN.Form.build = function(queryData, renderArgs) {
         if (!maxlen) {
             return;
         }
+        // jquery uses encodeURIComponent on textarea when calling serializeArray later in validate.
         var curlen = tarea.val().length;
-        var remlen = maxlen - curlen;
+        var remlen = parseInt(maxlen) - curlen;
+        //console.log(tarea.val());
         //console.log(maxlen, curlen, remlen);
         if (remlen < 0) {
-            countdown.text('Maximum length exceeded!');
+            countdown.text('Maximum length exceeded! ('+(remlen*-1)+' characters over)');
         }
         else {
             countdown.text(remlen + ' characters remaining');
@@ -511,6 +567,9 @@ PIN.Form.build = function(queryData, renderArgs) {
     jQuery('.pin-query-textarea textarea').keyup(maxlenWatcher);
 
     wrapper.trigger('pinform_built', renderArgs.divId);
+    if (renderArgs.opts.onRender) {
+        renderArgs.opts.onRender(renderArgs.divId, queryData);
+    }
 }
 
 PIN.Form.submit = function(divId) {
@@ -596,17 +655,17 @@ PIN.Form.submit = function(divId) {
 
     // POST to server    
     var errHandler = function(xhr, stat, err) {
-        console.log("ERROR:", xhr, stat, err);
-        //console.log("ERROR:", xhr.responseText);
+        PIN.Form.DEBUG && console.log("ERROR:", xhr, stat, err);
 
         // massage response errors into the format we expect
         var resp;
         if (xhr.responseText) {
             resp = jQuery.parseJSON(xhr.responseText);
+            PIN.Form.DEBUG && console.log(resp);
         }
         if (!resp) {
             btn.text('Server error -- contact support@publicinsightnetwork.org');
-            console.log("ERROR:", xhr, stat, err);
+            PIN.Form.DEBUG && console.log("ERROR:", xhr, stat, err);
             jQuery.error(xhr.responseText);
             return;
         }
@@ -710,20 +769,7 @@ PIN.Form.decorate = function(divId, errors) {
             //console.log("no ques_uuid in errors:", errArr);
             return;
         }
-        var elId = 'pin-q-'+ques_uuid;
-        //console.log(ques_uuid, errArr);
-        var field = jQuery('#'+elId);
-        if (!field || !field.length) {
-
-            // try with name attribute for radios, checkbox, etc
-            field = jQuery('input[name^='+ques_uuid+']');
-
-            if (!field || !field.length) {
-                console.log("Cannot find question for "+elId, errArr);
-                jQuery.error("Cannot find question for "+elId, errArr);
-                return;
-            }
-        }
+        var field = PIN.Form.getQuestionField(ques_uuid);
         var errMsgs = [];
         jQuery.each(errArr, function(idx, err) {
             errMsgs.push(PIN.Form.getErrorMsg(err));
@@ -735,11 +781,28 @@ PIN.Form.decorate = function(divId, errors) {
 
 }
 
+PIN.Form.getQuestionField = function(ques_uuid) {
+        var elId = 'pin-q-'+ques_uuid;
+        var field = jQuery('#'+elId);
+        if (!field || !field.length) {
+
+            // try with name attribute for radios, checkbox, etc
+            field = jQuery('input[name^='+ques_uuid+']');
+
+            if (!field || !field.length) {
+            PIN.Form.DEBUG && console.log("Cannot find question for "+elId);
+            jQuery.error("Cannot find question for "+elId);
+                return;
+            }
+        }
+    return field;
+}
+
 PIN.Form.clearError = function(ques_uuid) {
-    var el = jQuery('#pin-q-'+ques_uuid);
+    var el = PIN.Form.getQuestionField(ques_uuid);
     el.removeAttr('data-error');
-    el.parent().removeClass('pin-error');
-    el.parent().find('.pin-error-msg').remove();
+    el.closest('div.pin-question').removeClass('pin-error');
+    el.closest('div.pin-question').find('.pin-error-msg').remove();
 }
 
 PIN.Form.isRequired = function(q) {
@@ -763,7 +826,9 @@ PIN.Form.validate = function(divId, submission) {
     var questions = {};
     jQuery.each(query.data.questions, function(idx, q) {
         questions[q.ques_uuid] = q;
+        if (!PIN.Form.isDisplayOnly[q.ques_type]) {
         PIN.Form.clearError(q.ques_uuid);
+        }
     });
     var errors = {};    // key should be ques_uuid
 
@@ -796,7 +861,7 @@ PIN.Form.validate = function(divId, submission) {
 
 PIN.Form.validateQuestion = function(question, qvalue) {
 
-    var opts, ques_uuid, errors;
+    var opts, ques_len, ques_uuid, errors;
     if (!question) {
         console.log('question not defined in validateQuestion');
         jQuery.error('question not defined');
@@ -817,11 +882,32 @@ PIN.Form.validateQuestion = function(question, qvalue) {
     if (opts.require && (!qvalue.length || !qvalue.match(/\S/))) {
         errors.push('Required');
     }
+    ques_len = qvalue.length; 
+
+    // if the question was a textarea, jquery has encoded it so that newlines
+    // etc. are preserved. but our maxlen test should be against the raw (decoded) value.
+    // NOTE that js .length measures *characters* not bytes, so if there are any multi-byte
+    // characters, this length will under-report the actual byte length.
+    if (question.ques_type == 'A') {
+
+        // only attempt to decode if we detect an encoded \n or \r
+        if (qvalue.match(/%0[AD]/i)) {
+            PIN.Form.DEBUG && console.log('found encoded newline. len before=', ques_len);
+            try {
+                ques_len = decodeURIComponent(qvalue).length;
+                PIN.Form.DEBUG && console.log('len after=', ques_len);
+            }
+            catch(err) {
+                PIN.Form.DEBUG && console.log("caught exception: ", err);
+                //errors.push(err);  // user can't help it.
+            }
+        }
+    }
     if (opts.maxlen
         && parseInt(opts.maxlen) > 0
-        && qvalue.length > parseInt(opts.maxlen)
+        && ques_len > parseInt(opts.maxlen)
     ) {
-        errors.push('Max length exceeded');
+        errors.push('Max length exceeded (you have '+ques_len+' max is '+opts.maxlen+')');
     }
 
     // check type validity
@@ -850,13 +936,14 @@ PIN.Form.validateQuestion = function(question, qvalue) {
             errors.push('Not a 4 digit year (1900)');
         }
         if (opts.require && opts.hasOwnProperty('startyearoffset') && opts.hasOwnProperty('endyearoffset')) {
-            var startyear, endyear, nowyear;
+            var startyear, endyear, nowyear, selectedYear;
             nowyear = new Date().getFullYear();
-
-            startyear = nowyear- opts.startyearoffset;
-            endyear = nowyear - opts.endyearoffset
-            if (nowyear < startyear || nowyear > endyear) {
-                errors.push('Not in range ' + startyear + ' - ' + endyear);
+            startyear = parseInt(nowyear - opts.startyearoffset);
+            endyear = parseInt(nowyear - opts.endyearoffset);
+            selectedYear = parseInt(qvalue);
+            if (selectedYear < startyear || selectedYear > endyear) {
+                PIN.Form.DEBUG && console.log(selectedYear, startyear, endyear, nowyear, opts);
+                errors.push(selectedYear + ' is not in range ' + startyear + ' - ' + endyear);
             }
         }
         break;
@@ -885,7 +972,7 @@ PIN.Form.validateQuestion = function(question, qvalue) {
     case 'U':
         // looks like URL
         if (opts.require && !qvalue.match(/^\w+:\/\//)) {
-            errors.push('Not a URL');
+            errors.push('Not a URL (must be of the form http(s)://....)');
         }
         break;
 
@@ -898,7 +985,7 @@ PIN.Form.validateQuestion = function(question, qvalue) {
 
     case 'Z':
         // looks like postal code
-        if (opts.require && !qvalue.match(/^[\w\ ]+$/)) {
+        if (opts.require && !qvalue.match(/^[\w\ \-]+$/)) {
             errors.push('Not a postal code');
         }
         break;
@@ -1287,6 +1374,13 @@ PIN.Form.Formatter = {
     Z: PIN.Form.doContributor
 };
 
+PIN.Form.isDisplayOnly = {
+    '2': true,
+    '3': true,
+    '!': true,
+    '-': true
+};
+
 PIN.Form.parseScriptURIParams = function() {
     var query = PIN.Form.THIS_URL_PARAMS,
         map   = {};
@@ -1301,7 +1395,7 @@ if (typeof PIN.Form.THIS_URL_PARAMS !== 'undefined') {
     var params = PIN.Form.parseScriptURIParams();
     if (params['uuid']) {
         jQuery(document).ready(function() {
-            PIN.Form.render({uuid:params['uuid']});
+            PIN.Form.render({baseUrl:PIN.Form.THIS_URL+'/../', uuid:params['uuid']});
         });
     }
 }

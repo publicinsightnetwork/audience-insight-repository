@@ -33,7 +33,11 @@ my %path2config = (
     'responses'              => 'fuzzy_responses',
     'fuzzy-responses'        => 'fuzzy_responses',
     'strict-responses'       => 'responses',
+    'active-responses'       => 'fuzzy_responses',
+    'fuzzy-active-responses' => 'fuzzy_responses',
+    'strict-active-reponses' => 'responses',
     'public-responses'       => 'public_responses',
+    'outcomes'               => 'outcomes',
 );
 
 # basic config

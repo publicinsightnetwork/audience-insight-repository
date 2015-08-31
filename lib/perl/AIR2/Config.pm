@@ -101,6 +101,7 @@ sub get_php_path {
 }
 sub get_profiles { return $profiles }
 sub get_profile  { return $profile }
+sub get_profile_val { return $profiles->val( $profile, pop(@_) ) }
 sub get_hostname { return $hostname }
 sub get_user     { return $user }
 sub get_tz       { return $TIMEZONE }
@@ -135,6 +136,15 @@ sub get_mypin2_url {
 
 sub get_base_url {
     return $air2_constants->{AIR2_BASE_URL};
+}
+
+sub get_tandc_queue_root {
+    return Path::Class::dir( $profiles->val( $profile, 'tandc_queue_path' )
+            || '/opt/pin/shared/tandc' );
+}
+
+sub get_pinsightful_tag {
+    return $air2_constants->{AIR2_PINSIGHTFUL_TAG};
 }
 
 sub get_constant {
