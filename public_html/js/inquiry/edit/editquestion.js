@@ -65,7 +65,10 @@ AIR2.Inquiry.editQuestion = function (dv, index, node, event) {
     }
 
     // can't edit break type
-    if (AIR2.Inquiry.QUESTION.TYPE.BREAK.indexOf(typeNormalized) > -1) {
+    if (AIR2.Inquiry.QUESTION.TYPE.BREAK.indexOf(typeNormalized) > -1
+        ||
+        AIR2.Inquiry.QUESTION.TYPE.PAGEBREAK.indexOf(typeNormalized) > -1
+    ) {
         return;
     }
 

@@ -253,6 +253,11 @@
     clear: left;
 }
 
+/* hr breaks should reset any floats */
+.pin-break, .pin-pagebreak {
+    clear: left;
+}
+
 /* Responsive single stack */
 @media (max-width: 624px) {
 

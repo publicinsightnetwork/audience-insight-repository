@@ -269,6 +269,7 @@ AIR2.Inquiry.QUESTION.TYPE.FILE           = ['F'];
 AIR2.Inquiry.QUESTION.TYPE.DATE           = ['D'];
 AIR2.Inquiry.QUESTION.TYPE.BREAK          = ['2'];
 AIR2.Inquiry.QUESTION.TYPE.DISPLAY        = ['3'];
+AIR2.Inquiry.QUESTION.TYPE.PAGEBREAK      = ['4'];
 
 
 AIR2.Inquiry.QUESTION.DIRECTION            = {};

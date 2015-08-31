@@ -321,7 +321,10 @@ AIR2.Inquiry.QuestionDataView = function (displayMode) {
                         }
                     }
 
-                    if (AIR2.Inquiry.QUESTION.TYPE.BREAK.indexOf(values.ques_type) === -1) {
+                    if (AIR2.Inquiry.QUESTION.TYPE.BREAK.indexOf(values.ques_type) === -1
+                        && 
+                        AIR2.Inquiry.QUESTION.TYPE.PAGEBREAK.indexOf(values.ques_type) === -1
+                    ) {
                         row += 'class="air2-rowedit">Edit</button>';
                     }
 

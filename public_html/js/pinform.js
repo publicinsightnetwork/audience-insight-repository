@@ -1300,6 +1300,10 @@ PIN.Form.doBreak = function(opts) {
     return '<hr class="pin-break seq-'+opts.question.ques_dis_seq+'" />';
 }
 
+PIN.Form.doPageBreak = function(opts) {
+    return '<hr class="pin-pagebreak seq-'+opts.question.ques_dis_seq+'" />';
+}
+
 PIN.Form.doDisplay = function(opts) {
     return '<div class="pin-display seq-'+opts.question.ques_dis_seq+'">'+opts.question.ques_value+'</div>';
 }
@@ -1368,6 +1372,7 @@ PIN.Form.Formatter = {
     L: PIN.Form.doList,
     '2': PIN.Form.doBreak,
     '3': PIN.Form.doDisplay,
+    '4': PIN.Form.doPageBreak,
     '!': PIN.Form.doDisplay,  // TODO legacy
     '-': PIN.Form.doBreak,    // TODO legacy
     P: PIN.Form.doPermission,
@@ -1377,6 +1382,7 @@ PIN.Form.Formatter = {
 PIN.Form.isDisplayOnly = {
     '2': true,
     '3': true,
+    '4': true,
     '!': true,
     '-': true
 };

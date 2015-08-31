@@ -80,6 +80,7 @@ class Question extends AIR2_Record {
     // display-only
     public static $TYPE_BREAK         = '2';
     public static $TYPE_DISPLAY       = '3';
+    public static $TYPE_PAGEBREAK     = '4';
 
     // standard permission question
     public static $TYPE_PERMISSION        = 'P';

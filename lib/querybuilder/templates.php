@@ -256,6 +256,17 @@ $qb_templates = array(
         'ques_type'         => Question::$TYPE_BREAK,
         'single_instance'   => false,
     ),
+    'pagebreak' => array(
+        'display'           =>  array(
+            'en_US' => 'Page break',
+        ),  
+        'display_group'     => 'generic',
+        'ques_value'        =>  array(
+            'en_US' => '', 
+        ),  
+        'ques_type'         => Question::$TYPE_PAGEBREAK,
+        'single_instance'   => false,
+    ),
     'display' => array(
         'display'           =>  array(
             'en_US' => 'Display Text',
