@@ -65,6 +65,7 @@ Now setup the database, fixtures, and assets.  This will also check your install
     # lots of things happen here...
 
     cd lib/perl
+    cpan -i Module::Install
     perl Makefile.PL
     # missing dependencies will be identified, install them from CPAN
 
