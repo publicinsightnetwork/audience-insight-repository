@@ -105,7 +105,7 @@ if (typeof PIN.Form.LOADED === 'undefined') {
 
 // load fixtures from AIR, for states, countries, etc.
 if (!PIN.States && PIN.Form.THIS_URL) {
-    PIN.Form.includeJs(PIN.Form.THIS_URL+"/cache/fixtures.min.js", function() {
+    PIN.Form.includeJs("https://www.publicinsightnetwork.org/air2/js/cache/fixtures.min.js", function() {
         PIN.Form.DEBUG && console.log('fixtures.min.js loaded');
         PIN.Form.LOADED['fixtures'] = true;
     });
@@ -151,9 +151,10 @@ jQuery(document).ajaxSend(function (event, request, settings) {
  */
 
 PIN.Form.setup = function(args) {
+    console.log("setup");
 
     var uuid    = args.uuid;
-    var baseUrl = args.baseUrl;
+    var baseUrl = "https://www.publicinsightnetwork.org/air2/";
 
     // load our required CSS, if not already loaded.
     var cssfile = baseUrl + 'css/pinform.css';
@@ -270,7 +271,8 @@ PIN.Form.getParams = function(args) {
 
 // main public method
 PIN.Form.render = function(args) {
-
+    //comment:  point - 2
+    console.log("called render");
     // make sure our dependencies have loaded and defer if not.
     if (!PIN.Form.LOADED['fixtures'] || !PIN.Form.LOADED['ui'] || !PIN.Form.LOADED['form']) {
         PIN.Form.DEBUG && console.log('dependencies not loaded yet', PIN.Form.LOADED);
@@ -345,6 +347,25 @@ PIN.Form.build = function(queryData, renderArgs) {
     PIN.Form.DEBUG && console.log(renderArgs);
     PIN.Form.DEBUG && console.log(queryData);
 
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    style.innerHTML = '#msform fieldset:not(:first-of-type) {display: none;}';
+    document.getElementsByTagName('head')[0].appendChild(style);
+
+    var style2 = document.createElement('style');
+    style2.type = 'text/css';
+    style2.innerHTML = '.mp-button{background: none repeat scroll 0 0 #0099cc;\
+    border: 0 none;\
+    border-radius: 5px;\
+    clear: left;\
+    color: #fff;\
+    display: block;\
+    font-size: 18px;\
+    margin: 1em 0 1em 1em;\
+    padding: 5px 10px;\
+    text-shadow: 0 1px 1px rgba(25, 25, 50, 0.33);}';
+    document.getElementsByTagName('head')[0].appendChild(style2);
+
     if (typeof renderArgs.opts == 'undefined') {
         renderArgs.opts = {
             showIntro: true
@@ -365,7 +386,7 @@ PIN.Form.build = function(queryData, renderArgs) {
 
     var previewAttribute, sortedQuestions, wrapper, formEl, contributorFieldset, publicFieldSet, privateFieldSet;
 
-    sortedQuestions = PIN.Form.sortQuestions(queryData);
+    sortedQuestions = PIN.Form.mpSortQuestions(queryData);
     PIN.Form.DEBUG && console.log(sortedQuestions);
 
     wrapper = jQuery('#'+renderArgs.divId);
@@ -399,32 +420,24 @@ PIN.Form.build = function(queryData, renderArgs) {
     }
 
     // build up form
-    formEl = jQuery('<form enctype="multipart/form-data" action="'+queryData.action+'" method="'+queryData.method+'" class="pin-form"></form>');
+    formEl = jQuery('<form id="msform" enctype="multipart/form-data" action="'+queryData.action+'" method="'+queryData.method+'" class="pin-form">');
 
-    contributorFieldSet = jQuery('<fieldset class="contributor"><legend>Contact</legend></fieldset>');
-    jQuery.each(sortedQuestions.contributor, function(idx, question) {
-        var formatter = PIN.Form.Formatter[question.ques_type];
-        // lowercase letters are always hidden
-        if (question.ques_type.match(/[a-z]/)) {
-            //console.log('hidden question', question);
-            formatter = PIN.Form.doHidden;
-        }
-        if (!formatter) {
-            jQuery.error("No formatter for type " + question.ques_type);
-            return;
-        }
-        var el = formatter({question:question,idx:idx,opts:renderArgs.opts});
-        contributorFieldSet.append(el);
-    });
-    formEl.append(contributorFieldSet);
+    // contributorFieldSet = jQuery('<fieldset>');
+    var firstSection = true;
+    var noOfSections = sortedQuestions.length;
+    var count = 1;
+    jQuery.each(sortedQuestions, function(idx, quesArray) {
 
-    if (sortedQuestions.public.length) {
-        publicFieldSet = jQuery('<fieldset class="public"><legend>Public</legend></fieldset>');
-        jQuery.each(sortedQuestions.public, function(idx, question) {
+        noOfSections = noOfSections - 1;        
+        fieldSet = jQuery('<fieldset>');
+        var divID = 'fs-'+count;
+        div = jQuery('<div id="'+divID+'" style="float:left">');
+        var data = {questions: quesArray};
+        PIN.Form.Registry[divID]= {data: data, args: renderArgs };
+        jQuery.each(quesArray, function(idx, question) {
             var formatter = PIN.Form.Formatter[question.ques_type];
             // lowercase letters are always hidden
             if (question.ques_type.match(/[a-z]/)) {
-                //console.log('hidden question', question);
                 formatter = PIN.Form.doHidden;
             }
             if (!formatter) {
@@ -432,30 +445,28 @@ PIN.Form.build = function(queryData, renderArgs) {
                 return;
             }
             var el = formatter({question:question,idx:idx,opts:renderArgs.opts});
-            publicFieldSet.append(el);
+            div.append(el);
         });
-        formEl.append(publicFieldSet);
-    }
-    if (sortedQuestions.private.length) {
-        formEl.append('<hr class="pin-the-fold" />');
-        privateFieldSet = jQuery('<fieldset class="private"><legend>Private</legend></fieldset>');
-        jQuery.each(sortedQuestions.private, function(idx, question) {
-            var formatter = PIN.Form.Formatter[question.ques_type];
-            // lowercase letters are always hidden
-            if (question.ques_type.match(/[a-z]/)) {
-                //console.log('hidden question', question);
-                formatter = PIN.Form.doHidden;
-            }
-            if (!formatter) {
-                jQuery.error("No formatter for type " + question.ques_type);
-                return;
-            }
-            var el = formatter({question:question,idx:idx,opts:renderArgs.opts});
-            privateFieldSet.append(el);
-        });
-        formEl.append(privateFieldSet);
-    }
+        fieldSet.append(div);
+        div = jQuery('<div style="float:left" class="pin-question">')
         
+            if(firstSection != true){
+                div.append('<input type="button" name="previous" class="previous action-button mp-button" value="Previous"/>')
+            }
+
+             if(noOfSections != 0){
+                div.append('<input type="button" name="next" class="next action-button mp-button" value="Next"/>');
+            }else{
+                div.append('<button ' + previewAttribute + ' onclick="PIN.Form.submit(\''+renderArgs.divId+'\'); return false" class="pin-submit">Submit</button>');
+            }
+        
+        fieldSet.append(div);
+        formEl.append(fieldSet);
+        firstSection = false;
+        count= count+1;
+    });
+    
+    
     // disable submit if in preview mode
     if (renderArgs.previewMode) {
         previewAttribute = 'disabled="disabled"';
@@ -465,7 +476,7 @@ PIN.Form.build = function(queryData, renderArgs) {
     }
 
     // add submit listener, return false to avoid html form submission.
-    formEl.append('<button ' + previewAttribute + 'onclick="PIN.Form.submit(\''+renderArgs.divId+'\'); return false" class="pin-submit">Submit</button>');
+    formEl.append('<script src="./mpform.js" type="text/javascript"></script>');
 
     // insert the form
     //console.log('insert:', wrapper, formEl);
@@ -571,6 +582,7 @@ PIN.Form.build = function(queryData, renderArgs) {
         renderArgs.opts.onRender(renderArgs.divId, queryData);
     }
 }
+
 
 PIN.Form.submit = function(divId) {
     var formVals, formEl, formQA, url, btn, validationErrMsg;
@@ -728,6 +740,109 @@ PIN.Form.submit = function(divId) {
     return false;   // prevent html form submit
 }
 
+
+PIN.Form.validatePage = function(divId) {
+    formEl = jQuery('#'+divId+' :input');
+    // clear any existing validation error msg
+    jQuery('#pin-submit-errors').remove();
+
+
+    // extract all data into a single object
+    PIN.Form.DEBUG && console.log('formEl: ', formEl);
+    formVals = formEl.serializeArray();
+    // turn array of objects into one object
+    // for easy lookup
+    formQA = {};
+    jQuery.each(formVals, function(idx, pair) {
+        formQA[pair.name] = pair.value;
+    });
+    
+    // fill out our validation array manually.
+    // if we have a file upload, must grab it manually.
+    // jQuery also ignores unchecked radio and checkbox inputs
+    // so we must manually grab those to make sure required
+    // questions are validated.
+
+    jQuery.each(PIN.Form.Registry[divId].data.questions, function(idx,q) {
+        if (q.ques_resp_type === 'F') {
+            var fileQ = jQuery('#pin-q-'+q.ques_uuid);
+            formVals.push({name:q.ques_uuid, value: fileQ.val()});
+        }
+        if ((q.ques_type === 'P' || q.ques_type === 'C' || q.ques_type === 'R')
+            && 
+            !formQA[q.ques_uuid+'[]']
+        ) {
+            var inputs = jQuery('input[name^='+q.ques_uuid+']');
+            var inputVal = '';
+            jQuery.each(inputs, function(inputIdx, input) {
+                if (input.checked) {
+                    inputVal = input.val();
+                }
+            });
+            formVals.push({name:q.ques_uuid, value: inputVal});
+            formQA[q.ques_uuid] = inputVal;
+        }
+    });
+
+    PIN.Form.DEBUG && console.log('formVals: ', formVals);
+
+    // validate object
+    if (!PIN.Form.validate(divId, formVals)) {
+        PIN.Form.decorate(divId, PIN.Form.Registry[divId].errors);
+        // btn.removeAttr('disabled');
+        // btn.text('Submit');
+        validationErrMsg = 'Please fix the form errors above and try again.';
+        if (PIN.Form.Registry[divId].args.opts.validationErrMsg) {
+            validationErrMsg = PIN.Form.Registry[divId].args.opts.validationErrMsg;
+        }
+        // btn.after('<div id="pin-submit-errors" class="pin-error">'+validationErrMsg+'</div>');
+        return false;
+    }
+    else {
+        // clear error msg
+        if (jQuery('#pin-submit-errors').length) {
+            jQuery('#pin-submit-errors').remove();  
+        }
+    }
+    PIN.Form.DEBUG && console.log('validation OK');
+
+    var errHandler = function(xhr, stat, err) {
+        PIN.Form.DEBUG && console.log("ERROR:", xhr, stat, err);
+
+        // massage response errors into the format we expect
+        var resp;
+        if (xhr.responseText) {
+            resp = jQuery.parseJSON(xhr.responseText);
+            PIN.Form.DEBUG && console.log(resp);
+        }
+        if (!resp) {
+            // btn.text('Server error -- contact support@publicinsightnetwork.org');
+            PIN.Form.DEBUG && console.log("ERROR:", xhr, stat, err);
+            jQuery.error(xhr.responseText);
+            return;
+        }
+
+        var errors = {};
+        jQuery.each(resp.errors, function(idx, err) {
+            var ques_uuid = err.question;
+            if (!errors[ques_uuid]) {
+                errors[ques_uuid] = [];
+            }
+            errors[ques_uuid].push(err.msg);
+        });
+        PIN.Form.decorate(divId, errors);
+        // btn.removeAttr('disabled');
+        // btn.text('Submit');
+        validationErrMsg = 'Please fix the form errors above and try again.';
+        if (PIN.Form.Registry[divId].args.opts.validationErrMsg) {
+            validationErrMsg = PIN.Form.Registry[divId].args.opts.validationErrMsg;
+        }    
+    };
+    
+    
+
+    return true;   // prevent html form submit
+}
 // on successful submission, show thank you message and more queries.
 // this is an example only.
 // use the opts.thankYou feature in render() to define your own.
@@ -1096,6 +1211,10 @@ PIN.Form.doRadio = function(args) {
     return jQuery(t);
 }
 
+function store() {
+    window.location = "formjs2.html"
+}
+
 PIN.Form.doHidden = function(args) {
     var q = args.question;
     var preFill = args.opts.preFill;
@@ -1398,6 +1517,7 @@ PIN.Form.parseScriptURIParams = function() {
 
 // if any param was passed to this script, parse it and treat it like the inq_uuid
 if (typeof PIN.Form.THIS_URL_PARAMS !== 'undefined') {
+    //comment: entry point - 1
     var params = PIN.Form.parseScriptURIParams();
     if (params['uuid']) {
         jQuery(document).ready(function() {
@@ -1406,4 +1526,40 @@ if (typeof PIN.Form.THIS_URL_PARAMS !== 'undefined') {
     }
 }
 
+PIN.Form.mpSortQuestions = function(queryData) {
+    // group questions into 3 groups, sorted by sequence
+    var defaultSorted = PIN.Form.sortQuestions(queryData);
+    var questions= [];
+    var sorted = [];
+    var currArray = [];
+
+    jQuery.each(defaultSorted.contributor, function(idx, ques){
+        questions.push(ques);
+    });
+
+    jQuery.each(defaultSorted.public, function(idx, ques){
+        questions.push(ques);
+    });
+
+    jQuery.each(defaultSorted.private, function(idx, ques){
+        questions.push(ques);
+    });
+
+    // queryData.questions.sort(function(a,b) { return a.ques_dis_seq - b.ques_dis_seq; });
+    jQuery.each(questions, function(idx, q) {
+        
+        //check if form includes pagebreak. if so, split into multipage 
+        if (q.ques_type == '4' && currArray.length != 0) {
+            sorted.push(currArray);
+            currArray=[];
+        }else{
+            currArray.push(q);
+        }
+    });
+    if(currArray.length != 0){
+        sorted.push(currArray);
+    }
+
+    return sorted;
+}
 /* END PIN.Form */
