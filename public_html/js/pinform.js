@@ -105,7 +105,7 @@ if (typeof PIN.Form.LOADED === 'undefined') {
 
 // load fixtures from AIR, for states, countries, etc.
 if (!PIN.States && PIN.Form.THIS_URL) {
-    PIN.Form.includeJs("https://www.publicinsightnetwork.org/air2/js/cache/fixtures.min.js", function() {
+    PIN.Form.includeJs(PIN.Form.THIS_URL+"/cache/fixtures.min.js", function() {
         PIN.Form.DEBUG && console.log('fixtures.min.js loaded');
         PIN.Form.LOADED['fixtures'] = true;
     });
@@ -154,7 +154,7 @@ PIN.Form.setup = function(args) {
     console.log("setup");
 
     var uuid    = args.uuid;
-    var baseUrl = "https://www.publicinsightnetwork.org/air2/";
+    var baseUrl = args.baseUrl;
 
     // load our required CSS, if not already loaded.
     var cssfile = baseUrl + 'css/pinform.css';
@@ -271,8 +271,7 @@ PIN.Form.getParams = function(args) {
 
 // main public method
 PIN.Form.render = function(args) {
-    //comment:  point - 2
-    console.log("called render");
+
     // make sure our dependencies have loaded and defer if not.
     if (!PIN.Form.LOADED['fixtures'] || !PIN.Form.LOADED['ui'] || !PIN.Form.LOADED['form']) {
         PIN.Form.DEBUG && console.log('dependencies not loaded yet', PIN.Form.LOADED);
@@ -339,32 +338,43 @@ PIN.Form.sortQuestions = function(queryData) {
         sorted.public.push(perm_ques);
     }    
 
-    return sorted;
+    var questions= [];
+    var mp_sorted = [];
+    var currArray = [];
+
+    jQuery.each(sorted.contributor, function(idx, ques){
+        questions.push(ques);
+    });
+
+    jQuery.each(sorted.public, function(idx, ques){
+        questions.push(ques);
+    });
+
+    jQuery.each(sorted.private, function(idx, ques){
+        questions.push(ques);
+    });
+
+    // queryData.questions.sort(function(a,b) { return a.ques_dis_seq - b.ques_dis_seq; });
+    jQuery.each(questions, function(idx, q) {
+        
+        if (q.ques_type == '4' && currArray.length != 0) {
+            mp_sorted.push(currArray);
+            currArray=[];
+        }else{
+            currArray.push(q);
+        }
+    });
+    if(currArray.length != 0){
+        mp_sorted.push(currArray);
+    }
+
+    return mp_sorted;
 }
 
 // generate the HTML
 PIN.Form.build = function(queryData, renderArgs) {
     PIN.Form.DEBUG && console.log(renderArgs);
     PIN.Form.DEBUG && console.log(queryData);
-
-    var style = document.createElement('style');
-    style.type = 'text/css';
-    style.innerHTML = '#msform fieldset:not(:first-of-type) {display: none;}';
-    document.getElementsByTagName('head')[0].appendChild(style);
-
-    var style2 = document.createElement('style');
-    style2.type = 'text/css';
-    style2.innerHTML = '.mp-button{background: none repeat scroll 0 0 #0099cc;\
-    border: 0 none;\
-    border-radius: 5px;\
-    clear: left;\
-    color: #fff;\
-    display: block;\
-    font-size: 18px;\
-    margin: 1em 0 1em 1em;\
-    padding: 5px 10px;\
-    text-shadow: 0 1px 1px rgba(25, 25, 50, 0.33);}';
-    document.getElementsByTagName('head')[0].appendChild(style2);
 
     if (typeof renderArgs.opts == 'undefined') {
         renderArgs.opts = {
@@ -384,9 +394,9 @@ PIN.Form.build = function(queryData, renderArgs) {
     // register this form in global var for submit()
     PIN.Form.Registry[renderArgs.divId] = { data: queryData, args: renderArgs };
 
-    var previewAttribute, sortedQuestions, wrapper, formEl, contributorFieldset, publicFieldSet, privateFieldSet;
+    var previewAttribute, sortedQuestions, wrapper, formEl;
 
-    sortedQuestions = PIN.Form.mpSortQuestions(queryData);
+    sortedQuestions = PIN.Form.sortQuestions(queryData);
     PIN.Form.DEBUG && console.log(sortedQuestions);
 
     wrapper = jQuery('#'+renderArgs.divId);
@@ -431,7 +441,7 @@ PIN.Form.build = function(queryData, renderArgs) {
         noOfSections = noOfSections - 1;        
         fieldSet = jQuery('<fieldset>');
         var divID = 'fs-'+count;
-        div = jQuery('<div id="'+divID+'" style="float:left">');
+        div = jQuery('<div id="'+divID+'" class="pin-mpf-q-div" style="float:left">');
         var data = {questions: quesArray};
         PIN.Form.Registry[divID]= {data: data, args: renderArgs };
         jQuery.each(quesArray, function(idx, question) {
@@ -451,11 +461,11 @@ PIN.Form.build = function(queryData, renderArgs) {
         div = jQuery('<div style="float:left" class="pin-question">')
         
             if(firstSection != true){
-                div.append('<input type="button" name="previous" class="previous action-button mp-button" value="Previous"/>')
+                div.append('<input type="button" name="previous" class="pin-mpf-previous action-button mp-button" value="Previous"/>')
             }
 
              if(noOfSections != 0){
-                div.append('<input type="button" name="next" class="next action-button mp-button" value="Next"/>');
+                div.append('<input type="button" name="next" class="pin-mpf-next action-button mp-button" value="Next"/>');
             }else{
                 div.append('<button ' + previewAttribute + ' onclick="PIN.Form.submit(\''+renderArgs.divId+'\'); return false" class="pin-submit">Submit</button>');
             }
@@ -1211,9 +1221,6 @@ PIN.Form.doRadio = function(args) {
     return jQuery(t);
 }
 
-function store() {
-    window.location = "formjs2.html"
-}
 
 PIN.Form.doHidden = function(args) {
     var q = args.question;
@@ -1526,40 +1533,4 @@ if (typeof PIN.Form.THIS_URL_PARAMS !== 'undefined') {
     }
 }
 
-PIN.Form.mpSortQuestions = function(queryData) {
-    // group questions into 3 groups, sorted by sequence
-    var defaultSorted = PIN.Form.sortQuestions(queryData);
-    var questions= [];
-    var sorted = [];
-    var currArray = [];
-
-    jQuery.each(defaultSorted.contributor, function(idx, ques){
-        questions.push(ques);
-    });
-
-    jQuery.each(defaultSorted.public, function(idx, ques){
-        questions.push(ques);
-    });
-
-    jQuery.each(defaultSorted.private, function(idx, ques){
-        questions.push(ques);
-    });
-
-    // queryData.questions.sort(function(a,b) { return a.ques_dis_seq - b.ques_dis_seq; });
-    jQuery.each(questions, function(idx, q) {
-        
-        //check if form includes pagebreak. if so, split into multipage 
-        if (q.ques_type == '4' && currArray.length != 0) {
-            sorted.push(currArray);
-            currArray=[];
-        }else{
-            currArray.push(q);
-        }
-    });
-    if(currArray.length != 0){
-        sorted.push(currArray);
-    }
-
-    return sorted;
-}
 /* END PIN.Form */
