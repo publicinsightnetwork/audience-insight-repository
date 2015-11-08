@@ -4,25 +4,6 @@
  *
  */
 
-var style = document.createElement('style');
-    style.type = 'text/css';
-    style.innerHTML = ';
-    document.getElementsByTagName('head')[0].appendChild(style);
-
-    var style2 = document.createElement('style');
-    style2.type = 'text/css';
-    style2.innerHTML = '.mp-button{background: none repeat scroll 0 0 #0099cc;\
-    border: 0 none;\
-    border-radius: 5px;\
-    clear: left;\
-    color: #fff;\
-    display: block;\
-    font-size: 18px;\
-    margin: 1em 0 1em 1em;\
-    padding: 5px 10px;\
-    text-shadow: 0 1px 1px rgba(25, 25, 50, 0.33);}';
-    document.getElementsByTagName('head')[0].appendChild(style2);
-
 .pin-form {
     max-width: 100%;
 }
