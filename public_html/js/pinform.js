@@ -593,6 +593,70 @@ PIN.Form.build = function(queryData, renderArgs) {
     }
 }
 
+PIN.Form.multiPageNextClick = function(ev) {
+    if (PIN.Form.animationInProgress) return false;
+
+    var currentFs = $(ev.target).parents("fieldset");
+    var nextFs = currentFs.next();
+    var currentQuestionId = currentFs.find(".pin-mpf-q-div").attr('id');
+    var currentIsValid = PIN.Form.validatePage(currentQuestionId);
+
+    if (!currentIsValid) return false;
+
+    // do not trigger animation state till we know we are valid.
+    PIN.Form.animationInProgress = true;
+
+    // hide the current fieldset with style
+    currentFs.animate({opacity: 0}, {
+        step: function(now, mx) {
+            var scale = 1 - (1 - now) * 0.2;
+            var left = (now * 50)+"%";
+            var opacity = 1 - now;
+            currentFs.css({'transform': 'scale('+scale+')'});
+            nextFs.css({'left': left, 'opacity': opacity});
+        },
+        duration: 800,
+        complete: function(){
+            currentFs.hide();
+            PIN.Form.animationInProgress = false;
+        },
+        //this comes from the custom easing plugin  
+        easing: 'easeInOutBack'
+     });
+    nextFs.show();
+}
+
+PIN.Form.multiPagePrevClick = function(ev) {
+    if (PIN.Form.animationInProgress) return false;
+    PIN.Form.animationInProgress = true;
+
+    var currentFs = $(ev.target).parents("fieldset");
+    var previousFs = currentFs.prev();
+
+    currentFs.animate({opacity: 0}, {
+        step: function(now, mx) {
+            var scale = 0.8 + (1 - now) * 0.2;
+            var left = ((1-now) * 50)+"%";
+            var opacity = 1 - now;
+            currentFs.css({'left': left});
+            previousFs.css({'transform': 'scale('+scale+')', 'opacity': opacity});
+        },
+        duration: 800,
+        complete: function() {
+            currentFs.hide();
+            PIN.Form.animationInProgress = false;
+        },
+        //this comes from the custom easing plugin
+        easing: 'easeInOutBack'
+    });
+    previousFs.show();
+}
+
+PIN.Form.setupMultipage = function() {
+  $(".pin-mpf-next").click(PIN.Form.multiPageNextClick);
+  $(".pin-mpf-previous").click(PIN.Form.multiPagePrevClick);
+}
+
 
 PIN.Form.submit = function(divId) {
     var formVals, formEl, formQA, url, btn, validationErrMsg;
