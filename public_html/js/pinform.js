@@ -486,7 +486,7 @@ PIN.Form.build = function(queryData, renderArgs) {
     }
 
     // add submit listener, return false to avoid html form submission.
-    formEl.append('<script src="./mpform.js" type="text/javascript"></script>');
+    formEl.append('<button ' + previewAttribute + 'onclick="PIN.Form.submit(\''+renderArgs.divId+'\'); return false" class="pin-submit">Submit</button>');
 
     // insert the form
     //console.log('insert:', wrapper, formEl);
@@ -586,6 +586,9 @@ PIN.Form.build = function(queryData, renderArgs) {
     };
     jQuery('.pin-query-textarea textarea').change(maxlenWatcher);
     jQuery('.pin-query-textarea textarea').keyup(maxlenWatcher);
+
+    // add listeners if this is a multi-page form
+    PIN.Form.setupMultipage();
 
     wrapper.trigger('pinform_built', renderArgs.divId);
     if (renderArgs.opts.onRender) {
