@@ -1196,7 +1196,6 @@ PIN.Form.doRadio = function(args) {
     return jQuery(t);
 }
 
-
 PIN.Form.doHidden = function(args) {
     var q = args.question;
     var preFill = args.opts.preFill;
@@ -1499,7 +1498,6 @@ PIN.Form.parseScriptURIParams = function() {
 
 // if any param was passed to this script, parse it and treat it like the inq_uuid
 if (typeof PIN.Form.THIS_URL_PARAMS !== 'undefined') {
-    //comment: entry point - 1
     var params = PIN.Form.parseScriptURIParams();
     if (params['uuid']) {
         jQuery(document).ready(function() {
