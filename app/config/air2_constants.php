@@ -124,6 +124,13 @@ $profile_defs = array(
     // insight button
     array('AIR2_INSIGHT_BUTTON_URL',  'http://your.org/insightbutton'),
 
+    // virtual tag value applied to submissions that are "starred"
+    array('AIR2_PINSIGHTFUL_TAG',     'insightful'),
+
+    // emailed reports refer to secure public space
+    array('AIR2_SECURE_PUBLIC_PATH',  '/usr/local/air2/public_html/secure/reports'),
+    array('AIR2_SECURE_PUBLIC_URL',   'https://your.org/air2/secure/reports'),
+
     // MyPIN app URL
     array('AIR2_MYPIN2_URL',          'https//your.org/source'),
 );

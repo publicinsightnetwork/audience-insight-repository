@@ -45,6 +45,10 @@ Then create a mysql database and user for your AIR2 application to use.
     mysql> GRANT ALL PRIVILEGES ON air2.* TO "air2user"@"localhost" IDENTIFIED BY "air2isthegreatest";
     mysql> FLUSH PRIVILEGES;
 
+Copy the example config file to customize for your environment.
+
+    cp etc/profiles.ini.example etc/profiles.ini
+
 Create a profile for yourself in `etc/profiles.ini`, filling in your connection info.  There's a whole bunch more stuff you can put in here... see `app/config/air2_constants.php` for a list of them and their default values.
 
     [my_server_name]

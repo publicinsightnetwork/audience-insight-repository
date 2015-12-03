@@ -151,6 +151,7 @@ jQuery(document).ajaxSend(function (event, request, settings) {
  */
 
 PIN.Form.setup = function(args) {
+    PIN.Form.DEBUG && console.log("setup");
 
     var uuid    = args.uuid;
     var baseUrl = args.baseUrl;
@@ -303,6 +304,7 @@ PIN.Form.sortQuestions = function(queryData) {
         private: []
     };
     var perm_ques;
+    var hasMultiPage = false;
     jQuery.each(queryData.questions, function(idx, q) {
         if (q.ques_type.toLowerCase() == 'z'
          || q.ques_type.toLowerCase() == 's'
@@ -318,6 +320,10 @@ PIN.Form.sortQuestions = function(queryData) {
         }
         else {
             sorted.private.push(q);
+        }
+
+        if (q.ques_type == '4') {
+            hasMultiPage = true;
         }
     });
 
@@ -335,9 +341,35 @@ PIN.Form.sortQuestions = function(queryData) {
     // and force it to be last.
     if (sorted.public.length && perm_ques) {
         sorted.public.push(perm_ques);
-    }    
+    }
 
-    return sorted;
+    // flatten groups into a single array, retaining overall order.
+    var sortedQuestions = [].concat.apply([], [sorted.contributor, sorted.public, sorted.private]);
+    PIN.Form.DEBUG && console.log(sortedQuestions);
+
+    // if this is a multi-page form, group them into "pages"
+    if (hasMultiPage) {
+        var pages     = [];
+        var currArray = [];
+
+        jQuery.each(sortedQuestions, function(idx, q) {
+            if (q.ques_type == '4' && currArray.length != 0) {
+                pages.push(currArray);
+                currArray = [];
+            }
+            else {
+                currArray.push(q);
+            }
+        });
+    
+        if (currArray.length != 0) {
+            pages.push(currArray);
+        }
+        return pages;
+    }
+    else {
+        return [sortedQuestions]; // single page
+    }
 }
 
 // generate the HTML
@@ -363,10 +395,18 @@ PIN.Form.build = function(queryData, renderArgs) {
     // register this form in global var for submit()
     PIN.Form.Registry[renderArgs.divId] = { data: queryData, args: renderArgs };
 
-    var previewAttribute, sortedQuestions, wrapper, formEl, contributorFieldset, publicFieldSet, privateFieldSet;
+    var previewAttribute, sortedQuestions, wrapper, formEl;
 
     sortedQuestions = PIN.Form.sortQuestions(queryData);
     PIN.Form.DEBUG && console.log(sortedQuestions);
+
+    // disable submit if in preview mode
+    if (renderArgs.previewMode) {
+        previewAttribute = 'disabled="disabled"';
+    }        
+    else {
+        previewAttribute = '';
+    }        
 
     wrapper = jQuery('#'+renderArgs.divId);
 
@@ -399,74 +439,46 @@ PIN.Form.build = function(queryData, renderArgs) {
     }
 
     // build up form
-    formEl = jQuery('<form enctype="multipart/form-data" action="'+queryData.action+'" method="'+queryData.method+'" class="pin-form"></form>');
+    formEl = jQuery('<form enctype="multipart/form-data" action="'+queryData.action+'" method="'+queryData.method+'" class="pin-form">');
 
-    contributorFieldSet = jQuery('<fieldset class="contributor"><legend>Contact</legend></fieldset>');
-    jQuery.each(sortedQuestions.contributor, function(idx, question) {
-        var formatter = PIN.Form.Formatter[question.ques_type];
-        // lowercase letters are always hidden
-        if (question.ques_type.match(/[a-z]/)) {
-            //console.log('hidden question', question);
-            formatter = PIN.Form.doHidden;
-        }
-        if (!formatter) {
-            jQuery.error("No formatter for type " + question.ques_type);
-            return;
-        }
-        var el = formatter({question:question,idx:idx,opts:renderArgs.opts});
-        contributorFieldSet.append(el);
-    });
-    formEl.append(contributorFieldSet);
-
-    if (sortedQuestions.public.length) {
-        publicFieldSet = jQuery('<fieldset class="public"><legend>Public</legend></fieldset>');
-        jQuery.each(sortedQuestions.public, function(idx, question) {
+    // contributorFieldSet = jQuery('<fieldset>');
+    jQuery.each(sortedQuestions, function(idx, quesArray) {
+        var sectionsRemaining = sortedQuestions.length - idx - 1;
+        var fieldSet = jQuery('<fieldset>');
+        var divID = 'pin-fs-'+idx;
+        var div = jQuery('<div id="'+divID+'" class="pin-mpf-q-div">');
+        var data = {questions: quesArray};
+        PIN.Form.Registry[divID]= {data: data, args: renderArgs};
+        jQuery.each(quesArray, function(idx2, question) {
             var formatter = PIN.Form.Formatter[question.ques_type];
             // lowercase letters are always hidden
             if (question.ques_type.match(/[a-z]/)) {
-                //console.log('hidden question', question);
                 formatter = PIN.Form.doHidden;
             }
             if (!formatter) {
                 jQuery.error("No formatter for type " + question.ques_type);
                 return;
             }
-            var el = formatter({question:question,idx:idx,opts:renderArgs.opts});
-            publicFieldSet.append(el);
+            var el = formatter({question:question, idx:idx2, opts:renderArgs.opts});
+            div.append(el);
         });
-        formEl.append(publicFieldSet);
-    }
-    if (sortedQuestions.private.length) {
-        formEl.append('<hr class="pin-the-fold" />');
-        privateFieldSet = jQuery('<fieldset class="private"><legend>Private</legend></fieldset>');
-        jQuery.each(sortedQuestions.private, function(idx, question) {
-            var formatter = PIN.Form.Formatter[question.ques_type];
-            // lowercase letters are always hidden
-            if (question.ques_type.match(/[a-z]/)) {
-                //console.log('hidden question', question);
-                formatter = PIN.Form.doHidden;
-            }
-            if (!formatter) {
-                jQuery.error("No formatter for type " + question.ques_type);
-                return;
-            }
-            var el = formatter({question:question,idx:idx,opts:renderArgs.opts});
-            privateFieldSet.append(el);
-        });
-        formEl.append(privateFieldSet);
-    }
+        fieldSet.append(div);
+        div = jQuery('<div class="pin-question">')
+        if (idx != 0) {
+            div.append('<input type="button" name="previous" class="pin-mpf-previous action-button mp-button" value="Previous"/>')
+        }
+
+        if (sectionsRemaining > 0) {
+            div.append('<input type="button" name="next" class="pin-mpf-next action-button mp-button" value="Next"/>');
+        }
+        else {
+            div.append('<button ' + previewAttribute + ' onclick="PIN.Form.submit(\''+renderArgs.divId+'\'); return false" class="pin-submit">Submit</button>');
+        }
         
-    // disable submit if in preview mode
-    if (renderArgs.previewMode) {
-        previewAttribute = 'disabled="disabled"';
-    }
-    else {
-        previewAttribute = '';
-    }
-
-    // add submit listener, return false to avoid html form submission.
-    formEl.append('<button ' + previewAttribute + 'onclick="PIN.Form.submit(\''+renderArgs.divId+'\'); return false" class="pin-submit">Submit</button>');
-
+        fieldSet.append(div);
+        formEl.append(fieldSet);
+    });
+    
     // insert the form
     //console.log('insert:', wrapper, formEl);
     wrapper.append(formEl);
@@ -566,85 +578,111 @@ PIN.Form.build = function(queryData, renderArgs) {
     jQuery('.pin-query-textarea textarea').change(maxlenWatcher);
     jQuery('.pin-query-textarea textarea').keyup(maxlenWatcher);
 
+    // add listeners if this is a multi-page form
+    PIN.Form.setupMultipage();
+
     wrapper.trigger('pinform_built', renderArgs.divId);
     if (renderArgs.opts.onRender) {
         renderArgs.opts.onRender(renderArgs.divId, queryData);
     }
 }
 
+PIN.Form.multiPageNextClick = function(ev) {
+    if (PIN.Form.animationInProgress) return false;
+
+    var currentFs = $(ev.target).parents("fieldset");
+    var nextFs = currentFs.next();
+    var currentSetId = currentFs.find(".pin-mpf-q-div").attr('id');
+    var formEl = jQuery('#'+currentSetId+' :input');
+    var currentIsValid = PIN.Form.validatePage(currentSetId, formEl);
+
+    if (!currentIsValid) return false;
+
+    // do not trigger animation state till we know we are valid.
+    PIN.Form.animationInProgress = true;
+
+    // hide the current fieldset with style
+    currentFs.animate({opacity: 0}, {
+        step: function(now, mx) {
+            var scale = 1 - (1 - now) * 0.2;
+            var left = (now * 50)+"%";
+            var opacity = 1 - now;
+            currentFs.css({'transform': 'scale('+scale+')'});
+            nextFs.css({'left': left, 'opacity': opacity});
+        },
+        duration: 800,
+        complete: function(){
+            currentFs.hide();
+            PIN.Form.animationInProgress = false;
+        },
+        //this comes from the custom easing plugin  
+        easing: 'easeInOutBack'
+     });
+    nextFs.show();
+}
+
+PIN.Form.multiPagePrevClick = function(ev) {
+    if (PIN.Form.animationInProgress) return false;
+    PIN.Form.animationInProgress = true;
+
+    var currentFs = $(ev.target).parents("fieldset");
+    var previousFs = currentFs.prev();
+
+    currentFs.animate({opacity: 0}, {
+        step: function(now, mx) {
+            var scale = 0.8 + (1 - now) * 0.2;
+            var left = ((1-now) * 50)+"%";
+            var opacity = 1 - now;
+            currentFs.css({'left': left});
+            previousFs.css({'transform': 'scale('+scale+')', 'opacity': opacity});
+        },
+        duration: 800,
+        complete: function() {
+            currentFs.hide();
+            PIN.Form.animationInProgress = false;
+        },
+        //this comes from the custom easing plugin
+        easing: 'easeInOutBack'
+    });
+    previousFs.show();
+}
+
+PIN.Form.setupMultipage = function() {
+  $(".pin-mpf-next").click(PIN.Form.multiPageNextClick);
+  $(".pin-mpf-previous").click(PIN.Form.multiPagePrevClick);
+}
+
+
 PIN.Form.submit = function(divId) {
-    var formVals, formEl, formQA, url, btn, validationErrMsg;
+    var pageValidation, formVals, formEl, formQA, url, btn, validationErrMsg;
     formEl = jQuery('#'+divId+' form');
-    
-    // clear any existing validation error msg
-    jQuery('#pin-submit-errors').remove();
 
     // disable button immediately to avoid multiple clicks
     btn = formEl.find('.pin-submit');
     btn.attr('disabled','disabled');
     btn.text('Checking...');
 
-    // extract all data into a single object
+    validationErrMsg = 'Please fix the form errors above and try again.';
+    if (PIN.Form.Registry[divId].args.opts.validationErrMsg) {
+        validationErrMsg = PIN.Form.Registry[divId].args.opts.validationErrMsg;
+    }
+
+    // validate the entire form
+    pageValidation = PIN.Form.validatePage(divId, formEl);
+    
     PIN.Form.DEBUG && console.log('formEl: ', formEl);
-    formVals = formEl.serializeArray();
-    
-    // turn array of objects into one object
-    // for easy lookup
-    formQA = {};
-    jQuery.each(formVals, function(idx, pair) {
-        formQA[pair.name] = pair.value;
-    });
-    
-    // fill out our validation array manually.
-    // if we have a file upload, must grab it manually.
-    // jQuery also ignores unchecked radio and checkbox inputs
-    // so we must manually grab those to make sure required
-    // questions are validated.
-
-    jQuery.each(PIN.Form.Registry[divId].data.questions, function(idx,q) {
-        PIN.Form.DEBUG && console.log('q:', q);
-        if (q.ques_resp_type === 'F') {
-            var fileQ = jQuery('#pin-q-'+q.ques_uuid);
-            //console.log(fileQ.val());
-            formVals.push({name:q.ques_uuid, value: fileQ.val()});
-        }
-        if ((q.ques_type === 'P' || q.ques_type === 'C' || q.ques_type === 'R')
-            && 
-            !formQA[q.ques_uuid+'[]']
-        ) {
-            var inputs = jQuery('input[name^='+q.ques_uuid+']');
-            PIN.Form.DEBUG && console.log('inputs:', inputs);
-            var inputVal = '';
-            jQuery.each(inputs, function(inputIdx, input) {
-                if (input.checked) {
-                    inputVal = input.val();
-                }
-            });
-            formVals.push({name:q.ques_uuid, value: inputVal});
-            formQA[q.ques_uuid] = inputVal;
-        }
-    });
-
+    formVals = pageValidation['formVals'];
+    formQA = pageValidation['formQA'];
     PIN.Form.DEBUG && console.log('formVals: ', formVals);
 
     // validate object
-    if (!PIN.Form.validate(divId, formVals)) {
-        PIN.Form.decorate(divId, PIN.Form.Registry[divId].errors);
+    if (!pageValidation['isValid']) {
         btn.removeAttr('disabled');
         btn.text('Submit');
-        validationErrMsg = 'Please fix the form errors above and try again.';
-        if (PIN.Form.Registry[divId].args.opts.validationErrMsg) {
-            validationErrMsg = PIN.Form.Registry[divId].args.opts.validationErrMsg;
-        }
         btn.after('<div id="pin-submit-errors" class="pin-error">'+validationErrMsg+'</div>');
         return;
     }
-    else {
-        // clear error msg
-        if (jQuery('#pin-submit-errors').length) {
-            jQuery('#pin-submit-errors').remove();  
-        }
-    }
+
     PIN.Form.DEBUG && console.log('validation OK');
 
     // add some meta
@@ -726,6 +764,68 @@ PIN.Form.submit = function(divId) {
     formEl.submit();
 
     return false;   // prevent html form submit
+}
+
+
+PIN.Form.validatePage = function(divId, formEl) {
+    var formVals, formQA, isValid;
+
+    // clear any existing validation error msg
+    jQuery('#pin-submit-errors').remove();
+
+    // extract all data into a single object
+    PIN.Form.DEBUG && console.log('formEl: ', formEl);
+    formVals = formEl.serializeArray();
+
+    // turn array of objects into one object
+    // for easy lookup
+    formQA = {};
+    jQuery.each(formVals, function(idx, pair) {
+        formQA[pair.name] = pair.value;
+    });
+    
+    // fill out our validation array manually.
+    // if we have a file upload, must grab it manually.
+    // jQuery also ignores unchecked radio and checkbox inputs
+    // so we must manually grab those to make sure required
+    // questions are validated.
+
+    jQuery.each(PIN.Form.Registry[divId].data.questions, function(idx,q) {
+        if (q.ques_resp_type === 'F') {
+            var fileQ = jQuery('#pin-q-'+q.ques_uuid);
+            formVals.push({name:q.ques_uuid, value: fileQ.val()});
+        }
+        if ((q.ques_type === 'P' || q.ques_type === 'C' || q.ques_type === 'R')
+            && 
+            !formQA[q.ques_uuid+'[]']
+        ) {
+            var inputs = jQuery('input[name^='+q.ques_uuid+']');
+            var inputVal = '';
+            jQuery.each(inputs, function(inputIdx, input) {
+                if (input.checked) {
+                    inputVal = input.val();
+                }
+            });
+            formVals.push({name:q.ques_uuid, value: inputVal});
+            formQA[q.ques_uuid] = inputVal;
+        }
+    });
+
+    PIN.Form.DEBUG && console.log('formVals: ', formVals);
+
+    // validate object
+    if (!PIN.Form.validate(divId, formVals)) {
+        PIN.Form.decorate(divId, PIN.Form.Registry[divId].errors);
+        isValid = false;
+    }
+    else {
+        // clear error msg
+        if (jQuery('#pin-submit-errors').length) {
+            jQuery('#pin-submit-errors').remove();  
+        }
+    }
+
+    return { formQA: formQA, formVals: formVals, isValid: isValid };
 }
 
 // on successful submission, show thank you message and more queries.
