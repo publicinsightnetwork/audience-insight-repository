@@ -400,6 +400,14 @@ PIN.Form.build = function(queryData, renderArgs) {
     sortedQuestions = PIN.Form.sortQuestions(queryData);
     PIN.Form.DEBUG && console.log(sortedQuestions);
 
+    // disable submit if in preview mode
+    if (renderArgs.previewMode) {
+        previewAttribute = 'disabled="disabled"';
+    }        
+    else {
+        previewAttribute = '';
+    }        
+
     wrapper = jQuery('#'+renderArgs.divId);
 
     // insert if not found
@@ -471,15 +479,6 @@ PIN.Form.build = function(queryData, renderArgs) {
         formEl.append(fieldSet);
     });
     
-    
-    // disable submit if in preview mode
-    if (renderArgs.previewMode) {
-        previewAttribute = 'disabled="disabled"';
-    }
-    else {
-        previewAttribute = '';
-    }
-
     // insert the form
     //console.log('insert:', wrapper, formEl);
     wrapper.append(formEl);
