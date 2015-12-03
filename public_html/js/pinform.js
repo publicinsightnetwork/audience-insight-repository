@@ -430,7 +430,7 @@ PIN.Form.build = function(queryData, renderArgs) {
     }
 
     // build up form
-    formEl = jQuery('<form id="msform" enctype="multipart/form-data" action="'+queryData.action+'" method="'+queryData.method+'" class="pin-form">');
+    formEl = jQuery('<form enctype="multipart/form-data" action="'+queryData.action+'" method="'+queryData.method+'" class="pin-form">');
 
     // contributorFieldSet = jQuery('<fieldset>');
     var firstSection = true;

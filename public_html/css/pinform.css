@@ -290,7 +290,7 @@
 
 }
 
-#msform fieldset:not(:first-of-type) {
+.pin-form fieldset:not(:first-of-type) {
     display: none;
 }
 
