@@ -151,7 +151,7 @@ jQuery(document).ajaxSend(function (event, request, settings) {
  */
 
 PIN.Form.setup = function(args) {
-    console.log("setup");
+    PIN.Form.DEBUG && console.log("setup");
 
     var uuid    = args.uuid;
     var baseUrl = args.baseUrl;
@@ -304,6 +304,7 @@ PIN.Form.sortQuestions = function(queryData) {
         private: []
     };
     var perm_ques;
+    var hasMultiPage = false;
     jQuery.each(queryData.questions, function(idx, q) {
         if (q.ques_type.toLowerCase() == 'z'
          || q.ques_type.toLowerCase() == 's'
@@ -319,6 +320,10 @@ PIN.Form.sortQuestions = function(queryData) {
         }
         else {
             sorted.private.push(q);
+        }
+
+        if (q.ques_type == '4') {
+            hasMultiPage = true;
         }
     });
 
@@ -336,39 +341,35 @@ PIN.Form.sortQuestions = function(queryData) {
     // and force it to be last.
     if (sorted.public.length && perm_ques) {
         sorted.public.push(perm_ques);
-    }    
-
-    var questions= [];
-    var mp_sorted = [];
-    var currArray = [];
-
-    jQuery.each(sorted.contributor, function(idx, ques){
-        questions.push(ques);
-    });
-
-    jQuery.each(sorted.public, function(idx, ques){
-        questions.push(ques);
-    });
-
-    jQuery.each(sorted.private, function(idx, ques){
-        questions.push(ques);
-    });
-
-    // queryData.questions.sort(function(a,b) { return a.ques_dis_seq - b.ques_dis_seq; });
-    jQuery.each(questions, function(idx, q) {
-        
-        if (q.ques_type == '4' && currArray.length != 0) {
-            mp_sorted.push(currArray);
-            currArray=[];
-        }else{
-            currArray.push(q);
-        }
-    });
-    if(currArray.length != 0){
-        mp_sorted.push(currArray);
     }
 
-    return mp_sorted;
+    // flatten groups into a single array, retaining overall order.
+    var sortedQuestions = [].concat.apply([], [sorted.contributor, sorted.public, sorted.private]);
+    PIN.Form.DEBUG && console.log(sortedQuestions);
+
+    // if this is a multi-page form, group them into "pages"
+    if (hasMultiPage) {
+        var pages     = [];
+        var currArray = [];
+
+        jQuery.each(sortedQuestions, function(idx, q) {
+            if (q.ques_type == '4' && currArray.length != 0) {
+                pages.push(currArray);
+                currArray = [];
+            }
+            else {
+                currArray.push(q);
+            }
+        });
+    
+        if (currArray.length != 0) {
+            pages.push(currArray);
+        }
+        return pages;
+    }
+    else {
+        return [sortedQuestions]; // single page
+    }
 }
 
 // generate the HTML
@@ -433,18 +434,14 @@ PIN.Form.build = function(queryData, renderArgs) {
     formEl = jQuery('<form enctype="multipart/form-data" action="'+queryData.action+'" method="'+queryData.method+'" class="pin-form">');
 
     // contributorFieldSet = jQuery('<fieldset>');
-    var firstSection = true;
-    var noOfSections = sortedQuestions.length;
-    var count = 1;
     jQuery.each(sortedQuestions, function(idx, quesArray) {
-
-        noOfSections = noOfSections - 1;        
-        fieldSet = jQuery('<fieldset>');
-        var divID = 'fs-'+count;
-        div = jQuery('<div id="'+divID+'" class="pin-mpf-q-div" style="float:left">');
+        var sectionsRemaining = sortedQuestions.length - idx - 1;
+        var fieldSet = jQuery('<fieldset>');
+        var divID = 'pin-fs-'+idx;
+        var div = jQuery('<div id="'+divID+'" class="pin-mpf-q-div">');
         var data = {questions: quesArray};
-        PIN.Form.Registry[divID]= {data: data, args: renderArgs };
-        jQuery.each(quesArray, function(idx, question) {
+        PIN.Form.Registry[divID]= {data: data, args: renderArgs};
+        jQuery.each(quesArray, function(idx2, question) {
             var formatter = PIN.Form.Formatter[question.ques_type];
             // lowercase letters are always hidden
             if (question.ques_type.match(/[a-z]/)) {
@@ -454,26 +451,24 @@ PIN.Form.build = function(queryData, renderArgs) {
                 jQuery.error("No formatter for type " + question.ques_type);
                 return;
             }
-            var el = formatter({question:question,idx:idx,opts:renderArgs.opts});
+            var el = formatter({question:question, idx:idx2, opts:renderArgs.opts});
             div.append(el);
         });
         fieldSet.append(div);
-        div = jQuery('<div style="float:left" class="pin-question">')
-        
-            if(firstSection != true){
-                div.append('<input type="button" name="previous" class="pin-mpf-previous action-button mp-button" value="Previous"/>')
-            }
+        div = jQuery('<div class="pin-question">')
+        if (idx != 0) {
+            div.append('<input type="button" name="previous" class="pin-mpf-previous action-button mp-button" value="Previous"/>')
+        }
 
-             if(noOfSections != 0){
-                div.append('<input type="button" name="next" class="pin-mpf-next action-button mp-button" value="Next"/>');
-            }else{
-                div.append('<button ' + previewAttribute + ' onclick="PIN.Form.submit(\''+renderArgs.divId+'\'); return false" class="pin-submit">Submit</button>');
-            }
+        if (sectionsRemaining > 0) {
+            div.append('<input type="button" name="next" class="pin-mpf-next action-button mp-button" value="Next"/>');
+        }
+        else {
+            div.append('<button ' + previewAttribute + ' onclick="PIN.Form.submit(\''+renderArgs.divId+'\'); return false" class="pin-submit">Submit</button>');
+        }
         
         fieldSet.append(div);
         formEl.append(fieldSet);
-        firstSection = false;
-        count= count+1;
     });
     
     
@@ -484,9 +479,6 @@ PIN.Form.build = function(queryData, renderArgs) {
     else {
         previewAttribute = '';
     }
-
-    // add submit listener, return false to avoid html form submission.
-    formEl.append('<button ' + previewAttribute + 'onclick="PIN.Form.submit(\''+renderArgs.divId+'\'); return false" class="pin-submit">Submit</button>');
 
     // insert the form
     //console.log('insert:', wrapper, formEl);

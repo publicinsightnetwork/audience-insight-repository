@@ -290,11 +290,12 @@
 
 }
 
+/* multi-page styles */
 .pin-form fieldset:not(:first-of-type) {
     display: none;
 }
 
-.mp-button{
+.mp-button {
     background: none repeat scroll 0 0 #0099cc;
     border: 0 none;
     border-radius: 5px;
@@ -305,4 +306,8 @@
     margin: 1em 0 1em 1em;
     padding: 5px 10px;
     text-shadow: 0 1px 1px rgba(25, 25, 50, 0.33);
+}
+
+.pin-mpf-q-div {
+    float: left;
 }
