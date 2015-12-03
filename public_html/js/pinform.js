@@ -592,8 +592,9 @@ PIN.Form.multiPageNextClick = function(ev) {
 
     var currentFs = $(ev.target).parents("fieldset");
     var nextFs = currentFs.next();
-    var currentQuestionId = currentFs.find(".pin-mpf-q-div").attr('id');
-    var currentIsValid = PIN.Form.validatePage(currentQuestionId);
+    var currentSetId = currentFs.find(".pin-mpf-q-div").attr('id');
+    var formEl = jQuery('#'+currentSetId+' :input');
+    var currentIsValid = PIN.Form.validatePage(currentSetId, formEl);
 
     if (!currentIsValid) return false;
 
@@ -653,78 +654,35 @@ PIN.Form.setupMultipage = function() {
 
 
 PIN.Form.submit = function(divId) {
-    var formVals, formEl, formQA, url, btn, validationErrMsg;
+    var pageValidation, formVals, formEl, formQA, url, btn, validationErrMsg;
     formEl = jQuery('#'+divId+' form');
-    
-    // clear any existing validation error msg
-    jQuery('#pin-submit-errors').remove();
 
     // disable button immediately to avoid multiple clicks
     btn = formEl.find('.pin-submit');
     btn.attr('disabled','disabled');
     btn.text('Checking...');
 
-    // extract all data into a single object
+    validationErrMsg = 'Please fix the form errors above and try again.';
+    if (PIN.Form.Registry[divId].args.opts.validationErrMsg) {
+        validationErrMsg = PIN.Form.Registry[divId].args.opts.validationErrMsg;
+    }
+
+    // validate the entire form
+    pageValidation = PIN.Form.validatePage(divId, formEl);
+    
     PIN.Form.DEBUG && console.log('formEl: ', formEl);
-    formVals = formEl.serializeArray();
-    
-    // turn array of objects into one object
-    // for easy lookup
-    formQA = {};
-    jQuery.each(formVals, function(idx, pair) {
-        formQA[pair.name] = pair.value;
-    });
-    
-    // fill out our validation array manually.
-    // if we have a file upload, must grab it manually.
-    // jQuery also ignores unchecked radio and checkbox inputs
-    // so we must manually grab those to make sure required
-    // questions are validated.
-
-    jQuery.each(PIN.Form.Registry[divId].data.questions, function(idx,q) {
-        PIN.Form.DEBUG && console.log('q:', q);
-        if (q.ques_resp_type === 'F') {
-            var fileQ = jQuery('#pin-q-'+q.ques_uuid);
-            //console.log(fileQ.val());
-            formVals.push({name:q.ques_uuid, value: fileQ.val()});
-        }
-        if ((q.ques_type === 'P' || q.ques_type === 'C' || q.ques_type === 'R')
-            && 
-            !formQA[q.ques_uuid+'[]']
-        ) {
-            var inputs = jQuery('input[name^='+q.ques_uuid+']');
-            PIN.Form.DEBUG && console.log('inputs:', inputs);
-            var inputVal = '';
-            jQuery.each(inputs, function(inputIdx, input) {
-                if (input.checked) {
-                    inputVal = input.val();
-                }
-            });
-            formVals.push({name:q.ques_uuid, value: inputVal});
-            formQA[q.ques_uuid] = inputVal;
-        }
-    });
-
+    formVals = pageValidation['formVals'];
+    formQA = pageValidation['formQA'];
     PIN.Form.DEBUG && console.log('formVals: ', formVals);
 
     // validate object
-    if (!PIN.Form.validate(divId, formVals)) {
-        PIN.Form.decorate(divId, PIN.Form.Registry[divId].errors);
+    if (!pageValidation['isValid']) {
         btn.removeAttr('disabled');
         btn.text('Submit');
-        validationErrMsg = 'Please fix the form errors above and try again.';
-        if (PIN.Form.Registry[divId].args.opts.validationErrMsg) {
-            validationErrMsg = PIN.Form.Registry[divId].args.opts.validationErrMsg;
-        }
         btn.after('<div id="pin-submit-errors" class="pin-error">'+validationErrMsg+'</div>');
         return;
     }
-    else {
-        // clear error msg
-        if (jQuery('#pin-submit-errors').length) {
-            jQuery('#pin-submit-errors').remove();  
-        }
-    }
+
     PIN.Form.DEBUG && console.log('validation OK');
 
     // add some meta
@@ -809,15 +767,16 @@ PIN.Form.submit = function(divId) {
 }
 
 
-PIN.Form.validatePage = function(divId) {
-    formEl = jQuery('#'+divId+' :input');
+PIN.Form.validatePage = function(divId, formEl) {
+    var formVals, formQA, isValid;
+
     // clear any existing validation error msg
     jQuery('#pin-submit-errors').remove();
-
 
     // extract all data into a single object
     PIN.Form.DEBUG && console.log('formEl: ', formEl);
     formVals = formEl.serializeArray();
+
     // turn array of objects into one object
     // for easy lookup
     formQA = {};
@@ -857,14 +816,7 @@ PIN.Form.validatePage = function(divId) {
     // validate object
     if (!PIN.Form.validate(divId, formVals)) {
         PIN.Form.decorate(divId, PIN.Form.Registry[divId].errors);
-        // btn.removeAttr('disabled');
-        // btn.text('Submit');
-        validationErrMsg = 'Please fix the form errors above and try again.';
-        if (PIN.Form.Registry[divId].args.opts.validationErrMsg) {
-            validationErrMsg = PIN.Form.Registry[divId].args.opts.validationErrMsg;
-        }
-        // btn.after('<div id="pin-submit-errors" class="pin-error">'+validationErrMsg+'</div>');
-        return false;
+        isValid = false;
     }
     else {
         // clear error msg
@@ -872,45 +824,10 @@ PIN.Form.validatePage = function(divId) {
             jQuery('#pin-submit-errors').remove();  
         }
     }
-    PIN.Form.DEBUG && console.log('validation OK');
 
-    var errHandler = function(xhr, stat, err) {
-        PIN.Form.DEBUG && console.log("ERROR:", xhr, stat, err);
-
-        // massage response errors into the format we expect
-        var resp;
-        if (xhr.responseText) {
-            resp = jQuery.parseJSON(xhr.responseText);
-            PIN.Form.DEBUG && console.log(resp);
-        }
-        if (!resp) {
-            // btn.text('Server error -- contact support@publicinsightnetwork.org');
-            PIN.Form.DEBUG && console.log("ERROR:", xhr, stat, err);
-            jQuery.error(xhr.responseText);
-            return;
-        }
-
-        var errors = {};
-        jQuery.each(resp.errors, function(idx, err) {
-            var ques_uuid = err.question;
-            if (!errors[ques_uuid]) {
-                errors[ques_uuid] = [];
-            }
-            errors[ques_uuid].push(err.msg);
-        });
-        PIN.Form.decorate(divId, errors);
-        // btn.removeAttr('disabled');
-        // btn.text('Submit');
-        validationErrMsg = 'Please fix the form errors above and try again.';
-        if (PIN.Form.Registry[divId].args.opts.validationErrMsg) {
-            validationErrMsg = PIN.Form.Registry[divId].args.opts.validationErrMsg;
-        }    
-    };
-    
-    
-
-    return true;   // prevent html form submit
+    return { formQA: formQA, formVals: formVals, isValid: isValid };
 }
+
 // on successful submission, show thank you message and more queries.
 // this is an example only.
 // use the opts.thankYou feature in render() to define your own.
