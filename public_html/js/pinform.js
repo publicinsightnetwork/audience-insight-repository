@@ -668,11 +668,10 @@ PIN.Form.submit = function(divId) {
 
     // validate the entire form
     pageValidation = PIN.Form.validatePage(divId, formEl);
-    
-    PIN.Form.DEBUG && console.log('formEl: ', formEl);
+
+    PIN.Form.DEBUG && console.log('pageValidation:', pageValidation); 
     formVals = pageValidation['formVals'];
     formQA = pageValidation['formQA'];
-    PIN.Form.DEBUG && console.log('formVals: ', formVals);
 
     // validate object
     if (!pageValidation['isValid']) {
@@ -822,6 +821,7 @@ PIN.Form.validatePage = function(divId, formEl) {
         if (jQuery('#pin-submit-errors').length) {
             jQuery('#pin-submit-errors').remove();  
         }
+        isValid = true;
     }
 
     return { formQA: formQA, formVals: formVals, isValid: isValid };
