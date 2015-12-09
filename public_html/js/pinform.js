@@ -186,21 +186,20 @@ PIN.Form.setup = function(args) {
 
     // load form data, unless it is already loaded.
     if (!args.queryData) {
-    var jsonfile = baseUrl + "querys/" + uuid + '.json?';
+        var jsonfile = baseUrl + "querys/" + uuid + '.json?';
 
-    // if not same domain as this window, append jsonp param
-    
-    if (!baseUrl.match(PIN.Form.thisDomain)) {
-        jsonfile += 'callback=?';
-    }
-    if (args.opts && args.opts.rendered) {
-        jsonfile += '&cachebust=' + args.opts.rendered;
-    }
-    //console.log(window.location);
-    PIN.Form.DEBUG && console.log('loading json from', jsonfile);
-    jQuery.getJSON(jsonfile, function(resp) {
-        PIN.Form.build(resp, args);
-    });
+        // if not same domain as this window, append jsonp param
+        if (!baseUrl.match(PIN.Form.thisDomain)) {
+            jsonfile += 'callback=?';
+        }
+        if (args.opts && args.opts.rendered) {
+            jsonfile += '&cachebust=' + args.opts.rendered;
+        }
+        //console.log(window.location);
+        PIN.Form.DEBUG && console.log('loading json from', jsonfile);
+        jQuery.getJSON(jsonfile, function(resp) {
+            PIN.Form.build(resp, args);
+        });
     }
     else {
         PIN.Form.DEBUG && console.log('using local queryData');
@@ -515,7 +514,7 @@ PIN.Form.build = function(queryData, renderArgs) {
             filteredLegalHtml = filteredLegalHtml.replace(/<!-- COPYRIGHT_HOLDER -->/g, copyrightText.join(', '));
             legalWrapper.append(filteredLegalHtml);
         };
-        
+ 
         // legal text set in caller
         if (typeof renderArgs.opts.includeLegalFooter === 'object') {
             PIN.Form.DEBUG && console.log('using local legal footer');
@@ -546,7 +545,7 @@ PIN.Form.build = function(queryData, renderArgs) {
     // add date pickers
     if (!jQuery.datepicker) {
         PIN.Form.includeJs('https://www.publicinsightnetwork.org/source/js/jquery-ui-1.10.3.min.js', function() {
-    jQuery('.pin-query-date input').datepicker();
+            jQuery('.pin-query-date input').datepicker();
         });  
     }
     else {
@@ -594,9 +593,9 @@ PIN.Form.multiPageNextClick = function(ev) {
     var nextFs = currentFs.next();
     var currentSetId = currentFs.find(".pin-mpf-q-div").attr('id');
     var formEl = jQuery('#'+currentSetId+' :input');
-    var currentIsValid = PIN.Form.validatePage(currentSetId, formEl);
+    var pageValidation = PIN.Form.validatePage(currentSetId, formEl);
 
-    if (!currentIsValid) return false;
+    if (!pageValidation["isValid"]) return false;
 
     // do not trigger animation state till we know we are valid.
     PIN.Form.animationInProgress = true;
@@ -882,19 +881,19 @@ PIN.Form.decorate = function(divId, errors) {
 }
 
 PIN.Form.getQuestionField = function(ques_uuid) {
-        var elId = 'pin-q-'+ques_uuid;
-        var field = jQuery('#'+elId);
+    var elId = 'pin-q-'+ques_uuid;
+    var field = jQuery('#'+elId);
+    if (!field || !field.length) {
+
+        // try with name attribute for radios, checkbox, etc
+        field = jQuery('input[name^='+ques_uuid+']');
+
         if (!field || !field.length) {
-
-            // try with name attribute for radios, checkbox, etc
-            field = jQuery('input[name^='+ques_uuid+']');
-
-            if (!field || !field.length) {
             PIN.Form.DEBUG && console.log("Cannot find question for "+elId);
             jQuery.error("Cannot find question for "+elId);
-                return;
-            }
+            return;
         }
+    }
     return field;
 }
 
@@ -927,7 +926,7 @@ PIN.Form.validate = function(divId, submission) {
     jQuery.each(query.data.questions, function(idx, q) {
         questions[q.ques_uuid] = q;
         if (!PIN.Form.isDisplayOnly[q.ques_type]) {
-        PIN.Form.clearError(q.ques_uuid);
+            PIN.Form.clearError(q.ques_uuid);
         }
     });
     var errors = {};    // key should be ques_uuid
