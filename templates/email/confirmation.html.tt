@@ -31,7 +31,7 @@
     <!-- If you delete this meta tag, Half Life 3 will never be released. -->
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Submission Confirmation - Public Insight Network</title>
+    <title>Submission Confirmation - Public Insight Network&reg;</title>
 </head>
 
 <body style="-webkit-text-size-adjust:none; width: 100% !important; height: 100%; background-color: #f6f6f6; background: #f6f6f6 url([% pin.asset_uri %]/css/img/back-gray-grid.jpg) repeat; color: #444444; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0;">
@@ -86,7 +86,9 @@
                         <h3 style="font-weight:500; font-size: 27px; margin-bottom: 20px;">Hi [% source.name %],</h3>
                         <p style="font-size:17px;">Thank you for sharing your insight with <strong><a href="[% newsrooms.0.uri %]" style="[% css_body_links %]">[% newsrooms.0.name %]</a></strong>.</p>
 
-                        <p style="[% css_text %]">A reporter or producer may contact you to find out more about what you've told us. A copy of your responses is included below. Please take a moment to share <strong><a href="[% query.uri %]" style="[% css_body_links %]">this query</a></strong> with others who might have their own stories and insights to share about this topic.</p>
+                        <p style="[% css_text %]">A reporter or producer may contact you to find out more about what you've told us. Please take a moment to share <strong><a href="[% query.uri %]" style="[% css_body_links %]">this query</a></strong> with others who might have their own stories and insights to share about this topic.</p>
+                        <p style="[% css_text %]">If you wish to see this or your other submissions <a href="https://www.publicinsightnetwork.org/source/en/login">login or create a source account</a>.</p>
+
 
                         <span style="[% css_text %]">
                         <p><strong>You can also help inform more of our reporting:</strong></p>
@@ -119,28 +121,10 @@
                         </table>
                         <!-- /SIGNATURE -->
 
-
-                        <!-- SUBMISSION -->
-                        <div style="[% css_text %] padding-top: 30px; margin-top: 30px; border-top: 1px solid #eee;">
-                            <ul style="[% css_text %] margin-left: 0; padding-left: 20px;">
-                            [% FOREACH response IN submission %]
-                                [% IF (response.question) %]
-                                  [% NEXT IF (response.ques_type == '2' || response.ques_type == '3') %]
-                                    <li style="margin-bottom: 15px;">
-                                        <strong>[% response.question %]</strong><br />
-                                        <pre style="white-space:pre-wrap;word-wrap:break-word;">[% response.answer %]</pre>
-                                    </li>
-                                [% END %]
-                            [% END %]
-                            </ul>
-                        </div>
-                        <!-- /SUBMISSION -->
-
-
                         <!-- Callout Panel -->
                         <p style="[% css_text %] padding:15px; background-color:#ECF8FF; margin-top: 10px; margin-bottom: 10px;">
-                            <strong>What is the Public Insight Network?</strong><br />
-                            American Public Media's Public Insight Network (PIN) is a platform for connecting trusted journalists with knowledgeable sources. Through PIN, people around the world share what they know to inform reporting by PIN partner newsrooms, making news coverage more relevant, diverse, transparent and trustworthy.<br />
+                            <strong>What is the Public Insight Network&reg;?</strong><br />
+                            American Public Media's Public Insight Network&reg; (PIN&reg;) is a platform for connecting trusted journalists with knowledgeable sources. Through PIN&reg;, people around the world share what they know to inform reporting by PIN&reg; partner newsrooms, making news coverage more relevant, diverse, transparent and trustworthy.<br />
                             <a href="[% pin.uri %]" style="font-weight:bold; color: #2BA6CB;">Learn more &raquo;</a>
                         </p><!-- /Callout Panel -->
 

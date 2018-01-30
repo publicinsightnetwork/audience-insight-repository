@@ -30,9 +30,8 @@ use Getopt::Long;
 use Pod::Usage;
 use Rose::DateTime::Parser;
 use AIR2::Config;
+use AIR2::Emailer;
 use AIR2::Source;
-use Email::Stuff;
-use Email::Send;
 use Text::CSV_XS;
 use File::Slurp;
 
@@ -142,18 +141,11 @@ close $fh or die $!;
 
 # email output
 if ( $format eq 'email' ) {
-    my %mailer_args = ( Host => AIR2::Config->get_smtp_host, );
-    if ( AIR2::Config->smtp_host_requires_auth ) {
-        $mailer_args{username} = AIR2::Config->get_smtp_username;
-        $mailer_args{password} = AIR2::Config->get_smtp_password;
-    }
-    my $smtp = Email::Send->new(
-        {   mailer      => 'SMTP',
-            mailer_args => [ %mailer_args, ]
-        }
-    ) or die "failed to create Email::Send::SMTP: $@ $!\n";
-    Email::Stuff->to($mailto)->from('support@publicinsightnetwork.org')
-        ->subject("AIR Monthly Report - How Sources Join")
-        ->text_body("See attachment for new sources from $start to $end")
-        ->attach( $str, filename => $filename )->using($smtp)->send();
+    my $emailer = AIR2::Emailer->new( debug => $debug );
+    $emailer->send(
+        to      => $mailto,
+        subject => "AIR Monthly Report - How Sources Join",
+        text    => "See attachment for new sources from $start to $end",
+        attach  => [ $str, filename => $filename ]
+    );
 }

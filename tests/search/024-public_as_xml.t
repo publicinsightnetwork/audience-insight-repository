@@ -347,7 +347,7 @@ my $ques_seq   = $quesPublic->ques_dis_seq;
 my $ques_uuid  = $quesPublic->ques_uuid;
 my $ques_value = $quesPublic->ques_value;
 my $qa_set
-    = join( ':', $ques_uuid, $ques_type, $ques_seq, $ques_value, 'arugula' );
+    = join( '|', $ques_uuid, $ques_type, $ques_seq, $ques_value, 'arugula' );
 
 my $srs_qa_re = qr(<qa>$qa_set</qa>)s;
 

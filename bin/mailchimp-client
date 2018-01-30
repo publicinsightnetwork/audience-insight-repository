@@ -94,7 +94,7 @@ for my $name ( @$all_methods ) {
 
 # term setup
 my $prompt_str = "${GREEN}chimp> $RESET";
-my $term       = Term::ReadLine->new;
+my $term       = Term::ReadLine->new('mc');
 my $attribs    = $term->Attribs;
 $attribs->{completion_function} = sub {
     my ($text, $line, $start) = @_;

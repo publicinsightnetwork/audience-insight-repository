@@ -216,7 +216,6 @@
 .pin-error {
     color: red;
     font-weight: bold;
-    padding: 2px;
     border: 1px solid red;
 }
 
@@ -258,6 +257,11 @@
     clear: left;
 }
 
+/* hr breaks should reset any floats */
+.pin-break, .pin-pagebreak {
+    clear: left;
+}
+
 /* Responsive single stack */
 @media (max-width: 624px) {
 
@@ -288,6 +292,28 @@
         margin: 1em auto;
     }
 
+}
+
+/* multi-page styles */
+.pin-form fieldset:not(:first-of-type) {
+    display: none;
+}
+
+.mp-button {
+    background: none repeat scroll 0 0 #0099cc;
+    border: 0 none;
+    border-radius: 5px;
+    clear: left;
+    color: #fff;
+    display: block;
+    font-size: 14px;
+    margin: 1em 0 1em 1em;
+    padding: 5px 10px;
+    text-shadow: 0 1px 1px rgba(25, 25, 50, 0.33);
+}
+
+.pin-mpf-q-div {
+    float: left;
 }
 
 /* multi-page styles */

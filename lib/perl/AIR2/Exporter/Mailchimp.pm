@@ -38,7 +38,7 @@ __PACKAGE__->mk_ro_accessors(
         )
 );
 
-my $TMP_CSV             = '/tmp/mailchimp-api';
+my $TMP_CSV             = '/tmp/mailchimp-api-' . getpwuid($<);
 my $AIR_HOST            = 'mprweb1';
 my $CHECKED_INVALID     = 'I';
 my $CHECKED_PIN_STATUS  = 'S';
@@ -93,7 +93,7 @@ sub init {
     # org used only to compare source's orgs against
     $self->{org} = $self->{export_email}->organization;
 
-    $self->{api} = AIR2::Mailchimp->new();
+    $self->{api} ||= AIR2::Mailchimp->new();
 
     return $self;
 }
@@ -287,7 +287,8 @@ sub end_transaction {
     $self->{seg_name} = $res2->{name};
 
     # handle anything mailchimp skipped
-    for my $addr ( @{ $res2->{skip_list} } ) {
+    for my $pair ( @{ $res2->{skip_list} } ) {
+        my ( $addr, $was_skipped ) = @$pair;
         delete $self->{emails}->{$addr};
         $self->debug and warn "Mailchimp unable to subscribe $addr\n";
         $self->add_error("Mailchimp unable to subscribe $addr\n");

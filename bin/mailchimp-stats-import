@@ -64,13 +64,13 @@ campaign is sent.
 
 my ( $help, $debug, $dry_run, $since );
 GetOptions(
-    help        => \$help,
-    debug       => \$debug,
-    dry_run     => \$dry_run,
-    'since=s'   => \$since,
+    help      => \$help,
+    debug     => \$debug,
+    dry_run   => \$dry_run,
+    'since=s' => \$since,
 ) or pod2usage(2);
 
-pod2usage(2) if ( $help );
+pod2usage(2) if ($help);
 $debug   = 0 unless defined $debug;
 $dry_run = 0 unless defined $dry_run;
 
@@ -81,7 +81,8 @@ if ($since) {
     unless ( $since =~ /[1-2][0-9]{3}[0-1][0-9][0-3][0-9]/ ) {
         die "invalid date '$since' ... use format YYYYMMDD";
     }
-    $export_win = $date_parser->parse_date($since) or die "invalid date '$since'";
+    $export_win = $date_parser->parse_date($since)
+        or die "invalid date '$since'";
 }
 else {
     $export_win = DateTime->now()->subtract( days => 10 );
@@ -123,13 +124,18 @@ while ( my $se = $se_it->next() ) {
         my $changes = '';
 
         # set/update a subset of stats
-        for my $name ( @GRAB_STATS ) {
-            if ( $resp->{$name} > 0 && (!$stats->{$name} || $resp->{$name} != $stats->{$name}) ) {
-                $changes .= "$name(" . $resp->{$name} . ") ";
+        my $report_summary = $resp->{report_summary};
+        for my $name (@GRAB_STATS) {
+            if ($report_summary->{$name}
+                && (  !$stats->{$name}
+                    || $report_summary->{$name} != $stats->{$name} )
+                )
+            {
+                $changes .= "$name(" . $report_summary->{$name} . ") ";
             }
-            $stats->{$name} = $resp->{$name};
+            $stats->{$name} = $report_summary->{$name};
         }
-        $se->set_meta('stats', $stats);
+        $se->set_meta( 'stats', $stats );
         $se->save() unless $dry_run;
 
         # changes

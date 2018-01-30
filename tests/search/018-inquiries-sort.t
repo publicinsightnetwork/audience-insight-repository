@@ -47,7 +47,7 @@ my $TEST_USERNAME  = 'ima-test-user';
 my $TEST_PROJECT   = 'ima-test-project';
 my $TEST_INQ_UUID  = 'testinq12345';
 my $TEST_INQ_UUID2 = 'testinq67890';
-my $TMP_DIR        = Path::Class::dir('/tmp/air2-test/search');
+my $TMP_DIR        = AIR2::Config::get_tmp_dir->subdir('search');
 $AIR2::Config::SEARCH_ROOT = $TMP_DIR;
 
 $Rose::DB::Object::Debug          = $debug;
@@ -472,16 +472,19 @@ my $org2_tkt = $at->ticket(
 );
 
 my $skip = {
-    projects                => 1,
-    'sources'               => 1,
-    'active-sources'        => 1,
-    'primary-sources'       => 1,
-    'fuzzy-sources'         => 1,
-    'fuzzy-active-sources'  => 1,
-    'fuzzy-primary-sources' => 1,
-    'fuzzy-responses'       => 1,
-    'responses'             => 1,
-    'public-responses'      => 1,
+    projects                 => 1,
+    outcomes                 => 1,
+    'sources'                => 1,
+    'active-sources'         => 1,
+    'primary-sources'        => 1,
+    'fuzzy-sources'          => 1,
+    'fuzzy-active-sources'   => 1,
+    'fuzzy-primary-sources'  => 1,
+    'fuzzy-responses'        => 1,
+    'responses'              => 1,
+    'active-responses'       => 1,
+    'fuzzy-active-responses' => 1,
+    'public-responses'       => 1,
 };
 
 test_psgi(

@@ -39,7 +39,7 @@ AIR2_DBManager::init();
 
 // data prep
 $user = new TestUser();
-$user->user_password = MY_TEST_PASS;
+$user->user_encrypted_password = MY_TEST_PASS;
 $user->save();
 $org = new TestOrganization();
 $org->save();

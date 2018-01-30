@@ -41,12 +41,17 @@
  * @author rcavis
  * @package default
  */
+
+
 class SrcOrg extends AIR2_Record {
     /* code_master values */
     public static $STATUS_OPTED_IN = 'A';
     public static $STATUS_EDITORIAL_DEACTV = 'D';
     public static $STATUS_OPTED_OUT = 'F';
     public static $STATUS_DELETED = 'X';
+
+    // never allow a Source to be assigned to these Orgs
+    public static $BLACKLIST = array( AIR2_ALL_PIN_ORG_ID );
 
     /**
      * Set the table columns
@@ -116,11 +121,19 @@ class SrcOrg extends AIR2_Record {
     }
 
 
-
+    /**
+     *
+     * @param unknown $event
+     */
+    public function preValidate($event) {
+        if (in_array($this->so_org_id, self::$BLACKLIST)) {
+            throw new Exception("May not assign source ".$this->so_src_id." to Org ".$this->so_org_id);
+        }
+        parent::preValidate($event);
+    }
 
 
     /**
-     *
      *
      * @param unknown $event
      */

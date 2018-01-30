@@ -40,7 +40,9 @@ if (!in_array($request_method, $valid_methods)) {
 
 if ($request_method == 'OPTIONS') {
     // cross-domain requirement for embedded queries
-    header('Access-Control-Allow-Origin: *');
+    if (isset($_SERVER['HTTP_ORIGIN'])) {
+        header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
+    }
     header('Access-Control-Allow-Headers: Content-Type, Content-Range, Content-Disposition, Content-Description, X-Requested-With');
     exit(0);
 }
@@ -163,7 +165,9 @@ if ($this_is_ajax) {
     }
 
     header("Content-Type: $response_content_type");
-    header('Access-Control-Allow-Origin: *'); // cross-domain requirement for embedded queries
+    if (isset($_SERVER['HTTP_ORIGIN'])) {
+        header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']); // cross-domain requirement for embedded queries
+    }
 
     if (!$submission->ok() || $upload_error) {
         $errors = $submission->get_errors();

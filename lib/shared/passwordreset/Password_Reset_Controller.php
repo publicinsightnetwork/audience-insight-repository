@@ -205,7 +205,7 @@ abstract class Password_Reset_Controller extends Controller {
             // search for id associated with login name
             $cred = $this->get_login_credentials($name);
             if (!$cred) {
-                $this->show_reset_request_form($act, $this->captcha_html, $this->form_cred_error);
+                $this->show_email_sent_page($name, true);
                 return;
             }
             $loginid = $cred[0];

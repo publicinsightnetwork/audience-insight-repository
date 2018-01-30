@@ -22,16 +22,19 @@
 
 use strict;
 use warnings;
-use Test::More tests => 1;
+use Test::More tests => 3;
 use FindBin;
 use lib "$FindBin::Bin/../../lib/perl";
+use lib "$FindBin::Bin";
 use AIR2::Config;
 use Data::Dump qw( dump );
 use JSON;
-use WWW::Mailchimp;
+use AIR2::Mailchimp;
 
-my $API_KEY = AIR2::Config::get_constant('AIR2_MAILCHIMP_KEY');
-my $mcapi = WWW::Mailchimp->new( apikey => $API_KEY );
+use MailchimpUtils;
 
-# just make sure we can connect
-is( $mcapi->ping, "Everything's Chimpy!", "ping message" );
+ok( my $chimp = MailchimpUtils::client(), "new AIR2::Mailchimp" );
+ok( $chimp->isa('AIR2::Mailchimp'), 'isa AIR2::Mailchimp' );
+is( ref( $chimp->mailing_list ), 'HASH', 'initialized with mailing list' );
+
+MailchimpUtils::debug_list();

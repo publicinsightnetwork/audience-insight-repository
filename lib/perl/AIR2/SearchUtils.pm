@@ -620,6 +620,24 @@ sub all_facts_by_id {
     return { map { $_->fact_id => $_ } @{ AIR2::Fact->fetch_all } };
 }
 
+sub all_fact_values_map {
+    my $facts = all_facts_by_id();
+    my %table;
+    for my $fact_id ( sort { $a <=> $b } keys %$facts ) {
+        my $fact = $facts->{$fact_id};
+        $table{ $fact->fact_identifier }->{fact_id} = $fact_id;
+        for my $fact_value (
+            @{ $fact->find_fact_values( sort_by => 'fv_seq ASC' ) } )
+        {
+            next if $fact_value->fv_status ne 'A';
+            my $label = $fact_value->fv_value;
+            my $pk    = $fact_value->fv_id;
+            $table{ $fact->fact_identifier }->{$label} = $pk;
+        }
+    }
+    return \%table;
+}
+
 sub all_preferences_by_id {
     return { map { $_->pt_id => $_ } @{ AIR2::PreferenceType->fetch_all } };
 }
@@ -685,23 +703,19 @@ sub touch_stale {
     my $obj = shift or croak "RDBO object required";
 
     # look up by class since some classes share a table
-    my $class = $obj->meta->class;
-    my $stale_record;
-
-    for my $nick ( keys %stale_types ) {
-        my ( $type, $class_name ) = @{ $stale_types{$nick} };
-        if ( $class eq $class_name ) {
-            $stale_record = AIR2::StaleRecord->new(
-                str_type => $type,
-                str_xid  => $obj->primary_key_value,
-            );
-            last;
-        }
+    my $class      = $obj->meta->class;
+    my $stale_type = get_stale_type_for_class($class);
+    if ( !$stale_type ) {
+        $class =~ s/AIR2Test::/AIR2::/;
+        $stale_type = get_stale_type_for_class($class);
     }
 
-    if ( !$stale_record ) {
-        croak "Failed to find stale type for $obj ($class)";
-    }
+    confess "No stale type for $obj ($class)" unless $stale_type;
+
+    my $stale_record = AIR2::StaleRecord->new(
+        str_type => $stale_type,
+        str_xid  => $obj->primary_key_value,
+    );
 
     # if update, assume small race condition ok.
     return $stale_record->insert_or_update_on_duplicate_key();

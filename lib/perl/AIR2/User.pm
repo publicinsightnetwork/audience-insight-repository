@@ -29,6 +29,7 @@ use AIR2::Password;
 use AIR2::AuthTkt;
 use AIR2::Config;
 use JSON;
+use Crypt::Eksblowfish::Bcrypt qw( bcrypt_hash en_base64 de_base64 );
 
 __PACKAGE__->meta->setup(
     table => 'user',
@@ -43,8 +44,9 @@ __PACKAGE__->meta->setup(
         user_summary => { type => 'varchar', length => 255 },
         user_desc    => { type => 'text',    length => 65535 },
 
-        user_password  => { type => 'character', length => 32 },
-        user_pswd_dtim => { type => 'datetime' },
+        user_password           => { type => 'character', length => 32 },
+        user_encrypted_password => { type => 'varchar',   length => 255 },
+        user_pswd_dtim          => { type => 'datetime' },
 
         user_pref => { type => 'text', length => 65535 },
         user_type => {
@@ -747,10 +749,14 @@ sub get_signature {
     my $inq_uuid = shift;    # undef ok
 
     if ( !$self->has_related('signatures') ) {
+        my $primary_email
+            = $self->get_primary_email
+            ? $self->get_primary_email->uem_address
+            : $self->user_username;
         return {
             name  => $self->get_name_first_last,
             title => $self->get_title(),
-            email => $self->get_primary_email->uem_address,
+            email => $primary_email,
             phone => (
                   $self->get_primary_phone
                 ? $self->get_primary_phone->as_string()
@@ -796,6 +802,17 @@ sub get_primary_email {
         ->[0];
 }
 
+sub set_primary_email {
+    my $self = shift;
+    my $address = shift or confess "address required";
+    $self->user_email_address(
+        [   {   uem_address      => $address,
+                uem_primary_flag => 1,
+            }
+        ]
+    );
+}
+
 sub get_primary_phone {
     my $self = shift;
     return $self->find_user_phone_number( q => [ uph_primary_flag => 1 ] )
@@ -817,6 +834,21 @@ sub _encrypt_password {
     return md5_hex( $str . md5_hex($str) );
 }
 
+sub _hash_encrypted_password {
+    my $self = shift;
+    my $str  = shift;
+    my $salt = shift || AIR2::Utils->random_str(16);
+
+    # cost MUST match what we do on PHP side.
+    my $cost = 13;
+    my $bcrypt_hashed
+        = bcrypt_hash( { key_nul => 1, cost => $cost, salt => $salt }, $str );
+
+    # the PHP format is slightly different so return compatible string
+    return sprintf( '$2y$%02d$%s%s',
+        $cost, en_base64($salt), en_base64($bcrypt_hashed) );
+}
+
 sub set_password {
     my $self = shift;
     my $str = shift or croak "password string required";
@@ -830,7 +862,7 @@ sub set_password {
         $self->error( $ap->error );
         return;
     }
-    $self->user_password( $self->_encrypt_password($str) );
+    $self->user_encrypted_password( $self->_hash_encrypted_password($str) );
     $self->user_pswd_dtim( time() );
     return $self->check_password($str);
 }
@@ -843,7 +875,38 @@ sub set_random_password {
 sub check_password {
     my $self = shift;
     my $str = shift or croak "password string required";
-    return ( $self->user_password eq $self->_encrypt_password($str) );
+
+    # one-time upgrade to new hashing scheme
+    if ( $self->user_password && !$self->user_encrypted_password ) {
+        my $md5_match
+            = $self->user_password eq $self->_encrypt_password($str);
+        if ( $md5_match ) {
+            $self->set_password($str);
+            $self->user_password(undef);
+            $self->update;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    my $hashed_password = $self->user_encrypted_password;
+    return unless $hashed_password;
+
+    # extract the salt so we can compare encryptions
+    my @hashed_parts = split( /\$/, $hashed_password );
+    my $salt = substr( $hashed_parts[3], 0, 22 );
+
+    # Use a letter by letter match rather than
+    # a complete string match to avoid timing attacks
+    my $match = $self->_hash_encrypted_password( $str, de_base64($salt) );
+    my $bad = 0;
+    for ( my $n = 0; $n < length $match; $n++ ) {
+        $bad++
+            if substr( $match, $n, 1 ) ne substr( $hashed_password, $n, 1 );
+    }
+
+    return $bad == 0;
 }
 
 =head2 get_authz

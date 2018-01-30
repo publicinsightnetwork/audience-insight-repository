@@ -40,7 +40,7 @@ $users = array();
 $count = 0;
 while ($count++ < 9) {
     $u = new TestUser();
-    $u->user_password = MY_TEST_PASS;
+    $u->user_encrypted_password = MY_TEST_PASS;
     $u->save();
     $users[] = $u;
 }

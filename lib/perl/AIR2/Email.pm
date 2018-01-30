@@ -23,9 +23,9 @@ package AIR2::Email;
 use strict;
 use base qw(AIR2::DB);
 use Carp;
-use Email::Stuff;
 use Email::Valid;
 use Template;
+use AIR2::Emailer;
 use AIR2::SrcEmail;
 use AIR2::SrcActivity;
 use AIR2::HTML;
@@ -237,26 +237,19 @@ sub send_preview {
     # optional subject prefix
     my $subject_prefix = shift || '';
 
-    # crunch the "from" address
-    my $from = sprintf( "%s <%s>", $self->email_from_name,
+    # crunch the "reply_to" address
+    my $reply_to = sprintf( "%s <%s>", $self->email_from_name,
         $self->email_from_email );
 
-    # smtp setup
-    my %mailer_args = ( Host => AIR2::Config->get_smtp_host, );
-    if ( AIR2::Config->smtp_host_requires_auth ) {
-        $mailer_args{username} = AIR2::Config->get_smtp_username;
-        $mailer_args{password} = AIR2::Config->get_smtp_password;
-    }
-    my $smtp = Email::Send->new(
-        {   mailer      => 'SMTP',
-            mailer_args => [ %mailer_args, ]
-        }
-    ) or die "failed to create Email::Send::SMTP: $@ $!\n";
-
     # send it
-    Email::Stuff->to($addr)->from($from)
-        ->subject( $subject_prefix . $self->email_subject_line )
-        ->html_body( $self->compile_html_body )->using($smtp)->send;
+    my $mailer = AIR2::Emailer->new( debug => $self->debug );
+    $mailer->send(
+        to        => $addr,
+        reply_to  => $reply_to,
+        from_name => $self->email_from_name,
+        subject   => $subject_prefix . $self->email_subject_line,
+        html      => $self->compile_html_body
+    );
     return 1;
 }
 

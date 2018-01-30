@@ -6,7 +6,7 @@
  *
  *  Simple example:
 
- *  <script type="text/javascript" src="https://www.publicinsightnetwork.org/source/js/jquery-1.8.1.min.js"></script>
+ *  <script type="text/javascript" src="https://www.publicinsightnetwork.org/jquery/current.js"></script>
  *  <script type="text/javascript" src="https://www.publicinsightnetwork.org/air2/js/pinform.js?uuid=abcd1234"></script>
  *  <div id="pin-query-abcd1234"></div>
  *
@@ -14,7 +14,7 @@
  *  Advanced example:
  * 
  *  <div id="my-query"></div>
- *  <script type="text/javascript" src="https://www.publicinsightnetwork.org/source/js/jquery-1.8.1.min.js"></script>
+ *  <script type="text/javascript" src="https://www.publicinsightnetwork.org/jquery/current.js"></script>
  *  <script type="text/javascript" src="https://www.publicinsightnetwork.org/air2/js/pinform.js"></script>
  *  <script type="text/javascript">
  *    PIN_QUERY = {
@@ -324,6 +324,10 @@ PIN.Form.sortQuestions = function(queryData) {
         if (q.ques_type == '4') {
             hasMultiPage = true;
         }
+
+        if (q.ques_type == '4') {
+            hasMultiPage = true;
+        }
     });
 
     // sort perm question in explicit dis_seq order if no public questions
@@ -343,7 +347,15 @@ PIN.Form.sortQuestions = function(queryData) {
     }
 
     // flatten groups into a single array, retaining overall order.
-    var sortedQuestions = [].concat.apply([], [sorted.contributor, sorted.public, sorted.private]);
+    // for non-multipage forms, insert a break between sets as a visual marker.
+    var fieldsetBreak = { ques_type: '0' };
+    var sortedQuestions;
+    if (hasMultiPage) {
+        sortedQuestions = [].concat.apply([], [sorted.contributor, sorted.public, sorted.private]);
+    }
+    else {
+        sortedQuestions = [].concat.apply([], [sorted.contributor, [fieldsetBreak], sorted.public, [fieldsetBreak], sorted.private]);
+    }
     PIN.Form.DEBUG && console.log(sortedQuestions);
 
     // if this is a multi-page form, group them into "pages"
@@ -360,7 +372,7 @@ PIN.Form.sortQuestions = function(queryData) {
                 currArray.push(q);
             }
         });
-    
+
         if (currArray.length != 0) {
             pages.push(currArray);
         }
@@ -762,6 +774,69 @@ PIN.Form.submit = function(divId) {
     formEl.submit();
 
     return false;   // prevent html form submit
+}
+
+
+PIN.Form.validatePage = function(divId, formEl) {
+    var formVals, formQA, isValid;
+
+    // clear any existing validation error msg
+    jQuery('#pin-submit-errors').remove();
+
+    // extract all data into a single object
+    PIN.Form.DEBUG && console.log('formEl: ', formEl);
+    formVals = formEl.serializeArray();
+
+    // turn array of objects into one object
+    // for easy lookup
+    formQA = {};
+    jQuery.each(formVals, function(idx, pair) {
+        formQA[pair.name] = pair.value;
+    });
+    
+    // fill out our validation array manually.
+    // if we have a file upload, must grab it manually.
+    // jQuery also ignores unchecked radio and checkbox inputs
+    // so we must manually grab those to make sure required
+    // questions are validated.
+
+    jQuery.each(PIN.Form.Registry[divId].data.questions, function(idx,q) {
+        if (q.ques_resp_type === 'F') {
+            var fileQ = jQuery('#pin-q-'+q.ques_uuid);
+            formVals.push({name:q.ques_uuid, value: fileQ.val()});
+        }
+        if ((q.ques_type === 'P' || q.ques_type === 'C' || q.ques_type === 'R')
+            && 
+            !formQA[q.ques_uuid+'[]']
+        ) {
+            var inputs = jQuery('input[name^='+q.ques_uuid+']');
+            var inputVal = '';
+            jQuery.each(inputs, function(inputIdx, input) {
+                if (input.checked) {
+                    inputVal = input.val();
+                }
+            });
+            formVals.push({name:q.ques_uuid, value: inputVal});
+            formQA[q.ques_uuid] = inputVal;
+        }
+    });
+
+    PIN.Form.DEBUG && console.log('formVals: ', formVals);
+
+    // validate object
+    if (!PIN.Form.validate(divId, formVals)) {
+        PIN.Form.decorate(divId, PIN.Form.Registry[divId].errors);
+        isValid = false;
+    }
+    else {
+        // clear error msg
+        if (jQuery('#pin-submit-errors').length) {
+            jQuery('#pin-submit-errors').remove();  
+        }
+        isValid = true;
+    }
+
+    return { formQA: formQA, formVals: formVals, isValid: isValid };
 }
 
 
@@ -1403,8 +1478,19 @@ PIN.Form.doPageBreak = function(opts) {
     return '<hr class="pin-pagebreak seq-'+opts.question.ques_dis_seq+'" />';
 }
 
+PIN.Form.doPageBreak = function(opts) {
+    return '<hr class="pin-pagebreak seq-'+opts.question.ques_dis_seq+'" />';
+}
+
+PIN.Form.doFieldsetBreak = function(opts) {
+    return '<div class="pin-break"></div>';
+}
+
 PIN.Form.doDisplay = function(opts) {
-    return '<div class="pin-display seq-'+opts.question.ques_dis_seq+'">'+opts.question.ques_value+'</div>';
+    return '<div class="pin-display seq-'+opts.question.ques_dis_seq+'">' +
+            opts.question.ques_value +
+           '</div>' + 
+           '<div class="pin-break"></div>';
 }
 
 PIN.Form.doPermission = PIN.Form.doRadio;
@@ -1469,6 +1555,7 @@ PIN.Form.Formatter = {
     Y: PIN.Form.doCountries,
     C: PIN.Form.doCheckbox,
     L: PIN.Form.doList,
+    '0': PIN.Form.doFieldsetBreak,
     '2': PIN.Form.doBreak,
     '3': PIN.Form.doDisplay,
     '4': PIN.Form.doPageBreak,

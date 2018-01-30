@@ -13,8 +13,8 @@ use Plack::Test;
 use Unix::PID::Tiny;
 use Dezi::Client;
 
-my $TEST_ORG_NAME1 = 'testorg1';
-my $TEST_USERNAME  = 'ima-test-user';
+my $TEST_ORG_NAME1 = 'watchertestorg1';
+my $TEST_USERNAME  = 'ima-test-watcher-user';
 my $TEST_UUID      = 'abcdef123456';
 
 SKIP: {
@@ -34,6 +34,9 @@ SKIP: {
     if ( !$watcher_pid or !$unix_pid->is_pid_running($watcher_pid) ) {
         skip "The watch-stale-records script is not running", 10;
     }
+
+    # start clean
+    AIR2::StaleRecord->delete_all();
 
     # create dummy source record
     ok( my $org1 = AIR2Test::Organization->new(
@@ -55,7 +58,7 @@ SKIP: {
         "add email address"
     );
     ok( $source->add_organizations( [$org1] ), "add orgs to source" );
-    ok( $source->save(), "save source" );
+    ok( $source->load_or_save(), "save source" );
 
     # do this manually since load_or_save might miss it
     #AIR2::SrcOrgCache::refresh_cache($source);
@@ -70,10 +73,31 @@ SKIP: {
     #diag( "src_uuid=" . $source->src_uuid );
     #diag( 'src authz=' . dump( $source->get_authz ) );
 
+    # check for when idx meta changes to indicate index updated.
+    my $sources_idx = SWISH::Prog::InvIndex->new(
+        path => AIR2::Config::get_search_index->subdir('sources') );
+    my $idx_meta       = $sources_idx->meta_file;
+    my $idx_meta_mtime = $idx_meta->stat->mtime;
+
     # wait a little to give the watcher some time
-    sleep 15;
+    my $max_tries = 15;
+    my $tries     = 0;
+    while ( AIR2::StaleRecord->fetch_count() != 0 ) {
+        sleep 1;
+        last if $tries++ > $max_tries;
+        diag( "stale records check $tries times: "
+                . AIR2::StaleRecord->fetch_count() );
+    }
 
     # verify that the source record was indexed
+    $tries = 0;
+    while ( $idx_meta_mtime == $idx_meta->stat->mtime ) {
+        sleep 1;
+        last if $tries++ > $max_tries;
+        diag( "waiting for index update $tries: "
+                . localtime($idx_meta_mtime) );
+    }
+
     ok( my $tkt = AIR2TestUtils::dummy_system_tkt(), "get dummy auth tkt" );
 
     #diag( "tkt=" . $tkt );

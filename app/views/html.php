@@ -73,6 +73,7 @@ if (!isset($search_idx)) {
   <!-- leaflet has (bugs) that prevent it from being bundled -->
   <link rel="stylesheet" href="<?php echo $c->uri_for('lib/leaflet/dist/leaflet.css') ?>"/>
   <script type="text/javascript" src="<?php echo $c->uri_for('lib/leaflet/dist/leaflet.js') ?>"></script>
+  <script type="text/javascript" src="<?php echo $c->uri_for('lib/stamenmaps/tile.stamen.js') ?>"></script>
 
   <?php
       if (file_exists(AIR2_DOCROOT.'/js/third_party.js')) {

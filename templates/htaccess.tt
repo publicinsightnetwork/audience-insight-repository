@@ -1,16 +1,12 @@
-AddType application/rss+xml .rss
-
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
     # always require ssl
-    #RewriteCond %{HTTPS} off
-    #RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L]
+    RewriteCond %{HTTPS} off
+    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L]
 
     # proxy search server
-    # TODO host:port is defined in etc/profiles.ini
-    # we just assume localhost
-    RewriteRule ^search-admin/(.*)$ http://localhost:5002/$1  [P,L]
+    RewriteRule ^search-admin/(.*)$ [% search_uri %]/$1  [P,L]
 
     # querymaker shortcuts
     RewriteCond  %{REQUEST_METHOD} =POST [OR]
@@ -55,3 +51,9 @@ AddType application/rss+xml .rss
     ErrorDocument 404 /index.php
 </IfModule> 
 
+# compress static assets over the wire if we can
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/css text/javascript application/javascript
+</IfModule>
+
+php_value memory_limit [% memory_limit || '2048M' %]

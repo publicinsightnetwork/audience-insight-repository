@@ -32,7 +32,7 @@ use Encode;
 my $date_parser
     = Rose::DateTime::Parser->new( time_zone => $AIR2::Config::TIMEZONE );
 
-my @EVERGREEN_QUERY_UUIDS = qw( a5e5f19b1c58 b6be40de1385 c729062daffb );
+our @EVERGREEN_QUERY_UUIDS = qw( a5e5f19b1c58 b6be40de1385 c729062daffb );
 
 use constant TYPE_FORMBUILDER  => 'F';
 use constant TYPE_QUERYBUILDER => 'Q';
@@ -356,9 +356,19 @@ sub get_uri {
     );
 }
 
+sub locale_key {
+    my $self = shift;
+    if ( $self->locale ) {
+        return $self->locale->loc_key;
+    }
+    else {
+        return 'en_US';
+    }
+}
+
 sub get_uri_locale {
     my $self   = shift;
-    my $locale = $self->locale->loc_key;
+    my $locale = $self->locale_key;
     $locale =~ s/_\w\w$//;
     return $locale;
 }

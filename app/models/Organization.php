@@ -77,8 +77,8 @@ class Organization extends AIR2_Record {
     public static $TYPE_LJC = 'L';
 
     /* APM PIN org ID (should never change) */
-    public static $APMPIN_ORG_ID = 1;
-    public static $GLOBALPIN_ORG_ID = 44;
+    public static $APMPIN_ORG_ID = AIR2_APMPIN_ORG_ID;
+    public static $GLOBALPIN_ORG_ID = AIR2_GLOBALPIN_ORG_ID;
 
     /* flag to trigger creation of default project */
     public static $CREATE_DEFAULT_PRJ = true;

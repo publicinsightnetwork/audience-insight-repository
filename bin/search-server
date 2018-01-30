@@ -46,10 +46,11 @@ my $watcher_pidfile = $app_root->file("var/watch-stale-records.pid");
 my $dezi            = $^X;
 $dezi =~ s/perl$/dezi/;
 
-my $logfile       = file("/logs/applications/pij/search-${port}.log");
-my $error_logfile = file("/logs/applications/pij/search-${port}-error.log");
+my $log_dir       = dir( AIR2::Config::get_constant('AIR2_LOG_DIR') );
+my $logfile       = $log_dir->file("search-${port}.log");
+my $error_logfile = $log_dir->file("search-${port}-error.log");
 my $watcher_logfile
-    = file("/logs/applications/pij/search-watch-stale-records-${port}.log");
+    = $log_dir->file("search-watch-stale-records-${port}.log");
 my $patience = 10;  # willing to wait this many seconds for action to complete
 
 my $server
@@ -93,6 +94,11 @@ sub stop {
     stop_search_server();
 }
 
+sub force_stop {
+    stop_watcher(1);
+    stop_search_server(1);
+}
+
 sub check {
     check_watcher();
     check_search_server();
@@ -127,8 +133,10 @@ sub start_watcher {
 }
 
 sub stop_watcher {
+    my $force = shift;
     print "Stopping $watcher ...";
     if ( !-s $watcher_pidfile ) {
+        return if $force;
         print "No PID file found at $watcher_pidfile -- is server running?\n";
         exit(2);
     }
@@ -149,7 +157,7 @@ sub stop_watcher {
     }
     if ( $unix_pid->is_pid_running($pid) ) {
         print " failed to kill PID $pid\n";
-        exit(3);
+        exit(3) unless $force;
     }
     print " ok\n";
     unlink $watcher_pidfile;
@@ -157,6 +165,7 @@ sub stop_watcher {
 }
 
 sub start_search_server {
+
     # make sure we start in our app dir so INC works.
     chdir $app_root;
     my $cmd
@@ -188,9 +197,11 @@ sub start_search_server {
 }
 
 sub stop_search_server {
+    my $force = shift;
     print "Stopping search_server ...";
     if ( !-s $pidfile ) {
         print "No PID file found at $pidfile -- is server running?\n";
+        return if $force;
         exit(2);
     }
     my $pid      = `cat $pidfile`;
@@ -210,7 +221,7 @@ sub stop_search_server {
     }
     if ( $unix_pid->is_pid_running($pid) ) {
         print " failed to kill PID $pid\n";
-        exit(3);
+        exit(3) unless $force;
     }
     print " ok\n";
     unlink $pidfile;

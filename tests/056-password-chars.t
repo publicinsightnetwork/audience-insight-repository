@@ -37,16 +37,17 @@ $secret = 'TestPassw&rd123$';
 
 // setup user to login as
 $u = new TestUser();
-$u->user_password = $secret;
+$u->user_encrypted_password = $secret;
 $u->save();
 
-plan(15);
+plan(16);
 
 
 /**********************
  * Check password php methods
  */
-isnt( $u->user_password, $secret, 'password mutated' );
+like( $u->user_encrypted_password, '/^\$2y/', 'password bcrypt hashed' );
+isnt( $u->user_encrypted_password, $secret, 'password mutated' );
 ok( !$u->check_password('nothing'), 'bad password' );
 ok( $u->check_password($secret), 'password matches' );
 

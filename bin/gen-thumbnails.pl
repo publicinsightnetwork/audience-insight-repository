@@ -60,5 +60,8 @@ sub make_thumb {
         $cmd = "/usr/bin/convert $orig $thumb";
     }
     $debug and print "Creating $thumb\n";
-    system($cmd) and warn "$cmd failed: $!";
+    if (system($cmd)) {
+        warn "$cmd failed: $!";
+        system("mv $orig $orig.failed-to-convert");
+    }
 }

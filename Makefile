@@ -1,6 +1,6 @@
 ### Common Installation Commands ###
-install:  db-create assets-create db-fixtures js perl-deps budgethero
-clean: 	  db-drop assets-drop
+install:  db-create assets-create db-fixtures js perl-deps htaccess
+clean: 	  assets-drop search-drop
 reload:   db-reload assets-reload update-schema
 schema:   update-schema
 test:     check
@@ -31,10 +31,10 @@ css: css-compress
 perl-deps: lib/perl/Makefile.PL
 	cd lib/perl && perl Makefile.PL
 
-deploy: js css
+deploy: htaccess js css
 
 ### Smoketest ###
-smoketest: assets schema js budgethero search-server-restart check html
+smoketest: prep-test assets schema js htaccess check
 
 ### Wig and sunglasses ###
 disguise: bin/mk_disguise.pl
@@ -52,10 +52,17 @@ indexes: bin/build-search
 	bin/build-search --index
 search-server-stop: bin/search-server
 	bin/search-server stop
+search-server-force-stop:
+	bin/search-server force_stop
 search-server-start: bin/search-server
 	bin/search-server start
 search-server-restart: bin/search-server
 	bin/search-server restart
+search-server-check:
+	perl bin/check-search-servers
+search-drop: search-server-force-stop search-clear
+search-clear:
+	perl bin/clear-search
 
 ### test search builds ###
 testsearch: bin/resp2xml.pl
@@ -83,6 +90,7 @@ html: doc/book/air2.xml
 	bin/mk_docs.pl --html
 
 ### Testing Commands ###
+prep-test: db-reset db-fixtures db-seeds search-drop xml indexes search-server-check
 check: tests/Test.php
 	prove -r tests
 sane:  bin/data-sanity.pl
@@ -97,17 +105,21 @@ geo-lookup: bin/mk_geo_lookup.pl
 	perl bin/mk_geo_lookup.pl
 
 ### Some Database create/delete commands ###
-db: db-create
-db-create: bin/create-db
-	php bin/create-db
-db-drop: bin/drop-db
-	php bin/drop-db
 db-fixtures: bin/reload-fixture
-	php bin/reload-fixture ALL -S
-	php bin/reload-fixture IptcMaster -S
-	php bin/reload-fixture TagMaster -S
+	php bin/reload-fixture -S ALL
+	php bin/reload-fixture -S IptcMaster
+	php bin/reload-fixture -S TagMaster
+	gunzip -q -c app/fixtures/base/TranslationMap.yml.gz > app/fixtures/base/TranslationMap.yml
+	php bin/reload-fixture -S TranslationMap
+	rm -f app/fixtures/base/TranslationMap.yml
 db-reload: bin/load-db-from-backup
 	php bin/load-db-from-backup
+db-reset: bin/load-db-from-sql
+	php bin/load-db-from-sql
+db-seeds: bin/mk-db-seeds
+	perl bin/mk-db-seeds
+
+db-create: db-reset
 
 ### File asset path create/delete commands ###
 assets: assets-create
@@ -117,20 +129,7 @@ assets-drop: bin/drop-asset-paths
 	php bin/drop-asset-paths
 assets-reload: bin/load-assets-from-prod
 	php bin/load-assets-from-prod
+htaccess: bin/create-htaccess
+	perl bin/create-htaccess
 
-#### querymaker dev #####
-qm-prep:
-	perl lib/dbconv/qm/001-set-srs-fb-approved-flag.pl
-	perl lib/dbconv/qm/002-set-public-flags.pl
-	perl lib/dbconv/qm/003-set-librarius-public.pl
-	perl lib/dbconv/qm/004-contributor-questions.pl
-	perl lib/dbconv/qm/005-question_resp_opts.pl
-	perl lib/dbconv/qm/006-inquiry-author.pl
-	perl lib/dbconv/qm/007-inquiry-watcher.pl
-	perl lib/dbconv/qm/008-thanks-msg.pl
-	perl lib/dbconv/qm/009-file-ques_resp_type.pl
-
-#### budget hero ####
-budgethero:
-	perl bin/mk-budgethero-ini > etc/budgethero.ini
-
+.PHONY: search install smoketest

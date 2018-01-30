@@ -21,4 +21,5 @@ img_root            = /usr/local/air2/shared/img
 cache_root          = /usr/local/air2/cache
 analytics_acct      = your-google-analytics-key
 email_alerts        = you@your.org
+log_dir             = /var/log/air2
 

@@ -95,8 +95,8 @@
 
                         <!-- Callout Panel -->
                         <p style="[% css_text %] padding:15px; background-color:#ECF8FF; margin-top: 10px; margin-bottom: 10px;">
-                            <strong>What is the Public Insight Network?</strong><br />
-                            American Public Media's Public Insight Network (PIN) is a platform for connecting trusted journalists with knowledgeable sources. Through PIN, people around the world share what they know to inform reporting by PIN partner newsrooms, making news coverage more relevant, diverse, transparent and trustworthy.<br />
+                            <strong>What is the Public Insight Network&reg;?</strong><br />
+                            American Public Media's Public Insight Network&reg; (PIN&reg;) is a platform for connecting trusted journalists with knowledgeable sources. Through PIN&reg;, people around the world share what they know to inform reporting by PIN&reg; partner newsrooms, making news coverage more relevant, diverse, transparent and trustworthy.<br />
                             <a href="[% pin.uri %]" style="font-weight:bold; color: #2BA6CB;">Learn more &raquo;</a>
                         </p><!-- /Callout Panel -->
 

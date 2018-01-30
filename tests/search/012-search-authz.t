@@ -22,7 +22,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 105;
+use Test::More tests => 114;
 use lib 'tests/search';
 use Data::Dump qw( dump );
 use AIR2TestUtils;
@@ -49,7 +49,8 @@ my $TEST_USERNAME  = 'ima-test-user';
 my $TEST_PROJECT   = 'ima-test-project';
 my $TEST_INQ_UUID  = 'testinq12345';
 my $TEST_INQ_UUID2 = 'testinq67890';
-my $TMP_DIR        = Path::Class::dir('/tmp/air2-test/search');
+my $TEST_INQ_UUID3 = 'testinq78901';
+my $TMP_DIR        = AIR2::Config::get_tmp_dir->subdir('search');
 $AIR2::Config::SEARCH_ROOT = $TMP_DIR;
 
 $Rose::DB::Object::Debug          = $debug;
@@ -79,8 +80,16 @@ ok( my $project2 = AIR2Test::Project->new(
     "new project2"
 );
 
+ok( my $project3 = AIR2Test::Project->new(
+        prj_name         => $TEST_PROJECT . 3,
+        prj_display_name => $TEST_PROJECT . 3,
+    ),
+    "new project3"
+);
+
 ok( $project->load_or_save,  "save project" );
 ok( $project2->load_or_save, "save project2" );
+ok( $project3->save,         "save project3" );
 
 ok( my $org0 = AIR2Test::Organization->new(
         org_default_prj_id => $project->prj_id,
@@ -109,8 +118,16 @@ ok( my $org3 = AIR2Test::Organization->new(
         )->load_or_save(),
     "create test org3 child of org2"
 );
+ok( my $inactive_org = AIR2Test::Organization->new(
+        org_default_prj_id => $project->prj_id,
+        org_name           => $TEST_ORG_NAME2 . '-child-inactive',
+        org_parent_id      => $org2->org_id,
+        org_status         => 'F',
+        )->save(),
+    "create test inactive_org child of org2"
+);
 
-for my $o ( ( $org0, $org1, $org2, $org3 ) ) {
+for my $o ( ( $org0, $org1, $org2, $org3, $inactive_org ) ) {
     diag(
         sprintf(
             "[%s] org=%s parent=%s",
@@ -151,6 +168,15 @@ ok( $project2->add_project_orgs(
     "add orgs to project2"
 );
 ok( $project2->save(), "write ProjectOrgs2" );
+
+ok( $project3->add_project_orgs(
+        [   {   porg_org_id          => $inactive_org->org_id,
+                porg_contact_user_id => $user->user_id
+            }
+        ]
+    ),
+    "add orgs to project3"
+);
 
 ok( my $source = AIR2Test::Source->new(
         src_username  => $TEST_USERNAME,
@@ -245,6 +271,16 @@ ok( my $ques2
 );
 ok( $inq2->add_questions( [$ques2] ), "add question2" );
 ok( $inq2->load_or_save, "save inquiry2" );
+
+ok( my $inq_with_inactive_org = AIR2Test::Inquiry->new(
+        inq_uuid  => $TEST_INQ_UUID3,
+        inq_title => 'belongs to inactive org'
+    ),
+    "create test inq_with_inactive_org"
+);
+ok( $inq_with_inactive_org->add_projects( [$project3] ),
+    "add project3 to inq_with_inactive_org" );
+ok( $inq_with_inactive_org->save(), "save inq_with_inactive_org" );
 
 ##############################
 ## set up responses
@@ -385,7 +421,8 @@ ok( my $xml2 = $source2->as_xml(
 #diag( Search::Tools::XML->tidy($xml2) );
 
 # authz string should be explicit + parents/children
-my $xml2_authz_str = join( ',', $org0->org_id, $org2->org_id, $org3->org_id );
+my $xml2_authz_str = join( ',',
+    $org0->org_id, $org2->org_id, $org3->org_id, $inactive_org->org_id );
 like( $xml2, qr/authz="$xml2_authz_str"/, "source2 authz str" );
 
 ok( AIR2::SearchUtils::write_xml_file(
@@ -409,8 +446,9 @@ ok( my $xml3 = $source3->as_xml(
 #diag( Search::Tools::XML->tidy($xml3) );
 
 # authz string should be explicit + parents/children
-my $xml3_authz_str
-    = join( ',', $org0->org_id, $org1->org_id, $org2->org_id, $org3->org_id );
+my $xml3_authz_str = join( ',',
+    $org0->org_id, $org1->org_id, $org2->org_id,
+    $org3->org_id, $inactive_org->org_id );
 like( $xml3, qr/authz="$xml3_authz_str"/, "source3 authz str" );
 
 ok( AIR2::SearchUtils::write_xml_file(
@@ -457,6 +495,19 @@ ok( AIR2::SearchUtils::write_xml_file(
     ),
     "write inqxml2 file"
 );
+
+ok( my $inactive_inq_xml = $inq_with_inactive_org->as_xml(
+        {   debug    => $debug,
+            base_dir => $TMP_DIR->subdir('xml/inquiries')
+        }
+    ),
+    "make inactive_inq_xml"
+);
+
+my $inactive_org_inq_authz
+    = sprintf( 'authz="%s"', join( ',', ( $org0->org_id, $org2->org_id ) ) );
+like( $inactive_inq_xml, qr/$inactive_org_inq_authz/,
+    "authz for inq with inactive org" );
 
 $debug and diag(`tree $TMP_DIR`);
 

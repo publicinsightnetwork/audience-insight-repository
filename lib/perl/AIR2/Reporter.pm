@@ -39,7 +39,7 @@ use Plack::Util::Accessor (qw( searchers cache cache_ttl debug ));
 sub prepare_app {
     my $self = shift;
     if ( !$self->cache ) {
-        my $cache_dir = Path::Class::Dir->new('/tmp/air2/search/cache');
+        my $cache_dir = AIR2::Config->get_tmp_dir->subdir('search/cache');
         $cache_dir->mkpath();
 
         $self->{cache} = CHI->new(

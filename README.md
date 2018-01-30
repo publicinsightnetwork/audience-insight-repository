@@ -28,8 +28,8 @@ AIR2 runs on a standard LAMP stack, with a little bit of Perl to spice things up
 * Unix-flavored OS (Linux or OSX are your best bet)
 * Apache 2
 * MySQL 5
-* PHP 5
-* Perl 5
+* PHP 5.4 or greater
+* Perl 5.10 or creater
 
 
 Installation
@@ -66,12 +66,18 @@ Then tell AIR2 which server to use by putting the name of your profile in `etc/m
 Now setup the database, fixtures, and assets.  This will also check your installed Perl modules, and determine what you're lacking.
 
     make install
-    # lots of things happen here...
 
     cd lib/perl
     cpan -i Module::Install
     perl Makefile.PL
     # missing dependencies will be identified, install them from CPAN
+
+If all goes well, all Perl dependencies should be installed for you via CPAN. If there are any failures,
+contact the support address below.
+
+You may create a user record, usually for admin purposes, with:
+
+    % php bin/set-password.php
 
 Contact
 -------

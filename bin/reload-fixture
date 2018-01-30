@@ -44,15 +44,15 @@ AIR2_DBManager::init();
 $conn = AIR2_DBManager::get_master_connection();
 
 // process arguments
-if ($argc < 2 || substr($argv[1], 0, 1) == '-') {
-    echo "Invalid parameters. Usage: \"reload-fixture [MODEL_NAME|ALL] [OPTIONS]\"\n";
+$opts = getopt('SV');
+$run_silent = isset($opts['S']);
+$run_verbose = isset($opts['V']);
+$input_modelname = array_pop($argv);
+
+if (!$input_modelname) {
+    echo "Invalid parameters. Usage: \"reload-fixture [OPTIONS] [MODEL_NAME|ALL]\"\n";
     exit(1);
 }
-$opts = getopt('S::');
-$run_silent = isset($opts['S']);
-$opts = getopt('V::');
-$run_verbose = isset($opts['V']);
-$input_modelname = $argv[1];
 
 // get requested models
 $requested = array($input_modelname);
@@ -134,6 +134,11 @@ $cm_all_tables = array_flip($cm_all_tables);
 $insert_count = 0;
 $update_count = 0;
 $delete_count = 0;
+
+// must turn off constraints for FKs, etc
+$conn->execute('SET autocommit=0');
+$conn->execute('SET unique_checks=0');
+$conn->execute('SET foreign_key_checks=0');
 
 $conn->beginTransaction();
 try {
@@ -267,7 +272,7 @@ catch (Exception $e) {
 }
 
 // finish
-echo " > finished processing!  $update_count records updated, ";
+echo " > finished processing $input_modelname - $update_count records updated, ";
 echo "$insert_count inserted, $delete_count deleted.\n";
 if (($update_count + $insert_count) > 0) {
     if ($run_silent) {
@@ -286,3 +291,8 @@ if (($update_count + $insert_count) > 0) {
         }
     }
 }
+
+$conn->execute('SET autocommit=1');
+$conn->execute('SET unique_checks=1');
+$conn->execute('SET foreign_key_checks=1');
+

@@ -1,0 +1,29 @@
+#!/usr/bin/env perl
+use lib 'lib/perl';
+use strict;
+use warnings;
+use AIR2::CSVReader;
+use Data::Dump qw( dump );
+
+binmode STDOUT, ":utf8";
+
+my $csv_file = shift(@ARGV) or die "$0 path/to/file.csv";
+
+open( my $csv, '<', $csv_file ) or die "Can't read csv: $!";
+
+my $reader = AIR2::CSVReader->new($csv);
+
+my $max = 6000;
+my $i = 0;
+print "TranslationMap:\n";
+while ( my $row = $reader->next ) {
+
+    #dump $row;
+    print "  TranslationMap_$row->{xm_id}:\n";
+    for my $k ( keys %$row ) {
+        next if $k eq 'xm_cre_dtim';
+        print "    $k: '$row->{$k}'\n";
+    }
+
+    last if $i++ > $max;
+}

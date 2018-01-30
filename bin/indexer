@@ -158,7 +158,9 @@ $cmd .= qq/ -E $expected /   if is_interactive();
 $cmd .= qq/ -N "$mod_since"/ if $mod_since;
 $cmd .= " -v " unless $quiet;
 $cmd .= " -D" if $debug;
+$quiet or AIR2::Utils::logger("Starting indexer for $type");
 run_it($cmd);
+$quiet or AIR2::Utils::logger("Finished indexer for $type");
 
 # if in full index mode, clean up
 if ( $build_index ne $index_dir ) {

@@ -34,7 +34,7 @@ define('MY_TEST_PASS', 'fooBar123.');
 // create a test user
 AIR2_DBManager::init();
 $user = new TestUser();
-$user->user_password = MY_TEST_PASS;
+$user->user_encrypted_password = MY_TEST_PASS;
 $user->save();
 
 // html auth

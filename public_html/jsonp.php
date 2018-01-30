@@ -31,6 +31,14 @@ if (!in_array($request_method, $valid_methods)) {
     header('Allow: ' . implode(' ', $valid_methods));
     exit(0);
 }
+if ($request_method == 'OPTIONS') {
+    // cross-domain requirement for embedded queries
+    if (isset($_SERVER['HTTP_ORIGIN'])) {
+        header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
+    }
+    header('Access-Control-Allow-Headers: Content-Type, Content-Range, Content-Disposition, Content-Description, X-Requested-With');
+    exit(0);
+}
 
 if (!isset($_GET['f'])) {
     header('X-PIN: missing f param', false, 400);

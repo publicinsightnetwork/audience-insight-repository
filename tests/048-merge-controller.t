@@ -133,7 +133,7 @@ is( $json['success'], false, 'GET preview - unsuccess' );
 is( count($json['errors']), 3, 'GET preview - 3 errors' );
 
 // go with the merge source on all conflicts
-$ops = array('Source' => AIR2Merge::OPTMERGE);
+$ops = json_encode(array('Source' => AIR2Merge::OPTMERGE));
 $page = $browser->http_get("/merge/source/$prime_uuid/$merge_uuid", array('ops' => $ops));
 is( $browser->resp_code(), 200, 'GET preview2 - status' );
 ok( $json=json_decode($page,true), 'GET preview2 - json' );
@@ -167,7 +167,7 @@ $ops = array('Source' => array(
     'src_first_name' => AIR2Merge::OPTMERGE,
     'src_post_name' => AIR2Merge::OPTMERGE,
 ));
-$page = $browser->http_post("/merge/source/$prime_uuid/$merge_uuid", array('ops' => $ops));
+$page = $browser->http_post("/merge/source/$prime_uuid/$merge_uuid", array('ops' => json_encode($ops)));
 is( $browser->resp_code(), 200, 'POST commit - status' );
 ok( $json=json_decode($page,true), 'POST commit - json' );
 is( $json['success'], true, 'POST commit - success' );

@@ -63,13 +63,13 @@ mailchimp-import updates log records in AIR after mailchimp sends a campaign.
 
 my ( $help, $debug, $dry_run, $cleanup );
 GetOptions(
-    help        => \$help,
-    debug       => \$debug,
-    dry_run     => \$dry_run,
-    cleanup     => \$cleanup
+    help    => \$help,
+    debug   => \$debug,
+    dry_run => \$dry_run,
+    cleanup => \$cleanup
 ) or pod2usage(2);
 
-pod2usage(2) if ( $help );
+pod2usage(2) if ($help);
 $debug   = 0 unless defined $debug;
 $dry_run = 0 unless defined $dry_run;
 $cleanup = 0 unless defined $cleanup;
@@ -77,10 +77,10 @@ $cleanup = 0 unless defined $cleanup;
 # shortcut statement to update src_inquiry status
 my $dbh  = AIR2::DBManager->new()->get_write_handle->retain_dbh;
 my $stmt = "UPDATE src_inquiry SET si_status='C' WHERE si_sent_by = ?";
-if ( $dry_run ) {
+if ($dry_run) {
     $stmt = "SELECT si_id FROM src_inquiry WHERE si_sent_by = ?";
 }
-my $sth  = $dbh->prepare($stmt);
+my $sth = $dbh->prepare($stmt);
 
 # get every src_export that isn't complete
 my $se_it = AIR2::SrcExport->fetch_all_iterator(
@@ -88,28 +88,48 @@ my $se_it = AIR2::SrcExport->fetch_all_iterator(
     sort_by => 'se_id ASC',
 );
 
+my $chimp = AIR2::Mailchimp->new();
+
+my $campaigns = $chimp->campaign_ids();
+
+$debug and warn dump $campaigns;
+
+if ( !@$campaigns ) {
+    warn "No campaigns at Mailchimp";
+    exit;
+}
+
+my %campaign_ids = map { $_ => $_ } @$campaigns;
+
 # try to find the campaign in mailchimp
 while ( my $se = $se_it->next() ) {
+    next unless exists $campaign_ids{ $se->se_name };
+
     if ( my $resp = AIR2::Mailchimp->campaign( $se->se_name ) ) {
         if ( $resp->{status} eq 'sent' ) {
             $debug and warn "campaign_id($se->{se_name}) has been sent\n";
 
             # update src_inquiry records (will just select on dry_run)
             $sth->execute( $se->se_name );
-            $debug and warn "  *updated ".$sth->rows." src_inquiry records\n";
+            $debug
+                and warn "  *updated "
+                . $sth->rows
+                . " src_inquiry records\n";
 
             # update the src_export record
             $se->se_status('C');
-            $se->set_meta('mailchimp_emails', $resp->{emails_sent});
+            $se->set_meta( 'mailchimp_emails', $resp->{emails_sent} );
             $se->save() unless $dry_run;
         }
         else {
-            $debug and warn "campaign_id($se->{se_name}) is $resp->{status}\n";
+            $debug
+                and warn "campaign_id($se->{se_name}) is $resp->{status}\n";
         }
     }
     else {
-        $debug and warn "campaign_id($se->{se_name}) not found in mailchimp\n";
-        if ( $cleanup ) {
+        $debug
+            and warn "campaign_id($se->{se_name}) not found in mailchimp\n";
+        if ($cleanup) {
             $debug and warn "  *deleted src_export record\n";
             $se->delete() unless $dry_run;
         }

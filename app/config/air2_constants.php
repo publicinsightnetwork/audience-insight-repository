@@ -64,6 +64,8 @@ $profile_defs = array(
     array('AIR2_BASE_URL',            null),
     array('AIR2_REVERSE_PROXY_BASE',  null),
 
+    array('AIR2_LOG_DIR',             '/logs/applications/pij'),
+
     // SSO config - define trust as false to disable
     array('AIR2_PIN_SSO_TRUST',       false),
     array('AIR2_PIN_SSO_CONFIG',      '/usr/local/air2/etc/auth_tkt.conf'),
@@ -121,6 +123,9 @@ $profile_defs = array(
     array('AIR2_SMTP_USERNAME',       'you'),
     array('AIR2_SMTP_PASSWORD',       'a-secret'),
 
+    array('AIR2_EMAIL_LIST_ID',       'set-in-etc-profiles.ini'),
+    array('AIR2_EMAIL_TEST_LIST_ID',  'set-in-etc-profiles.ini'),
+
     // insight button
     array('AIR2_INSIGHT_BUTTON_URL',  'http://your.org/insightbutton'),
 
@@ -133,6 +138,14 @@ $profile_defs = array(
 
     // MyPIN app URL
     array('AIR2_MYPIN2_URL',          'https//your.org/source'),
+
+    // db server time zone
+    array('AIR2_SERVER_TIME_ZONE',    'America/Chicago'),
+
+    // db record constants - set only if using these Organizations.
+    array('AIR2_APMPIN_ORG_ID',       '1'),
+    array('AIR2_GLOBALPIN_ORG_ID',    '44'),
+    array('AIR2_ALL_PIN_ORG_ID',      '139'),
 );
 
 foreach ($profile_defs as $def) {

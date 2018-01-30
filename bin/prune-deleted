@@ -38,6 +38,7 @@ use Getopt::Long;
 use Pod::Usage;
 use Lucy::Index::Indexer;
 use SWISH::Prog::InvIndex;
+use Try::Tiny;
 
 =pod
 
@@ -164,7 +165,12 @@ if ($dry_run) {
 my @lucy;
 if ( !$noindex ) {
     for my $index_dir (@index_dirs) {
-        push @lucy, Lucy::Index::Indexer->new( index => $index_dir );
+        try {
+            push @lucy, Lucy::Index::Indexer->new( index => $index_dir );
+        }
+        catch {
+            warn "Failed to open Indexer for $index_dir: $_";
+        };
     }
 }
 for my $url ( keys %to_delete ) {

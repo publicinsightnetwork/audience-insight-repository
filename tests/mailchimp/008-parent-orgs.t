@@ -22,14 +22,13 @@
 
 use strict;
 use warnings;
-use Test::More tests => 11;
-use Test::Exception;
+use Test::More tests => 8;
 use FindBin;
 use lib "$FindBin::Bin/../../lib/perl";
 use lib "$FindBin::Bin/../search/models";
+use lib "$FindBin::Bin";
 use JSON;
 use Data::Dump qw( dump );
-use WWW::Mailchimp;
 
 use AIR2::Config;
 use AIR2::Mailchimp;
@@ -39,71 +38,61 @@ use AIR2Test::User;
 use AIR2Test::Organization;
 use AIR2Test::Source;
 
-my $TEST_LIST_ID = '8992dc9e18';
+use MailchimpUtils;
 
-# test sources
-my @test_sources = qw(
-    testsource0@nosuchemail.org
-    testsource1@nosuchemail.org
-    testsource2@nosuchemail.org
-);
+my $random_str   = $$;
+my $i            = 0;
+my @test_sources = ();
+while ( $i < 3 ) {
+    push @test_sources, "testsource${i}.$random_str\@nosuchemail.org";
+    $i++;
+}
 
 #
 # setup org and parents
 #
-ok(
-    my $mega_parent = AIR2Test::Organization->new(
+ok( my $mega_parent = AIR2Test::Organization->new(
         org_default_prj_id => 1,
         org_name           => 'mailchimp-test-top-org',
-      )->load_or_save(),
+        )->load_or_save(),
     "create test parent org"
 );
-ok(
-    my $parent = AIR2Test::Organization->new(
+ok( my $parent = AIR2Test::Organization->new(
         org_parent_id      => $mega_parent->org_id,
         org_default_prj_id => 1,
         org_name           => 'mailchimp-test-parent-org',
-      )->load_or_save(),
+        )->load_or_save(),
     "create test parent org"
 );
-ok(
-    my $org = AIR2Test::Organization->new(
-        org_parent_id      => $parent->org_id,
-        org_default_prj_id => 1,
-        org_name           => 'mailchimp-test-org',
-      )->load_or_save(),
-    "create test org"
-);
-$org->org_sys_id( [ { osid_type => 'M', osid_xuuid => $TEST_LIST_ID } ] );
+ok( my $org = MailchimpUtils::test_org( org_parent_id => $parent->org_id, ),
+    "create test org" );
+$org->org_sys_id(
+    [ { osid_type => 'M', osid_xuuid => MailchimpUtils::list_id } ] );
 ok( $org->save, "create test org_sys_id" );
-ok( my $chimp = AIR2::Mailchimp->new( org => $org ), "create api adaptor" );
+ok( my $chimp = MailchimpUtils::client( org => $org ), "create api adaptor" );
 
-# clean slate (delete all these emails from mailchimp)
-$chimp->api->listBatchUnsubscribe(
-    id            => $TEST_LIST_ID,
-    emails        => [ @test_sources ],
-    delete_member => 1,
-    send_goodbye  => 0,
-    send_notify   => 0,
-);
+# start clean
+MailchimpUtils::clear_campaigns;
+MailchimpUtils::clear_segments;
+MailchimpUtils::clear_list;
 
 # setup sources
 my $idx = -1;
 my @sources;
-for my $e ( @test_sources ) {
+for my $e (@test_sources) {
     my $src = AIR2Test::Source->new( src_username => $e )->load_or_save;
     $src->add_emails( [ { sem_email => $e, sem_status => 'G' } ] );
 
     # pick different orgs to opt into
     my $my_org = $org->org_id;
-    $my_org = $parent->org_id if $e eq $test_sources[1];
+    $my_org = $parent->org_id      if $e eq $test_sources[1];
     $my_org = $mega_parent->org_id if $e eq $test_sources[2];
     $src->add_src_orgs( [ { so_org_id => $my_org, so_status => 'A' } ] );
     $src->save();
     AIR2::SrcOrgCache::refresh_cache($src);
 
     # cache a reference
-    $sources[++$idx] = $src;
+    $sources[ ++$idx ] = $src;
 }
 
 #
@@ -112,28 +101,28 @@ for my $e ( @test_sources ) {
 
 # make sure everybody syncs
 my $res = $chimp->sync_list( source => \@sources );
-is( $res->{ignored},      0, 'sync - 0 ignored' );
-is( $res->{subscribed},   3, 'sync - 3 subscribed' );
-is( $res->{unsubscribed}, 0, 'sync - 0 unsubscribed' );
+is_deeply(
+    $res,
+    { cleaned => 0, ignored => 0, subscribed => 3 },
+    "setup complete"
+);
 
 # unsubscribe somebody
 $sources[1]->src_orgs->[0]->so_status('D');
 $sources[1]->src_orgs->[0]->save();
-AIR2::SrcOrgCache::refresh_cache($sources[1]);
+AIR2::SrcOrgCache::refresh_cache( $sources[1] );
 
 # sync again
 my $res2 = $chimp->sync_list( source => \@sources );
-is( $res2->{ignored},      2, 'sync2 - 2 ignored' );
-is( $res2->{subscribed},   0, 'sync2 - 0 subscribed' );
-is( $res2->{unsubscribed}, 1, 'sync2 - 1 unsubscribed' );
-
-#
-# cleanup
-#
-$chimp->api->listBatchUnsubscribe(
-    id            => $TEST_LIST_ID,
-    emails        => [ @test_sources ],
-    delete_member => 1,
-    send_goodbye  => 0,
-    send_notify   => 0,
+MailchimpUtils::compare_list(
+    {   $test_sources[2] => 'subscribed',
+        $test_sources[0] => 'subscribed',
+    },
+    "unsubscribed $test_sources[1]"
 );
+is_deeply(
+    $res2,
+    { cleaned => 0, ignored => 0, subscribed => 2, unsubscribed => 1 },
+    "unsubscribed $test_sources[1]"
+);
+

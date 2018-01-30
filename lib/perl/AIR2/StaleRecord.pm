@@ -26,13 +26,19 @@ __PACKAGE__->meta->setup(
     table => 'stale_record',
 
     columns => [
-        str_xid      => { type => 'integer',  not_null => 1 },
-        str_upd_dtim => { type => 'datetime', not_null => 1 },
-        str_type => { type => 'character', length => 1, not_null => 1 },
+        str_xid      => { type => 'integer',   not_null => 1 },
+        str_upd_dtim => { type => 'datetime',  not_null => 1 },
+        str_type     => { type => 'character', length   => 1, not_null => 1 },
     ],
 
     primary_key_columns => [ 'str_xid', 'str_type' ],
 );
+
+sub delete_all {
+    my $class = shift;
+    AIR2::DBManager->new->get_write_handle->dbh->do(
+        "DELETE FROM " . $class->meta->table );
+}
 
 1;
 

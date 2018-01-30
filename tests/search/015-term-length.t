@@ -19,8 +19,11 @@ SKIP: {
 
     my $tkt = AIR2TestUtils::dummy_tkt();
 
+    my $config
+        = do AIR2::Config->get_app_root->file('etc/dezi.config.pl') . "";
+
     test_psgi(
-        app    => AIR2::Search::MasterServer->app( {} ),
+        app    => AIR2::Search::MasterServer->app($config),
         client => sub {
             my $callback = shift;
             my $query    = URI::Query->new(
@@ -35,12 +38,14 @@ SKIP: {
             #dump($resp);
 
             is( $resp->code, 500, "too short term throws server error" );
-            if ($resp->code == 500) {
+            if ( $resp->code == 500 ) {
                 like( $resp->content, qr/at least 2/, "error msg match" );
             }
             else {
+                fail('got response other than 500');
                 my $body = decode_json( $resp->content );
                 diag( $body->{query} );
+                diag( dump $body );
             }
 
         },

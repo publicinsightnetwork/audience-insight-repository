@@ -96,6 +96,7 @@ elsif ($since) {
     $since = $date_parser->parse_date($since) or die "invalid date $since";
 }
 else {
+    # default is incremental sync.
     $since = 1;    # this will cause the api to lookup MAX(soe_status_dtim)
 }
 

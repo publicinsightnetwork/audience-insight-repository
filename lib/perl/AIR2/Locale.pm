@@ -23,6 +23,7 @@ package AIR2::Locale;
 use strict;
 use base qw(AIR2::DB);
 use Carp;
+use utf8;
 
 __PACKAGE__->meta->setup(
     table => 'locale',
@@ -48,6 +49,26 @@ sub get_by_key {
     my $locale = $self->new( loc_key => $key )->load;
     $locales{$key} = $locale;
     return $locale;
+}
+
+my %LOCALE_MAP = (
+    'es'            => 'es_US',
+    'en'            => 'en_US',
+    'English'       => 'en_US',
+    'Spanish'       => 'es_US',
+    'Inglés'       => 'en_US',
+    'Español'      => 'es_US',
+    'no_preference' => 'None',
+    'None'          => 'None',
+);
+
+sub language_to_locale {
+    my $self = shift;
+    my $lang = shift or confess "language string required";
+    if ( $LOCALE_MAP{$lang} ) {
+        return $LOCALE_MAP{$lang};
+    }
+    confess "No locale found for language '$lang'";
 }
 
 1;

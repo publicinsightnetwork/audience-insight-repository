@@ -57,8 +57,10 @@ $dbh->{AutoCommit} = 0;
 $dbh->{RaiseError} = 1;
 
 # drop existing cache table
-my $drop = "delete from src_org_cache";
-$drop .= " where soc_src_id in ($wherein)" if $wherein;
+my $drop = 'truncate src_org_cache';
+if ($wherein) {
+    $drop = "delete from src_org_cache where soc_src_id in ($wherein)";
+}
 $dbh->do($drop);
 
 ##################################

@@ -40,6 +40,12 @@ my $TEST_PROJECT  = 'ima-test-project';
 $Rose::DB::Object::Debug          = $debug;
 $Rose::DB::Object::Manager::Debug = $debug;
 
+# start clean
+{
+    my $s = AIR2::Source->new( src_username => $TEST_USERNAME )->load_speculative;
+    $s->delete if ($s and $s->src_id);
+}
+
 ###################################
 ##           source
 ###################################

@@ -18,15 +18,11 @@
 #   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
 #
 ###########################################################################
-
-# currently a placeholder only
-# in future could be used for term expansion and other
-# custom behavior based on field name
-
 package AIR2::Search::Field;
 use strict;
 use base 'Search::Query::Field::Lucy';
 use Carp;
+use Data::Dump qw( dump );
 
 my %requires_min_len = map { $_ => 1 } qw(
     qa

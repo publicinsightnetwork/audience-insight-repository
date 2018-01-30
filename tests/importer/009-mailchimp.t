@@ -5,6 +5,7 @@ use Data::Dump qw( dump );
 use FindBin;
 use lib "$FindBin::Bin/../../lib/perl";
 use lib 'tests/search/models';
+use lib 'tests/mailchimp';
 use Test::More tests => 26;
 
 use AIR2::Bin;
@@ -17,13 +18,22 @@ use AIR2Test::Email;
 use AIR2::SrcOrgCache;
 use AIR2::Exporter::Mailchimp;
 
-my $TEST_LIST_ID = '8992dc9e18';
-my @SRC_EMAILS  = qw(
-    cavisr+mctest1@gmail.com
-    cavisr+mctest2@gmail.com
-    cavisr+mctest3@gmail.com
-);
-my $USER_EMAIL = 'cavisr+mcuser@gmail.com';
+use MailchimpUtils;
+
+my @SRC_EMAILS = ();
+my %seen       = ();
+while ( scalar(@SRC_EMAILS) < 3 ) {
+
+    # all the pin0-99 @pinsight.org addresses are forwarded to the same
+    # email address, so pick a random number in that range.
+    # we randomize so as not to run afoul of MC throttling.
+    my $random = 0 + int( rand(99) );
+    my $email  = "pin${random}\@pinsight.org";
+    push @SRC_EMAILS, $email unless $seen{$email}++;
+}
+diag( "SRC_EMAILS: " . dump( \@SRC_EMAILS ) );
+
+my $USER_EMAIL = 'pijdev@mpr.org';
 
 # setup an org with some src_org_emails
 my $user = AIR2Test::User->new(
@@ -35,14 +45,20 @@ $user->user_email_address( [ { uem_address => $USER_EMAIL } ] );
 my $org = AIR2Test::Organization->new(
     org_default_prj_id => 1,
     org_name           => 'mailchimp-test-org',
-    org_sys_id => [ { osid_type => 'M', osid_xuuid => $TEST_LIST_ID } ],
+    org_sys_id =>
+        [ { osid_type => 'M', osid_xuuid => MailchimpUtils::list_id } ],
 );
+my $apmpin_org
+    = AIR2::Organization->new( org_id => AIR2::Config::get_apmpin_org_id() )
+    ->load;
 ok( $user->load_or_save(), "setup - test user" );
-ok( $org->load_or_save(), "setup - test org" );
+ok( $org->load_or_save(),  "setup - test org" );
 
 # create an email record
-my $inq1 = AIR2Test::Inquiry->new( inq_title => 'ima-inquiry1' )->load_or_save;
-my $inq2 = AIR2Test::Inquiry->new( inq_title => 'ima-inquiry2' )->load_or_save;
+my $inq1
+    = AIR2Test::Inquiry->new( inq_title => 'ima-inquiry1' )->load_or_save;
+my $inq2
+    = AIR2Test::Inquiry->new( inq_title => 'ima-inquiry2' )->load_or_save;
 $user->add_signatures( [ { usig_text => 'blah blah blah' } ] );
 $user->save();
 my $email = AIR2Test::Email->new(
@@ -65,6 +81,7 @@ $email->save();
 
 # test bins that clean themselves up
 {
+
     package MyBin;
     @MyBin::ISA = ('AIR2::Bin');
     sub DESTROY { my $self = shift; $self->delete(); }
@@ -76,24 +93,28 @@ ok( $bin->load_or_save(), "setup - test bin" );
 sub create_source {
     my $e = shift;
     my $src = AIR2Test::Source->new( src_username => $e )->load_or_save;
-    $src->add_src_orgs( [ { so_org_id => $org->org_id, so_status => 'A' } ] );
+    $src->add_src_orgs(
+        [   { so_org_id => $org->org_id,        so_status => 'A' },
+            { so_org_id => $apmpin_org->org_id, so_status => 'A' }
+        ]
+    );
     $src->add_emails( [ { sem_email => $e, sem_status => 'G' } ] );
     $src->save();
     AIR2::SrcOrgCache::refresh_cache($src);
     my $soe = {
-        soe_org_id      => $org->org_id,
+        soe_org_id      => $apmpin_org->org_id,
         soe_status      => 'A',
         soe_status_dtim => time(),
         soe_type        => 'M',
     };
-    $src->emails->[-1]->add_src_org_emails( [ $soe ] );
+    $src->emails->[-1]->add_src_org_emails( [$soe] );
     $src->emails->[-1]->save();
     $src->save();
     return $src;
 }
 my @sources;
-for my $e ( @SRC_EMAILS ) {
-    my $src = create_source( $e );
+for my $e (@SRC_EMAILS) {
+    my $src = create_source($e);
     push @sources, $src;
     $bin->add_sources( { bsrc_src_id => $src->src_id } );
 }
@@ -109,7 +130,7 @@ ok( my $exporter = AIR2::Exporter::Mailchimp->new(
         no_export    => 0,
         no_bcc       => 1,
         strict       => 1,
-        reader       => $bin->get_exportable_emails($org),
+        reader       => $bin->get_exportable_mailchimp_emails($org),
         export_email => $email,
         export_bin   => $bin,
         user         => $user,
@@ -118,13 +139,20 @@ ok( my $exporter = AIR2::Exporter::Mailchimp->new(
 );
 ok( defined $exporter->run(), "test export - run()" );
 is( $exporter->completed, 3, "test export - completed" );
-is( $exporter->errored, 0, "test export - errored" );
-is( $exporter->skipped, 0, "test export - skipped" );
-# diag( $exporter->report );
+is( $exporter->errored,   0, "test export - errored" );
+is( $exporter->skipped,   0, "test export - skipped" );
+
+diag( $exporter->report );
 
 # reference src_exports (for cleanup)
 my %src_exports;
-for my $src ( @sources ) {
+
+END {
+    for my $se_id ( keys %src_exports ) {
+        AIR2::SrcExport->new( se_id => $se_id )->load->delete();
+    }
+}
+for my $src (@sources) {
     $src->load();
     for my $si ( @{ $src->inquiries } ) {
         is( $si->si_status, 'P', 'test export - si_status pending' );
@@ -133,7 +161,7 @@ for my $src ( @sources ) {
 }
 is( scalar keys %src_exports, 1, "test export - 1 src_export" );
 
-my $seid = (keys %src_exports)[0];
+my $seid = ( keys %src_exports )[0];
 my $src_export = AIR2::SrcExport->new( se_id => $seid )->load;
 is( $src_export->se_status, 'Q', 'test export - se_status queued' );
 
@@ -141,7 +169,7 @@ is( $src_export->se_status, 'Q', 'test export - se_status queued' );
 # check periodically to see if the campaign is sent
 #
 $| = 1;
-for ( my $i = 0; $i < 10; $i++) {
+for ( my $i = 0; $i < 10; $i++ ) {
     sleep 5;
     if ( my $resp = AIR2::Mailchimp->campaign( $src_export->se_name ) ) {
         last if ( $resp->{status} eq 'sent' );
@@ -155,36 +183,17 @@ my $perl     = $^X;
 my $app_root = AIR2::Config->get_app_root();
 my $import   = $app_root->file("bin/mailchimp-import");
 my $output   = `$perl $import --debug`;
+
 # diag($output);
 
 $src_export->load;
 is( $src_export->se_status, 'C', 'test import - se_status complete' );
-is( $src_export->get_meta('mailchimp_emails'), 3, 'test import - mailchimp_emails count' );
-for my $src ( @sources ) {
-    $src->load(with => 'inquiries');
+is( $src_export->get_meta('mailchimp_emails'),
+    3, 'test import - mailchimp_emails count' );
+for my $src (@sources) {
+    $src->load( with => 'inquiries' );
     for my $si ( @{ $src->inquiries } ) {
         is( $si->si_status, 'C', 'test import - si_status complete' );
     }
 }
 
-#
-# cleanup campaigns/segments (optional, but nice)
-#
-my $tres = $exporter->{api}->{api}->listStaticSegments(id => $TEST_LIST_ID);
-for my $ss ( @{ $tres } ) {
-    if ( $ss->{name} =~ /Test-Importer-009-mailchimp/ ) {
-        # diag("* cleaning up $ss->{name}\n");
-        $exporter->{api}->{api}->listStaticSegmentDel(id => $TEST_LIST_ID, seg_id => $ss->{id});
-    }
-}
-$tres = $exporter->{api}->{api}->campaigns(filters => {list_id => $TEST_LIST_ID});
-for my $cc ( @{ $tres->{data} } ) {
-    if ( $cc->{subject} =~ /Test Importer 009-mailchimp/ ) {
-        # diag("* cleaning up $cc->{subject}\n");
-        $exporter->{api}->{api}->campaignDelete(cid => $cc->{id});
-    }
-}
-for my $se_id ( keys %src_exports ) {
-    # diag("* cleaning up src_export($se_id)\n");
-    AIR2::SrcExport->new( se_id => $se_id )->load->delete();
-}

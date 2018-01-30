@@ -31,7 +31,9 @@ is_deeply( $authz, AIR2::SearchUtils::unpack_authz($authz_packed),
 
 my $debug     = 0;
 my $quiet     = 1;
-my $lock_file = AIR2::SearchUtils::get_lockfile_on_xml_dir('/tmp/air2-test');
+my $tmpdir    = AIR2::Config::get_tmp_dir->subdir('search');
+$tmpdir->mkpath($debug);
+my $lock_file = AIR2::SearchUtils::get_lockfile_on_xml_dir($tmpdir);
 ok( my $pks = AIR2::SearchUtils::get_pks_to_index(
         lock_file => $lock_file,
         class     => 'AIR2::Source',

@@ -1,7 +1,7 @@
 # Perl syntax
 use strict;
 use AIR2::Config;
-use SWISH::Prog::Config;
+use Dezi::Indexer::Config;
 use Dezi::Stats;
 use Dezi::Admin;
 use AIR2::DBManager;
@@ -57,7 +57,7 @@ for my $path ( keys %path2config ) {
     my $config = $path2config{$path};
     $conf->{$path}->{engine_config} = {
         indexer_config => {
-            config => SWISH::Prog::Config->new(
+            config => Dezi::Indexer::Config->new(
                 AIR2::Config::get_search_config($config)->stringify
             ),
             highlightable_fields => 1,
@@ -66,6 +66,7 @@ for my $path ( keys %path2config ) {
             find_relevant_fields => 1,
             qp_config            => {
                 dialect          => 'Lucy',
+                field_class      => 'AIR2::Search::Field', # TODO use this?
                 null_term        => 'NULL',
                 croak_on_error   => 1,
                 query_class_opts => { debug => $ENV{DEZI_DEBUG} },

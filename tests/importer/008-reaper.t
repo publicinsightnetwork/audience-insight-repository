@@ -8,6 +8,7 @@ use AIR2::User;
 use AIR2::Config;
 use AIR2::CSVReader;
 use AIR2::Importer::FS;
+use AIR2::SrsConfirmation;
 use AIR2Test::Source;
 use AIR2Test::Project;
 use AIR2Test::Inquiry;
@@ -15,7 +16,7 @@ use AIR2Test::Organization;
 use AIR2Test::User;
 use AIR2::JobQueue;
 use Data::Dump qw( dump );
-use Test::More tests => 52;
+use Test::More tests => 59;
 use Path::Class;
 use JSON;
 use File::Slurp;
@@ -23,15 +24,25 @@ use File::Slurp;
 #############################################################
 ## mock up inquiries and submissions
 
-my $TEST_ORG_NAME1      = 'testorg1';
-my $TEST_ORG_NAME2      = 'testorg2';
-my $TEST_PROJECT        = 'ima-test-project';
-my $TEST_USERNAME       = 'ima-test-user';
-my $TEMP_SUBMISSION_PEN = dir('/tmp/submission-pen');
+my $TEST_ORG_NAME1 = 'testorg1';
+my $TEST_ORG_NAME2 = 'testorg2';
+my $TEST_PROJECT   = 'ima-test-project';
+my $TEST_USERNAME  = 'ima-test-user';
+my $TEST_INQUIRY   = 'abcdef123456';
+my $TEMP_SUBMISSION_PEN
+    = dir( $ENV{TEMP_SUBMISSION_PEN}
+        || '/tmp/submission-pen-' . getpwuid($<) );
 my $TEST_FILE_UPLOAD
     = AIR2::Config::get_app_root->file('tests/querymaker/test-upload.jpg');
 
-$TEMP_SUBMISSION_PEN->rmtree();
+# start clean
+{
+    my $i = AIR2::Inquiry->new( inq_uuid => $TEST_INQUIRY )->load_speculative;
+    $i->delete if $i;
+
+    $TEMP_SUBMISSION_PEN->rmtree();
+}
+
 $TEMP_SUBMISSION_PEN->mkpath(1);
 
 use_ok('AIR2::InquiryPublisher');
@@ -71,6 +82,8 @@ ok( my $user = AIR2Test::User->new(
     ),
     "create test user"
 );
+ok( $user->set_primary_email('i-am-user@nosuchemail.org'),
+    "set user->primary_email" );
 ok( $user->load_or_save(), "save test user" );
 
 # must do this AFTER we set default_prj_id above
@@ -105,6 +118,7 @@ ok( my $question1 = AIR2::Question->new(
 ok( $inquiry1->add_questions($question1), "add question to Inquiry" );
 ok( $inquiry1->add_projects( [$project] ), "add projects to Inquiry" );
 ok( $inquiry1->add_organizations($org1), "org1 is an Owner" );
+ok( $inquiry1->add_users_as_authors( [$user] ), "add author to Inquiry" );
 
 ok( $inquiry1->load_or_save(), 'save inquiry1' );
 
@@ -115,7 +129,7 @@ my $inq_uuid1_safe = AIR2::InquiryPublisher->safe_uuid($inq_uuid1);
 ok( AIR2::InquiryPublisher->publish($inq_uuid1), 'published' );
 
 ok( my $inquiry2 = AIR2Test::Inquiry->new(
-        inq_uuid  => 'abcdef123456',
+        inq_uuid  => $TEST_INQUIRY,
         inq_title => 'what color is your parachute?',
     ),
     "new Inquiry"
@@ -169,7 +183,8 @@ ok( $inquiry2->add_questions(
 );
 ok( $inquiry2->add_projects( [$project] ), "add projects to Inquiry" );
 ok( $inquiry2->add_organizations($org2), "org2 is an Owner" );
-ok( $inquiry2->load_or_save(),           'save inquiry2' );
+ok( $inquiry2->add_users_as_authors( [$user] ), "add author to Inquiry" );
+ok( $inquiry2->load_or_save(), 'save inquiry2' );
 
 # publish
 my $inq_uuid2      = $inquiry2->inq_uuid;
@@ -267,7 +282,8 @@ for my $t (@$tanks) {
     #            $t->tank_id, $t->tank_status, $t->tank_errors
     #        )
     #    );
-    my $job = AIR2::JobQueue->new(
+    my $job
+        = AIR2::JobQueue->new(
         jq_job => 'PERL AIR2_ROOT/bin/run-discriminator ' . $t->tank_id, );
     ok( $job->run(), "run discriminator for tank " . $t->tank_id );
     if ( $job->jq_error_msg() ) {
@@ -354,6 +370,27 @@ for my $sact ( @{ $new_source->activities } ) {
 
 is( $new_source->get_pref_lang,
     'es_US', "preferred language mapped to preferences" );
+
+##########################################################
+##             confirmation message
+##########################################################
+
+# confirmation message
+ok( my $confirmation = AIR2::SrsConfirmation->new( dry_run => 1 ),
+    "new AIR2::SrsConfirmation" );
+ok( my $confirmed = $confirmation->send($srs_uuid), "confirmation->send" );
+is_deeply(
+    $confirmed->{template_vars}->{source},
+    {   email  => $new_source->get_primary_email->sem_email,
+        name   => $new_source->get_first_last_name,
+        src_id => $new_source->src_id,
+    },
+    "confirmation template_vars source"
+);
+is( $confirmed->{template_vars}->{locale},
+    $new_source->get_pref_lang,
+    "pref_lang used in confirmation email"
+);
 
 ##########################################################
 ##             clean up

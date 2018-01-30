@@ -32,8 +32,8 @@ use lib "$FindBin::Bin/../lib/perl";
 use Carp;
 use Getopt::Long;
 use Pod::Usage;
-use Email::Stuff;
 use AIR2::Config;
+use AIR2::Emailer;
 use AIR2::Reader::FS;
 use AIR2::Importer::FS;
 use Data::Dump qw( dump );
@@ -114,9 +114,12 @@ TANK: for my $t ( sort { $a->tank_id <=> $b->tank_id } @$tanks ) {
 
 # NOTE ->errored is currently a no-op in Importer::FS
 if ( $importer->errored ) {
-    Email::Stuff->to($email_notify)->from('support@publicinsightnetwork.org')
-        ->subject("Submission import results")
-        ->text_body( $importer->report )->send;
+    my $emailer = AIR2::Emailer->new( dry_run => $dry_run, debug => $debug );
+    $emailer->send(
+        to      => $email_notify,
+        subject => "Submission import results",
+        text    => $importer->report
+    );
 }
 
 sub email_report {

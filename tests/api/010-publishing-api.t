@@ -31,6 +31,9 @@ require_once "$tdir/models/TestAPIKey.php";
 AIR2_DBManager::init();
 $conn = AIR2_DBManager::get_master_connection();
 
+// we expect at least one public query with responses to exist
+$public_query_uuid = 'publicqueryA';
+
 plan(49);
 
 $apiKey = new TestAPIKey();
@@ -49,7 +52,7 @@ $browser = new AirHttpTest();
 $browser->set_user('testuser', array(''=>false));
 $browser->set_content_type(AirHttpTest::$XML);
 
-$uri = "/api/public/search.xml?q=hi&a=$testAPIKey";
+$uri = "/api/public/search.xml?q=query_uuid:$public_query_uuid&a=$testAPIKey";
 ok( $xmlResp = $browser->http_get($uri), "GET $uri");
 is( $browser->resp_code(), 200, "Successful");
 is( $browser->resp_content_type(), 'application/xml; charset=utf-8', "XML");
@@ -150,7 +153,7 @@ $browser = new AirHttpTest();
 $browser->set_user('testuser', array(''=>false));
 $browser->set_content_type(AirHttpTest::$JSON);
 
-$uri = "/api/public/search.json?q=responseset:8c3764ae8ac4&a=$testAPIKey&h=0";
+$uri = "/api/public/search.json?q=query_uuid:$public_query_uuid&a=$testAPIKey&h=0";
 ok( $jsonResp = $browser->http_get($uri), "GET $uri");
 is( $browser->resp_code(), 200, "Successful");
 is( $browser->resp_content_type(), 'application/json; charset=utf-8', "JSON content type");
@@ -159,128 +162,5 @@ ok( $respJSON = json_decode($jsonResp, true), "parse JSON");
 // we expect a certain format for our JSON response
 //diag_dump( $respJSON );
 ok( $results = $respJSON['results'], 'get results');
+is( count($results), 25, 'got 25 results' );
 
-//diag_dump( $respJSON );
-
-$found_result = false;
-
-$librarius_srs = AIR2_Record::find('SrcResponseSet', '8c3764ae8ac4');
-$srs_last_mod = $librarius_srs->srs_date;
-$srs_mtime    = strtotime($librarius_srs->srs_upd_dtim);
-$srs_last_mod = preg_replace('/-/', '', $srs_last_mod);
-$srs_last_mod = preg_replace('/\ .*$/', '', $srs_last_mod);
-
-foreach ($librarius_srs->SrcResponse as $sr) {
-    //diag(sprintf("%s %s => %s", $sr->Question->ques_uuid, $sr->Question->ques_value, $sr->sr_orig_value));
-}
-
-// we expect to find this result, but this test is somewhat brittle
-// because this is live data from a librarius result.
-// We give a hint below in the fail() message that the failure
-// might be spurious because the environment is beyond this test's
-// control.
-// TODO create a test-specific index
-$expected_result = array(
-
-    // dezi fields
-    'uri'               => '8c3764ae8ac4',
-    'title'             => '8c3764ae8ac4',
-    'summary'           => '',
-    'mtime'             => $srs_mtime,
-    'lastmod'           => $srs_last_mod,
-
-    // official fields from API spec
-    'src_first_name'    => 'Farrukh',
-    'src_last_name'     => 'S',
-    'primary_lat'       => '',
-    'primary_long'      => '',
-    'primary_country'   => '',
-    'primary_city'      => 'Gleason',
-    'primary_state'     => 'WI',
-    'primary_county'    => '',
-    'primary_zip'       => '',
-    'query_title'       => 'Why are you at the library today -- in person or online?',
-    'query_uuid'        => 'b6f315470887',
-    'srs_date'          => $librarius_srs->srs_cre_dtim,
-    'srs_ts'            => $srs_last_mod,
-    'srs_upd_dtim'      => $librarius_srs->srs_upd_dtim,
-
-    // array of questions keyed by ques_uuid
-    'questions'         => array(
-        'f2c1da7d3772' => array(
-            'seq'   => '2',
-            'type'  => 'A',
-            'value' => 'What brings you to the library today?',
-        ),
-        'b22a5a56df6e'  => array(
-            'seq'   => '3',
-            'type'  => 'R',
-            'value' => "Please pick one category that best describes what you&#39;re doing at the library today.",
-        ),
-        '67b3761fe188'  => array(
-            'seq'   => '1',
-            'type'  => 'T',
-            'value' => 'What library are you visiting? (library name, city, state)', 
-        ),
-        'fc93b011394b'  => array(
-            'seq'   => '5',
-            'type'  => 'R',
-            'value' => 'How are you accessing the library today?',
-        ),
-        '2631db581afd'  => array(
-            'seq'   => '10',
-            'type'  => 'A',
-            'value' => 'Please share some details or a story that would help us understand your answer -- and the role that libraries play in your life or the life of your community.',
-        ),
-        'ad3ac1809eab'  => array(
-            'seq'   => '14',
-            'type'  => 'T',
-            'value' => "If it weren&#39;t for the library, I would not...",
-        ),
-    ),
-
-    // array of responses keyed by ques_uuid
-    'responses' => array(
-        'f2c1da7d3772'  => "I&#39;m Farrukh",
-        'b22a5a56df6e'  => 'research and homework',
-        '67b3761fe188'  => 'H, Gleason, WI 54435, USA',
-        'fc93b011394b'  => "I&#39;m here in person.",
-        '2631db581afd'  => 'Without library people like me are blind in the field of research. Libraries provide us great help in achieving our goals.',
-        'ad3ac1809eab'  => '',
-    ),
-);
-
-// predictable key order
-foreach ($results as $r) {
-    if ($r['uri'] == '8c3764ae8ac4') {
-        $expected_result['score'] = $r['score'];
-        //diag_dump($r);
-        //diag_dump($expected_result);
-        ksortTree($expected_result);
-        ksortTree($r);
-        is_deeply( $r, $expected_result, "got expected result format");
-        $found_result = true;
-    }
-}
-if (!$found_result) {
-    fail("Found result -- does the public_responses index contain real Librarius query data?");
-}
-
-
-/**
- *
- *
- * @param unknown $array (reference)
- * @return unknown
- */
-function ksortTree( &$array ) {
-    if (!is_array($array)) {
-        return false;
-    }
-
-    ksort($array);
-    foreach ($array as $k=>$v) {
-        ksortTree($array[$k]);
-    }
-    return true;
-}

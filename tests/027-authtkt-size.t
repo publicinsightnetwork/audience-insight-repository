@@ -71,10 +71,11 @@ $o->org_name = str_pad($o->org_name, 16, '0');
 $o->UserOrg[0]->uo_home_flag = true;
 $o->save();
 
-// add user to all orgs
+// add user to all top-level orgs
 $top_orgs = AIR2_Query::create()
     ->from('Organization')
     ->where('org_id != ?', $o->org_id)
+    ->andWhere('org_parent_id is null')
     ->execute();
 foreach ($top_orgs as $org) {
     join_user($usr, $org, 1);
@@ -82,7 +83,7 @@ foreach ($top_orgs as $org) {
 
 // create the auth_tkt
 $airuser = new AirUser();
-$tkt = $airuser->create_tkt($usr, false);
+$tkt = $airuser->create_tkt($usr, false, true);
 
 
 /**********************

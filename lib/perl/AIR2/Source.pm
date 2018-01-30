@@ -62,8 +62,8 @@ __PACKAGE__->meta->setup(
             not_null => 1
         },
         src_username => { type => 'varchar', length => 255, not_null => 1, },
-        src_first_name => { type => 'varchar', default => '', length => 64, },
-        src_last_name      => { type => 'varchar',   length => 64 },
+        src_first_name => { type => 'varchar', default => '', length => 255, },
+        src_last_name      => { type => 'varchar',   length => 255 },
         src_middle_initial => { type => 'character', length => 1 },
         src_pre_name       => { type => 'varchar',   length => 64 },
         src_post_name      => { type => 'varchar',   length => 64 },
@@ -1311,6 +1311,29 @@ sub _get_preferences {
     return \%p;
 }
 
+sub _pref_hash_to_src_prefs {
+    my $self  = shift;
+    my $pref  = shift or confess "pref hashref required";
+    my $prefs = AIR2::SearchUtils::all_preference_values_by_id();
+    my @src_prefs;
+    for my $pref_name ( keys %$pref ) {
+        my $pref_type
+            = AIR2::PreferenceType->new( pt_identifier => $pref_name )->load;
+        for my $ptv ( @{ $pref_type->preference_type_values } ) {
+            if (    $ptv->ptv_status eq 'A'
+                and $ptv->ptv_value eq $pref->{$pref_name} )
+            {
+                push @src_prefs,
+                    AIR2::SrcPreference->new(
+                    sp_src_id => $self->src_id,
+                    sp_ptv_id => $ptv->ptv_id,
+                    );
+            }
+        }
+    }
+    return \@src_prefs;
+}
+
 =head2 set_preference( I<pref> )
 
 Preferences should be unique by preference_type for
@@ -1325,7 +1348,7 @@ sub set_preference {
     my $pref = shift or croak "preference required";
 
     if ( blessed($pref) and $pref->isa('AIR2::SrcPreference') ) {
-        my @prefs = @{ $self->preferences };
+        my @prefs = @{ $self->preferences || [] };
         my @newprefs;
         my $pref_was_set = 0;
         for my $p (@prefs) {
@@ -1345,9 +1368,17 @@ sub set_preference {
         # replace
         $self->preferences( \@newprefs );
     }
+    elsif ( ref $pref eq 'HASH' ) {
+        my $src_prefs = $self->_pref_hash_to_src_prefs($pref);
+        for my $src_pref (@$src_prefs) {
+            $self->set_preference($src_pref);
+        }
+    }
     else {
         $self->add_preferences($pref);
     }
+
+    return $self->preferences;
 }
 
 =head2 avg_query_rate

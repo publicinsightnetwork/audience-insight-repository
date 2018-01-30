@@ -5,7 +5,7 @@ use Test::More tests => 5;
 use lib 'tests/search';
 use AIR2TestUtils;    # sets lib path
 use AIR2::Search::MasterServer;
-use AIR2::SrcResponseSet;
+use AIR2Test::SrcResponse;
 use Data::Dump qw( dump );
 use JSON;
 use Plack::Test;
@@ -25,29 +25,23 @@ SKIP: {
 
     # some known data to add a bona fide utf-8 ellipsis to
     my $ellips = "…";
-    my $sr     = AIR2::SrcResponse->new(
-        sr_src_id     => 205021,
-        sr_ques_id    => 32776,
-        sr_srs_id     => 1260468,
+
+    my $srs = AIR2::SrcResponseSet->new( srs_id => 1 )->load;
+    my $sr = AIR2Test::SrcResponse->new(
         sr_orig_value => "this is an ellipsis: $ellips",
-    );
-    $sr->load_or_save;
+        sr_src_id     => 1,
+        sr_ques_id    => $srs->inquiry->questions->[0]->ques_id,
+        sr_srs_id     => 1,
+    )->save;
 
-    my $uuid = $sr->srcresponseset->srs_uuid;
-
-    my $srs
-        = AIR2::SrcResponseSet->new( srs_uuid => $uuid )->load_speculative;
-    if ( !$srs or $srs->not_found ) {
-        skip "Can't find utf-8 encoded response $uuid in db. Skipping tests",
-            5;
-    }
+    my $uuid = $srs->srs_uuid;
 
     # add to index
     my $base_dir = AIR2::Config->get_search_xml->subdir('responses');
     $base_dir->mkpath(1);
 
-    my $xml = $srs->as_xml( { base_dir => $base_dir } );
-    my $tkt = AIR2TestUtils::dummy_tkt( 37, 44 );
+    my $xml         = $srs->as_xml( { base_dir => $base_dir } );
+    my $tkt         = AIR2TestUtils::dummy_tkt( $srs->cre_user->user_id );
     my $dezi_client = Dezi::Client->new(
         server        => AIR2::Config->get_search_uri() . '/responses',
         server_params => { 'air2_tkt' => $tkt }
@@ -62,15 +56,12 @@ SKIP: {
         diag( $http_resp->content );
     }
 
-    # clean up
-    $sr->delete;
-
     test_psgi(
         app    => AIR2::Search::MasterServer->app( {} ),
         client => sub {
             my $callback = shift;
             my $params   = URI::Query->new(
-                {   q        => "srs_uuid:$uuid",
+                {   q        => "ellipsis",
                     air2_tkt => $tkt,
                 }
             );
@@ -84,15 +75,21 @@ SKIP: {
 
             #dump($json);
 
-            ok( my $qas = $json->{results}->[0]->{qa}, "get qa" );
+            my $result = $json->{results}->[0];
+            like(
+                $result->{summary},
+                qr/ellipsis \.\.\./,
+                'summary is ASCII'
+            );
+
+            ok( my $qas = $result->{qa}, "get qa" );
 
             #dump($qas);
 
-            is( scalar(@$qas), 4, "got 4 qa" );
-
             for my $qa (@$qas) {
-                next unless $qa =~ qr/$ellips/;
-                like( $qa, qr/$ellips/, "matches utf8 character" );
+                next unless $qa->{resp} =~ m/ellipsis/;
+                my $utf8_octets = to_utf8( $qa->{resp} );
+                like( $utf8_octets, qr/$ellips/, "matches utf8 character" );
             }
 
         },

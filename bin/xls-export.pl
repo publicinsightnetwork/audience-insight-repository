@@ -27,11 +27,11 @@ use FindBin;
 use lib "$FindBin::Bin/../lib/perl";
 use Getopt::Long;
 use Pod::Usage;
-use Email::Stuff;
 use JSON;
 use Data::Dump qw( dump );
 
 use AIR2::Config;
+use AIR2::Emailer;
 use AIR2::Bin;
 use AIR2::User;
 use AIR2::SrcResponseSet;
@@ -444,7 +444,6 @@ elsif ( $format eq 'email' ) {
     # fire!
     send_email(
         to      => $eml,
-        from    => 'support@publicinsightnetwork.org',
         subject => "AIR Submission export results - $name",
         text    => (
             $srs_id
@@ -459,30 +458,6 @@ sub send_email {
     if ($debug) {
         dump \%args;
     }
-    my $stuff = Email::Stuff->to( $args{to} )->from( $args{from} )
-        ->subject( $args{subject} );
-    if ( $args{text} ) {
-        $stuff->text_body( $args{text} );
-    }
-    if ( $args{html} ) {
-        $stuff->html_body( $args{html} );
-    }
-    if ( $args{attach} ) {
-        $stuff->attach( @{ $args{attach} } );
-    }
-    my %mailer_args = ( Host => AIR2::Config->get_smtp_host, );
-    if ( AIR2::Config->smtp_host_requires_auth ) {
-        $mailer_args{username} = AIR2::Config->get_smtp_username;
-        $mailer_args{password} = AIR2::Config->get_smtp_password;
-    }
-    my $smtp = Email::Send->new(
-        {   mailer      => 'SMTP',
-            mailer_args => [ %mailer_args, ]
-        }
-    ) or die "failed to create Email::Send::SMTP: $@ $!\n";
-    my $result = $stuff->using($smtp)->send();
-
-    $debug and warn $result;
-
-    return $result;
+    my $emailer = AIR2::Emailer->new( debug => $debug );
+    $emailer->send(%args);
 }

@@ -38,7 +38,7 @@ AIR2_DBManager::init();
 
 // data prep
 $user = new TestUser();
-$user->user_password = MY_TEST_PASS;
+$user->user_encrypted_password = MY_TEST_PASS;
 $user->save();
 $org = new TestOrganization();
 $org->save();
@@ -51,12 +51,18 @@ $inquiry = new TestInquiry();
 $inquiry->add_projects(array($project));
 
 // questions
-$inquiry->Question[0]->ques_value = 'what is the air-speed velocity of a swallow?';
-$inquiry->Question[0]->ques_resp_type = 'S';
-$inquiry->Question[1]->ques_value = 'email';
-$inquiry->Question[1]->ques_resp_type = 'E';
-$inquiry->Question[1]->ques_resp_opts = json_encode(array('require' => true));
+$inquiry->save(); // will create contributor questions
 
+$question = new Question;
+$question->ques_value = 'what is the air-speed velocity of a swallow?';
+$question->ques_resp_type = 'S';
+$inquiry->Question[] = $question;
+$inquiry->save(); // add our custom question
+
+$url_question = new Question;
+$url_question->ques_value = 'where is your web home?';
+$url_question->ques_resp_type = Question::$DTYPE_URL;
+$inquiry->Question[] = $url_question;
 $inquiry->save();
 
 ok( $inquiry->do_publish(), "do_publish" );
@@ -65,10 +71,20 @@ ok( $query_json = $pub_query->get_json(), "published get_json" );
 
 //diag_dump( $query_json );
 
+// find our contributor questions so we can submit against them
+$contrib_question = array();
+foreach ($query_json->questions as $q) {
+    $contrib_question[$q->ques_template] = $q;
+}
+
 // mock submission
 $incoming_submission = array(
-    $inquiry->Question[0]->ques_uuid => 'african or european swallow?',
-    $inquiry->Question[1]->ques_uuid => 'bad email',
+    $question->ques_uuid => 'african or european swallow?',
+    $url_question->ques_uuid => 'http://example.com/foo?bar=quack',
+    $contrib_question['email']->ques_uuid => 'hahainvalidemail',
+    $contrib_question['firstname']->ques_uuid => 'some',
+    $contrib_question['lastname']->ques_uuid  => 'body',
+    $contrib_question['zip']->ques_uuid       => '55555',
 );
 $meta = array( 'referer' => null, 'mtime' => time() );
 ok( $fail_submission = $pub_query->validate($incoming_submission, $meta),
@@ -76,11 +92,12 @@ ok( $fail_submission = $pub_query->validate($incoming_submission, $meta),
 );
 ok( !$fail_submission->ok(), "submission is not ok" );
 ok( $errors = $fail_submission->get_errors(), "get errors" );
+//diag_dump( $errors );
 is( count($errors), 1, "got expected error number" );
 is_deeply( $errors, array(
         array(
             'msg' => 'Not an email',
-            'question' => $inquiry->Question[1]->ques_uuid
+            'question' => $contrib_question['email']->ques_uuid
         )
     ),
     "got expected error messages"

@@ -323,9 +323,9 @@ class AIR2_PublishedQuery {
 
                         $start_year = date('Y', strtotime('-' . $opts->startyearoffset . 'years'));
                         $end_year = date('Y', strtotime('-' . $opts->endyearoffset . 'years'));
-                        $start_time = strtotime($start_year);
-                        $end_time = strtotime($end_year);
-                        $ques_time = strtotime($ques_value);
+                        $start_time = intval($start_year);
+                        $end_time = intval($end_year);
+                        $ques_time = intval($ques_value);
 
                         if ($ques_time < $start_time || $ques_time > $end_time) {
                             $errors[] = array(

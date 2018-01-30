@@ -226,7 +226,7 @@ is( $rs['radix']['inq_stale_flag'], true, 'publish 2 - change stale' );
 $i->refresh();
 $i->inq_expire_dtim = air2_date(strtotime('-2 day'));
 $i->save();
-$rs = $api->update("inquiry/$uuid", array('do_publish' => 1, 'inq_title' => 'Expired query'));
+$rs = $api->update("inquiry/$uuid", array('do_expire' => 1, 'inq_title' => 'Expired query'));
 is( $rs['code'], AIRAPI::OKAY, 'publish 3 - okay' );
 is( $rs['radix']['inq_status'], Inquiry::$STATUS_EXPIRED, 'publish 3 - status' );
 is( $rs['radix']['inq_stale_flag'], false, 'publish 3 - not stale' );

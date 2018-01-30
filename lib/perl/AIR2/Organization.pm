@@ -265,23 +265,14 @@ Returns array ref of org_ids for all active parents.
 =cut
 
 sub get_active_parents_ids {
-    my $self = shift;
-    my $pids = [];
-    if (   $self->org_status ne 'A'
-        && $self->org_status ne 'P'
-        && $self->org_status ne 'G' )
-    {
-        return $pids;
-    }
+    my $self   = shift;
+    my $pids   = [];
     my $parent = $self->parent;
-    while (
-        $parent
-        && (   $parent->org_status eq 'A'
-            || $parent->org_status eq 'P'
-            || $parent->org_status eq 'G' )
-        )
+    while ( $parent
+        && ( $parent->org_status ne 'F' ) )
     {
-        last if $parent->org_id == $self->org_id;
+        last
+            if $parent->org_id == $self->org_id;
         push @$pids, $parent->org_id;
         $parent = $parent->parent;
     }
@@ -300,18 +291,15 @@ sub collect_related_org_ids {
     my $self = shift;
     my $org_ids = shift or croak "org_ids required";
 
-    if (   $self->org_status eq 'A'
-        || $self->org_status eq 'P'
-        || $self->org_status eq 'G' )
-    {
+    if ( $self->org_status ne 'F' ) {
         push @$org_ids, $self->org_id;
-        for my $oid ( @{ $self->get_active_parents_ids() } ) {
-            push @$org_ids, $oid;
-        }
-        for my $o ( @{ $self->children } ) {
-            next if $o->org_id == $self->org_id;
-            $o->collect_related_org_ids($org_ids);
-        }
+    }
+    for my $oid ( @{ $self->get_active_parents_ids() } ) {
+        push @$org_ids, $oid;
+    }
+    for my $o ( @{ $self->children } ) {
+        next if $o->org_id == $self->org_id;
+        $o->collect_related_org_ids($org_ids);
     }
 
     return $org_ids;

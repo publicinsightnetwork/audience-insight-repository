@@ -54,7 +54,8 @@ if (!$pinpass->validate()) {
 }
 
 if (strlen($userpass) > 0) {
-    $user->user_password = $userpass;
+    $user->user_encrypted_password = $userpass;
+    $user->user_pswd_dtim = air2_date();
     $user->save();
     echo "Password changed for user " . $user->user_username . " uuid " . $user->user_uuid . "\n";
 } else {

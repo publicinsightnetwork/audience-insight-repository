@@ -1,0 +1,474 @@
+#!/usr/bin/env perl
+###########################################################################
+#
+#   Copyright 2010 American Public Media Group
+#
+#   This file is part of AIR2.
+#
+#   AIR2 is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   AIR2 is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with AIR2.  If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use Carp;
+use AIR2::DBManager;
+use AIR2::Utils;
+use AIR2::Config;
+use Path::Class;
+use Data::Dump qw( dump );
+use AIR2::SearchUtils;
+use AIR2::Source;
+use AIR2::Inquiry;
+use AIR2::Project;
+use AIR2::Question;
+
+# build N projects, inquiries, sources and responses
+# using data primed for the test suite.
+my $SEED_PROJECT           = 'i am a seed project';
+my $SEED_ORG               = 'i am a seed org';
+my $SEED_USERNAME          = 'i.am.a.seed.user@nosuchemail.org';
+my $N_SOURCES              = 500;
+my $MANUAL_SUBMISSION_UUID = 'dLBQu3yPPCw4';
+
+my $mgr_role    = AIR2::AdminRole->new( ar_code => 'M' )->load;
+my $writer_role = AIR2::AdminRole->new( ar_code => 'W' )->load;
+
+my $default_project = AIR2::Project->new(
+    prj_name         => $SEED_PROJECT,
+    prj_display_name => $SEED_PROJECT,
+)->save;
+
+my $project = AIR2::Project->new(
+    prj_name         => $SEED_PROJECT . 1,
+    prj_display_name => $SEED_PROJECT . 1,
+)->save;
+
+my $project2 = AIR2::Project->new(
+    prj_name         => $SEED_PROJECT . 2,
+    prj_display_name => $SEED_PROJECT . 2,
+)->save;
+
+# required "fixture" orgs with predictable IDs
+my $all_pin_org = AIR2::Organization->new(
+    org_default_prj_id => $default_project->prj_id,
+    org_name           => 'allPIN',
+    org_display_name   => 'All of PIN',
+    org_id             => AIR2::Config::get_constant('AIR2_ALL_PIN_ORG_ID'),
+)->save;
+my $global_pin_org = AIR2::Organization->new(
+    org_id             => AIR2::Config::get_constant('AIR2_GLOBALPIN_ORG_ID'),
+    org_name           => 'global',
+    org_display_name   => 'Global PIN Access',
+    org_parent_id      => $all_pin_org->org_id,
+    org_default_prj_id => $project2->prj_id,
+)->save;
+my $apmpin_org = AIR2::Organization->new(
+    org_parent_id      => $global_pin_org->org_id,
+    org_default_prj_id => $project->prj_id,
+    org_id             => AIR2::Config::get_constant('AIR2_APMPIN_ORG_ID'),
+    org_display_name   => 'American Public Media',
+    org_name           => 'apmpin',
+)->save;
+
+# test orgs all descended from apm_pin org
+my $org1 = AIR2::Organization->new(
+    org_parent_id      => $apmpin_org->org_id,
+    org_default_prj_id => $project->prj_id,
+    org_name           => $SEED_ORG
+)->save;
+my $org2 = AIR2::Organization->new(
+    org_parent_id      => $apmpin_org->org_id,
+    org_default_prj_id => $project->prj_id,
+    org_name           => $SEED_ORG . 2,
+)->save();
+my $org3 = AIR2::Organization->new(
+    org_default_prj_id => $project2->prj_id,
+    org_name           => $SEED_ORG . '-child',
+    org_parent_id      => $org2->org_id,
+)->save();
+
+my $user = AIR2::User->new(
+    user_username   => '1' . $SEED_USERNAME,
+    user_first_name => 'First',
+    user_last_name  => 'Last',
+)->save;
+
+my $uem = AIR2::UserEmailAddress->new(
+    user             => $user,
+    uem_primary_flag => 1,
+    uem_address      => $user->user_username,
+)->save;
+
+$user->user_orgs(
+    [   {   uo_org_id    => $org1->org_id,
+            uo_ar_id     => $mgr_role->ar_id,
+            uo_home_flag => 1,
+        },
+        {   uo_org_id    => $org2->org_id,
+            uo_ar_id     => $writer_role->ar_id,
+            uo_home_flag => 0,
+        },
+    ]
+);
+$user->save;
+
+my $user2 = AIR2::User->new(
+    user_username   => '2' . $SEED_USERNAME,
+    user_first_name => 'First',
+    user_last_name  => 'Last',
+)->save;
+
+my $uem2 = AIR2::UserEmailAddress->new(
+    user             => $user2,
+    uem_primary_flag => 1,
+    uem_address      => $user2->user_username,
+)->save;
+
+$user->user_orgs(
+    [   {   uo_org_id    => $org3->org_id,
+            uo_ar_id     => $writer_role->ar_id,
+            uo_home_flag => 1,
+        }
+    ]
+);
+$user2->save;
+
+my $global_user = AIR2::User->new(
+    user_username   => 'global-pin-user',
+    user_first_name => 'World',
+    user_last_name  => 'Traveller',
+    user_orgs       => [
+        {   uo_org_id    => $global_pin_org->org_id,
+            uo_ar_id     => $writer_role->ar_id,
+            uo_home_flag => 1,
+        }
+    ]
+)->save;
+
+# must do this AFTER we set default_prj_id above
+$project->add_project_orgs(
+    [   {   porg_org_id          => $org1->org_id,
+            porg_contact_user_id => $user->user_id,
+        },
+        {   porg_org_id          => $org2->org_id,
+            porg_contact_user_id => $user2->user_id,
+        }
+    ]
+);
+$project->save();
+
+$project2->add_project_orgs(
+    [   {   porg_org_id          => $org2->org_id,
+            porg_contact_user_id => $user2->user_id,
+        }
+    ]
+);
+$project2->save();
+
+# add several projects to both orgs to flesh it out for tests
+for my $i ( ( 0 .. 10 ) ) {
+    my $project = AIR2::Project->new(
+        prj_name         => $SEED_PROJECT . "-test-$i",
+        prj_display_name => $SEED_PROJECT . "-test-$i",
+    );
+    $project->add_project_orgs(
+        [   {   porg_org_id          => $org1->org_id,
+                porg_contact_user_id => $user->user_id,
+            },
+            {   porg_org_id          => $org2->org_id,
+                porg_contact_user_id => $user2->user_id,
+            }
+        ]
+    );
+    $project->save();
+}
+
+my $tagmaster1 = AIR2::TagMaster->new( tm_name => 'searchtag1' )->save;
+
+my @sources;
+for my $i ( ( 0 .. $N_SOURCES ) ) {
+    my $source = AIR2::Source->new(
+        src_username   => $i . AIR2::Utils->random_str . '@nosuchemail.org',
+        src_first_name => AIR2::Utils->random_str . '-First',
+        src_last_name  => AIR2::Utils->random_str . '-Last',
+    );
+    $source->add_emails(
+        [ { sem_primary_flag => 1, sem_email => $source->src_username } ] );
+    $source->add_mail_addresses(
+        [   {   smadd_state  => 'MN',
+                smadd_zip    => '55106',
+                smadd_county => 'Ramsey',
+                smadd_lat    => '150.00',
+                smadd_long   => '200.01',
+            },
+        ]
+    );
+    $source->add_organizations( [$org1] );
+    $source->add_annotations( [ { srcan_value => 'some annotation' } ] );
+    $source->add_aliases( [ { sa_first_name => 'source-first-alias' } ] );
+    $source->save();
+    AIR2::SrcOrgCache::refresh_cache($source);
+    push @sources, $source;
+    my $src_tag = AIR2::Tag->new(
+        tag_xid      => $source->src_id,
+        tag_ref_type => 'S',
+        tag_tm_id    => $tagmaster1->tm_id,
+    )->save();
+    my $outcome = AIR2::Outcome->new(
+        out_headline => 'test the outcome xml',
+        out_url      => 'https://nosuchemail.org',
+        out_teaser   => 'this is a test test test',
+        out_dtim     => time(),
+    );
+    $outcome->add_sources( [$source] );
+    $outcome->save;
+}
+
+my $inq = AIR2::Inquiry->new(
+    inq_title        => 'the color query',
+    inq_ext_title    => 'the color query',
+    inq_publish_dtim => '2012-01-01',
+    organizations    => [$org1],
+    projects         => [$project],
+);
+$inq->add_projects( [ $project, $project2 ] );
+
+my $inq2 = AIR2::Inquiry->new(
+    inq_uuid         => 'publicqueryA',
+    inq_title        => 'the public shape query',
+    inq_ext_title    => 'We want to know more about you',
+    inq_desc         => '<H3>change your photo</H3> and tell us things!',
+    inq_rss_intro    => 'Tell us more, more, MORE!',
+    inq_rss_status   => 'Y',
+    inq_publish_dtim => '2012-02-01',
+    inq_public_flag  => 1,
+    inquiry_annotations =>
+        [ { inqan_value => 'yes we have several bananas' } ],
+    inquiry_orgs => [ { iorg_org_id => $org1->org_id, } ],
+);
+$inq2->add_projects( [$project2] );
+
+my $ques = AIR2::Question->new( ques_value => 'what is your favorite color' );
+$inq->add_questions( [$ques] );
+$inq->save;
+
+my $ques2 = AIR2::Question->new(
+    ques_value       => 'what is your favorite shape',
+    ques_public_flag => 1,
+);
+$inq2->add_questions( [$ques2] );
+$inq2->save;
+
+my $utf8_query = AIR2::Inquiry->new(
+    inq_confirm_msg =>
+        "<p>Gracias por elegir a participar en la red Public Insight Network. Pronto, estaremos en contacto con usted para colaborar en la presentaci\xF3n de informes sobre educaci\xF3n. </p>",
+    inq_ext_title => "Ay\xFAdenos reportar sobre educaci\xF3n",
+    inq_intro_para =>
+        "<p>La educaci\xF3n juega un papel muy importante en nuestras vidas y en las vidas de nuestros hijos. La educaci\xF3n desarrolla a nuestro pensamiento y prepara la pr\xF3xima generaci\xF3n para posiciones de liderazgo en el futuro.</p>",
+    inq_loc_id => 72,
+    inq_status => "E",
+    inq_title =>
+        "SchoolBook - Are you a student/parent/teacher/educator? (Spanish) - WA",
+    inq_type  => "F",
+    inq_uuid  => "e56b187c799c",
+    questions => [
+        {   ques_choices =>
+                "[{\"value\":\"no_preference\",\"isdefault\":\"1\"},{\"value\":\"English\",\"isdefault\":\"\"},{\"value\":\"Spanish\",\"isdefault\":\"\"}]",
+            ques_dis_seq => 1,
+            ques_pmap_id => 40,
+            ques_resp_opts =>
+                "{\"maxlen\":null,\"require\":false,\"dir\":\"V\"}",
+            ques_resp_type => "S",
+            ques_template  => "preflang",
+            ques_type      => "O",
+            ques_value     => "pref_lang",
+        },
+        {   ques_choices =>
+                "[{\"value\":\"Padre/Madre\",\"isdefault\":\"\"},{\"value\":\"Maestro/a\",\"isdefault\":\"\"},{\"value\":\"Administrador/a\",\"isdefault\":\"\"},{\"value\":\"Estudiante\",\"isdefault\":\"\"},{\"value\":\"Empleado/a de una escuela\",\"isdefault\":\"\"},{\"value\":\"Ninguno de los anteriores\",\"isdefault\":\"\"}]",
+            ques_dis_seq => 2,
+            ques_resp_opts =>
+                "{\"maxlen\":null,\"require\":false,\"dir\":\"H\"}",
+            ques_resp_type => "S",
+            ques_type      => "C",
+            ques_value     => "Seleccione todos los aplican. Yo soy un/a...",
+        },
+        {   ques_dis_seq => 3,
+            ques_resp_opts =>
+                "{\"maxlen\":null,\"require\":false,\"dir\":null}",
+            ques_resp_type => "S",
+            ques_type      => "T",
+            ques_value     => "&iquest;Cu&aacute;ntos hijos tiene usted?",
+        },
+        {   ques_dis_seq => 4,
+            ques_resp_opts =>
+                "{\"maxlen\":null,\"require\":false,\"rows\":\"3\",\"cols\":\"95\",\"dir\":null}",
+            ques_resp_type => "S",
+            ques_type      => "A",
+            ques_value =>
+                "&iquest;Qu&eacute; edad tiene su hijo(s) y cual es el nombre de su escuela?",
+        },
+        {   ques_dis_seq => 6,
+            ques_resp_opts =>
+                "{\"maxlen\":null,\"require\":false,\"rows\":\"3\",\"cols\":\"95\",\"dir\":null}",
+            ques_resp_type => "S",
+            ques_type      => "A",
+            ques_value =>
+                "Si usted es un educador, cu&eacute;ntanos lo que usted hace y en cual escuela u oficina.",
+        },
+        {   ques_dis_seq     => 7,
+            ques_public_flag => 0,
+            ques_resp_opts =>
+                "{\"maxlen\":null,\"require\":false,\"rows\":\"5\",\"cols\":\"95\",\"dir\":null}",
+            ques_resp_type => "S",
+            ques_type      => "A",
+            ques_value =>
+                "Describa el desaf&iacute;o m&aacute;s grande relacionado con la escuela y c\xF3mo ha cambiado su punto de vista del sistema educativo.",
+        },
+        {   ques_choices =>
+                "[{\"value\":\"Si\",\"isdefault\":\"\"},{\"value\":\"No\",\"isdefault\":\"\"}]",
+            ques_dis_seq => 9,
+            ques_resp_opts =>
+                "{\"maxlen\":null,\"require\":false,\"dir\":\"H\"}",
+            ques_resp_type => "S",
+            ques_type      => "R",
+            ques_value =>
+                "&iquest;Es mejor contactar a usted mediante mensajes de texto? (Por favor, no se olvide de incluir un n&uacute;mero de tel&eacute;fono m&oacute;vil encima.)",
+        },
+        {   ques_choices =>
+                "[{\"value\":\"Ning&uacute;n diploma\",\"isdefault\":\"\"},{\"value\":\"Diploma de escuela secundaria / GED\",\"isdefault\":\"\"},{\"value\":\"Tecnico\",\"isdefault\":\"\"},{\"value\":\"Licenciatura\",\"isdefault\":\"\"},{\"value\":\"Maestria\",\"isdefault\":\"\"},{\"value\":\"Doctorado\",\"isdefault\":\"\"},{\"value\":\"Otro\",\"isdefault\":\"\"}]",
+            ques_dis_seq => 5,
+            ques_resp_opts =>
+                "{\"maxlen\":null,\"require\":false,\"dir\":null}",
+            ques_resp_type => "S",
+            ques_type      => "O",
+            ques_value =>
+                "&iquest;Qu&eacute; nivel de educaci&oacute;n ha alcanzado?",
+        },
+        {   ques_choices =>
+                "[{\"value\":\"Si\",\"isdefault\":\"\"},{\"value\":\"No\",\"isdefault\":\"\"}]",
+            ques_dis_seq     => 8,
+            ques_public_flag => 0,
+            ques_resp_opts =>
+                "{\"maxlen\":null,\"require\":false,\"dir\":\"H\"}",
+            ques_resp_type => "S",
+            ques_type      => "R",
+            ques_value =>
+                "&iquest;Puede uno de nuestros productores, editores o periodistas entrar en contacto contigo para hacer algunas preguntas o tal vez una entrevista?",
+        },
+    ],
+    projects      => [$project2],
+    organizations => [$org2],
+)->save;
+
+# evergreen queries have known UUIDs
+for my $uuid (@AIR2::Inquiry::EVERGREEN_QUERY_UUIDS) {
+    my $query = AIR2::Inquiry->new(
+        inq_title     => "i am evergreen $uuid",
+        inq_ext_title => "i am evergreen $uuid",
+        inq_uuid      => $uuid,
+        organizations => [$org2],
+        projects      => [$project2],
+    );
+    $query->save;
+}
+
+# half the sources reply to one query
+for my $source ( @sources[ 0 .. int( $N_SOURCES / 2 ) ] ) {
+    my $srs = AIR2::SrcResponseSet->new(
+        srs_src_id => $source->src_id,
+        srs_inq_id => $inq->inq_id,
+        srs_date   => time(),
+    );
+    my $response = AIR2::SrcResponse->new(
+        sr_src_id     => $source->src_id,
+        sr_ques_id    => $ques->ques_id,
+        sr_orig_value => 'blue black - a test - oil spill',
+    );
+    $srs->add_responses( [$response] );
+    $srs->save();
+}
+
+# the other half reply to all queries
+for my $source ( @sources[ int( $N_SOURCES / 2 ) .. ( $N_SOURCES - 1 ) ] ) {
+    my $srs = AIR2::SrcResponseSet->new(
+        srs_src_id => $source->src_id,
+        srs_inq_id => $inq->inq_id,
+        srs_date   => time(),
+    );
+    my $response = AIR2::SrcResponse->new(
+        sr_src_id  => $source->src_id,
+        sr_ques_id => $ques->ques_id,
+        sr_orig_value =>
+            'red is my favorite color - a test - oil in the gulf',
+    );
+    $srs->add_responses( [$response] );
+    $srs->save;
+
+    $srs = AIR2::SrcResponseSet->new(
+        srs_src_id      => $source->src_id,
+        srs_inq_id      => $inq2->inq_id,
+        srs_date        => time(),
+        srs_public_flag => 1,
+    );
+    $response = AIR2::SrcResponse->new(
+        sr_src_id      => $source->src_id,
+        sr_ques_id     => $ques2->ques_id,
+        sr_orig_value  => 'circle is my favorite shape - test',
+        sr_public_flag => 1,
+    );
+    $srs->add_responses( [$response] );
+    $srs->save;
+}
+
+# manual submissions
+my $manual_query = $project->get_manual_entry_inquiry();
+my $manual_srs   = AIR2::SrcResponseSet->new(
+    srs_uuid   => $MANUAL_SUBMISSION_UUID,
+    srs_src_id => $sources[0]->src_id,
+    srs_inq_id => $manual_query->inq_id,
+    srs_date   => time(),
+    srs_type   => 'E',
+    cre_user   => $user,
+    upd_user   => $user,
+);
+$manual_srs->add_responses(
+    [   AIR2::SrcResponse->new(
+            sr_src_id     => $manual_srs->srs_src_id,
+            sr_ques_id    => $manual_query->questions->[0]->ques_id,
+            sr_orig_value => 'Email',
+            cre_user      => $user,
+            upd_user      => $user,
+        ),
+        AIR2::SrcResponse->new(
+            sr_src_id     => $manual_srs->srs_src_id,
+            sr_ques_id    => $manual_query->questions->[1]->ques_id,
+            sr_orig_value => 'what is your favorite color?',
+            cre_user      => $user,
+            upd_user      => $user,
+        ),
+        AIR2::SrcResponse->new(
+            sr_src_id     => $manual_srs->srs_src_id,
+            sr_ques_id    => $manual_query->questions->[2]->ques_id,
+            sr_orig_value => 'i sent this answer via email: yellow',
+            cre_user      => $user,
+            upd_user      => $user,
+        )
+    ]
+);
+$manual_srs->save;
+
+print "DB seeds complete\n";

@@ -41,7 +41,7 @@ $conn = AIR2_DBManager::get_connection();
 $users = array();
 for ($i=0; $i<4; $i++) {
     $users[$i] = new TestUser();
-    $users[$i]->user_password = 'Test123$';
+    $users[$i]->user_encrypted_password = 'Test123$';
     $users[$i]->save();
 }
 

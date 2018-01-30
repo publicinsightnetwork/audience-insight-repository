@@ -31,7 +31,7 @@ require_once 'models/TestInquiry.php';
 
 // init
 AIR2_DBManager::init();
-plan(10);
+plan(11);
 
 // since we use activities to determine some status values
 define('AIR2_REMOTE_USER_ID', 1);
@@ -146,3 +146,17 @@ $sact2->sact_xid = $srs1->srs_id;
 $sact2->sact_ref_type = SrcActivity::$REF_TYPE_RESPONSE;
 $sact2->save();
 is( $src->set_src_status(), Source::$STATUS_ENGAGED, "3 SrcOrg 2 responses == A" );
+
+// try adding source to blacklisted org
+$all_pin = Doctrine::getTable('Organization')->findOneBy('org_name', 'allPIN');
+$so4 = new SrcOrg();
+$so4->so_src_id = $src->src_id;
+$so4->so_org_id = $all_pin->org_id;
+$src->SrcOrg[] = $so4;
+try {
+  $src->save();
+  fail( "Assigning to All PIN Org should throw exception" );
+}
+catch (Exception $ex) {
+  ok( $ex, "Caught exception trying to add Source to AllPIN Org: $ex" );
+}

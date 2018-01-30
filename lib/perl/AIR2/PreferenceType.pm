@@ -65,7 +65,7 @@ __PACKAGE__->meta->setup(
 
     primary_key_columns => ['pt_id'],
 
-    unique_key => ['pt_uuid'],
+    unique_keys => [ ['pt_uuid'], ['pt_identifier'] ],
 
     foreign_keys => [
         cre_user => {

@@ -23,15 +23,14 @@
 use strict;
 use warnings;
 use Test::More tests => 21;
-use Test::Exception;
 use FindBin;
 use lib "$FindBin::Bin/../../lib/perl";
 use lib "$FindBin::Bin/../search/models";
+use lib "$FindBin::Bin";
 use JSON;
 use Data::Dump qw( dump );
 use Date::Parse;
 use DateTime;
-use WWW::Mailchimp;
 
 use AIR2::Config;
 use AIR2::Mailchimp;
@@ -42,19 +41,20 @@ use AIR2Test::Organization;
 use AIR2Test::Source;
 use AIR2Test::Email;
 
-my $TEST_LIST_ID = '8992dc9e18';
+use MailchimpUtils;
 
 # test sources
-# my @test_sources = qw(
-#     testsource0@nosuchemail.org
-#     testsource1@nosuchemail.org
-#     testsource2@nosuchemail.org
-# );
-my @test_sources = qw(
-    cavisr+mctest1@gmail.com
-    cavisr+mctest2@gmail.com
-    cavisr+mctest3@gmail.com
-);
+my @test_sources = ();
+my %seen         = ();
+while ( scalar(@test_sources) < 3 ) {
+
+    # all the pin0-99 @pinsight.org addresses are forwarded to the same
+    # email address, so pick a random number in that range.
+    # we randomize so as not to run afoul of MC throttling.
+    my $random = 0 + int( rand(99) );
+    my $email  = "pin${random}\@pinsight.org";
+    push @test_sources, $email unless $seen{$email}++;
+}
 
 #
 # setup an org with some src_org_emails
@@ -63,23 +63,23 @@ ok( my $user = AIR2Test::User->new(
         user_username   => 'i-am-a-test-user',
         user_first_name => 'i',
         user_last_name  => 'test',
-    )->load_or_save(),
+        )->load_or_save(),
     "new test user"
 );
-ok(
-    my $org = AIR2Test::Organization->new(
-        org_default_prj_id => 1,
-        org_name           => 'mailchimp-test-org',
-      )->load_or_save(),
-    "create test org"
-);
-$org->org_sys_id( [ { osid_type => 'M', osid_xuuid => $TEST_LIST_ID } ] );
+ok( my $org = MailchimpUtils::test_org(), "create test org" );
+$org->org_sys_id(
+    [ { osid_type => 'M', osid_xuuid => MailchimpUtils::list_id } ] );
 ok( $org->save, "create test org_sys_id" );
-ok( my $chimp = AIR2::Mailchimp->new( org => $org ), "create api adaptor" );
+ok( my $chimp = MailchimpUtils::client( org => $org ), "create api adaptor" );
+
+# start clean
+MailchimpUtils::clear_campaigns;
+MailchimpUtils::clear_segments;
+MailchimpUtils::clear_list;
 
 # setup sources
 my @sources;
-for my $e ( @test_sources ) {
+for my $e (@test_sources) {
     my $src = AIR2Test::Source->new( src_username => $e )->load_or_save;
     push @sources, $src;
 
@@ -94,14 +94,17 @@ for my $e ( @test_sources ) {
         soe_status_dtim => time(),
         soe_type        => 'M',
     };
-    $src->emails->[-1]->add_src_org_emails( [ $soe ] );
+    $src->emails->[-1]->add_src_org_emails( [$soe] );
     $src->emails->[-1]->save();
 }
 
 # make sure mailchimp is on the same page
 my $res = $chimp->sync_list( source => \@sources );
-my $tot = $res->{ignored} + $res->{subscribed} + $res->{unsubscribed};
-is( $tot, 3, 'setup - 3 total' );
+is_deeply(
+    $res,
+    { cleaned => 0, ignored => 0, subscribed => 3 },
+    "setup complete"
+);
 
 # test email
 $user->add_signatures( [ { usig_text => 'blah blah blah' } ] );
@@ -125,7 +128,7 @@ my $email = AIR2Test::Email->new(
 # setup segment
 my $seg_base = '006-send-campaign';
 $res = $chimp->make_segment( source => \@sources, name => $seg_base );
-is( $res->{added}, 3, 'segment setup - 3 added' );
+is( $res->{added},   3, 'segment setup - 3 added' );
 is( $res->{skipped}, 0, 'segment setup - 0 skipped' );
 my $segid = $res->{id};
 
@@ -136,68 +139,57 @@ is( $res->{count}, 3, 'campaign shows 3 in segment' );
 my $campid = $res->{id};
 
 # schedule to run in the future (check timezone conversions)
-my $delay_my_tz = DateTime->now(time_zone => $AIR2::Config::TIMEZONE);
-$delay_my_tz = $delay_my_tz->add(minutes => 10);
+my $delay_my_tz = DateTime->now( time_zone => $AIR2::Config::TIMEZONE );
+$delay_my_tz = $delay_my_tz->add( minutes => 10 );
 $res = $chimp->send_campaign( campaign => $campid, delay => $delay_my_tz );
-ok( $res, 'campaign delay - success' );
+is( $res->{code}, '204', 'campaign will be sent later' );
 
 # check the scheduling
-$res = $chimp->api->campaigns( filters => {campaign_id => $campid} );
-ok( my $camp = $res->{data}->[0], 'campaign delay - api response' );
-is( $camp->{id}, $campid, 'campaign delay - api match' );
-is( $camp->{emails_sent}, 0, 'campaign delay - emails sent' );
-is( $camp->{status}, 'schedule', 'campaign delay - status' );
+$res = $chimp->api->campaign( campaign_id => $campid );
+ok( my $camp = $res->{content}, 'campaign delay - api response' );
+is( $camp->{id},          $campid,    'campaign delay - api match' );
+is( $camp->{emails_sent}, 0,          'campaign delay - emails sent' );
+is( $camp->{status},      'schedule', 'campaign delay - status' );
 ok( $camp->{send_time}, 'campaign delay - send time' );
-is( str2time($camp->{send_time}, 'UTC'), $delay_my_tz->epoch(), 'campaign delay - epochs align' );
-ok( $chimp->api->campaignUnschedule(cid => $campid), 'campaign delay - unschedule' );
+cmp_ok( str2time( $camp->{send_time}, 'UTC' ),
+    '>=', $delay_my_tz->epoch(), 'campaign delay - epochs align' );
+ok( $res = $chimp->api->unschedule_campaign( campaign_id => $campid ),
+    'campaign delay - unschedule' );
 
 # run one now
 if ( $ENV{MAILCHIMP_TEST_SEND} ) {
     $res = $chimp->send_campaign( campaign => $campid );
-    ok( $res, 'campaign send - success' );
+    is( $res->{code}, '204', 'campaign send - success' );
+
+    my $campaign;
 
     # check periodically to see if we've sent them
-    for ( my $i = 0; $i < 10; $i++) {
+    for ( my $i = 0; $i < 10; $i++ ) {
         sleep 5;
-        $res = $chimp->api->campaigns( filters => {campaign_id => $campid} );
-        $camp = $res->{data}->[0];
-        # diag("*STATUS CHECK: $camp->{status}");
+        $campaign = $chimp->campaign($campid);
 
-        if ( $camp->{status} eq 'sent' ) {
+        diag dump $campaign;
+
+        if ( $campaign->{status} eq 'sent' ) {
             last;
         }
-        elsif ( $camp->{status} ne 'sending' ) {
-            diag( "*STATUS ERROR: $camp->{status}" );
+        elsif ( $campaign->{status} ne 'sending' ) {
+            diag("*STATUS ERROR: $campaign->{status}");
             last;
         }
     }
 
     # now the status should be correct
-    is( $camp->{emails_sent}, 3, 'campaign send - emails sent' );
-    is( $camp->{status}, 'sent', 'campaign send - status' );
-    ok( $camp->{send_time}, 'campaign send - send time' );
+    is( $campaign->{emails_sent}, 3,      'campaign send - emails sent' );
+    is( $campaign->{status},      'sent', 'campaign send - status' );
+    ok( $campaign->{send_time}, 'campaign send - send time' );
 }
 else {
-    pass( 'campaign send - success **SKIPPED' );
-    pass( 'campaign send - emails sent **SKIPPED' );
-    pass( 'campaign send - status **SKIPPED' );
-    pass( 'campaign send - send time **SKIPPED' );
+    pass('campaign send - success **SKIPPED');
+    pass('campaign send - emails sent **SKIPPED');
+    pass('campaign send - status **SKIPPED');
+    pass('campaign send - send time **SKIPPED');
 }
 
-#
-# cleanup (optional, but nice)
-#
-$res = $chimp->api->listStaticSegments(id => $TEST_LIST_ID);
-for my $ss ( @{ $res } ) {
-    if ( $ss->{name} =~ /^006-send-campaign/ ) {
-        # diag("* cleaning up $ss->{name}\n");
-        $chimp->api->listStaticSegmentDel(id => $TEST_LIST_ID, seg_id => $ss->{id});
-    }
-}
-$res = $chimp->api->campaigns(filters => {list_id => $TEST_LIST_ID});
-for my $cc ( @{ $res->{data} } ) {
-    if ( $cc->{subject} =~ /006-send-campaign/ ) {
-        # diag("* cleaning up $cc->{subject}\n");
-        $chimp->api->campaignDelete(cid => $cc->{id});
-    }
-}
+$org = undef;
+

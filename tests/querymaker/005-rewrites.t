@@ -19,7 +19,7 @@ $dummy_query_html->spew('i am html');
 $dummy_query_json->spew('{"test":"i am json"}');
 
 my $url     = AIR2::Config::get_constant('AIR2_BASE_URL') . 'q';
-my $browser = LWP::UserAgent->new();
+my $browser = LWP::UserAgent->new( ssl_opts => { verify_hostname => 0 } );
 
 # /q/<uuid> => /querys/<uuid>.html
 ok( my $resp = $browser->get("$url/$uuid"), "get $url/$uuid" );

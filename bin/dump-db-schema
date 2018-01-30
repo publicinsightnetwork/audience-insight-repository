@@ -1,0 +1,38 @@
+#!/usr/bin/env perl
+#
+# dump the bare (no data) mysql schema to stdout
+#
+# example: perl bin/dump-db-schema > etc/sql/air2.sql
+#
+use strict;
+use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../lib/perl";
+use AIR2::DBManager;
+use Path::Class;
+
+sub filter {
+    my ($line) = @_;
+    $line =~ s/DEFINER=[^*]*\*/\*/;
+    $line =~ s/ AUTO_INCREMENT=[0-9]*//g;
+    return $line;
+}
+
+my $db     = AIR2::DBManager->new_or_cached();
+my $un     = $db->username;
+my $pw     = $db->password;
+my $dbname = $db->database;
+my $host   = $db->host;
+my $pwfile = file("/tmp/.air2.pw");
+$pwfile->spew("[client]\npassword=$pw\n");
+my $backup_mysql = sprintf( "mysqldump --defaults-file=%s -d -u %s -h %s %s",
+    $pwfile, $un, $host, $dbname );
+
+open( my $fh, '-|', $backup_mysql ) or die "Can't exec $backup_mysql: $!";
+while ( my $line = <$fh> ) {
+    print filter($line);
+}
+close($fh);
+
+$pwfile->remove();
+

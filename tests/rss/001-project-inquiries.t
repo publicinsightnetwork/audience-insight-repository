@@ -137,7 +137,7 @@ $sum_before = md5($response);  // Note: This is only the body; not including hea
 $rss = new SimpleXMLElement($response);
 $items = $rss->xpath('/rss/channel/item');
 foreach ($items as $item) {
-    diag( $item->title );
+    //diag( $item->title );
 }
 is(count($items), 1, 'count of items in rss feed'); // only one of 5 in the feed
 

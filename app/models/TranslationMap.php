@@ -50,7 +50,7 @@ class TranslationMap extends AIR2_Record {
         $this->hasColumn('xm_fact_id', 'integer', 4, array(
                 'notnull' => true,
             ));
-        $this->hasColumn('xm_xlate_from', 'string', 128, array(
+        $this->hasColumn('xm_xlate_from', 'string', 255, array(
                 'notnull' => true,
             ));
         $this->hasColumn('xm_xlate_to_fv_id', 'integer', 4, array(

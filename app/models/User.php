@@ -21,6 +21,7 @@
  *************************************************************************/
 
 require_once 'shared/phmagick/phmagick.php';
+require_once 'shared/password.php';
 
 /**
  * User
@@ -113,6 +114,7 @@ class User extends AIR2_Record {
         $this->hasColumn('user_password', 'string', 32, array(
                 'fixed' => true,
             ));
+        $this->hasColumn('user_encrypted_password', 'string', 255, array());
         $this->hasColumn('user_pswd_dtim', 'timestamp', null, array());
 
         // metadata
@@ -193,6 +195,7 @@ class User extends AIR2_Record {
 
         // add a mutator on the password field
         $this->hasMutator('user_password', '_encrypt_password');
+        $this->hasMutator('user_encrypted_password', '_hash_encrypted_password');
     }
 
 
@@ -233,8 +236,18 @@ class User extends AIR2_Record {
      * @param string  $cleartext
      */
     protected function _encrypt_password($cleartext) {
-        $encrypted = $this->_encrypt_string($cleartext);
-        $this->_set('user_password', $encrypted);
+        $this->_hash_encrypted_password($cleartext);
+    }
+
+
+    /**
+     * Mutates the user_encrypted_password
+     *
+     * @param string  $cleartext
+     */
+    protected function _hash_encrypted_password($cleartext) {
+        $hashed = $this->_hash_password($cleartext);
+        $this->_set('user_encrypted_password', $hashed);
     }
 
 
@@ -251,14 +264,37 @@ class User extends AIR2_Record {
 
 
     /**
-     * Checks for equality between a password string against user_password
+     * Hash a plain password string.
      *
-     * @param string  $cleartext
+     * @param string  $plain_password
+     * @return string the password hash
+     */
+    protected function _hash_password($plain_password) {
+        return password_hash($plain_password, PASSWORD_BCRYPT, array("cost" => 13));
+    }
+
+
+    /**
+     * Checks for equality between a password string against stored password.
+     *
      * @return boolean
+     * @param string  $cleartext
      */
     public function check_password($cleartext) {
-        $encrypted = $this->_encrypt_string($cleartext);
-        return $encrypted === $this->user_password;
+        if (isset($this->user_password) && !strlen($this->user_encrypted_password)) {
+            $encrypted = $this->_encrypt_string($cleartext);
+            $old_md5_match = $encrypted === $this->user_password;
+            // this is a match against legacy hashing. update if necessary.
+            if ($old_md5_match) {
+                $this->user_encrypted_password = $cleartext;
+                $this->_set('user_password', null);
+                $this->save();
+            }
+            else {
+                return false;
+            }
+        }
+        return password_verify($cleartext, $this->user_encrypted_password);
     }
 
 

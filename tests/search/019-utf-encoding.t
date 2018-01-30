@@ -47,7 +47,7 @@ use URI::Query;
 
 my $stxml   = Search::Tools::XML->new;
 my $debug   = $ENV{PERL_DEBUG} || 0;
-my $TMP_DIR = Path::Class::dir('/tmp/air2-test/search');
+my $TMP_DIR = AIR2::Config::get_tmp_dir->subdir('search');
 $AIR2::Config::SEARCH_ROOT = $TMP_DIR;
 
 $Rose::DB::Object::Debug          = $debug;
@@ -61,6 +61,13 @@ $index_dir->mkpath($debug);
 
 ok( my $inquiry = AIR2::Inquiry->new( inq_uuid => 'e56b187c799c' )->load(),
     "load utf-8 encoded inquiry" );
+
+# make sure we are related to at least one active org
+for my $prjinq ( @{ $inquiry->project_inquiries } ) {
+    for my $porg ( @{ $prjinq->project->project_orgs } ) {
+        $porg->organization->org_status('A');    # DO NOT SAVE
+    }
+}
 
 ok( my $inqxml = $inquiry->as_xml(
         {   debug    => $debug,
@@ -112,20 +119,24 @@ require AIR2::Search::MasterServer;
 test_psgi(
     app => AIR2::Search::MasterServer->app(
         {   skip => {
-                sources                  => 1,
-                'active-sources'         => 1,
-                'primary-sources'        => 1,
-                'strict-sources'         => 1,
-                'strict-active-sources'  => 1,
-                'strict-primary-sources' => 1,
-                projects                 => 1,
-                responses                => 1,
-                'fuzzy-sources'          => 1,
-                'fuzzy-active-sources'   => 1,
-                'fuzzy-primary-sources'  => 1,
-                'fuzzy-responses'        => 1,
-                'strict-responses'       => 1,
-                'public-responses'       => 1,
+                sources                   => 1,
+                outcomes                  => 1,
+                'active-sources'          => 1,
+                'primary-sources'         => 1,
+                'strict-sources'          => 1,
+                'strict-active-sources'   => 1,
+                'strict-primary-sources'  => 1,
+                projects                  => 1,
+                responses                 => 1,
+                'fuzzy-sources'           => 1,
+                'fuzzy-active-sources'    => 1,
+                'fuzzy-primary-sources'   => 1,
+                'fuzzy-responses'         => 1,
+                'strict-responses'        => 1,
+                'active-responses'        => 1,
+                'fuzzy-active-responses'  => 1,
+                'strict-active-responses' => 1,
+                'public-responses'        => 1,
             }
         }
     ),

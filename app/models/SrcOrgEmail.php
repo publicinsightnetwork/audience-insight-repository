@@ -33,6 +33,7 @@ class SrcOrgEmail extends AIR2_Record {
     public static $STATUS_BOUNCED      = 'B';
     public static $STATUS_UNSUBSCRIBED = 'U';
     public static $STATUS_ERROR        = 'E';
+    public static $STATUS_PENDING      = 'P';
     public static $TYPE_LYRIS          = 'L';
     public static $TYPE_MAILCHIMP      = 'M';
 

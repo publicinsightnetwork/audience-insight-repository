@@ -56,7 +56,7 @@ function getFocus() {
    <table border="0" cellpadding="5" style="width:100%">
 
     <tr><th>Username:</th><td><input type="text" name="username" /></td></tr>
-    <tr><th>Password:</th><td><input type="password" name="password" />
+    <tr><th>Password:</th><td><input type="password" name="password" autocomplete="off"/>
     </td></tr>
     <tr><td colspan="2" align="right">
      <div id="forgot-password">

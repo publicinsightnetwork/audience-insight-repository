@@ -147,6 +147,7 @@ sub make_xml {
         pk   => $pk,
         base => $base_dir,
         xml  => $xml,
+        compress => 1,
     );
 
     # if this was a stale record, zap the stale record

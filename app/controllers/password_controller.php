@@ -99,7 +99,7 @@ class Password_Controller extends Password_Reset_Controller {
     protected function show_email_sent_page($email, $success) {
         $header = $success ? 'Success!' : 'Error!';
         $body = $success ?
-            "An email containing a link to change your password was sent to $email." :
+            "If your address was found in our system, an email containing a link to change your password was sent to $email." :
             "There was a problem sending an email to $email.";
         $stash = array(
             'static_url' => site_url(),
@@ -221,7 +221,8 @@ class Password_Controller extends Password_Reset_Controller {
      */
     protected function change_password($login_id, $password) {
         $usr = Doctrine::getTable('User')->find($login_id);
-        $usr->user_password = $password;
+        $usr->user_encrypted_password = $password;
+        $usr->user_pswd_dtim = air2_date();
         try {
             $usr->save();
             return true;

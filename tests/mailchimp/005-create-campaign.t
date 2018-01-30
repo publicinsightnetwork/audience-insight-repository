@@ -27,9 +27,9 @@ use Test::Exception;
 use FindBin;
 use lib "$FindBin::Bin/../../lib/perl";
 use lib "$FindBin::Bin/../search/models";
+use lib "$FindBin::Bin";
 use JSON;
 use Data::Dump qw( dump );
-use WWW::Mailchimp;
 
 use AIR2::Config;
 use AIR2::Mailchimp;
@@ -40,14 +40,16 @@ use AIR2Test::Organization;
 use AIR2Test::Source;
 use AIR2Test::Email;
 
-my $TEST_LIST_ID = '8992dc9e18';
+use MailchimpUtils;
 
 # test sources
-my @test_sources = qw(
-    testsource0@nosuchemail.org
-    testsource1@nosuchemail.org
-    testsource2@nosuchemail.org
-);
+my $random_str   = $$;
+my $i            = 0;
+my @test_sources = ();
+while ( $i < 3 ) {
+    push @test_sources, "testsource${i}.$random_str\@nosuchemail.org";
+    $i++;
+}
 
 #
 # setup an org with some src_org_emails
@@ -56,23 +58,23 @@ ok( my $user = AIR2Test::User->new(
         user_username   => 'i-am-a-test-user',
         user_first_name => 'i',
         user_last_name  => 'test',
-    )->load_or_save(),
+        )->load_or_save(),
     "new test user"
 );
-ok(
-    my $org = AIR2Test::Organization->new(
-        org_default_prj_id => 1,
-        org_name           => 'mailchimp-test-org',
-      )->load_or_save(),
-    "create test org"
-);
-$org->org_sys_id( [ { osid_type => 'M', osid_xuuid => $TEST_LIST_ID } ] );
+ok( my $org = MailchimpUtils::test_org(), "create test org" );
+$org->org_sys_id(
+    [ { osid_type => 'M', osid_xuuid => MailchimpUtils::list_id } ] );
 ok( $org->save, "create test org_sys_id" );
-ok( my $chimp = AIR2::Mailchimp->new( org => $org ), "create api adaptor" );
+ok( my $chimp = MailchimpUtils::client( org => $org ), "create api adaptor" );
+
+# start clean
+MailchimpUtils::clear_campaigns;
+MailchimpUtils::clear_segments;
+MailchimpUtils::clear_list;
 
 # setup sources
 my @sources;
-for my $e ( @test_sources ) {
+for my $e (@test_sources) {
     my $src = AIR2Test::Source->new( src_username => $e )->load_or_save;
     push @sources, $src;
 
@@ -87,14 +89,17 @@ for my $e ( @test_sources ) {
         soe_status_dtim => time(),
         soe_type        => 'M',
     };
-    $src->emails->[-1]->add_src_org_emails( [ $soe ] );
+    $src->emails->[-1]->add_src_org_emails( [$soe] );
     $src->emails->[-1]->save();
 }
 
 # make sure mailchimp is on the same page
 my $res = $chimp->sync_list( source => \@sources );
-my $tot = $res->{ignored} + $res->{subscribed} + $res->{unsubscribed};
-is( $tot, 3, 'setup - 3 total' );
+is_deeply(
+    $res,
+    { ignored => 0, subscribed => 3, cleaned => 0, },
+    "setup subscribers"
+);
 
 # test email
 $user->add_signatures( [ { usig_text => 'blah blah blah' } ] );
@@ -117,7 +122,7 @@ my $email = AIR2Test::Email->new(
 # setup segment
 my $seg_base = '005-create-campaign';
 $res = $chimp->make_segment( source => \@sources, name => $seg_base );
-is( $res->{added}, 3, 'segment setup - 3 added' );
+is( $res->{added},   3, 'segment setup - 3 added' );
 is( $res->{skipped}, 0, 'segment setup - 0 skipped' );
 my $segid = $res->{id};
 
@@ -135,24 +140,3 @@ $res = $chimp->make_campaign( template => $email, segment => $segid );
 ok( $res->{id}, 'campaign created' );
 is( $res->{count}, 3, 'campaign shows 3 in segment' );
 
-#
-# cleanup (optional, but nice)
-#
-$res = $chimp->api->listStaticSegments(id => $TEST_LIST_ID);
-for my $ss ( @{ $res } ) {
-    if ( $ss->{name} =~ /^005-create-campaign/ ) {
-        # diag("* cleaning up $ss->{name}\n");
-        $chimp->api->listStaticSegmentDel(id => $TEST_LIST_ID, seg_id => $ss->{id});
-    }
-}
-$res = $chimp->api->campaigns(filters => {list_id => $TEST_LIST_ID});
-for my $cc ( @{ $res->{data} } ) {
-    if ( $cc->{subject} =~ /005-create-campaign/ ) {
-        # diag("* cleaning up $cc->{subject}\n");
-        $chimp->api->campaignDelete(cid => $cc->{id});
-    }
-}
-$email->delete();
-for my $usg ( @{ $user->signatures } ) {
-    $usg->delete();
-}

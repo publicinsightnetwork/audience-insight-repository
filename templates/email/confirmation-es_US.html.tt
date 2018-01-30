@@ -1,0 +1,176 @@
+[%  # in-line style definitions
+
+    font_face = 'font-family: Helvetica';
+    font_size = '9px';
+
+    content = 'max-width: 600px; margin: 0 auto; display: block;';
+    css_newsrooms = 'width: 100%; padding-bottom: 20px; margin-bottom: 20px; color: #999999; font-size: 14px; border-bottom: 1px solid #eeeeee;';
+    css_container = 'display:block !important; max-width:600px !important; margin:0 auto !important; clear:both!important;';
+    css_text = 'margin: 15px 0; font-weight: normal; font-size:14px; line-height:1.5;';
+    css_body_links = 'color: #4887ff; text-decoration: none;'
+    css_footer_links = 'color: #666666; text-decoration: none;';
+
+    all_inline_styles = "$font_face; $font_size;";
+
+%]
+[% BLOCK do_signature %]
+[% #sig.dump_stderr %]
+[% IF sig.isa('AIR2::UserSignature') %]
+
+[% ELSE %]
+    <strong>[% sig.name %]</strong><br/>
+    [% IF sig.title %][% sig.title %]<br/>[% END %]
+    [% IF sig.email %][% sig.email %]<br/>[% END %]
+    [% IF sig.phone %][% sig.phone %][% END %]
+[% END %]
+[% END # end BLOCK %]
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!-- If you delete this meta tag, Half Life 3 will never be released. -->
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Submission Confirmation - Public Insight Network</title>
+</head>
+
+<body style="-webkit-text-size-adjust:none; width: 100% !important; height: 100%; background-color: #f6f6f6; background: #f6f6f6 url([% pin.asset_uri %]/css/img/back-gray-grid.jpg) repeat; color: #444444; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0;">
+
+
+<!-- BACKGROUND COLOR FOR GMAIL -->
+<table bgcolor="#eeeeee" width="100%" cellpadding="0" cellspacing="0" style="background: #f6f6f6 url([% pin.asset_uri %]/css/img/back-gray-grid.jpg) repeat;">
+  <tr>
+    <td>
+
+
+<!-- HEADER -->
+<table style="width: 100%; text-align: center; margin-bottom: 25px;" bgcolor="#B80007" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <td style="[% css_container %] text-align: center; margin: 0; padding: 10px;">
+            <a href="[% pin.uri %]"><img src="[% pin.asset_uri %]/css/img/pin-logo-white.png" style="border: 0; max-width: 200px; text-align: center;" /></a>
+        </td>
+    </tr>
+</table>
+<!-- /HEADER -->
+
+
+<!-- BODY -->
+<table style="width: 100%;" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <td></td>
+        <td style="[% css_container %]">
+
+            <div style="[% content %] background: #fff; padding: 20px; box-shadow: 0 0 5px rgba(0,0,0,.1);">
+            <table>
+                <tr>
+                    <td>
+
+                        <!-- NEWSROOMS -->
+                        <table style="[% css_newsrooms %]">
+                            [% FOREACH newsroom IN newsrooms %]
+                            <tr>
+                                <td style="width: 1%;">
+                                    <a href="[% newsroom.uri %]" style="[% css_body_links %]"><img src="[% newsroom.logo_uri %]" style="width: 45px; height: 45px; border-radius: 2px; margin-right: 7px;" /></a>
+                                </td>
+                                <td valign="top" style="padding-top: 6px; width: 1px; white-space: nowrap; padding-right: 30px; line-height: 18px;">
+                                    <strong><a href="[% newsroom.uri %]" style="text-decoration: none;">[% newsroom.name %]</a></strong><br />
+                                    [% newsroom.location %]
+                                </td>
+                            </tr>
+                            [% END %]
+                        </table>
+                        <!-- /NEWSROOMS -->
+
+
+                        <!-- MESSAGE -->
+                        <h3 style="font-weight:500; font-size: 27px; margin-bottom: 20px;">Estimada [% source.name %],</h3>
+                        <p style="font-size:17px;">Gracias por compartir su información con el equipo de <strong><a href="[% newsrooms.0.uri %]" style="[% css_body_links %]">[% newsrooms.0.name %]</a></strong>.</p>
+
+                        <p style="[% css_text %]">Puede que un miembro de nuestro equipo lo(a) contacte con algunas preguntas sobre la información que usted nos proporcionó. Por favor, tome un momento para compartir <strong><a href="[% query.uri %]" style="[% css_body_links %]">este formulario</a></strong> con otras personas que tengan interes en este tema.</p>
+<!-- disabled related queries in spanish
+                        <span style="[% css_text %]">
+                        <p><strong>También puede ayudar a informar a más de nuestro informe:</strong></p>
+
+                            <ul style="[% css_text %] margin-left: 0; padding-left: 20px;">
+                            [% FOREACH q IN related_queries %]
+                                <li><a href="[% q.uri %]" style="[% css_body_links %]">[% q.title %]</a></li>
+                            [% END %]
+                            </ul>
+                        </span>
+-->
+                        <p style="[% css_text %]">
+                        ¡Nuevamente, gracias por su tiempo!
+                        </p>
+                        <!-- MESSAGE -->
+
+
+                        <!-- SIGNATURE -->
+                        <table style="margin: 25px 0; font-weight: normal; font-size: 14px; line-height: 1.4;">
+                        [% FOREACH author IN authors %]
+                            <tr>
+                             [% IF (author.get_avatar_uri) %]
+                                <td style="width: 62px;">
+                                    <img src="[% author.get_avatar_uri %]" style="height: 55px; width: 55px; border-radius: 50px;">
+                                </td>
+                             [% END %]
+                                <td><p style="[% css_text %]">[% PROCESS do_signature sig = author.get_signature( query.uuid ) %]</p></td>
+                            </tr>
+                        [% END %]
+                        </table>
+                        <!-- /SIGNATURE -->
+
+                        <!-- Callout Panel -->
+                        <p style="[% css_text %] padding:15px; background-color:#ECF8FF; margin-top: 10px; margin-bottom: 10px;">
+                            <strong>¿Qué es la Red de Perspectivas Públicas?</strong><br />
+Public Insight Network (PIN) de American Public Media, es una plataforma para conectar a periodistas de confianza con fuentes con conocimientos. Mediante PIN, las personas alrededor del mundo comparten lo que saben para informar los reportajes realizados en salas de redacción asociadas con PIN, haciendo que la cobertura de las noticias sea más relevante, diversa, transparente y fiable.<br />
+                            <a href="[% pin.uri %]" style="font-weight:bold; color: #2BA6CB;">Aprenda más &raquo;</a>
+                        </p><!-- /Callout Panel -->
+
+                    </td>
+                </tr>
+            </table>
+            </div><!-- /content -->
+
+        </td>
+        <td></td>
+    </tr>
+</table><!-- /BODY -->
+
+<!-- FOOTER -->
+<table style="width: 100%; clear: both !important; padding-bottom: 40px;">
+    <tr>
+        <td></td>
+        <td style="[% css_container %]">
+
+            <!-- FOOTER CONTENT -->
+            <div class="content">
+            [% FOREACH newsroom IN newsrooms %]
+                <div class="newsroom-footer">
+                    <p style="color: #999999; padding-left: 20px;">
+                        <strong><a href="[% newsroom.uri %]" style="[% css_footer_links %]">[% newsroom.name %]</a></strong><br />
+                        [% newsroom.location %]
+                    </p>
+                </div>
+            [% END %]
+                <div>
+                    <p style="font-weight: bold; padding-left: 20px;">
+                        <a href="[% unsubscribe_url %]" style="[% css_footer_links %]">Unsubscribe</a> <span style="color: #ccc;">|</span>
+                        <a href="[% pin.terms_uri %]" style="[% css_footer_links %]">Terms</a> <span style="color: #ccc;">|</span>
+                        <a href="[% pin.privacy_uri %]" style="[% css_footer_links %]">Privacy</a>
+                    </p>
+                </div>
+            </div>
+            <!-- /FOOTER CONTENT -->
+
+          </td>
+        <td></td>
+    </tr>
+</table><!-- /FOOTER -->
+
+
+
+    </td>
+  </tr>
+</table>
+</body>
+</html>

@@ -119,10 +119,10 @@ class Source extends AIR2_Record {
                     '2 characters long, with no leading or trailing whitespace',
                 ),
             ));
-        $this->hasColumn('src_first_name', 'string', 64, array(
+        $this->hasColumn('src_first_name', 'string', 255, array(
 
             ));
-        $this->hasColumn('src_last_name', 'string', 64, array(
+        $this->hasColumn('src_last_name', 'string', 255, array(
 
             ));
         $this->hasColumn('src_middle_initial', 'string', 1, array(

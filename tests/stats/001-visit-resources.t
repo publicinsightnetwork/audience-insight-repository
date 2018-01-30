@@ -53,6 +53,10 @@ $srs->Inquiry = $inq;
 $srs->srs_date = date('Y-m-d');
 $srs->save();
 
+// clean slate
+$conn = AIR2_DBManager::get_master_connection();
+$conn->exec("delete from user_visit");
+
 // Initialize browser.
 $browser = new AirHttpTest();
 $browser->set_content_type(AirHttpTest::$HTML);
@@ -66,7 +70,7 @@ $recs = UserVisit::find(array(
 	'type' => UserVisit::$VISITABLE['Source'],
 	'xid' => $src->src_id)
 );
-is(count($recs), 0);
+is(count($recs), 0, "visits start at zero");
 
 // Test retrieving the source.
 $result = $browser->http_get('/source/' . $src->src_uuid);
@@ -86,7 +90,7 @@ $recs = UserVisit::find(array(
 	'type' => UserVisit::$VISITABLE['SrcResponseSet'],
 	'xid' => $srs->srs_id)
 );
-is(count($recs), 0);
+is(count($recs), 0, "visits start at zero");
 
 // Visit.
 $result = $browser->http_get('/submission/' . $srs->srs_uuid);
@@ -96,4 +100,4 @@ $recs = UserVisit::find(array(
 	'type' => UserVisit::$VISITABLE['SrcResponseSet'],
 	'xid' => $srs->srs_id)
 );
-is(count($recs), 1);
+is(count($recs), 1, "visits increment by one");

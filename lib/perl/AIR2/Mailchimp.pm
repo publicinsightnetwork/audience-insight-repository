@@ -25,16 +25,31 @@ use warnings;
 use Carp;
 use Data::Dump qw( dump );
 use List::MoreUtils qw( natatime );
+use Digest::MD5 qw( md5_hex );
 use Date::Parse;
 use DateTime;
 use Scalar::Util qw( blessed );
 use JSON;
+use IO::String;
+use IO::Uncompress::Gunzip;
+use Archive::Tar;
 use AIR2::Config;
 use AIR2::Organization;
-use WWW::Mailchimp;
+use Mail::Chimp3;
+use AIR2::UserAgent;
+use Time::HiRes ();
 use base qw( Rose::ObjectX::CAF );
 
-__PACKAGE__->mk_accessors(qw( ));
+__PACKAGE__->mk_accessors(
+    qw(
+        debug
+        max_tries
+        interval
+        api_page_size
+        api_batch_min
+        api_batch_limit
+        )
+);
 
 __PACKAGE__->mk_ro_accessors(
     qw(
@@ -44,6 +59,7 @@ __PACKAGE__->mk_ro_accessors(
         list_id
         mailing_list
         grouping_id
+        list_filter_max
         )
 );
 
@@ -82,6 +98,7 @@ my %ERRORS    = (
     RoleBasedOrInvalid_Email  => -99,
 );
 my %SOE_STATUS_MAP = (
+    pending          => 'P',
     subscribed       => 'A',
     unsubscribed     => 'U',
     cleaned          => 'B',
@@ -89,6 +106,10 @@ my %SOE_STATUS_MAP = (
 );
 my @cached_since_emails;
 my %cached_unsub_reasons;
+my $DEFAULT_START_TIME = '2001-01-01 01:01:01';
+
+# this is a Mailchimp constant. May only schedule campaigns on the quarter hour.
+use constant INCREMENT_DELAY => 15;
 
 # The number of seconds to buffer when comparing timestamps between mailchimp
 # and AIR.  Should account for slight differences in server times.
@@ -98,10 +119,12 @@ my $TBUFF = 5;
 my $API_KEY = AIR2::Config::get_constant('AIR2_MAILCHIMP_KEY');
 my $LIST_ID = AIR2::Config::get_constant('AIR2_EMAIL_LIST_ID');
 my $API_OPT = {
-    apikey        => $API_KEY,
-    timeout       => 180,
-    output_format => 'json',
-    api_version   => 1.3,
+    api_key => $API_KEY,
+    agent   => AIR2::UserAgent->new(
+        timeout  => 180,
+        agent    => 'air2-useragent',
+        ssl_opts => { verify_hostname => 0, SSL_verify_mode => 0x00 }
+    ),
 };
 my $API;
 
@@ -109,6 +132,20 @@ my $API;
 sub init {
     my $self = shift;
     my %args = @_;
+    $args{debug} ||= $ENV{MAILCHIMP_DEBUG} || $ENV{AIR2_DEBUG};
+    $args{max_tries}       ||= 10;
+    $args{interval}        ||= 5;
+    $args{api_batch_min}   ||= 10;
+    $args{api_batch_limit} ||= 500;    # determined by Mailchimp
+
+    # >100 slows down total time for large resultsets
+    $args{api_page_size} ||= 100;
+
+    # production list size is > 200k
+    # 200,000 members at 100/page = 2000 HTTP calls
+    # so if total list size is < 2000 then faster to do individually.
+    $args{list_filter_max} ||= int( 200_000 / $args{api_page_size} );
+
     $args{api_key} ||= $API_KEY;
     $args{list_id} ||= $LIST_ID;
     $args{org}     ||= AIR2::Organization->new(
@@ -117,35 +154,52 @@ sub init {
     $self->SUPER::init(%args);
 
     # check
-    croak "org required"                       unless ( $self->org );
-    croak "unable to find list id"             unless ( $self->list_id );
-    croak "unable to find a mailchimp api key" unless ( $self->api_key );
+    confess "org required"                       unless ( $self->org );
+    confess "unable to find list id"             unless ( $self->list_id );
+    confess "unable to find a mailchimp api key" unless ( $self->api_key );
+
+    $self->{api} = $self->init_api();
+    $self->init_mailing_list();
+}
+
+sub init_api {
+    my $self = shift;
+    return $API if $API;
 
     # setup api singleton
-    $API = WWW::Mailchimp->new($API_OPT) unless ($API);
+    $API = Mail::Chimp3->new($API_OPT) unless ($API);
 
     # turn on debug opts to stderr
     if ( $ENV{AIR2_DEBUG} || $ENV{MAILCHIMP_DEBUG} ) {
         my $dumper = sub {
-            if ( $_[0] =~ m/^[\{\[]/ ) { dump( decode_json( $_[0] ) ) }
+            if ( $_[0] =~ m/^[\{\[]/ ) {
+                $self->debug_response( decode_json( $_[0] ) );
+            }
         };
-        $API->ua->add_handler( "request_send", sub { shift->dump; return } );
-        $API->ua->add_handler( "response_done",
+        $API->agent->add_handler( "request_send",
+            sub { shift->dump; return } );
+        $API->agent->add_handler( "response_done",
             sub { $_[0]->dump; $dumper->( $_[0]->decoded_content ); return }
         );
     }
+    return $API;
+}
 
-    $self->{api} = $API;
+sub init_mailing_list {
+    my $self = shift;
 
-    # get the actual mailing list
-    my $list = $API->lists( filters => { list_id => $self->{list_id} } );
+    # cache the mailing list
+    my $list = $self->api->list( list_id => $self->list_id );
     if ( !ref $list ) {
-        croak $list;
+        confess $list;
     }
-    croak $list->{error} if $list->{error};
-    $self->{mailing_list} = $list->{data}->[0];
+    confess $list->{error} if $list->{error};
+    $self->{mailing_list} = $list->{content};
+}
 
-    return $self;
+sub list_member_count {
+    my $self = shift;
+    $self->{mailing_list}->{stats}->{member_count} || 0;
 }
 
 =head2 campaign( I<campaign_id> )
@@ -157,25 +211,362 @@ ID via the api, and returns it in raw hash form.
 
 sub campaign {
     my $self       = shift;
-    my $camp_id    = shift or croak "campaign_id required";
+    my $id         = shift or confess "campaign_id required";
     my $with_stats = shift;
-    $API = WWW::Mailchimp->new($API_OPT) unless ($API);
-    if ($with_stats) {
-        my $resp = $API->campaignStats( cid => $camp_id );
-        if ( !ref $resp ) {
-            warn "$resp";
-            return 0;
-        }
-        return $resp->{error} ? 0 : $resp;
+    my $api        = init_api();
+    my $resp       = $api->campaign( campaign_id => $id );
+    if ( $resp->{code} eq '404' ) {
+        return 0;
+    }
+    if ( $resp->{error} ) {
+        warn dump($resp);
+        return 0;
+    }
+    if ( $resp->{code} eq '200' ) {
+        return $resp->{content};
     }
     else {
-        my $resp = $API->campaigns( filters => { campaign_id => $camp_id } );
-        if ( !ref $resp ) {
-            warn "$resp";
-            return 0;
-        }
-        return $resp->{error} ? 0 : $resp->{data}->[0];
+        return 0;
     }
+}
+
+=head2 campaign_ids
+
+Returns list of all campaign ids defined on the list.
+
+=cut
+
+sub campaign_ids {
+    my $self = shift;
+
+    # paginate
+    my $list_id = $self->list_id;
+    my $total = 1;    # start here, then re-set based on first page.
+    my @campaigns;
+    my $seen     = 0;
+    my $attempts = 0;
+    while ( $seen < $total ) {
+        my %params = (
+            list_id => $list_id,
+            count   => $self->api_page_size,
+            offset  => scalar(@campaigns),
+        );
+        my $res = $self->api->campaigns(%params)->{content};
+        my @c   = @{ $res->{campaigns} };
+        push @campaigns, map { $_->{id} } @c;
+        $seen += scalar @c;
+        $total = $res->{total_items};
+        last if $seen == 0;
+    }
+    return \@campaigns;
+}
+
+=head2 subscriber_hash( I<email_address> )
+
+Returns the MD5 hash of the I<email_address>. This is used by Mailchimp
+as the unique identifier of the subscriber in URLs.
+
+=cut
+
+sub subscriber_hash {
+    my $self = shift;
+    my $email_address = shift or confess "email address required";
+
+    return md5_hex( lc($email_address) );
+}
+
+sub debug_response {
+    my $self = shift;
+    my $resp = shift or confess "resp required";
+
+    my @attrs = qw( members new_members updated_members );
+    my %copy  = %$resp;
+
+    delete $copy{_links};
+    for my $key (@attrs) {
+        if ( exists $copy{$key} ) {
+            for my $m ( @{ $copy{$key} } ) {
+                delete $m->{_links};
+            }
+        }
+    }
+    if ( exists $copy{content} ) {
+        delete $copy{content}->{_links};
+        for my $key (@attrs) {
+            next unless exists $copy{content}->{$key};
+            for my $m ( @{ $copy{content}->{$key} } ) {
+                delete $m->{_links};
+            }
+        }
+    }
+
+    dump( \%copy );
+}
+
+=head2 unsubscribe( I<array_of_emails> )
+
+Sets subscriber status to C<unsubscribed> for I<array_of_emails>.
+
+=cut
+
+sub unsubscribe {
+    my $self = shift;
+    $self->set_members_status( @_, 'unsubscribed' );
+}
+
+=head2 delete( I<array_of_emails> )
+
+Removes I<array_of_emails> from the list.
+
+=cut
+
+sub delete {
+    my $self = shift;
+    my $emails = shift or confess "array ref of emails required";
+
+    if ( scalar(@$emails) < $self->api_batch_min ) {
+        my @responses;
+        for my $email (@$emails) {
+
+            my $resp = $self->api->delete_member(
+                list_id         => $self->list_id,
+                subscriber_hash => $self->subscriber_hash($email)
+            );
+            push @responses, $resp;
+        }
+        return $self->_build_member_report( \@responses );
+    }
+
+    my @ops = ();
+    for my $email (@$emails) {
+        my $op = {
+            operation_id => "DELETE-$email",
+            method       => 'DELETE',
+            path         => sprintf(
+                "/lists/%s/members/%s",
+                $self->list_id, $self->subscriber_hash($email)
+            ),
+        };
+        push @ops, $op;
+    }
+
+    my $results = $self->wait_for_batch(
+        $self->api->add_batch( operations => \@ops ) );
+    $self->debug and warn "DELETE report: " . dump($results);
+    return $self->_build_member_report($results);
+}
+
+=head2 delete_all
+
+Calls B<delete> on every list member.
+
+=cut
+
+sub delete_all {
+    my $self    = shift;
+    my $members = $self->list_members();
+    my @emails  = map { $_->{email_address} } grep { $_->{status} } @$members;
+    $self->delete( \@emails ) if @emails;
+}
+
+=head2 clean( I<array_of_emails> )
+
+Sets status to C<cleaned> for each of I<array_of_emails>.
+
+=cut
+
+sub clean {
+    my $self = shift;
+    $self->set_members_status( @_, 'cleaned' );
+}
+
+=head2 subscribe( I<array_of_emails> )
+
+Sets status to C<subscribed> for each of I<array_of_emails>.
+
+=cut
+
+sub subscribe {
+    my $self = shift;
+    $self->set_members_status( @_, 'subscribed' );
+}
+
+sub set_members_status {
+    my $self   = shift;
+    my $emails = shift or confess "array ref of emails required";
+    my $status = shift or confess "status required";
+
+    # use special batch endpoint if we are under api_batch_limit
+    if ( scalar(@$emails) <= $self->api_batch_limit ) {
+        my @members;
+        for my $email (@$emails) {
+            push @members, { email_address => $email, status => $status };
+        }
+        my $resp = $self->api->batch_list(
+            list_id         => $self->list_id,
+            members         => \@members,
+            update_existing => \1,
+        );
+        my $report = $resp;
+        if ( $report->{code} eq '200' ) {
+            $report->{success_count} = 1;
+            $report->{$status}
+                = (   $report->{content}->{total_created}
+                    + $report->{content}->{total_updated} );
+        }
+        return $report;
+    }
+
+    # build operations
+    my @ops = ();
+    for my $email (@$emails) {
+        my $op = {
+            operation_id => "$status-$email",
+            method       => 'PUT',
+            path         => sprintf(
+                "/lists/%s/members/%s",
+                $self->list_id, $self->subscriber_hash($email)
+            ),
+            body => encode_json(
+                {   status        => $status,
+                    email_address => $email
+                }
+            ),
+        };
+        push @ops, $op;
+    }
+
+    my $results = $self->wait_for_batch(
+        $self->api->add_batch( operations => \@ops ) );
+    return $self->_build_member_report($results);
+}
+
+sub _build_member_report {
+    my $self    = shift;
+    my $results = shift;
+    my $report  = { results => $results };
+    for my $result (@$results) {
+        my $code = $result->{status_code} || $result->{code};
+        $report->{success_count}++ if $code =~ m/^2/;
+        if ( $result->{content}->{status} ) {
+            $report->{ $result->{content}->{status} }++;
+        }
+    }
+    return $report;
+}
+
+sub wait_for_batch {
+    my $self = shift;
+    my $batch_resp = shift or confess "batch_resp required";
+
+    my $batch_id = $batch_resp->{content}->{id}
+        or confess "no batch id in response " . dump($batch_resp);
+
+    my $max_tries = $self->max_tries;
+    my $interval  = $self->interval;
+    my $attempts  = 0;
+    my $final_resp;
+    while ( $attempts++ < $max_tries ) {
+        $self->debug
+            and warn
+            "attempts $attempts max_tries $max_tries sleep $interval";
+        sleep($interval);
+        my $resp = $self->api->batch( batch_id => $batch_id );
+        if ( $resp->{content}->{status} eq 'finished' ) {
+            $final_resp = $self->_fetch_batch_response(
+                $resp->{content}->{response_body_url} );
+            last;
+        }
+        if ( $resp->{content}->{total_operations}
+            > $resp->{content}->{finished_operations} )
+        {
+            $attempts--;
+        }
+    }
+
+    return $final_resp;
+}
+
+sub _fetch_batch_response {
+    my $self      = shift;
+    my $uri       = shift;
+    my $resp      = $self->api->agent->get($uri);
+    my $io_str    = IO::String->new( $resp->decoded_content );
+    my $gunzipped = IO::Uncompress::Gunzip->new($io_str);
+    my $tar       = Archive::Tar->new;
+    my @responses;
+    for my $file ( ( $tar->read($gunzipped) ) ) {
+        next unless $file->name =~ m/\.json$/;
+        push @responses, @{ decode_json( $file->get_content ) };
+    }
+    for my $response (@responses) {
+        $response->{content} = decode_json( $response->{response} );
+    }
+    return \@responses;
+}
+
+=head2 list_members
+
+Returns array ref of member hashes for all members of the list.
+
+=cut
+
+sub list_members {
+    my $self     = shift;
+    my $callback = shift;
+    my $status   = shift;
+
+    my @members;
+    my @states = qw( subscribed unsubscribed cleaned );
+    @states = ($status) if defined $status;
+
+    for my $state (@states) {
+        push @members,
+            @{ $self->_fetch_members_by_status( $callback, $state ) };
+    }
+
+    return \@members;
+}
+
+sub _fetch_members_by_status {
+    my ( $self, $callback, $status ) = @_;
+
+    my $list_id = $self->list_id;
+
+    # paginate
+    my $total = 1;    # start here, then re-set based on first page.
+    my @members;
+    my $seen     = 0;
+    my $attempts = 0;
+    while ( $seen < $total ) {
+        my %params = (
+            list_id => $list_id,
+            count   => $self->api_page_size,
+            offset  => scalar(@members),
+        );
+        $params{status} = $status if $status;
+
+        my $resp    = $self->api->members(%params);
+        my $content = $resp->{content};
+
+        $total = $content->{total_items};
+
+        my @segment = @{ $content->{members} };
+        $seen += scalar(@segment);
+
+        # sanity check
+        last if ( $attempts++ > 1 && $seen == 0 );
+
+        if ($callback) {
+            for my $member (@segment) {
+                $callback->($member);
+            }
+        }
+        else {
+            push @members, @segment;
+        }
+    }
+    return \@members;
 }
 
 =head2 push_list( I<options> )
@@ -183,11 +574,23 @@ sub campaign {
 Push changes from src_org_email to mailchimp. Makes no attempt to verify what's
 in src_org_email... just blindly throws at Mailchimp.
 
-* B<source> - Single or array of sources to push (will find all src_emails)
+I<options> may include:
 
-* B<email>  - Single or array of emails to push
+=over
 
-* B<all>    - True to push ALL changes EVER for this mailing list
+=item B<source>
+
+Single or array of sources to push (will find all src_emails)
+
+=item B<email>
+
+Single or array of emails to push
+
+=item B<all>
+
+True to push ALL changes EVER for this mailing list
+
+=back
 
 =cut
 
@@ -198,19 +601,22 @@ sub push_list {
 
     # sanitized results
     my %results = (
-        subscribed   => 0,
-        unsubscribed => 0,
-        ignored      => 0,
+        subscribed => 0,
+        cleaned    => 0,
+        ignored    => 0,
     );
 
     # everything that isn't subscribed is an unsub action
     my ( $subs, $unsubs );
     while ( my $soe = $soe_it->next ) {
-        if ( $soe->soe_status eq 'A' ) {
-            $subs->{ $soe->email->sem_email } = $soe;
+        my $soe_status = $soe->soe_status;
+        my $email      = $soe->email->sem_email;
+
+        if ( $soe_status eq 'A' ) {
+            $subs->{$email} = $soe;
         }
         else {
-            $unsubs->{ $soe->email->sem_email } = $soe;
+            $unsubs->{$email} = $soe;
         }
     }
 
@@ -218,91 +624,78 @@ sub push_list {
     #warn "unsubs: " . dump($unsubs);
 
     # subscribes
-    my $sub_iter = natatime( $PAGE_SIZE, keys %{$subs} );
+    my $sub_iter = natatime( $PAGE_SIZE, keys %$subs );
     while ( my @chunk = $sub_iter->() ) {
-        @chunk = map { { EMAIL => $_, } } @chunk;
-        my $resp = $API->listBatchSubscribe(
-            id                => $self->{list_id},
-            batch             => \@chunk,
-            double_optin      => 0,
-            replace_interests => 0,
-        );
-        if ( !ref $resp ) {
-            croak $resp;
-        }
-        $results{subscribed} += $resp->{add_count};
-        $results{subscribed} += $resp->{update_count};
+        my $resp = $self->subscribe( \@chunk );
+
+        #warn "SUB:" . $self->debug_response($resp);
+        $results{subscribed} += $resp->{subscribed} || 0;
 
         # process individual error codes (we'll ignore some codes)
-        for my $err ( @{ $resp->{errors} } ) {
-            if ( $err->{code} == $ERRORS{List_AlreadySubscribed} ) {
-                $results{ignored}++;
-            }
-            elsif ($err->{code} == $ERRORS{List_InvalidImport}
-                || $err->{code} == $ERRORS{Invalid_Email}
-                || $err->{code} == $ERRORS{RoleBasedOrInvalid_Email} )
-            {
-                $results{skipped}++;
-            }
-            elsif ($err->{code} == $ERRORS{List_InvalidUnsubMember}
-                || $err->{code} == $ERRORS{List_InvalidBounceMember} )
-            {
-
-                # NOTE: unlike batch, single-sub calls can force a re-sub.
-                # Since this is always a manual process in AIR, hopefully
-                # there will never be a ridiculous number of these.
-                my $force_resp = $API->listSubscribe(
-                    id                => $self->{list_id},
-                    email_address     => $err->{email},
-                    double_optin      => 0,
-                    update_existing   => 1,
-                    replace_interests => 0,
-                    send_welcome      => 0,
-                );
-                if ($force_resp) {
-                    $results{subscribed}++;
-                }
-                else {
-                    warn "MailChimp ERROR($err->{code}) : $err->{message}";
-                    croak "MailChimp ERROR($err->{code}) : $err->{message}";
-                }
-            }
-            else {
-                warn "MailChimp ERROR($err->{code}) : $err->{message}";
-                croak "MailChimp ERROR($err->{code}) : $err->{message}";
-            }
-        }
+        confess $resp->{errors} if $resp->{errors};
     }
 
     # unsubscribes
-    my $unsub_iter = natatime( $PAGE_SIZE, keys %{$unsubs} );
+    my $unsub_iter = natatime( $PAGE_SIZE, keys %$unsubs );
     while ( my @chunk = $unsub_iter->() ) {
-        my $resp = $API->listBatchUnsubscribe(
-            id            => $self->{list_id},
-            emails        => \@chunk,
-            delete_member => 1,                  # always delete; AIR is SOR
-            send_goodbye  => 0,
-            send_notify   => 0,
-        );
-        $results{unsubscribed} += $resp->{success_count};
+        my $resp = $self->delete( \@chunk );
 
-        # process individual error codes (we'll ignore some codes)
-        for my $err ( @{ $resp->{errors} } ) {
-            if ( $err->{code} == $ERRORS{Email_NotExists} ) {
-                $results{ignored}++;
-            }
-            elsif ( $err->{code} == $ERRORS{List_NotSubscribed} ) {
-                $results{ignored}++;
-            }
-            else {
-                warn "MailChimp ERROR($err->{code}) : $err->{message}";
-                croak "MailChimp ERROR($err->{code}) : $err->{message}";
+        #warn "UNSUB:" . $self->debug_response($resp);
+        my $success = $resp->{success_count} || 0;
+        $results{unsubscribed} += $success;
+
+        if ( $success != scalar(@chunk) ) {
+            for my $result ( @{ $resp->{results} } ) {
+                my $code = $result->{status_code} || $result->{code} || '';
+                if ( $code eq '404' ) {
+                    $results{ignored}++;
+                }
             }
         }
     }
 
-    # return the results
     return \%results;
+}
+
+=head2 member( I<email> )
+
+Returns member record for I<email>.
+
+=cut
+
+sub member {
+    my $self = shift;
+    my $email = shift or confess "email address required";
+    $self->api->member(
+        list_id         => $self->list_id,
+        subscriber_hash => $self->subscriber_hash($email),
+    );
+}
+
+=head2 member_exists( I<email> )
+
+Returns true if I<email> is on the list (regardless of status).
+
+=cut
+
+sub member_exists {
+    my $self  = shift;
+    my $email = shift or confess "email address required";
+    my $resp  = $self->member($email);
+    return $resp->{code} eq '200';
+}
+
+=head2 member_subscribed( I<email> )
+
+Returns true if I<email> is on the list with status C<subscribed>.
+
+=cut
+
+sub member_subscribed {
+    my $self  = shift;
+    my $email = shift or confess "email address required";
+    my $resp  = $self->member($email);
+    return $resp->{content} && $resp->{content}->{status} eq 'subscribed';
 }
 
 =head2 pull_list( I<options> )
@@ -310,21 +703,37 @@ sub push_list {
 Update the src_org_email table from what's in Mailchimp.  Will overwrite
 any existing records in the table.
 
-* B<source> - Single or array of sources to pull (will find all src_emails)
+I<options> may include:
 
-* B<email>  - Single or array of emails to pull
+=over
 
-* B<all>    - True to get ALL changes EVER for this mailing list
+=item B<source>
 
-* B<since>  - Pull changes >= timestamp. Pass 1 to default to the latest
-              soe_status_dtim found for this org. This should be passed as the
-              SERVER's timezone.
+Single or array of sources to pull (will find all src_emails)
+
+=item B<email>
+
+Single or array of emails to pull
+
+=item B<all>
+
+True to get ALL changes EVER for this mailing list
+
+=item B<since>
+
+Pull changes >= timestamp. Pass 1 to default to the latest
+C<soe_status_dtim> found for this org. This should be passed as the
+SERVER's timezone.
+
+=back
 
 =cut
 
 sub pull_list {
     my $self = shift;
     my $opts = {@_};
+
+    my $debug = $opts->{debug} || $self->debug;
 
     # sanitized results
     my %results = (
@@ -349,14 +758,16 @@ sub pull_list {
             # lookup the last value
             if ( $opts->{since} == 1 ) {
                 my $soe = AIR2::SrcOrgEmail->fetch_all_iterator(
-                    query =>
-                        [ soe_org_id => $self->org->org_id, soe_type => 'M' ],
+                    query => [
+                        soe_org_id => $self->org->org_id,
+                        soe_type   => 'M'
+                    ],
                     sort_by => 'soe_status_dtim DESC',
                 )->next;
                 my $last
                     = $soe
                     ? '' . $soe->soe_status_dtim
-                    : "2001-01-01 01:01:01";
+                    : $DEFAULT_START_TIME;
 
                 # subtract 1 second, to make sure we get everything
                 $epoch = str2time($last) - 1;
@@ -379,40 +790,42 @@ sub pull_list {
     if ( $opts->{all} || $opts->{since} ) {
 
         # debug output
-        if ( $opts->{debug} && $opts->{all} ) {
-            warn " *pulling ALL list members\n";
+        if ( $opts->{all} ) {
+            $debug and warn " *pulling ALL list members\n";
         }
-        elsif ( $opts->{debug} && $opts->{since} ) {
-            warn " *pulling list members changed since $opts->{since}\n";
+        elsif ( $opts->{since} ) {
+            $debug
+                and warn
+                " *pulling list members changed since $opts->{since}\n";
         }
 
         # need to fetch each status with a separate api call
-        for my $status ( keys %{$stats} ) {
+        for my $status ( keys %$stats ) {
             my $start = 0;
             my $total = 0;
 
             do {
-                my $resp = $API->listMembers(
-                    id     => $self->{list_id},
-                    status => $status,
-                    since  => $opts->{since},     # 24 hour format in GMT
-                    start  => $start,
-                    limit  => $PAGE_SIZE,         # limit 15K
+                my $resp = $self->api->members(
+                    list_id => $self->list_id,
+                    status  => $status,
+
+                    # 24 hour format in GMT
+                    since_last_changed => $opts->{since},
+                    offset             => $start,
+                    count              => $self->api_page_size,    # limit 15K
                 );
 
-                if ( !ref $resp ) {
-                    croak $resp;
-                }
+                confess $resp unless ref $resp;
 
-            # $opts->{debug} and warn " FETCHING($self->{list_id}) $status\n";
-            # $opts->{debug} and dump $resp;
+                $debug and warn "members:" . $self->debug_response($resp);
 
-                $total = $resp->{total};
-                $start = $start + $PAGE_SIZE;
+                my @members = @{ $resp->{content}->{members} };
+                $total = $resp->{content}->{total_items};
+                $start += scalar(@members);
 
-                for my $row ( @{ $resp->{data} } ) {
-                    my $email    = lc $row->{email};
-                    my $gmt_dtim = $row->{timestamp};
+                for my $row (@members) {
+                    my $email    = lc $row->{email_address};
+                    my $gmt_dtim = $row->{last_changed};
                     $stats->{$status}->{$email} = $gmt_dtim;
                     push( @cached_since_emails, $email )
                         if $opts->{since};
@@ -433,57 +846,118 @@ sub pull_list {
         }
     }
     else {
-        my @emails;
+        my %emails;
 
-        # only really care about emails that exist in AIR
+        $debug and warn "pull_list scope limited to specific emails";
+
+        # this anon function pointer used for both individual /member calls
+        # and as a callback for all list_members.
+        my $member_checker = sub {
+            my $member = shift;
+            my $email  = lc $member->{email_address};
+            return unless exists $emails{$email};
+
+            my $gmt_dtim = $member->{last_changed};
+            my $status   = $member->{status};
+            $stats->{$status}->{$email} = $gmt_dtim || time();
+            $emails{$email} = 1;
+        };
+
+        # how many records are we expecting?
+        my $sem_query = $self->_get_sem_iterator_query($opts);
+        my $segment_size
+            = ref( $sem_query->[1] ) eq 'ARRAY'
+            ? scalar( @{ $sem_query->[1] } )
+            : 1;
+
+        # refer to AIR records only.
         my $sem_it = $self->_get_sem_iterator($opts);
-        while ( my $sem = $sem_it->next ) {
-            push @emails, lc $sem->sem_email;
+
+        # Optimize the number of API calls made.
+        # The math takes into account the total list size,
+        # and the number of emails in this segment,
+        # and minimizes the number of HTTP calls.
+        # This means tests run faster,
+        # but in production (where total list size >200k)
+        # it is fewer HTTP calls to fetch each email individually
+        # since most segments are small (<500 emails).
+        $self->init_mailing_list;
+
+        $debug and warn "list_member_count=" . $self->list_member_count;
+        $debug and warn "list_filter_max=" . $self->list_filter_max;
+        $debug and warn "segment_size=" . $segment_size;
+
+        # first rule: compare total list size to production (list_filter_max)
+        my $use_list_filter
+            = $self->list_member_count < $self->list_filter_max;
+
+        # second rule: if the segment is bigger than list_filter_max
+        # (as with a large production mailing)
+        # then it is fewer HTTP calls to fetch the whole list and filter.
+        $use_list_filter = 1 if $segment_size > $self->list_filter_max;
+
+        if ($use_list_filter) {
+            $debug and warn "use list_member_filter for pull_list";
+            $self->_list_member_filter( \%emails, $member_checker, $sem_it );
+        }
+        else {
+            $debug and warn "use fetch_members for pull_list";
+            $self->_fetch_members( \%emails, $member_checker, $sem_it );
         }
 
-        # unfortunately, API only handles 50-at-a-time
-        my $chunk_iter = natatime( 50, @emails );
-        while ( my @chunk = $chunk_iter->() ) {
-            my $resp = $API->listMemberInfo(
-                id            => $self->{list_id},
-                email_address => \@chunk,
-            );
-
-            for my $row ( @{ $resp->{data} } ) {
-                if ( $row->{error} ) {
-                    my $email = lc $row->{email_address};
-                    $stats->{not_in_mailchimp}->{$email} = time();
-                }
-                else {
-                    my $email    = lc $row->{email};
-                    my $gmt_dtim = $row->{timestamp};
-                    my $status   = $row->{status};
-                    $stats->{$status}->{$email} = $gmt_dtim;
-                }
-            }
+        # any emails marked 0 are not at mailchimp
+        for my $email ( keys %emails ) {
+            next if $emails{$email} == 1;
+            $stats->{not_in_mailchimp}->{$email} = time();
         }
     }
 
+    $debug and warn dump($stats);
+
     # now insert/update src_org_email rows in AIR
-    for my $st ( keys %{$stats} ) {
-        for my $addr ( keys %{ $stats->{$st} } ) {
-            if ( $self->_update_soe( $addr, $st, $stats->{$st}->{$addr} ) ) {
-                if ( $st eq 'subscribed' ) {
-                    $results{subscribed}++;
-                }
-                else {
-                    $results{unsubscribed}++;
-                }
+    for my $status ( keys %$stats ) {
+        for my $addr ( keys %{ $stats->{$status} } ) {
+            my $updated_at = $stats->{$status}->{$addr};
+            if ( $self->_update_soe( $addr, $status, $updated_at ) ) {
+                $debug
+                    and warn
+                    "update_soe OK for $addr [$status] [$updated_at]";
+                $results{$status}++;
             }
             else {
+                $debug and warn "ignored for $addr [$status] [$updated_at]";
                 $results{ignored}++;
             }
         }
     }
 
     # return the results
-    $opts->{debug} and dump \%results;
+    $debug and warn dump \%results;
+
     return \%results;
+}
+
+sub _fetch_members {
+    my ( $self, $emails, $member_checker, $sem_it ) = @_;
+    while ( my $sem = $sem_it->next ) {
+        my $email = lc $sem->sem_email;
+        my $resp  = $self->member($email);
+        if ( $resp->{code} eq '404' ) {
+            $emails->{$email} = 0;
+            next;
+        }
+        my $member = $resp->{content};
+        $member_checker->($member);
+    }
+}
+
+sub _list_member_filter {
+    my ( $self, $emails, $member_checker, $sem_it ) = @_;
+    while ( my $sem = $sem_it->next ) {
+        my $email = lc $sem->sem_email;
+        $emails->{$email} = 0;
+    }
+    $self->list_members($member_checker);
 }
 
 =head2 sync_list( I<options> )
@@ -491,22 +965,39 @@ sub pull_list {
 The real workhorse.  Reconciles (so_status + sem_status) vs soe_status.  Takes
 the same options as pull_list.
 
-* B<source> - Single or array of sources to sync (will find all src_emails)
+I<options> may include:
 
-* B<email>  - Single or array of emails to sync
+=over
 
-* B<all>    - True to sync ALL changes EVER for this mailing list
+=item B<source>
 
-* B<since>  - Pull changes >= timestamp. Pass 1 to default to the latest
-              soe_status_dtim found for this org. This should be passed as the
-              SERVER's timezone.
+Single or array of sources to sync (will find all src_emails)
 
-* B<dry_run> - Don't actually update anything in mailchimp - just pull the
-               changes to AIR. The return value will be whatever pull_list
-               returned instead of the usual push_list return value.
+=item B<email>
 
+Single or array of emails to sync
 
-* B<debug>   - Debug output
+=item B<all>
+
+True to sync ALL changes EVER for this mailing list
+
+=item B<since>
+
+Pull changes >= timestamp. Pass 1 to default to the latest
+soe_status_dtim found for this org. This should be passed as the
+SERVER's timezone.
+
+=item B<dry_run>
+
+Don't actually update anything in mailchimp - just pull the
+changes to AIR. The return value will be whatever pull_list
+returned instead of the usual push_list return value.
+
+=item B<debug>
+
+Debug output
+
+=back
 
 =cut
 
@@ -514,12 +1005,19 @@ sub sync_list {
     my $self = shift;
     my $opts = {@_};
 
+    my %timings;
+    my $start_time = Time::HiRes::time();
+
     # pull things
-    my $resp = $self->pull_list(@_);
+    my $resp = $self->pull_list(%$opts);
+
+    $timings{pull_list}
+        = sprintf( "%0.5f", Time::HiRes::time() - $start_time );
+    $start_time = Time::HiRes::time();
 
     # if we specified "since", we need to use the actual pulled emails,
     # since push_list doesn't support that argument
-    if ( $opts->{since} ) {
+    if ( $opts->{since} && !$opts->{source} ) {
         if ( scalar @cached_since_emails > 0 ) {
             $opts->{email} = \@cached_since_emails;
         }
@@ -658,42 +1156,21 @@ sub sync_list {
                                 );
                             }
                             elsif ( $soe_st eq 'U' ) {
-
-                              # The only API call that can get the reason text
-                              # is listMembers (arggg!), so try to pull since
-                              # a timestamp, and hope we get the right one.
-                                my $try_since = DateTime->from_epoch(
-                                    epoch => ( $dtsoe - 1 ) );
-                                my $try_resp = $API->listMembers(
-                                    id     => $self->{list_id},
-                                    status => 'unsubscribed',
-                                    since  => $try_since->strftime(
-                                        "%Y-%m-%d %H:%M:%S"),
-                                    start => 0,
-                                    limit => 20,
-                                );
-                                unless ( $try_resp->{error} ) {
-                                    for my $row ( @{ $try_resp->{data} } ) {
-                                        if (lc( $row->{email} ) eq
-                                            $sem->sem_email )
-                                        {
-                                            if (   $row->{reason}
-                                                && $row->{reason_text} )
-                                            {
-                                                $sact->sact_notes(
-                                                    "$row->{reason} - $row->{reason_text}"
-                                                );
-                                            }
-                                            elsif ($row->{reason}
-                                                || $row->{reason_text} )
-                                            {
-                                                $sact->sact_notes(
-                                                           $row->{reason}
-                                                        || $row->{reason_text}
-                                                );
-                                            }
-                                            last;
-                                        }
+                                my $member = $self->member( $sem->sem_email );
+                                if ( $member->{code} eq '200' ) {
+                                    my $row = $member->{content};
+                                    if (   $row->{reason}
+                                        && $row->{reason_text} )
+                                    {
+                                        $sact->sact_notes(
+                                            "$row->{reason} - $row->{reason_text}"
+                                        );
+                                    }
+                                    elsif ($row->{reason}
+                                        || $row->{reason_text} )
+                                    {
+                                        $sact->sact_notes( $row->{reason}
+                                                || $row->{reason_text} );
                                     }
                                 }
                             }
@@ -706,6 +1183,9 @@ sub sync_list {
             }
         }
     }
+
+    $timings{db_sync} = sprintf( "%0.5f", Time::HiRes::time() - $start_time );
+    $start_time = Time::HiRes::time();
 
     # push the changes out
     unless ( $opts->{dry_run} ) {
@@ -720,11 +1200,79 @@ sub sync_list {
         }
     }
 
+    $timings{push_list}
+        = sprintf( "%0.5f", Time::HiRes::time() - $start_time );
+    $start_time = Time::HiRes::time();
+
     # cleanup src_org_emails where the src_org DNE
     map { $_->delete() } @soe_cleanup;
 
+    $timings{cleanup} = sprintf( "%0.5f", Time::HiRes::time() - $start_time );
+
+    $resp->{timings} = \%timings if $opts->{timings};
+
     # return result of either push or pull
     return $resp;
+}
+
+=head2 add_segment(I<name>, I<array_ref_of_emails>)
+
+Creates a new segment with I<name> consisting of members I<array_ref_of_emails>.
+If I<array_ref_of_emails> is undef will safely default to an empty array.
+
+=cut
+
+sub add_segment {
+    my $self    = shift;
+    my $name    = shift or confess "segment name required";
+    my $members = shift || [];
+
+    $self->api->add_segment(
+        list_id        => $self->list_id,
+        name           => $name,
+        static_segment => $members,
+    );
+}
+
+=head2 add_segment_members(I<segment_id>, I<array_ref_of_emails>)
+
+Adds I<array_ref_of_emails> to the segment with I<segment_id>.
+
+=cut
+
+sub add_segment_members {
+    my $self       = shift;
+    my $segment_id = shift or confess "segment_id required";
+    my $emails     = shift or confess "array ref of emails required";
+
+    $self->api->batch_segment(
+        list_id        => $self->list_id,
+        segment_id     => $segment_id,
+        members_to_add => $emails,
+    );
+}
+
+sub _create_unique_segment {
+    my ( $self, $name, $results ) = @_;
+
+    # normalize the segment name (max len 50, so leave room)
+    ( my $norm_name = substr( $name, 0, 44 ) ) =~ s/\W+/\-/g;
+    $results->{name} = $norm_name;
+
+    # Mailchimp no longer enforces unique names, so we do it ourselves.
+    my $resp = $self->api->segments( list_id => $self->list_id );
+    my %existing_segments
+        = map { $_->{name} => $_->{id} } @{ $resp->{content}->{segments} };
+    if ( exists $existing_segments{ $results->{name} } ) {
+        $results->{name} .= '-' . AIR2::Utils::random_str();
+    }
+
+    $resp = $self->add_segment( $results->{name} );
+    $self->debug and warn "add_segment: " . $self->debug_response($resp);
+
+    unless ( $results->{id} = $resp->{content}->{id} ) {
+        confess "Failed to create segment: " . dump($resp);
+    }
 }
 
 =head2 make_segment( I<options> )
@@ -733,25 +1281,39 @@ Create a static segment containing a certain subset of emails.  Will return
 the segment ID, along with any errors that occurred (most often that you have
 a source that's unsubscribed from this mailing list).
 
-* B<name>   - A unique-ish name for the segment.  If the passed name is already
-              taken, this method will add random characters to the end in an
-              attempt to make it unique.
+I<options> may include:
 
-* B<source> - Source or sources in the segment (will find primary emails)
+=over
 
-* B<email>  - Email addresses in the segment
+=item B<name>
 
-* B<bcc>    - Email addresses to include in the segment, but not the counts.
-              (should ALWAYS be valid emails)
+A unique-ish name for the segment.  If the passed name is already
+taken, this method will add random characters to the end in an
+attempt to make it unique.
+
+=item B<source>
+
+Source or sources in the segment (will find primary emails)
+
+=item B<email>
+
+Email addresses in the segment
+
+=item B<bcc>
+
+Email addresses to include in the segment, but not the counts.
+These should ALWAYS be valid emails.
+
+=back
 
 =cut
 
 sub make_segment {
     my $self = shift;
     my $opts = {@_};
-    $opts->{name} or croak "Segment name required";
+    $opts->{name} or confess "Segment name required";
     if ( !$opts->{source} and !$opts->{email} ) {
-        croak "Sources or emails required";
+        confess "Sources or emails required";
     }
 
     # sanitized results
@@ -763,30 +1325,7 @@ sub make_segment {
         skip_list => [],    # refs to sources skipped
     );
 
-    # normalize the segment name (max len 50, so leave room)
-    ( my $norm_name = substr( $opts->{name}, 0, 44 ) ) =~ s/\W+/\-/g;
-    $results{name} = $norm_name;
-
-    # keep attempting to create until we find a unique name
-    my $attempts = 1;
-    my $resp     = $API->listStaticSegmentAdd(
-        id   => $self->{list_id},
-        name => $results{name},
-    );
-    while ( ref $resp && $resp->{error} =~ /must be unique/i ) {
-        $results{name} = $norm_name . '-' . $attempts++;
-        $resp = $API->listStaticSegmentAdd(
-            id   => $self->{list_id},
-            name => $results{name},
-        );
-    }
-
-    # if that didn't work, upchuck
-    if ( ref $resp && $resp->{error} ) {
-        warn "MailChimp ERROR($resp->{code}) : $resp->{error}";
-        croak "MailChimp ERROR($resp->{code}) : $resp->{error}";
-    }
-    $results{id} = $resp;
+    $self->_create_unique_segment( $opts->{name}, \%results );
 
     # get list of emails
     my @emails;
@@ -813,21 +1352,37 @@ sub make_segment {
     # add the emails
     my %skipped_emails;
     my $chunk_iter = natatime( $PAGE_SIZE, @emails );
+    my $resp;
     while ( my @chunk = $chunk_iter->() ) {
-        $resp = $API->listStaticSegmentMembersAdd(
-            id     => $self->{list_id},
-            seg_id => $results{id},
-            batch  => \@chunk,
-        );
-        $results{added} += $resp->{success};
-        for my $err ( @{ $resp->{errors} } ) {
-            $skipped_emails{ $err->{email} } = 1;
+        $resp = $self->add_segment_members( $results{id}, \@chunk );
+        $self->debug
+            and warn "add_segment_members: " . $self->debug_response($resp);
+        $results{added} += $resp->{content}->{total_added};
+
+        # the API docs claim 'errors' is populated with skipped emails,
+        # but testing shows otherwise. Do it both ways.
+        for my $err ( @{ $resp->{content}->{errors} } ) {
+            my $emails_skipped = $err->{email_addresses};
+            my $err_msg        = $err->{error};
+            for my $email_skipped (@$emails_skipped) {
+                $skipped_emails{$email_skipped} = $err_msg;
+            }
+        }
+
+        my %emails_sent = map { $_ => 1 } @chunk;
+        my %emails_added = map { $_->{email_address} => 1 }
+            @{ $resp->{content}->{members_added} };
+        for my $sent ( keys %emails_sent ) {
+            if ( !exists $emails_added{$sent} ) {
+                $skipped_emails{$sent} = 1;
+            }
         }
     }
 
     # figure out what we actually processed/skipped
     if ( $opts->{email} ) {
-        @{ $results{skip_list} } = keys %skipped_emails;
+        $results{skip_list}
+            = [ map { [ $_, $skipped_emails{$_} ] } keys %skipped_emails ];
         $results{skipped} = scalar keys %skipped_emails;
     }
     else {
@@ -838,12 +1393,12 @@ sub make_segment {
             if ( my $e = $srcid_to_email{ $src->src_id } ) {
                 if ( $skipped_emails{$e} ) {
                     $results{skipped}++;
-                    push @{ $results{skip_list} }, $src;
+                    push @{ $results{skip_list} }, [ $src, 1 ];
                 }
             }
             else {
                 $results{skipped}++;
-                push @{ $results{skip_list} }, $src;
+                push @{ $results{skip_list} }, [ $src, 1 ];
             }
         }
     }
@@ -851,24 +1406,60 @@ sub make_segment {
     # add the BCC's (force subscribe them to the list)
     if ( $opts->{bcc} && scalar @{ $opts->{bcc} } > 0 ) {
         for my $addr ( @{ $opts->{bcc} } ) {
-            $API->listSubscribe(
-                id                => $self->{list_id},
-                email_address     => $addr,
-                double_optin      => 0,
-                update_existing   => 1,
-                replace_interests => 0,
-                send_welcome      => 0,
-            );
+            $self->subscribe( [$addr] );
         }
-        $API->listStaticSegmentMembersAdd(
-            id     => $self->{list_id},
-            seg_id => $results{id},
-            batch  => $opts->{bcc},
-        );
+        $self->add_segment_members( $results{id}, $opts->{bcc} );
     }
 
     # return the results
     return \%results;
+}
+
+=head2 create_campaign(I<template>, I<segment_id>)
+
+Create a new campaign.
+
+=cut
+
+sub create_campaign {
+    my $self       = shift;
+    my $template   = shift or confess 'template required';
+    my $segment_id = shift or confess 'segment_id required';
+
+    my %campaign = ();
+    $campaign{add} = $self->api->add_campaign(
+        type       => 'regular',
+        recipients => {
+            list_id      => $self->list_id,
+            segment_opts => {
+                match            => 'all',
+                saved_segment_id => $segment_id + 0,
+                conditions       => [
+                    {   op    => 'static_is',
+                        field => 'static_segment',
+                        value => $segment_id + 0,
+                    }
+                ],
+            }
+        },
+        settings => {
+            subject_line  => $template->email_subject_line,
+            reply_to      => $template->email_from_email,
+            from_name     => $template->email_from_name,
+            inline_css    => \1,
+            generate_text => \1,                              # TODO ??
+        },
+    );
+    if ( $campaign{add}->{code} eq '200' ) {
+        $campaign{id} = $campaign{add}->{content}->{id};
+        $campaign{count}
+            = $campaign{add}->{content}->{recipients}->{recipient_count};
+        $campaign{content} = $self->api->set_campaign_content(
+            campaign_id => $campaign{id},
+            html        => $template->compile_html_body()
+        );
+    }
+    return \%campaign;
 }
 
 =head2 make_campaign( I<options> )
@@ -885,55 +1476,14 @@ email - just returns the ID so you can schedule it or send it later.
 sub make_campaign {
     my $self = shift;
     my $opts = {@_};
-    $opts->{template} or croak "Email template record required";
-    $opts->{segment}  or croak "Segment id required";
+    $opts->{template} or confess "Email template record required";
+    $opts->{segment}  or confess "Segment id required";
+    confess 'template must be an AIR2::Email object'
+        unless $opts->{template}->isa('AIR2::Email');
     my $stat = $opts->{template}->email_status;
-    croak "Email not active" if ( $stat ne 'A' && $stat ne 'Q' );
+    confess "Email not active" if ( $stat ne 'A' && $stat ne 'Q' );
 
-    # sanitized results
-    my %results = (
-        id    => 0,
-        count => 0,
-    );
-
-    # segmentation
-    my $seg = {
-        match      => 'all',
-        conditions => [
-            {   field => 'static_segment',
-                op    => 'eq',
-                value => $opts->{segment},
-            }
-        ],
-    };
-
-    # create ye ol' campaign
-    $results{id} = $API->campaignCreate(
-        type    => 'regular',
-        options => {
-            list_id       => $self->{list_id},
-            subject       => $opts->{template}->email_subject_line,
-            from_email    => $opts->{template}->email_from_email,
-            from_name     => $opts->{template}->email_from_name,
-            inline_css    => 1,
-            generate_text => 1,
-        },
-        content      => { html => $opts->{template}->compile_html_body() },
-        segment_opts => $seg,
-    );
-    if ( ref $results{id} eq 'HASH' ) {
-        warn "MailChimp ERROR($results{id}->{code}) : $results{id}->{error}";
-        croak "MailChimp ERROR($results{id}->{code}) : $results{id}->{error}";
-    }
-
-    # test the static segment
-    $results{count} = $API->campaignSegmentTest(
-        list_id => $self->{list_id},
-        options => $seg,
-    );
-
-    # return the results
-    return \%results;
+    $self->create_campaign( $opts->{template}, $opts->{segment} );
 }
 
 =head2 send_campaign( I<options> )
@@ -949,24 +1499,30 @@ Send a campaign - either now, or sometime in the future.
 sub send_campaign {
     my $self = shift;
     my $opts = {@_};
-    $opts->{campaign} or croak "Campaign id required";
+    $opts->{campaign} or confess "campaign id required";
 
     # send now, or a bit later on
     if ( $opts->{delay} ) {
         my $epoch = str2time( $opts->{delay} );
-        croak "Invalid delay specified: $opts->{delay}" unless $epoch;
+        confess "Invalid delay specified: $opts->{delay}" unless $epoch;
+
+        # round up to the nearest interval
+        my $interval_seconds = INCREMENT_DELAY * 60;
+        if ( my $diff = $epoch % $interval_seconds ) {
+            $epoch += $interval_seconds - $diff;
+        }
         my $date_utc = DateTime->from_epoch(
             epoch     => $epoch,
             time_zone => $AIR2::Config::TIMEZONE,
         );
         $date_utc->set_time_zone('UTC');
-        return $API->campaignSchedule(
-            cid           => $opts->{campaign},
+        return $self->api->schedule_campaign(
+            campaign_id   => $opts->{campaign},
             schedule_time => $date_utc->strftime("%Y-%m-%d %H:%M:%S"),
         );
     }
     else {
-        return $API->campaignSendNow( cid => $opts->{campaign} );
+        return $self->api->send_campaign( campaign_id => $opts->{campaign} );
     }
 }
 
@@ -977,12 +1533,12 @@ sub send_campaign {
 # convert options to a src_org_email iterator
 sub _get_soe_iterator {
     my $self = shift;
-    my $opts = shift or croak "options required";
+    my $opts = shift or confess "options required";
 
     # argument exclusivity
     my %excl = map { $_ => 1 } qw(source email all);
     if ( scalar( grep { $excl{$_} } keys %{$opts} ) != 1 ) {
-        croak 'Invalid arguments';
+        confess 'Invalid arguments';
     }
 
     # build query
@@ -1008,14 +1564,14 @@ sub _get_soe_iterator {
 }
 
 # convert options to a src_email iterator
-sub _get_sem_iterator {
+sub _get_sem_iterator_query {
     my $self = shift;
-    my $opts = shift or croak "options required";
+    my $opts = shift or confess "options required";
 
     # argument exclusivity
     my %excl = map { $_ => 1 } qw(source email src_id);
     if ( scalar( grep { $excl{$_} } keys %{$opts} ) != 1 ) {
-        croak 'Invalid arguments';
+        confess 'Invalid arguments';
     }
 
     # build query
@@ -1036,6 +1592,15 @@ sub _get_sem_iterator {
         push @$query, 'sem_src_id' => $opts->{src_id};
     }
 
+    return $query;
+}
+
+sub _get_sem_iterator {
+    my $self = shift;
+    my $opts = shift or confess "options required";
+
+    my $query = $self->_get_sem_iterator_query($opts);
+
     # get iterator
     return AIR2::SrcEmail->fetch_all_iterator( query => $query );
 }
@@ -1043,13 +1608,15 @@ sub _get_sem_iterator {
 # convert options to a src_org_cache iterator
 sub _get_soc_iterator {
     my $self = shift;
-    my $opts = shift or croak "options required";
+    my $opts = shift or confess "options required";
 
-    # argument exclusivity
-    my %excl = map { $_ => 1 } qw(source email all);
-    if ( scalar( grep { $excl{$_} } keys %{$opts} ) != 1 ) {
-        croak 'Invalid arguments';
+    my %exclusive = map { $_ => 1 } qw(source email all);
+    my $exclusive_count = 0;
+    for my $opt ( keys %$opts ) {
+        $exclusive_count++ if exists $exclusive{$opt};
     }
+    confess 'Invalid arguments: ' . dump( [ keys %$opts ] )
+        if $exclusive_count > 1;
 
     # build query
     my $query = [ 'soc_org_id' => $self->org->org_id ];
@@ -1085,13 +1652,15 @@ sub _get_soc_iterator {
 # find or create a src_org_email record (returns 1 on update)
 sub _update_soe {
     my $self   = shift;
-    my $email  = shift or croak "email address required";
-    my $status = shift or croak "status required";
-    my $dtim   = shift or croak "dtim required";
+    my $email  = shift or confess "email address required";
+    my $status = shift or confess "status required";
+    my $dtim   = shift or confess "dtim required for $email ($status)";
 
     # TODO: optimize these lookups somehow
     my $sem = AIR2::SrcEmail->new( sem_email => $email );
     return 0 unless ( $sem->load_speculative );
+
+    #warn "found $email";
 
     my $soe = AIR2::SrcOrgEmail->new(
         soe_sem_id => $sem->sem_id,
@@ -1100,6 +1669,13 @@ sub _update_soe {
     );
     my $exists = $soe->load_speculative;
     my $old_status = $exists ? $soe->soe_status : '';
+
+    #warn "old_status:$old_status  status:$status";
+
+    if ( !exists $SOE_STATUS_MAP{$status} ) {
+        warn "No mapped status for '$status'";
+        return 0;
+    }
 
     # delete from air when DNE in mailchimp
     if ( $SOE_STATUS_MAP{$status} eq 'X' ) {
@@ -1110,12 +1686,14 @@ sub _update_soe {
 
     # update status/dtim (convert from UTC)
     $soe->soe_status( $SOE_STATUS_MAP{$status} );
-    my $epoch = str2time( $dtim, 'UTC' );
+
+    #warn "soe_status set to " . $soe->soe_status;
+    my $epoch = str2time( $dtim, 'UTC' ) || time();
     $soe->soe_status_dtim($epoch);
     $soe->save;
 
     # return changed
-    return ( $old_status eq $soe->soe_status ) ? 0 : 1;
+    return $old_status ne $soe->soe_status;
 }
 
 # helper to find/test for valid states
@@ -1128,7 +1706,7 @@ my @VALID_STATES = qw(
 
 sub _state_search {
     my $self = shift;
-    my $sem  = shift or croak "src_email required";
+    my $sem  = shift or confess "src_email required";
     my $sorg = shift;
     my $soe  = shift;
 

@@ -28,9 +28,7 @@ use Path::Class;
 use Config::IniFiles;
 use Sys::Hostname;
 
-my $GLOBALPIN_ORG_ID = 44;
-my $APM_PIN_ORG_ID   = 1;
-my $hostname         = hostname();
+my $hostname = hostname();
 $hostname =~ s/\..+//;
 my $user = $ENV{AIR2_USER} || $ENV{USER} || $ENV{REMOTE_USER} || 'nobody';
 my $path_to_this_pm = file( $INC{"AIR2/Config.pm"} );
@@ -41,6 +39,7 @@ my $profiles     = Config::IniFiles->new( -file => $profiles_ini );
 my $profile      = $ENV{'AIR2_PROFILE'} || get_profile_name();
 my $version_file = file( $etc_dir, 'my_version' );
 my $version      = '2.x.y';
+
 if ( -s $version_file ) {
     chomp( $version = $version_file->slurp );
 }
@@ -93,19 +92,25 @@ for my $name ( $roles_ini->Sections ) {
     $AUTHZ{$code} = $mask;
 }
 
-sub get_global_pin_org_id { return $GLOBALPIN_ORG_ID }
-sub get_apmpin_org_id     { return $APM_PIN_ORG_ID }
+sub get_global_pin_org_id { get_constant('AIR2_GLOBALPIN_ORG_ID') }
+sub get_apmpin_org_id     { get_constant('AIR2_APMPIN_ORG_ID') }
 
 sub get_php_path {
     return ( $profiles->val( $profile, 'php_path' ) || '/usr/local/bin/php' );
 }
 sub get_profiles { return $profiles }
 sub get_profile  { return $profile }
-sub get_profile_val { return $profiles->val( $profile, pop(@_) ) }
+
+sub get_profile_val {
+    my $v = $profiles->val( $profile, pop(@_) );
+    $v =~ s/^['"]|['"]$//g;
+    return $v;
+}
 sub get_hostname { return $hostname }
 sub get_user     { return $user }
 sub get_tz       { return $TIMEZONE }
 sub get_version  { return $version }
+sub get_tmp_dir  { return Path::Class::dir( '/tmp/air2-temp-' . $profile ) }
 
 sub get_smtp_host {
     return $air2_constants->{AIR2_SMTP_HOST} . ':'
@@ -204,6 +209,11 @@ sub get_app_root {
 
 sub get_submission_pen {
     return Path::Class::dir( get_constant('AIR2_QUERY_INCOMING_ROOT') );
+}
+
+sub get_pin_logo_uri {
+    return $profiles->val( $profile, 'pin_logo_uri' )
+        || 'https://www.publicinsightnetwork.org/air2/img/org/49896787525b/logo_medium.png';
 }
 
 sub get_profile_name {

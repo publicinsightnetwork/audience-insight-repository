@@ -50,6 +50,8 @@ for my $section ( $cfg->Sections ) {
         server_time_zone  => $cfg->val( $section, 'server_time_zone' ),
     );
 
+    $conf{'password'} =~ s/^['"]|['"]$//g;
+
     # if there are multiple hostnames, pick one randomly
     if ( $conf{host} =~ m/,/ ) {
         my @hosts = split( /,/, $conf{host} );

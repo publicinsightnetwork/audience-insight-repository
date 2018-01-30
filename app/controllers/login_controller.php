@@ -142,7 +142,9 @@ class Login_Controller extends AIR2_Controller {
 
         // POST requests attempt to authenticate
         elseif ($this->method == 'POST') {
-            header('Access-Control-Allow-Origin: *'); // allow external
+            if (isset($_SERVER['HTTP_ORIGIN'])) {
+                header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']); // allow external
+            }
             $uname = isset($this->input_all['username']) ? $this->input_all['username'] : null;
 
             // #9505 - xss-filter messes up passwords, so get raw input

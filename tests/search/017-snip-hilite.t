@@ -85,8 +85,8 @@ state=("MN")
                 cmp_ok( $json->{build_time}, '<', 4,
                     "build time less than 4 sec" );
 
-                diag( "build_time: " . $json->{build_time} );
-                diag( "total: " . $json->{total} );
+                #diag( "build_time: " . $json->{build_time} );
+                #diag( "total: " . $json->{total} );
             }
 
         },

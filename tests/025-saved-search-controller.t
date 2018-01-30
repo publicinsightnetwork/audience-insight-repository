@@ -89,7 +89,7 @@ define('MY_TEST_PASS', 'fooBar123.');
 
 // create a test user
 $user = new TestUser();
-$user->user_password = MY_TEST_PASS;
+$user->user_encrypted_password = MY_TEST_PASS;
 $user->save();
 $browser2 = new AirHttpTest();
 $browser2->set_content_type(AirHttpTest::$JSON);
